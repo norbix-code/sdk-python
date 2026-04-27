@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    branches: [main, next, beta]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      - name: Install x tool
+        run: dotnet tool install --global x
+
+      - name: Install dependencies
+        run: uv sync --all-groups
+
+      - name: Test before release
+        run: |
+          uv run python scripts/sync_types.py
+          uv run python scripts/generate_endpoints.py
+          uv run pytest
+
+      - name: Semantic release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: uv run semantic-release publish
