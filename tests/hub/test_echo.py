@@ -12,7 +12,7 @@ def test_hub_echo_module_surface() -> None:
 
 def test_hub_echo_echo_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.echo.echo({})
+    client.hub.echo.echo()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

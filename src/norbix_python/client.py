@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import httpx
-
-if TYPE_CHECKING:
-    from .facade.database import Collection
 from pydantic import BaseModel, ConfigDict, Field
 
 from .api import ApiNamespace
@@ -45,9 +42,12 @@ class Norbix:
         default_headers: dict[str, str] | None = None,
         http_client: httpx.Client | None = None,
     ) -> None:
-        resolved_project_id = (
-            project_id if project_id is not None else os.getenv("NORBIX_PROJECT_ID") or None
-        )
+        resolved_project_id = project_id or os.getenv("NORBIX_PROJECT_ID")
+        if not resolved_project_id:
+            raise ValueError(
+                "Norbix: project_id is required "
+                "(set NORBIX_PROJECT_ID or pass project_id=...)."
+            )
         resolved_base_url_api = base_url_api or os.getenv("NORBIX_API_URL") or DEFAULT_BASE_URL_API
         resolved_base_url_hub = base_url_hub or os.getenv("NORBIX_HUB_URL") or DEFAULT_BASE_URL_HUB
         resolved_api_version = api_version or os.getenv("NORBIX_API_VERSION") or DEFAULT_VERSION
@@ -70,11 +70,6 @@ class Norbix:
         self.api = ApiNamespace(self._transport)
         self.hub = HubNamespace(self._transport)
 
-    def collection(self, name: str) -> Collection:
-        from .facade.database import Collection as CollectionFacade
-
-        return CollectionFacade(self, name)
-
     def close(self) -> None:
         self._transport.close()
 
@@ -84,11 +79,8 @@ class Norbix:
     def __exit__(self, *_exc: object) -> None:
         self.close()
 
-    def login(self, credentials: LoginCredentials | dict[str, Any]) -> dict[str, Any]:
-        if isinstance(credentials, LoginCredentials):
-            payload = credentials.model_dump(by_alias=True, exclude_none=True)
-        else:
-            payload = dict(credentials)
+    def login(self, credentials: LoginCredentials) -> dict[str, Any]:
+        payload = credentials.model_dump(by_alias=True, exclude_none=True)
         payload.setdefault("provider", "credentials")
         result = self._transport.send(
             target="api",
@@ -137,9 +129,12 @@ class AsyncNorbix:
         default_headers: dict[str, str] | None = None,
         http_client: httpx.AsyncClient | None = None,
     ) -> None:
-        resolved_project_id = (
-            project_id if project_id is not None else os.getenv("NORBIX_PROJECT_ID") or None
-        )
+        resolved_project_id = project_id or os.getenv("NORBIX_PROJECT_ID")
+        if not resolved_project_id:
+            raise ValueError(
+                "AsyncNorbix: project_id is required "
+                "(set NORBIX_PROJECT_ID or pass project_id=...)."
+            )
         resolved_base_url_api = base_url_api or os.getenv("NORBIX_API_URL") or DEFAULT_BASE_URL_API
         resolved_base_url_hub = base_url_hub or os.getenv("NORBIX_HUB_URL") or DEFAULT_BASE_URL_HUB
         resolved_api_version = api_version or os.getenv("NORBIX_API_VERSION") or DEFAULT_VERSION
@@ -174,11 +169,8 @@ class AsyncNorbix:
     async def __aexit__(self, *_exc: object) -> None:
         await self.aclose()
 
-    async def login(self, credentials: LoginCredentials | dict[str, Any]) -> dict[str, Any]:
-        if isinstance(credentials, LoginCredentials):
-            payload = credentials.model_dump(by_alias=True, exclude_none=True)
-        else:
-            payload = dict(credentials)
+    async def login(self, credentials: LoginCredentials) -> dict[str, Any]:
+        payload = credentials.model_dump(by_alias=True, exclude_none=True)
         payload.setdefault("provider", "credentials")
         result = await self._transport.send(
             target="api",

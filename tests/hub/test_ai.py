@@ -53,21 +53,21 @@ def test_hub_ai_get_llm_integration_request_shape() -> None:
 
 def test_hub_ai_get_llm_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.ai.get_llm_integrations({})
+    client.hub.ai.get_llm_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_ai_save_llm_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.ai.save_llm_integration({})
+    client.hub.ai.save_llm_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_ai_test_llm_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.ai.test_llm_integration({})
+    client.hub.ai.test_llm_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -102,21 +102,21 @@ def test_hub_ai_get_mcp_integration_request_shape() -> None:
 
 def test_hub_ai_get_mcp_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.ai.get_mcp_integrations({})
+    client.hub.ai.get_mcp_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_ai_save_mcp_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.ai.save_mcp_integration({})
+    client.hub.ai.save_mcp_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_ai_test_mcp_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.ai.test_mcp_integration({})
+    client.hub.ai.test_mcp_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

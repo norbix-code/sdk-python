@@ -19,14 +19,14 @@ def test_hub_scheduler_module_surface() -> None:
 
 def test_hub_scheduler_disable_scheduler_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.scheduler.disable_scheduler({})
+    client.hub.scheduler.disable_scheduler()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_scheduler_enable_scheduler_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.scheduler.enable_scheduler({})
+    client.hub.scheduler.enable_scheduler()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -61,14 +61,14 @@ def test_hub_scheduler_get_scheduler_task_request_shape() -> None:
 
 def test_hub_scheduler_get_scheduler_tasks_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.scheduler.get_scheduler_tasks({})
+    client.hub.scheduler.get_scheduler_tasks()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_scheduler_save_scheduler_task_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.scheduler.save_scheduler_task({})
+    client.hub.scheduler.save_scheduler_task()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

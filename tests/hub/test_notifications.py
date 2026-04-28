@@ -79,42 +79,42 @@ def test_hub_notifications_module_surface() -> None:
 
 def test_hub_notifications_get_user_notification_preferences_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_user_notification_preferences({})
+    client.hub.notifications.get_user_notification_preferences()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_update_user_notifications_preferences_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.update_user_notifications_preferences({})
+    client.hub.notifications.update_user_notifications_preferences()
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_disable_email_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.disable_email({})
+    client.hub.notifications.disable_email()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_enable_email_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.enable_email({})
+    client.hub.notifications.enable_email()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_attach_file_to_template_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.attach_file_to_template({})
+    client.hub.notifications.attach_file_to_template()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_create_email_template_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.create_email_template({})
+    client.hub.notifications.create_email_template()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -135,14 +135,14 @@ def test_hub_notifications_get_email_template_request_shape() -> None:
 
 def test_hub_notifications_get_email_templates_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_email_templates({})
+    client.hub.notifications.get_email_templates()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_get_mjml_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_mjml({})
+    client.hub.notifications.get_mjml()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -156,7 +156,7 @@ def test_hub_notifications_get_system_email_template_request_shape() -> None:
 
 def test_hub_notifications_get_system_email_templates_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_system_email_templates({})
+    client.hub.notifications.get_system_email_templates()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -170,7 +170,7 @@ def test_hub_notifications_get_email_template_available_tokens_request_shape() -
 
 def test_hub_notifications_update_email_template_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.update_email_template({})
+    client.hub.notifications.update_email_template()
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -191,28 +191,28 @@ def test_hub_notifications_get_email_signature_request_shape() -> None:
 
 def test_hub_notifications_get_email_signatures_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_email_signatures({})
+    client.hub.notifications.get_email_signatures()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_save_email_signature_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.save_email_signature({})
+    client.hub.notifications.save_email_signature()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_get_email_settings_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_email_settings({})
+    client.hub.notifications.get_email_settings()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_confirm_email_integration_human_delivery_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.confirm_email_integration_human_delivery({})
+    client.hub.notifications.confirm_email_integration_human_delivery()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -247,14 +247,14 @@ def test_hub_notifications_get_email_integration_request_shape() -> None:
 
 def test_hub_notifications_get_email_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_email_integrations({})
+    client.hub.notifications.get_email_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_save_email_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.save_email_integration({})
+    client.hub.notifications.save_email_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -268,7 +268,7 @@ def test_hub_notifications_set_emails_integration_as_default_request_shape() -> 
 
 def test_hub_notifications_test_email_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.test_email_integration({})
+    client.hub.notifications.test_email_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -310,21 +310,21 @@ def test_hub_notifications_get_email_footer_request_shape() -> None:
 
 def test_hub_notifications_get_email_footers_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_email_footers({})
+    client.hub.notifications.get_email_footers()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_save_email_footer_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.save_email_footer({})
+    client.hub.notifications.save_email_footer()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_create_email_campaign_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.create_email_campaign({})
+    client.hub.notifications.create_email_campaign()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -345,7 +345,7 @@ def test_hub_notifications_get_email_campaign_request_shape() -> None:
 
 def test_hub_notifications_get_email_campaigns_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_email_campaigns({})
+    client.hub.notifications.get_email_campaigns()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -380,7 +380,7 @@ def test_hub_notifications_get_email_campaign_statistics_request_shape() -> None
 
 def test_hub_notifications_preview_email_notification_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.preview_email_notification({})
+    client.hub.notifications.preview_email_notification()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -401,14 +401,14 @@ def test_hub_notifications_get_email_campaign_messages_request_shape() -> None:
 
 def test_hub_notifications_disable_push_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.disable_push({})
+    client.hub.notifications.disable_push()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_enable_push_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.enable_push({})
+    client.hub.notifications.enable_push()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -429,7 +429,7 @@ def test_hub_notifications_clone_push_template_request_shape() -> None:
 
 def test_hub_notifications_create_push_template_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.create_push_template({})
+    client.hub.notifications.create_push_template()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -450,7 +450,7 @@ def test_hub_notifications_get_push_template_request_shape() -> None:
 
 def test_hub_notifications_get_push_templates_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_push_templates({})
+    client.hub.notifications.get_push_templates()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -471,14 +471,14 @@ def test_hub_notifications_un_archive_push_template_request_shape() -> None:
 
 def test_hub_notifications_update_push_template_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.update_push_template({})
+    client.hub.notifications.update_push_template()
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_confirm_push_integration_human_delivery_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.confirm_push_integration_human_delivery({})
+    client.hub.notifications.confirm_push_integration_human_delivery()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -513,14 +513,14 @@ def test_hub_notifications_get_push_integration_request_shape() -> None:
 
 def test_hub_notifications_get_push_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.get_push_integrations({})
+    client.hub.notifications.get_push_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_save_push_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.save_push_integration({})
+    client.hub.notifications.save_push_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -534,14 +534,14 @@ def test_hub_notifications_set_push_integration_as_default_request_shape() -> No
 
 def test_hub_notifications_test_push_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.test_push_integration({})
+    client.hub.notifications.test_push_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_notifications_register_code_mash_app_push_integration_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.notifications.register_code_mash_app_push_integration({})
+    client.hub.notifications.register_code_mash_app_push_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -549,7 +549,7 @@ def test_hub_notifications_register_code_mash_app_push_integration_request_shape
 def test_hub_notifications_register_code_mash_app_push_integration_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.notifications.register_code_mash_app_push_integration({})
+        client.hub.notifications.register_code_mash_app_push_integration()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -557,7 +557,7 @@ def test_hub_notifications_register_code_mash_app_push_integration_requires_acco
 
 def test_hub_notifications_register_device_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.register_device({})
+    client.hub.notifications.register_device()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

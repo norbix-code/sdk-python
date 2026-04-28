@@ -12,7 +12,7 @@ def test_api_chat_module_surface() -> None:
 
 def test_api_chat_ask_chat_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.api.chat.ask_chat({})
+    client.api.chat.ask_chat()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

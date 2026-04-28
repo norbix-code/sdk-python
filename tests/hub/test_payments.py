@@ -27,14 +27,14 @@ def test_hub_payments_module_surface() -> None:
 
 def test_hub_payments_disable_payments_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.disable_payments({})
+    client.hub.payments.disable_payments()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_payments_enable_payments_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.enable_payments({})
+    client.hub.payments.enable_payments()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -69,21 +69,21 @@ def test_hub_payments_get_payments_trigger_request_shape() -> None:
 
 def test_hub_payments_get_payments_triggers_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.get_payments_triggers({})
+    client.hub.payments.get_payments_triggers()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_payments_save_payments_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.save_payments_trigger({})
+    client.hub.payments.save_payments_trigger()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_payments_confirm_payments_integration_human_delivery_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.confirm_payments_integration_human_delivery({})
+    client.hub.payments.confirm_payments_integration_human_delivery()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -118,21 +118,21 @@ def test_hub_payments_get_payments_integration_request_shape() -> None:
 
 def test_hub_payments_get_payments_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.get_payments_integrations({})
+    client.hub.payments.get_payments_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_payments_save_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.save_payments_integration({})
+    client.hub.payments.save_payments_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_payments_test_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.test_payments_integration({})
+    client.hub.payments.test_payments_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

@@ -26,14 +26,14 @@ def test_hub_files_module_surface() -> None:
 
 def test_hub_files_disable_files_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.disable_files({})
+    client.hub.files.disable_files()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_files_enable_files_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.enable_files({})
+    client.hub.files.enable_files()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -68,14 +68,14 @@ def test_hub_files_get_files_trigger_request_shape() -> None:
 
 def test_hub_files_get_files_triggers_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.get_files_triggers({})
+    client.hub.files.get_files_triggers()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_files_save_files_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.save_files_trigger({})
+    client.hub.files.save_files_trigger()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -110,14 +110,14 @@ def test_hub_files_get_files_integration_request_shape() -> None:
 
 def test_hub_files_get_files_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.get_files_integrations({})
+    client.hub.files.get_files_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_files_save_files_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.save_files_integration({})
+    client.hub.files.save_files_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

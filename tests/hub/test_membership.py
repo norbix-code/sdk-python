@@ -36,14 +36,14 @@ def test_hub_membership_module_surface() -> None:
 
 def test_hub_membership_disable_membership_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.disable_membership({})
+    client.hub.membership.disable_membership()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_enable_membership_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.enable_membership({})
+    client.hub.membership.enable_membership()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -78,28 +78,28 @@ def test_hub_membership_get_membership_trigger_request_shape() -> None:
 
 def test_hub_membership_get_membership_triggers_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.get_membership_triggers({})
+    client.hub.membership.get_membership_triggers()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_save_membership_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.save_membership_trigger({})
+    client.hub.membership.save_membership_trigger()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_create_role_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.create_role({})
+    client.hub.membership.create_role()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_delete_role_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.delete_role({})
+    client.hub.membership.delete_role()
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -113,28 +113,28 @@ def test_hub_membership_get_role_request_shape() -> None:
 
 def test_hub_membership_get_roles_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.get_roles({})
+    client.hub.membership.get_roles()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_update_role_policies_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.update_role_policies({})
+    client.hub.membership.update_role_policies()
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_create_policy_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.create_policy({})
+    client.hub.membership.create_policy()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_delete_policy_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.delete_policy({})
+    client.hub.membership.delete_policy()
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -148,14 +148,14 @@ def test_hub_membership_get_policy_request_shape() -> None:
 
 def test_hub_membership_get_policies_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.get_policies({})
+    client.hub.membership.get_policies()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_update_policy_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.update_policy({})
+    client.hub.membership.update_policy()
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -190,14 +190,14 @@ def test_hub_membership_get_membership_integration_request_shape() -> None:
 
 def test_hub_membership_get_membership_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.get_membership_integrations({})
+    client.hub.membership.get_membership_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_save_membership_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.save_membership_integration({})
+    client.hub.membership.save_membership_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

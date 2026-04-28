@@ -20,14 +20,14 @@ def test_hub_logs_module_surface() -> None:
 
 def test_hub_logs_disable_logging_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.logs.disable_logging({})
+    client.hub.logs.disable_logging()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_logs_enable_logging_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.logs.enable_logging({})
+    client.hub.logs.enable_logging()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -62,21 +62,21 @@ def test_hub_logs_get_logging_integration_request_shape() -> None:
 
 def test_hub_logs_get_logging_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.logs.get_logging_integrations({})
+    client.hub.logs.get_logging_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_logs_save_logging_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.logs.save_logging_integration({})
+    client.hub.logs.save_logging_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_logs_test_logging_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.logs.test_logging_integration({})
+    client.hub.logs.test_logging_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

@@ -12,7 +12,7 @@ def test_hub_email_module_surface() -> None:
 
 def test_hub_email_one_click_unsubscribe_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.email.one_click_unsubscribe({})
+    client.hub.email.one_click_unsubscribe()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

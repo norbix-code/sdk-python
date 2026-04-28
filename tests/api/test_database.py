@@ -50,7 +50,7 @@ def test_api_database_get_database_schema_request_shape() -> None:
 
 def test_api_database_get_database_schemas_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.api.database.get_database_schemas({})
+    client.api.database.get_database_schemas()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

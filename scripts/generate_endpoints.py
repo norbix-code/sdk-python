@@ -215,7 +215,7 @@ def emit_method_body(
     else:
         path_params_expr = "{}"
 
-    req_expr = "request or {}"
+    req_expr = "request"
     prefix = "return await " if async_ else "return "
     return [
         f"{indent}{prefix}self._transport.send(",
@@ -269,13 +269,13 @@ def emit_modules(
                 args_list = [f"{py}: str" for _, py in param_pairs]
                 sig = (
                     f"    def {method_name}(self, {', '.join(args_list)}, "
-                    f"*, request: dict[str, Any] | None = None, timeout: float | None = None, "
-                    f"bearer_token: str | None = None) -> Any:"
+                    f"*, timeout: float | None = None, "
+                    f"bearer_token: str | None = None, **request: Any) -> Any:"
                 )
             else:
                 sig = (
-                    f"    def {method_name}(self, request: dict[str, Any] | None = None, *, "
-                    f"timeout: float | None = None, bearer_token: str | None = None) -> Any:"
+                    f"    def {method_name}(self, *, timeout: float | None = None, "
+                    f"bearer_token: str | None = None, **request: Any) -> Any:"
                 )
 
             lines.append(sig)
@@ -313,13 +313,13 @@ def emit_modules(
                 args_list = [f"{py}: str" for _, py in param_pairs]
                 sig = (
                     f"    async def {method_name}(self, {', '.join(args_list)}, "
-                    f"*, request: dict[str, Any] | None = None, timeout: float | None = None, "
-                    f"bearer_token: str | None = None) -> Any:"
+                    f"*, timeout: float | None = None, "
+                    f"bearer_token: str | None = None, **request: Any) -> Any:"
                 )
             else:
                 sig = (
-                    f"    async def {method_name}(self, request: dict[str, Any] | None = None, *, "
-                    f"timeout: float | None = None, bearer_token: str | None = None) -> Any:"
+                    f"    async def {method_name}(self, *, timeout: float | None = None, "
+                    f"bearer_token: str | None = None, **request: Any) -> Any:"
                 )
 
             lines.append(sig)
@@ -404,7 +404,7 @@ def _emit_single_group_tests(
             call_inner = ", ".join(f'{py}="stub-{wire}"' for wire, py in pt)
             call_line = f"    client.{target}.{group}.{method_name}({call_inner})"
         else:
-            call_line = f"    client.{target}.{group}.{method_name}({{}})"
+            call_line = f"    client.{target}.{group}.{method_name}()"
 
         acct_arg = "account_id='acc-1'" if account_scoped else "account_id=None"
         blocks.extend(
@@ -425,7 +425,7 @@ def _emit_single_group_tests(
                 inner = ", ".join(f'{py}="stub"' for _, py in pt)
                 inner_call = f"client.{target}.{group}.{method_name}({inner})"
             else:
-                inner_call = f"client.{target}.{group}.{method_name}({{}})"
+                inner_call = f"client.{target}.{group}.{method_name}()"
 
             blocks.extend(
                 [

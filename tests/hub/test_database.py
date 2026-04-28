@@ -52,14 +52,14 @@ def test_hub_database_module_surface() -> None:
 
 def test_hub_database_disable_database_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.disable_database({})
+    client.hub.database.disable_database()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_enable_database_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.enable_database({})
+    client.hub.database.enable_database()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -94,14 +94,14 @@ def test_hub_database_get_schema_trigger_request_shape() -> None:
 
 def test_hub_database_get_schema_triggers_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.get_schema_triggers({})
+    client.hub.database.get_schema_triggers()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_save_schema_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.save_schema_trigger({})
+    client.hub.database.save_schema_trigger()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -122,14 +122,14 @@ def test_hub_database_get_database_taxonomy_request_shape() -> None:
 
 def test_hub_database_get_database_taxonomies_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.get_database_taxonomies({})
+    client.hub.database.get_database_taxonomies()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_save_database_taxonomy_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.save_database_taxonomy({})
+    client.hub.database.save_database_taxonomy()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -192,7 +192,7 @@ def test_hub_database_get_database_schema_request_shape() -> None:
 
 def test_hub_database_get_database_schemas_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.get_database_schemas({})
+    client.hub.database.get_database_schemas()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -234,7 +234,7 @@ def test_hub_database_rename_database_schema_request_shape() -> None:
 
 def test_hub_database_save_database_schema_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.save_database_schema({})
+    client.hub.database.save_database_schema()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -283,14 +283,14 @@ def test_hub_database_get_database_integration_request_shape() -> None:
 
 def test_hub_database_get_database_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.get_database_integrations({})
+    client.hub.database.get_database_integrations()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_save_database_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.save_database_integration({})
+    client.hub.database.save_database_integration()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -318,21 +318,21 @@ def test_hub_database_get_database_aggregate_request_shape() -> None:
 
 def test_hub_database_get_database_aggregates_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.get_database_aggregates({})
+    client.hub.database.get_database_aggregates()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_save_database_aggregate_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.save_database_aggregate({})
+    client.hub.database.save_database_aggregate()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_test_database_aggregate_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.database.test_database_aggregate({})
+    client.hub.database.test_database_aggregate()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

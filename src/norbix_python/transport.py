@@ -23,7 +23,7 @@ _DEFAULT_MAX_RETRIES = 3
 class TransportConfig:
     api_key: str | None
     bearer_token: str | None
-    project_id: str | None
+    project_id: str
     account_id: str | None
     base_url_api: str
     base_url_hub: str
@@ -58,14 +58,7 @@ class Transport:
                 message="This endpoint is account-scoped. Configure account_id on the client.",
                 code="NORBIX_ACCOUNT_SCOPE_REQUIRED",
             )
-        if scope in ("project", "account") and not self._cfg.project_id:
-            raise NorbixError(
-                message=(
-                    "project_id is required for this endpoint "
-                    "(set NORBIX_PROJECT_ID or pass project_id=...)."
-                ),
-                code="NORBIX_PROJECT_SCOPE_REQUIRED",
-            )
+        # project_id is required at construction; kept for defensive checks only.
 
         base_url = self._cfg.base_url_api if target == "api" else self._cfg.base_url_hub
         version = self._cfg.api_version if target == "api" else self._cfg.hub_version
@@ -90,8 +83,7 @@ class Transport:
                 )
             headers["Authorization"] = f"Bearer {token}"
 
-        if self._cfg.project_id:
-            headers["X-CM-ProjectId"] = self._cfg.project_id
+        headers["X-CM-ProjectId"] = self._cfg.project_id
         if self._cfg.account_id:
             headers["X-CM-AccountId"] = self._cfg.account_id
         if body is not None:
@@ -189,14 +181,7 @@ class AsyncTransport:
                 message="This endpoint is account-scoped. Configure account_id on the client.",
                 code="NORBIX_ACCOUNT_SCOPE_REQUIRED",
             )
-        if scope in ("project", "account") and not self._cfg.project_id:
-            raise NorbixError(
-                message=(
-                    "project_id is required for this endpoint "
-                    "(set NORBIX_PROJECT_ID or pass project_id=...)."
-                ),
-                code="NORBIX_PROJECT_SCOPE_REQUIRED",
-            )
+        # project_id is required at construction; kept for defensive checks only.
 
         base_url = self._cfg.base_url_api if target == "api" else self._cfg.base_url_hub
         version = self._cfg.api_version if target == "api" else self._cfg.hub_version
@@ -221,8 +206,7 @@ class AsyncTransport:
                 )
             headers["Authorization"] = f"Bearer {token}"
 
-        if self._cfg.project_id:
-            headers["X-CM-ProjectId"] = self._cfg.project_id
+        headers["X-CM-ProjectId"] = self._cfg.project_id
         if self._cfg.account_id:
             headers["X-CM-AccountId"] = self._cfg.account_id
         if body is not None:

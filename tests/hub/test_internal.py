@@ -12,7 +12,7 @@ def test_hub_internal_module_surface() -> None:
 
 def test_hub_internal_internals_type_gen_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.internal.internals_type_gen({})
+    client.hub.internal.internals_type_gen()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

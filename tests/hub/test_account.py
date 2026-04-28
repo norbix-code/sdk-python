@@ -48,7 +48,7 @@ def test_hub_account_module_surface() -> None:
 
 def test_hub_account_get_account_profile_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_account_profile({})
+    client.hub.account.get_account_profile()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -56,7 +56,7 @@ def test_hub_account_get_account_profile_request_shape() -> None:
 def test_hub_account_get_account_profile_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.get_account_profile({})
+        client.hub.account.get_account_profile()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -64,7 +64,7 @@ def test_hub_account_get_account_profile_requires_account_scope() -> None:
 
 def test_hub_account_update_account_profile_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.update_account_profile({})
+    client.hub.account.update_account_profile()
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -72,7 +72,7 @@ def test_hub_account_update_account_profile_request_shape() -> None:
 def test_hub_account_update_account_profile_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.update_account_profile({})
+        client.hub.account.update_account_profile()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -80,7 +80,7 @@ def test_hub_account_update_account_profile_requires_account_scope() -> None:
 
 def test_hub_account_resend_account_verification_token_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.resend_account_verification_token({})
+    client.hub.account.resend_account_verification_token()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -88,7 +88,7 @@ def test_hub_account_resend_account_verification_token_request_shape() -> None:
 def test_hub_account_resend_account_verification_token_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.resend_account_verification_token({})
+        client.hub.account.resend_account_verification_token()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -96,7 +96,7 @@ def test_hub_account_resend_account_verification_token_requires_account_scope() 
 
 def test_hub_account_get_account_status_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_account_status({})
+    client.hub.account.get_account_status()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -104,7 +104,7 @@ def test_hub_account_get_account_status_request_shape() -> None:
 def test_hub_account_get_account_status_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.get_account_status({})
+        client.hub.account.get_account_status()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -112,7 +112,7 @@ def test_hub_account_get_account_status_requires_account_scope() -> None:
 
 def test_hub_account_create_stripe_checkout_session_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.create_stripe_checkout_session({})
+    client.hub.account.create_stripe_checkout_session()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -120,7 +120,7 @@ def test_hub_account_create_stripe_checkout_session_request_shape() -> None:
 def test_hub_account_create_stripe_checkout_session_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.create_stripe_checkout_session({})
+        client.hub.account.create_stripe_checkout_session()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -128,7 +128,7 @@ def test_hub_account_create_stripe_checkout_session_requires_account_scope() -> 
 
 def test_hub_account_get_stripe_billing_portal_url_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_stripe_billing_portal_url({})
+    client.hub.account.get_stripe_billing_portal_url()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -136,7 +136,7 @@ def test_hub_account_get_stripe_billing_portal_url_request_shape() -> None:
 def test_hub_account_get_stripe_billing_portal_url_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.get_stripe_billing_portal_url({})
+        client.hub.account.get_stripe_billing_portal_url()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -144,7 +144,7 @@ def test_hub_account_get_stripe_billing_portal_url_requires_account_scope() -> N
 
 def test_hub_account_create_team_member_from_invitation_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.create_team_member_from_invitation({})
+    client.hub.account.create_team_member_from_invitation()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -152,7 +152,7 @@ def test_hub_account_create_team_member_from_invitation_request_shape() -> None:
 def test_hub_account_create_team_member_from_invitation_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.create_team_member_from_invitation({})
+        client.hub.account.create_team_member_from_invitation()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -160,7 +160,7 @@ def test_hub_account_create_team_member_from_invitation_requires_account_scope()
 
 def test_hub_account_verify_account_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.verify_account({})
+    client.hub.account.verify_account()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -168,7 +168,7 @@ def test_hub_account_verify_account_request_shape() -> None:
 def test_hub_account_verify_account_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.verify_account({})
+        client.hub.account.verify_account()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -256,7 +256,7 @@ def test_hub_account_save_notifications_tag_requires_account_scope() -> None:
 
 def test_hub_account_create_project_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.create_project({})
+    client.hub.account.create_project()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -264,7 +264,7 @@ def test_hub_account_create_project_request_shape() -> None:
 def test_hub_account_create_project_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.create_project({})
+        client.hub.account.create_project()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -304,7 +304,7 @@ def test_hub_account_get_project_requires_account_scope() -> None:
 
 def test_hub_account_get_projects_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_projects({})
+    client.hub.account.get_projects()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -312,7 +312,7 @@ def test_hub_account_get_projects_request_shape() -> None:
 def test_hub_account_get_projects_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.get_projects({})
+        client.hub.account.get_projects()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -320,7 +320,7 @@ def test_hub_account_get_projects_requires_account_scope() -> None:
 
 def test_hub_account_get_account_regions_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_account_regions({})
+    client.hub.account.get_account_regions()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -328,7 +328,7 @@ def test_hub_account_get_account_regions_request_shape() -> None:
 def test_hub_account_get_account_regions_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.get_account_regions({})
+        client.hub.account.get_account_regions()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -560,7 +560,7 @@ def test_hub_account_update_project_regions_requires_account_scope() -> None:
 
 def test_hub_account_create_account_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.create_account({})
+    client.hub.account.create_account()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -568,7 +568,7 @@ def test_hub_account_create_account_request_shape() -> None:
 def test_hub_account_create_account_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.create_account({})
+        client.hub.account.create_account()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -576,7 +576,7 @@ def test_hub_account_create_account_requires_account_scope() -> None:
 
 def test_hub_account_get_account_collaborators_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_account_collaborators({})
+    client.hub.account.get_account_collaborators()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -584,7 +584,7 @@ def test_hub_account_get_account_collaborators_request_shape() -> None:
 def test_hub_account_get_account_collaborators_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.get_account_collaborators({})
+        client.hub.account.get_account_collaborators()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -592,7 +592,7 @@ def test_hub_account_get_account_collaborators_requires_account_scope() -> None:
 
 def test_hub_account_send_invite_to_team_member_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.send_invite_to_team_member({})
+    client.hub.account.send_invite_to_team_member()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -600,7 +600,7 @@ def test_hub_account_send_invite_to_team_member_request_shape() -> None:
 def test_hub_account_send_invite_to_team_member_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.send_invite_to_team_member({})
+        client.hub.account.send_invite_to_team_member()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -608,7 +608,7 @@ def test_hub_account_send_invite_to_team_member_requires_account_scope() -> None
 
 def test_hub_account_get_licenses_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_licenses({})
+    client.hub.account.get_licenses()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -616,7 +616,7 @@ def test_hub_account_get_licenses_request_shape() -> None:
 def test_hub_account_get_licenses_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.get_licenses({})
+        client.hub.account.get_licenses()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
@@ -624,7 +624,7 @@ def test_hub_account_get_licenses_requires_account_scope() -> None:
 
 def test_hub_account_ask_chat_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
-    client.hub.account.ask_chat({})
+    client.hub.account.ask_chat()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -632,7 +632,7 @@ def test_hub_account_ask_chat_request_shape() -> None:
 def test_hub_account_ask_chat_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
-        client.hub.account.ask_chat({})
+        client.hub.account.ask_chat()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
