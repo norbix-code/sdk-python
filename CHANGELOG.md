@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.2 (2026-04-28)
+
+### Bug Fixes
+
+- **ci**: Publish python package to pypi via uv
+  ([`3ec7ba5`](https://github.com/norbix-code/sdk-python/commit/3ec7ba58c5c0e2ee27330696f022cc251e2068cd))
+
+
 ## v1.0.1 (2026-04-28)
 
 ### Bug Fixes
