@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.1.0 (2026-04-28)
+
+### Features
+
+- **pypi**: Rename distribution package to norbix
+  ([`2ab5e75`](https://github.com/norbix-code/sdk-python/commit/2ab5e7508f5b465f1b81add49191213c9440a252))
+
+
 ## v1.0.2 (2026-04-28)
 
 ### Bug Fixes

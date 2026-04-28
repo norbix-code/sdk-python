@@ -1,6 +1,6 @@
 [project]
 name = "norbix"
-version = "1.0.2"
+version = "1.1.0"
 description = "Official Python SDK for Norbix — split API and Hub clients with flat module access."
 readme = "README.md"
 requires-python = ">=3.10"
