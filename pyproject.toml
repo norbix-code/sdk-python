@@ -1,5 +1,5 @@
 [project]
-name = "norbix-python"
+name = "norbix"
 version = "1.0.2"
 description = "Official Python SDK for Norbix — split API and Hub clients with flat module access."
 readme = "README.md"

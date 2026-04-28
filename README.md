@@ -1,9 +1,9 @@
 # norbix-python
 
 [![CI](https://github.com/norbix-dev/norbix-python/actions/workflows/ci.yml/badge.svg)](https://github.com/norbix-dev/norbix-python/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/norbix-python.svg)](https://pypi.org/project/norbix-python/)
+[![PyPI](https://img.shields.io/pypi/v/norbix.svg)](https://pypi.org/project/norbix/)
 [![Python](https://img.shields.io/badge/python-%3E=3.10-blue)](https://python.org)
-[![License](https://img.shields.io/pypi/l/norbix-python.svg)](./LICENSE)
+[![License](https://img.shields.io/pypi/l/norbix.svg)](./LICENSE)
 
 Official Python SDK for [Norbix](https://norbix.dev).
 Use split clients with flat module access:
@@ -14,7 +14,7 @@ Use split clients with flat module access:
 ## Install
 
 ```bash
-uv add norbix-python
+uv add norbix
 ```
 
 Optional: load `.env` in apps with `python-dotenv` (`load_dotenv()` before constructing `Norbix()`).
