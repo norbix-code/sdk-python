@@ -1,712 +1,638 @@
 from __future__ import annotations
 
 from norbix_python import Norbix, NorbixError
-from ..helpers import make_client, stub_request_for_path
+from ..helpers import make_client
 
 
 def test_hub_account_module_surface() -> None:
     client, _ = make_client()
     module = client.hub.account
-    assert callable(module.getAccountProfile)
-    assert callable(module.updateAccountProfile)
-    assert callable(module.resendAccountVerificationToken)
-    assert callable(module.getAccountStatus)
-    assert callable(module.createStripeCheckoutSession)
-    assert callable(module.getStripeBillingPortalUrl)
-    assert callable(module.createTeamMemberFromInvitation)
-    assert callable(module.verifyAccount)
-    assert callable(module.deleteNotificationsGroup)
-    assert callable(module.deleteNotificationsTag)
-    assert callable(module.removeTagFromNotificationsGroup)
-    assert callable(module.saveNotificationsGroup)
-    assert callable(module.saveNotificationsTag)
-    assert callable(module.createProject)
-    assert callable(module.deleteProject)
-    assert callable(module.getProject)
-    assert callable(module.getProjects)
-    assert callable(module.getAccountRegions)
-    assert callable(module.getProjectTokens)
-    assert callable(module.updateProjectAccentColor)
-    assert callable(module.updateProjectIcon)
-    assert callable(module.updateProjectLogo)
-    assert callable(module.updateProjectMainColor)
-    assert callable(module.updateProjectAllowedOrigins)
-    assert callable(module.updateProjectDefaultLanguage)
-    assert callable(module.updateProjectDescription)
-    assert callable(module.disableProject)
-    assert callable(module.enableProject)
-    assert callable(module.updateProjectLanguages)
-    assert callable(module.updateProjectUrl)
-    assert callable(module.updateProjectName)
-    assert callable(module.updateProjectRegions)
-    assert callable(module.createAccount)
-    assert callable(module.getAccountCollaborators)
-    assert callable(module.sendInviteToTeamMember)
-    assert callable(module.getLicenses)
-    assert callable(module.askChat)
+    assert callable(module.get_account_profile)
+    assert callable(module.update_account_profile)
+    assert callable(module.resend_account_verification_token)
+    assert callable(module.get_account_status)
+    assert callable(module.create_stripe_checkout_session)
+    assert callable(module.get_stripe_billing_portal_url)
+    assert callable(module.create_team_member_from_invitation)
+    assert callable(module.verify_account)
+    assert callable(module.delete_notifications_group)
+    assert callable(module.delete_notifications_tag)
+    assert callable(module.remove_tag_from_notifications_group)
+    assert callable(module.save_notifications_group)
+    assert callable(module.save_notifications_tag)
+    assert callable(module.create_project)
+    assert callable(module.delete_project)
+    assert callable(module.get_project)
+    assert callable(module.get_projects)
+    assert callable(module.get_account_regions)
+    assert callable(module.get_project_tokens)
+    assert callable(module.update_project_accent_color)
+    assert callable(module.update_project_icon)
+    assert callable(module.update_project_logo)
+    assert callable(module.update_project_main_color)
+    assert callable(module.update_project_allowed_origins)
+    assert callable(module.update_project_default_language)
+    assert callable(module.update_project_description)
+    assert callable(module.disable_project)
+    assert callable(module.enable_project)
+    assert callable(module.update_project_languages)
+    assert callable(module.update_project_url)
+    assert callable(module.update_project_name)
+    assert callable(module.update_project_regions)
+    assert callable(module.create_account)
+    assert callable(module.get_account_collaborators)
+    assert callable(module.send_invite_to_team_member)
+    assert callable(module.get_licenses)
+    assert callable(module.ask_chat)
 
 
-def test_hub_account_getAccountProfile_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/profile') if False else {}
-    client.hub.account.getAccountProfile(payload)
+def test_hub_account_get_account_profile_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_account_profile({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getAccountProfile_requires_account_scope() -> None:
+def test_hub_account_get_account_profile_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/profile') if False else {}
     try:
-        client.hub.account.getAccountProfile(payload)
+        client.hub.account.get_account_profile({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateAccountProfile_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/profile') if False else {}
-    client.hub.account.updateAccountProfile(payload)
+def test_hub_account_update_account_profile_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_account_profile({})
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateAccountProfile_requires_account_scope() -> None:
+def test_hub_account_update_account_profile_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/profile') if False else {}
     try:
-        client.hub.account.updateAccountProfile(payload)
+        client.hub.account.update_account_profile({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_resendAccountVerificationToken_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/verify/resend') if False else {}
-    client.hub.account.resendAccountVerificationToken(payload)
+def test_hub_account_resend_account_verification_token_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.resend_account_verification_token({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_resendAccountVerificationToken_requires_account_scope() -> None:
+def test_hub_account_resend_account_verification_token_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/verify/resend') if False else {}
     try:
-        client.hub.account.resendAccountVerificationToken(payload)
+        client.hub.account.resend_account_verification_token({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getAccountStatus_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/status') if False else {}
-    client.hub.account.getAccountStatus(payload)
+def test_hub_account_get_account_status_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_account_status({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getAccountStatus_requires_account_scope() -> None:
+def test_hub_account_get_account_status_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/status') if False else {}
     try:
-        client.hub.account.getAccountStatus(payload)
+        client.hub.account.get_account_status({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_createStripeCheckoutSession_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/stripe/create-checkout-session') if False else {}
-    client.hub.account.createStripeCheckoutSession(payload)
+def test_hub_account_create_stripe_checkout_session_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.create_stripe_checkout_session({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_createStripeCheckoutSession_requires_account_scope() -> None:
+def test_hub_account_create_stripe_checkout_session_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/stripe/create-checkout-session') if False else {}
     try:
-        client.hub.account.createStripeCheckoutSession(payload)
+        client.hub.account.create_stripe_checkout_session({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getStripeBillingPortalUrl_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/stripe/get-portal-url') if False else {}
-    client.hub.account.getStripeBillingPortalUrl(payload)
+def test_hub_account_get_stripe_billing_portal_url_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_stripe_billing_portal_url({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getStripeBillingPortalUrl_requires_account_scope() -> None:
+def test_hub_account_get_stripe_billing_portal_url_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/stripe/get-portal-url') if False else {}
     try:
-        client.hub.account.getStripeBillingPortalUrl(payload)
+        client.hub.account.get_stripe_billing_portal_url({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_createTeamMemberFromInvitation_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/team/member') if False else {}
-    client.hub.account.createTeamMemberFromInvitation(payload)
+def test_hub_account_create_team_member_from_invitation_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.create_team_member_from_invitation({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_createTeamMemberFromInvitation_requires_account_scope() -> None:
+def test_hub_account_create_team_member_from_invitation_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/team/member') if False else {}
     try:
-        client.hub.account.createTeamMemberFromInvitation(payload)
+        client.hub.account.create_team_member_from_invitation({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_verifyAccount_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/verify') if False else {}
-    client.hub.account.verifyAccount(payload)
+def test_hub_account_verify_account_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.verify_account({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_verifyAccount_requires_account_scope() -> None:
+def test_hub_account_verify_account_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/verify') if False else {}
     try:
-        client.hub.account.verifyAccount(payload)
+        client.hub.account.verify_account({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_deleteNotificationsGroup_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/group') if True else {}
-    client.hub.account.deleteNotificationsGroup(payload)
+def test_hub_account_delete_notifications_group_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.delete_notifications_group(project_id="stub-projectId")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_deleteNotificationsGroup_requires_account_scope() -> None:
+def test_hub_account_delete_notifications_group_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/group') if True else {}
     try:
-        client.hub.account.deleteNotificationsGroup(payload)
+        client.hub.account.delete_notifications_group(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_deleteNotificationsTag_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/tag') if True else {}
-    client.hub.account.deleteNotificationsTag(payload)
+def test_hub_account_delete_notifications_tag_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.delete_notifications_tag(project_id="stub-projectId")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_deleteNotificationsTag_requires_account_scope() -> None:
+def test_hub_account_delete_notifications_tag_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/tag') if True else {}
     try:
-        client.hub.account.deleteNotificationsTag(payload)
+        client.hub.account.delete_notifications_tag(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_removeTagFromNotificationsGroup_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/group/tag') if True else {}
-    client.hub.account.removeTagFromNotificationsGroup(payload)
+def test_hub_account_remove_tag_from_notifications_group_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.remove_tag_from_notifications_group(project_id="stub-projectId")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_removeTagFromNotificationsGroup_requires_account_scope() -> None:
+def test_hub_account_remove_tag_from_notifications_group_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/group/tag') if True else {}
     try:
-        client.hub.account.removeTagFromNotificationsGroup(payload)
+        client.hub.account.remove_tag_from_notifications_group(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_saveNotificationsGroup_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/group') if True else {}
-    client.hub.account.saveNotificationsGroup(payload)
+def test_hub_account_save_notifications_group_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.save_notifications_group(project_id="stub-projectId")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_saveNotificationsGroup_requires_account_scope() -> None:
+def test_hub_account_save_notifications_group_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/group') if True else {}
     try:
-        client.hub.account.saveNotificationsGroup(payload)
+        client.hub.account.save_notifications_group(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_saveNotificationsTag_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/tag') if True else {}
-    client.hub.account.saveNotificationsTag(payload)
+def test_hub_account_save_notifications_tag_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.save_notifications_tag(project_id="stub-projectId")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_saveNotificationsTag_requires_account_scope() -> None:
+def test_hub_account_save_notifications_tag_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/notifications/settings/tag') if True else {}
     try:
-        client.hub.account.saveNotificationsTag(payload)
+        client.hub.account.save_notifications_tag(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_createProject_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects') if False else {}
-    client.hub.account.createProject(payload)
+def test_hub_account_create_project_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.create_project({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_createProject_requires_account_scope() -> None:
+def test_hub_account_create_project_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects') if False else {}
     try:
-        client.hub.account.createProject(payload)
+        client.hub.account.create_project({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_deleteProject_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}') if True else {}
-    client.hub.account.deleteProject(payload)
+def test_hub_account_delete_project_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.delete_project(project_id="stub-projectId")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_deleteProject_requires_account_scope() -> None:
+def test_hub_account_delete_project_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}') if True else {}
     try:
-        client.hub.account.deleteProject(payload)
+        client.hub.account.delete_project(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getProject_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}') if True else {}
-    client.hub.account.getProject(payload)
+def test_hub_account_get_project_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_project(project_id="stub-projectId")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getProject_requires_account_scope() -> None:
+def test_hub_account_get_project_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}') if True else {}
     try:
-        client.hub.account.getProject(payload)
+        client.hub.account.get_project(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getProjects_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects') if False else {}
-    client.hub.account.getProjects(payload)
+def test_hub_account_get_projects_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_projects({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getProjects_requires_account_scope() -> None:
+def test_hub_account_get_projects_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects') if False else {}
     try:
-        client.hub.account.getProjects(payload)
+        client.hub.account.get_projects({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getAccountRegions_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/regions') if False else {}
-    client.hub.account.getAccountRegions(payload)
+def test_hub_account_get_account_regions_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_account_regions({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getAccountRegions_requires_account_scope() -> None:
+def test_hub_account_get_account_regions_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/regions') if False else {}
     try:
-        client.hub.account.getAccountRegions(payload)
+        client.hub.account.get_account_regions({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getProjectTokens_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/tokens') if True else {}
-    client.hub.account.getProjectTokens(payload)
+def test_hub_account_get_project_tokens_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_project_tokens(project_id="stub-projectId")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getProjectTokens_requires_account_scope() -> None:
+def test_hub_account_get_project_tokens_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/tokens') if True else {}
     try:
-        client.hub.account.getProjectTokens(payload)
+        client.hub.account.get_project_tokens(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectAccentColor_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/accent-color') if True else {}
-    client.hub.account.updateProjectAccentColor(payload)
+def test_hub_account_update_project_accent_color_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_accent_color(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectAccentColor_requires_account_scope() -> None:
+def test_hub_account_update_project_accent_color_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/accent-color') if True else {}
     try:
-        client.hub.account.updateProjectAccentColor(payload)
+        client.hub.account.update_project_accent_color(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectIcon_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/icon') if True else {}
-    client.hub.account.updateProjectIcon(payload)
+def test_hub_account_update_project_icon_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_icon(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectIcon_requires_account_scope() -> None:
+def test_hub_account_update_project_icon_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/icon') if True else {}
     try:
-        client.hub.account.updateProjectIcon(payload)
+        client.hub.account.update_project_icon(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectLogo_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/logo') if True else {}
-    client.hub.account.updateProjectLogo(payload)
+def test_hub_account_update_project_logo_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_logo(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectLogo_requires_account_scope() -> None:
+def test_hub_account_update_project_logo_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/logo') if True else {}
     try:
-        client.hub.account.updateProjectLogo(payload)
+        client.hub.account.update_project_logo(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectMainColor_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/main-color') if True else {}
-    client.hub.account.updateProjectMainColor(payload)
+def test_hub_account_update_project_main_color_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_main_color(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectMainColor_requires_account_scope() -> None:
+def test_hub_account_update_project_main_color_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/main-color') if True else {}
     try:
-        client.hub.account.updateProjectMainColor(payload)
+        client.hub.account.update_project_main_color(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectAllowedOrigins_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/origins') if True else {}
-    client.hub.account.updateProjectAllowedOrigins(payload)
+def test_hub_account_update_project_allowed_origins_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_allowed_origins(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectAllowedOrigins_requires_account_scope() -> None:
+def test_hub_account_update_project_allowed_origins_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/origins') if True else {}
     try:
-        client.hub.account.updateProjectAllowedOrigins(payload)
+        client.hub.account.update_project_allowed_origins(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectDefaultLanguage_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/default-language') if True else {}
-    client.hub.account.updateProjectDefaultLanguage(payload)
+def test_hub_account_update_project_default_language_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_default_language(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectDefaultLanguage_requires_account_scope() -> None:
+def test_hub_account_update_project_default_language_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/default-language') if True else {}
     try:
-        client.hub.account.updateProjectDefaultLanguage(payload)
+        client.hub.account.update_project_default_language(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectDescription_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/description') if True else {}
-    client.hub.account.updateProjectDescription(payload)
+def test_hub_account_update_project_description_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_description(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectDescription_requires_account_scope() -> None:
+def test_hub_account_update_project_description_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/description') if True else {}
     try:
-        client.hub.account.updateProjectDescription(payload)
+        client.hub.account.update_project_description(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_disableProject_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/disable') if True else {}
-    client.hub.account.disableProject(payload)
+def test_hub_account_disable_project_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.disable_project(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_disableProject_requires_account_scope() -> None:
+def test_hub_account_disable_project_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/disable') if True else {}
     try:
-        client.hub.account.disableProject(payload)
+        client.hub.account.disable_project(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_enableProject_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/enable') if True else {}
-    client.hub.account.enableProject(payload)
+def test_hub_account_enable_project_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.enable_project(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_enableProject_requires_account_scope() -> None:
+def test_hub_account_enable_project_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/enable') if True else {}
     try:
-        client.hub.account.enableProject(payload)
+        client.hub.account.enable_project(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectLanguages_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/languages') if True else {}
-    client.hub.account.updateProjectLanguages(payload)
+def test_hub_account_update_project_languages_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_languages(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectLanguages_requires_account_scope() -> None:
+def test_hub_account_update_project_languages_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/languages') if True else {}
     try:
-        client.hub.account.updateProjectLanguages(payload)
+        client.hub.account.update_project_languages(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectUrl_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/url') if True else {}
-    client.hub.account.updateProjectUrl(payload)
+def test_hub_account_update_project_url_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_url(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectUrl_requires_account_scope() -> None:
+def test_hub_account_update_project_url_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/url') if True else {}
     try:
-        client.hub.account.updateProjectUrl(payload)
+        client.hub.account.update_project_url(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectName_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/name') if True else {}
-    client.hub.account.updateProjectName(payload)
+def test_hub_account_update_project_name_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_name(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectName_requires_account_scope() -> None:
+def test_hub_account_update_project_name_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/name') if True else {}
     try:
-        client.hub.account.updateProjectName(payload)
+        client.hub.account.update_project_name(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_updateProjectRegions_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/regions') if True else {}
-    client.hub.account.updateProjectRegions(payload)
+def test_hub_account_update_project_regions_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.update_project_regions(project_id="stub-projectId")
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_updateProjectRegions_requires_account_scope() -> None:
+def test_hub_account_update_project_regions_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/projects/{projectId}/settings/regions') if True else {}
     try:
-        client.hub.account.updateProjectRegions(payload)
+        client.hub.account.update_project_regions(project_id="stub")
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_createAccount_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account') if False else {}
-    client.hub.account.createAccount(payload)
+def test_hub_account_create_account_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.create_account({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_createAccount_requires_account_scope() -> None:
+def test_hub_account_create_account_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account') if False else {}
     try:
-        client.hub.account.createAccount(payload)
+        client.hub.account.create_account({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getAccountCollaborators_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/collaborators') if False else {}
-    client.hub.account.getAccountCollaborators(payload)
+def test_hub_account_get_account_collaborators_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_account_collaborators({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getAccountCollaborators_requires_account_scope() -> None:
+def test_hub_account_get_account_collaborators_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/collaborators') if False else {}
     try:
-        client.hub.account.getAccountCollaborators(payload)
+        client.hub.account.get_account_collaborators({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_sendInviteToTeamMember_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/team/member/invite') if False else {}
-    client.hub.account.sendInviteToTeamMember(payload)
+def test_hub_account_send_invite_to_team_member_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.send_invite_to_team_member({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_sendInviteToTeamMember_requires_account_scope() -> None:
+def test_hub_account_send_invite_to_team_member_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/team/member/invite') if False else {}
     try:
-        client.hub.account.sendInviteToTeamMember(payload)
+        client.hub.account.send_invite_to_team_member({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_getLicenses_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/licenses') if False else {}
-    client.hub.account.getLicenses(payload)
+def test_hub_account_get_licenses_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.get_licenses({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_getLicenses_requires_account_scope() -> None:
+def test_hub_account_get_licenses_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/licenses') if False else {}
     try:
-        client.hub.account.getLicenses(payload)
+        client.hub.account.get_licenses({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_account_askChat_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/account/chat/complete') if False else {}
-    client.hub.account.askChat(payload)
+def test_hub_account_ask_chat_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.ask_chat({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_account_askChat_requires_account_scope() -> None:
+def test_hub_account_ask_chat_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/account/chat/complete') if False else {}
     try:
-        client.hub.account.askChat(payload)
+        client.hub.account.ask_chat({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:

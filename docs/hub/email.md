@@ -4,4 +4,4 @@ Access with `norbix.hub.email`.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `oneClickUnsubscribe` | `POST` | `/{version}/email/one-click-unsubscribe` | `project` |
+| `one_click_unsubscribe` | `POST` | `/{version}/email/one-click-unsubscribe` | `project` |

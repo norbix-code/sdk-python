@@ -7,4 +7,3 @@ dist/
 build/
 *.pyc
 scripts/sync_types.py
-scripts/generate_endpoints.py

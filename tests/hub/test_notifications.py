@@ -1,632 +1,563 @@
 from __future__ import annotations
 
 from norbix_python import Norbix, NorbixError
-from ..helpers import make_client, stub_request_for_path
+from ..helpers import make_client
 
 
 def test_hub_notifications_module_surface() -> None:
     client, _ = make_client()
     module = client.hub.notifications
-    assert callable(module.getUserNotificationPreferences)
-    assert callable(module.updateUserNotificationsPreferences)
-    assert callable(module.disableEmail)
-    assert callable(module.enableEmail)
-    assert callable(module.attachFileToTemplate)
-    assert callable(module.createEmailTemplate)
-    assert callable(module.deleteEmailTemplate)
-    assert callable(module.getEmailTemplate)
-    assert callable(module.getEmailTemplates)
-    assert callable(module.getMjml)
-    assert callable(module.getSystemEmailTemplate)
-    assert callable(module.getSystemEmailTemplates)
-    assert callable(module.getEmailTemplateAvailableTokens)
-    assert callable(module.updateEmailTemplate)
-    assert callable(module.deleteEmailSignature)
-    assert callable(module.getEmailSignature)
-    assert callable(module.getEmailSignatures)
-    assert callable(module.saveEmailSignature)
-    assert callable(module.getEmailSettings)
-    assert callable(module.confirmEmailIntegrationHumanDelivery)
-    assert callable(module.deleteEmailIntegration)
-    assert callable(module.disableEmailIntegration)
-    assert callable(module.enableEmailIntegration)
-    assert callable(module.getEmailIntegration)
-    assert callable(module.getEmailIntegrations)
-    assert callable(module.saveEmailIntegration)
-    assert callable(module.setEmailsIntegrationAsDefault)
-    assert callable(module.testEmailIntegration)
-    assert callable(module.archiveEmailTemplate)
-    assert callable(module.cloneEmailTemplate)
-    assert callable(module.unArchiveEmailTemplate)
-    assert callable(module.deleteEmailFooter)
-    assert callable(module.getEmailFooter)
-    assert callable(module.getEmailFooters)
-    assert callable(module.saveEmailFooter)
-    assert callable(module.createEmailCampaign)
-    assert callable(module.deleteEmailCampaign)
-    assert callable(module.getEmailCampaign)
-    assert callable(module.getEmailCampaigns)
-    assert callable(module.getEmailCampaignBatches)
-    assert callable(module.getEmailCampaignBatchNotification)
-    assert callable(module.getEmailCampaignBatchNotifications)
-    assert callable(module.getEmailCampaignStatistics)
-    assert callable(module.previewEmailNotification)
-    assert callable(module.getEmailCampaignMessage)
-    assert callable(module.getEmailCampaignMessages)
-    assert callable(module.disablePush)
-    assert callable(module.enablePush)
-    assert callable(module.archivePushTemplate)
-    assert callable(module.clonePushTemplate)
-    assert callable(module.createPushTemplate)
-    assert callable(module.deletePushTemplate)
-    assert callable(module.getPushTemplate)
-    assert callable(module.getPushTemplates)
-    assert callable(module.getPushMessageContentTokens)
-    assert callable(module.unArchivePushTemplate)
-    assert callable(module.updatePushTemplate)
-    assert callable(module.confirmPushIntegrationHumanDelivery)
-    assert callable(module.deletePushIntegration)
-    assert callable(module.disablePushIntegration)
-    assert callable(module.enablePushIntegration)
-    assert callable(module.getPushIntegration)
-    assert callable(module.getPushIntegrations)
-    assert callable(module.savePushIntegration)
-    assert callable(module.setPushIntegrationAsDefault)
-    assert callable(module.testPushIntegration)
-    assert callable(module.registerCodeMashAppPushIntegration)
-    assert callable(module.registerDevice)
+    assert callable(module.get_user_notification_preferences)
+    assert callable(module.update_user_notifications_preferences)
+    assert callable(module.disable_email)
+    assert callable(module.enable_email)
+    assert callable(module.attach_file_to_template)
+    assert callable(module.create_email_template)
+    assert callable(module.delete_email_template)
+    assert callable(module.get_email_template)
+    assert callable(module.get_email_templates)
+    assert callable(module.get_mjml)
+    assert callable(module.get_system_email_template)
+    assert callable(module.get_system_email_templates)
+    assert callable(module.get_email_template_available_tokens)
+    assert callable(module.update_email_template)
+    assert callable(module.delete_email_signature)
+    assert callable(module.get_email_signature)
+    assert callable(module.get_email_signatures)
+    assert callable(module.save_email_signature)
+    assert callable(module.get_email_settings)
+    assert callable(module.confirm_email_integration_human_delivery)
+    assert callable(module.delete_email_integration)
+    assert callable(module.disable_email_integration)
+    assert callable(module.enable_email_integration)
+    assert callable(module.get_email_integration)
+    assert callable(module.get_email_integrations)
+    assert callable(module.save_email_integration)
+    assert callable(module.set_emails_integration_as_default)
+    assert callable(module.test_email_integration)
+    assert callable(module.archive_email_template)
+    assert callable(module.clone_email_template)
+    assert callable(module.un_archive_email_template)
+    assert callable(module.delete_email_footer)
+    assert callable(module.get_email_footer)
+    assert callable(module.get_email_footers)
+    assert callable(module.save_email_footer)
+    assert callable(module.create_email_campaign)
+    assert callable(module.delete_email_campaign)
+    assert callable(module.get_email_campaign)
+    assert callable(module.get_email_campaigns)
+    assert callable(module.get_email_campaign_batches)
+    assert callable(module.get_email_campaign_batch_notification)
+    assert callable(module.get_email_campaign_batch_notifications)
+    assert callable(module.get_email_campaign_statistics)
+    assert callable(module.preview_email_notification)
+    assert callable(module.get_email_campaign_message)
+    assert callable(module.get_email_campaign_messages)
+    assert callable(module.disable_push)
+    assert callable(module.enable_push)
+    assert callable(module.archive_push_template)
+    assert callable(module.clone_push_template)
+    assert callable(module.create_push_template)
+    assert callable(module.delete_push_template)
+    assert callable(module.get_push_template)
+    assert callable(module.get_push_templates)
+    assert callable(module.get_push_message_content_tokens)
+    assert callable(module.un_archive_push_template)
+    assert callable(module.update_push_template)
+    assert callable(module.confirm_push_integration_human_delivery)
+    assert callable(module.delete_push_integration)
+    assert callable(module.disable_push_integration)
+    assert callable(module.enable_push_integration)
+    assert callable(module.get_push_integration)
+    assert callable(module.get_push_integrations)
+    assert callable(module.save_push_integration)
+    assert callable(module.set_push_integration_as_default)
+    assert callable(module.test_push_integration)
+    assert callable(module.register_code_mash_app_push_integration)
+    assert callable(module.register_device)
 
 
-def test_hub_notifications_getUserNotificationPreferences_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/user/preferences') if False else {}
-    client.hub.notifications.getUserNotificationPreferences(payload)
+def test_hub_notifications_get_user_notification_preferences_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_user_notification_preferences({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_updateUserNotificationsPreferences_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/user/preferences') if False else {}
-    client.hub.notifications.updateUserNotificationsPreferences(payload)
+def test_hub_notifications_update_user_notifications_preferences_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.update_user_notifications_preferences({})
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_disableEmail_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/disable') if False else {}
-    client.hub.notifications.disableEmail(payload)
+def test_hub_notifications_disable_email_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.disable_email({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_enableEmail_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/enable') if False else {}
-    client.hub.notifications.enableEmail(payload)
+def test_hub_notifications_enable_email_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.enable_email({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_attachFileToTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/attachments') if False else {}
-    client.hub.notifications.attachFileToTemplate(payload)
+def test_hub_notifications_attach_file_to_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.attach_file_to_template({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_createEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates') if False else {}
-    client.hub.notifications.createEmailTemplate(payload)
+def test_hub_notifications_create_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.create_email_template({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_deleteEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/{Id}') if True else {}
-    client.hub.notifications.deleteEmailTemplate(payload)
+def test_hub_notifications_delete_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.delete_email_template(id="stub-Id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/{id}') if True else {}
-    client.hub.notifications.getEmailTemplate(payload)
+def test_hub_notifications_get_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_template(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailTemplates_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates') if False else {}
-    client.hub.notifications.getEmailTemplates(payload)
+def test_hub_notifications_get_email_templates_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_templates({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getMjml_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/mjml') if False else {}
-    client.hub.notifications.getMjml(payload)
+def test_hub_notifications_get_mjml_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_mjml({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getSystemEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/system-templates/{id}') if True else {}
-    client.hub.notifications.getSystemEmailTemplate(payload)
+def test_hub_notifications_get_system_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_system_email_template(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getSystemEmailTemplates_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/system-templates') if False else {}
-    client.hub.notifications.getSystemEmailTemplates(payload)
+def test_hub_notifications_get_system_email_templates_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_system_email_templates({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailTemplateAvailableTokens_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/{id}/tokens') if True else {}
-    client.hub.notifications.getEmailTemplateAvailableTokens(payload)
+def test_hub_notifications_get_email_template_available_tokens_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_template_available_tokens(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_updateEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates') if False else {}
-    client.hub.notifications.updateEmailTemplate(payload)
+def test_hub_notifications_update_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.update_email_template({})
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_deleteEmailSignature_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/signatures/{id}') if True else {}
-    client.hub.notifications.deleteEmailSignature(payload)
+def test_hub_notifications_delete_email_signature_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.delete_email_signature(id="stub-id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailSignature_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/signatures/{id}') if True else {}
-    client.hub.notifications.getEmailSignature(payload)
+def test_hub_notifications_get_email_signature_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_signature(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailSignatures_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/signatures') if False else {}
-    client.hub.notifications.getEmailSignatures(payload)
+def test_hub_notifications_get_email_signatures_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_signatures({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_saveEmailSignature_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/signatures') if False else {}
-    client.hub.notifications.saveEmailSignature(payload)
+def test_hub_notifications_save_email_signature_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.save_email_signature({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailSettings_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/settings') if False else {}
-    client.hub.notifications.getEmailSettings(payload)
+def test_hub_notifications_get_email_settings_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_settings({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_confirmEmailIntegrationHumanDelivery_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations/confirm-human-delivery') if False else {}
-    client.hub.notifications.confirmEmailIntegrationHumanDelivery(payload)
+def test_hub_notifications_confirm_email_integration_human_delivery_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.confirm_email_integration_human_delivery({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_deleteEmailIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations/{Id}') if True else {}
-    client.hub.notifications.deleteEmailIntegration(payload)
+def test_hub_notifications_delete_email_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.delete_email_integration(id="stub-Id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_disableEmailIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations/{Id}/disable') if True else {}
-    client.hub.notifications.disableEmailIntegration(payload)
+def test_hub_notifications_disable_email_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.disable_email_integration(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_enableEmailIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations/{Id}/enable') if True else {}
-    client.hub.notifications.enableEmailIntegration(payload)
+def test_hub_notifications_enable_email_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.enable_email_integration(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations/{id}') if True else {}
-    client.hub.notifications.getEmailIntegration(payload)
+def test_hub_notifications_get_email_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_integration(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailIntegrations_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations') if False else {}
-    client.hub.notifications.getEmailIntegrations(payload)
+def test_hub_notifications_get_email_integrations_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_integrations({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_saveEmailIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations') if False else {}
-    client.hub.notifications.saveEmailIntegration(payload)
+def test_hub_notifications_save_email_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.save_email_integration({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_setEmailsIntegrationAsDefault_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations/{Id}/default') if True else {}
-    client.hub.notifications.setEmailsIntegrationAsDefault(payload)
+def test_hub_notifications_set_emails_integration_as_default_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.set_emails_integration_as_default(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_testEmailIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/integrations/test') if False else {}
-    client.hub.notifications.testEmailIntegration(payload)
+def test_hub_notifications_test_email_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.test_email_integration({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_archiveEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/{Id}/archive') if True else {}
-    client.hub.notifications.archiveEmailTemplate(payload)
+def test_hub_notifications_archive_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.archive_email_template(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_cloneEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/{Id}/clone') if True else {}
-    client.hub.notifications.cloneEmailTemplate(payload)
+def test_hub_notifications_clone_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.clone_email_template(id="stub-Id")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_unArchiveEmailTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/templates/{Id}/unarchive') if True else {}
-    client.hub.notifications.unArchiveEmailTemplate(payload)
+def test_hub_notifications_un_archive_email_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.un_archive_email_template(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_deleteEmailFooter_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/footers/{id}') if True else {}
-    client.hub.notifications.deleteEmailFooter(payload)
+def test_hub_notifications_delete_email_footer_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.delete_email_footer(id="stub-id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailFooter_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/footers/{id}') if True else {}
-    client.hub.notifications.getEmailFooter(payload)
+def test_hub_notifications_get_email_footer_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_footer(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailFooters_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/footers') if False else {}
-    client.hub.notifications.getEmailFooters(payload)
+def test_hub_notifications_get_email_footers_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_footers({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_saveEmailFooter_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/footers') if False else {}
-    client.hub.notifications.saveEmailFooter(payload)
+def test_hub_notifications_save_email_footer_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.save_email_footer({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_createEmailCampaign_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns') if False else {}
-    client.hub.notifications.createEmailCampaign(payload)
+def test_hub_notifications_create_email_campaign_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.create_email_campaign({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_deleteEmailCampaign_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns/{Id}') if True else {}
-    client.hub.notifications.deleteEmailCampaign(payload)
+def test_hub_notifications_delete_email_campaign_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.delete_email_campaign(id="stub-Id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaign_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns/{id}') if True else {}
-    client.hub.notifications.getEmailCampaign(payload)
+def test_hub_notifications_get_email_campaign_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaign(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaigns_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns') if False else {}
-    client.hub.notifications.getEmailCampaigns(payload)
+def test_hub_notifications_get_email_campaigns_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaigns({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaignBatches_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns/{id}/batches') if True else {}
-    client.hub.notifications.getEmailCampaignBatches(payload)
+def test_hub_notifications_get_email_campaign_batches_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaign_batches(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaignBatchNotification_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns/{id}/batches/{batchId}/{notificationId}') if True else {}
-    client.hub.notifications.getEmailCampaignBatchNotification(payload)
+def test_hub_notifications_get_email_campaign_batch_notification_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaign_batch_notification(id="stub-id", batch_id="stub-batchId", notification_id="stub-notificationId")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaignBatchNotifications_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns/{id}/batches/{batchId}') if True else {}
-    client.hub.notifications.getEmailCampaignBatchNotifications(payload)
+def test_hub_notifications_get_email_campaign_batch_notifications_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaign_batch_notifications(id="stub-id", batch_id="stub-batchId")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaignStatistics_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/campaigns/{id}/stats') if True else {}
-    client.hub.notifications.getEmailCampaignStatistics(payload)
+def test_hub_notifications_get_email_campaign_statistics_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaign_statistics(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_previewEmailNotification_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/email/preview') if False else {}
-    client.hub.notifications.previewEmailNotification(payload)
+def test_hub_notifications_preview_email_notification_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.preview_email_notification({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaignMessage_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}') if True else {}
-    client.hub.notifications.getEmailCampaignMessage(payload)
+def test_hub_notifications_get_email_campaign_message_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaign_message(campaign_id="stub-campaignId", id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getEmailCampaignMessages_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/emails/campaigns/{campaignId}/messages') if True else {}
-    client.hub.notifications.getEmailCampaignMessages(payload)
+def test_hub_notifications_get_email_campaign_messages_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_email_campaign_messages(campaign_id="stub-campaignId")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_disablePush_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/disable') if False else {}
-    client.hub.notifications.disablePush(payload)
+def test_hub_notifications_disable_push_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.disable_push({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_enablePush_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/enable') if False else {}
-    client.hub.notifications.enablePush(payload)
+def test_hub_notifications_enable_push_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.enable_push({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_archivePushTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates/{Id}/archive') if True else {}
-    client.hub.notifications.archivePushTemplate(payload)
+def test_hub_notifications_archive_push_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.archive_push_template(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_clonePushTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates/{Id}/clone') if True else {}
-    client.hub.notifications.clonePushTemplate(payload)
+def test_hub_notifications_clone_push_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.clone_push_template(id="stub-Id")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_createPushTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates') if False else {}
-    client.hub.notifications.createPushTemplate(payload)
+def test_hub_notifications_create_push_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.create_push_template({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_deletePushTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates/{Id}') if True else {}
-    client.hub.notifications.deletePushTemplate(payload)
+def test_hub_notifications_delete_push_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.delete_push_template(id="stub-Id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getPushTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates/{id}') if True else {}
-    client.hub.notifications.getPushTemplate(payload)
+def test_hub_notifications_get_push_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_push_template(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getPushTemplates_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates') if False else {}
-    client.hub.notifications.getPushTemplates(payload)
+def test_hub_notifications_get_push_templates_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_push_templates({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getPushMessageContentTokens_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates/{id}/tokens') if True else {}
-    client.hub.notifications.getPushMessageContentTokens(payload)
+def test_hub_notifications_get_push_message_content_tokens_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_push_message_content_tokens(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_unArchivePushTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates/{Id}/unarchive') if True else {}
-    client.hub.notifications.unArchivePushTemplate(payload)
+def test_hub_notifications_un_archive_push_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.un_archive_push_template(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_updatePushTemplate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/templates') if False else {}
-    client.hub.notifications.updatePushTemplate(payload)
+def test_hub_notifications_update_push_template_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.update_push_template({})
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_confirmPushIntegrationHumanDelivery_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/confirm-human-delivery') if False else {}
-    client.hub.notifications.confirmPushIntegrationHumanDelivery(payload)
+def test_hub_notifications_confirm_push_integration_human_delivery_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.confirm_push_integration_human_delivery({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_deletePushIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/{Id}') if True else {}
-    client.hub.notifications.deletePushIntegration(payload)
+def test_hub_notifications_delete_push_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.delete_push_integration(id="stub-Id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_disablePushIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/{Id}/disable') if True else {}
-    client.hub.notifications.disablePushIntegration(payload)
+def test_hub_notifications_disable_push_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.disable_push_integration(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_enablePushIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/{Id}/enable') if True else {}
-    client.hub.notifications.enablePushIntegration(payload)
+def test_hub_notifications_enable_push_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.enable_push_integration(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getPushIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/{id}') if True else {}
-    client.hub.notifications.getPushIntegration(payload)
+def test_hub_notifications_get_push_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_push_integration(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_getPushIntegrations_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations') if False else {}
-    client.hub.notifications.getPushIntegrations(payload)
+def test_hub_notifications_get_push_integrations_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_push_integrations({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_savePushIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations') if False else {}
-    client.hub.notifications.savePushIntegration(payload)
+def test_hub_notifications_save_push_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.save_push_integration({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_setPushIntegrationAsDefault_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/{Id}/default') if True else {}
-    client.hub.notifications.setPushIntegrationAsDefault(payload)
+def test_hub_notifications_set_push_integration_as_default_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.set_push_integration_as_default(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_testPushIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/test') if False else {}
-    client.hub.notifications.testPushIntegration(payload)
+def test_hub_notifications_test_push_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.test_push_integration({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_registerCodeMashAppPushIntegration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if True else None)
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/app/request') if False else {}
-    client.hub.notifications.registerCodeMashAppPushIntegration(payload)
+def test_hub_notifications_register_code_mash_app_push_integration_request_shape() -> None:
+    client, transport = make_client(account_id='acc-1')
+    client.hub.notifications.register_code_mash_app_push_integration({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_registerCodeMashAppPushIntegration_requires_account_scope() -> None:
+def test_hub_notifications_register_code_mash_app_push_integration_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
-    payload = stub_request_for_path('/{version}/notifications/push/integrations/app/request') if False else {}
     try:
-        client.hub.notifications.registerCodeMashAppPushIntegration(payload)
+        client.hub.notifications.register_code_mash_app_push_integration({})
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
 
-def test_hub_notifications_registerDevice_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/notifications/push/devices') if False else {}
-    client.hub.notifications.registerDevice(payload)
+def test_hub_notifications_register_device_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.register_device({})
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

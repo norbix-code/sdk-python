@@ -4,4 +4,4 @@ Access with `norbix.api.chat`.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `askChat` | `POST` | `/{version}/chat/complete` | `project` |
+| `ask_chat` | `POST` | `/{version}/chat/complete` | `project` |

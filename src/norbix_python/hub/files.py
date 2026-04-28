@@ -2,188 +2,403 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..transport import Transport
+from ..transport import AsyncTransport, Transport
 
 class FilesModule:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
 
-    def disableFiles(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def disable_files(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/files/disable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/disable',
-            method='GET',
+            target="hub",
+            path="/{version}/files/disable",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def enableFiles(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def enable_files(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/files/enable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/enable',
-            method='GET',
+            target="hub",
+            path="/{version}/files/enable",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def deleteFilesTrigger(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def delete_files_trigger(self, trigger_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """DELETE /{version}/files/triggers/{triggerId}"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/triggers/{triggerId}',
-            method='DELETE',
+            target="hub",
+            path="/{version}/files/triggers/{triggerId}",
+            method="DELETE",
+            path_params={"triggerId": trigger_id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def disableFilesTrigger(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def disable_files_trigger(self, trigger_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PATCH /{version}/files/triggers/{triggerId}/disable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/triggers/{triggerId}/disable',
-            method='PATCH',
+            target="hub",
+            path="/{version}/files/triggers/{triggerId}/disable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def enableFilesTrigger(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def enable_files_trigger(self, trigger_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PATCH /{version}/files/triggers/{triggerId}/enable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/triggers/{triggerId}/enable',
-            method='PATCH',
+            target="hub",
+            path="/{version}/files/triggers/{triggerId}/enable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def getFilesTrigger(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def get_files_trigger(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/files/triggers/{id}"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/triggers/{id}',
-            method='GET',
+            target="hub",
+            path="/{version}/files/triggers/{id}",
+            method="GET",
+            path_params={"id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def getFilesTriggers(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def get_files_triggers(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/files/triggers"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/triggers',
-            method='GET',
+            target="hub",
+            path="/{version}/files/triggers",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def saveFilesTrigger(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def save_files_trigger(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """POST /{version}/files/triggers"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/triggers',
-            method='POST',
+            target="hub",
+            path="/{version}/files/triggers",
+            method="POST",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def deleteFilesIntegration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def delete_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """DELETE /{version}/files/integrations/{Id}"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/integrations/{Id}',
-            method='DELETE',
+            target="hub",
+            path="/{version}/files/integrations/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def disableFilesIntegration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def disable_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/files/integrations/{Id}/disable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/integrations/{Id}/disable',
-            method='PUT',
+            target="hub",
+            path="/{version}/files/integrations/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def enableFilesIntegration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def enable_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/files/integrations/{Id}/enable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/integrations/{Id}/enable',
-            method='PUT',
+            target="hub",
+            path="/{version}/files/integrations/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def getFilesIntegration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def get_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/files/integrations/{id}"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/integrations/{id}',
-            method='GET',
+            target="hub",
+            path="/{version}/files/integrations/{id}",
+            method="GET",
+            path_params={"id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def getFilesIntegrations(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def get_files_integrations(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/files/integrations"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/integrations',
-            method='GET',
+            target="hub",
+            path="/{version}/files/integrations",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def saveFilesIntegration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def save_files_integration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """POST /{version}/files/integrations"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/integrations',
-            method='POST',
+            target="hub",
+            path="/{version}/files/integrations",
+            method="POST",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def setFilesIntegrationAsDefault(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def set_files_integration_as_default(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/files/integrations/{Id}/default"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/files/integrations/{Id}/default',
-            method='PUT',
+            target="hub",
+            path="/{version}/files/integrations/{Id}/default",
+            method="PUT",
+            path_params={"Id": id},
             request=request or {},
-            scope='project',
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+
+class AsyncFilesModule:
+    def __init__(self, transport: AsyncTransport) -> None:
+        self._transport = transport
+
+    async def disable_files(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/files/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/disable",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_files(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/files/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/enable",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_files_trigger(self, trigger_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """DELETE /{version}/files/triggers/{triggerId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/triggers/{triggerId}",
+            method="DELETE",
+            path_params={"triggerId": trigger_id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_files_trigger(self, trigger_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PATCH /{version}/files/triggers/{triggerId}/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/triggers/{triggerId}/disable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_files_trigger(self, trigger_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PATCH /{version}/files/triggers/{triggerId}/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/triggers/{triggerId}/enable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_files_trigger(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/files/triggers/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/triggers/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_files_triggers(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/files/triggers"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/triggers",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_files_trigger(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """POST /{version}/files/triggers"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/triggers",
+            method="POST",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """DELETE /{version}/files/integrations/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/files/integrations/{Id}/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/files/integrations/{Id}/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_files_integration(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/files/integrations/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_files_integrations(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/files/integrations"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_files_integration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """POST /{version}/files/integrations"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations",
+            method="POST",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_files_integration_as_default(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/files/integrations/{Id}/default"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations/{Id}/default",
+            method="PUT",
+            path_params={"Id": id},
+            request=request or {},
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )

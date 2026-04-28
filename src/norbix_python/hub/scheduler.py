@@ -2,104 +2,221 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..transport import Transport
+from ..transport import AsyncTransport, Transport
 
 class SchedulerModule:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
 
-    def disableScheduler(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def disable_scheduler(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/scheduler/disable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/disable',
-            method='GET',
+            target="hub",
+            path="/{version}/scheduler/disable",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def enableScheduler(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def enable_scheduler(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/scheduler/enable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/enable',
-            method='GET',
+            target="hub",
+            path="/{version}/scheduler/enable",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def deleteSchedulerTask(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def delete_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """DELETE /{version}/scheduler/tasks/{Id}"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/tasks/{Id}',
-            method='DELETE',
+            target="hub",
+            path="/{version}/scheduler/tasks/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def disableSchedulerTask(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def disable_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/scheduler/tasks/{Id}/disable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/tasks/{Id}/disable',
-            method='PUT',
+            target="hub",
+            path="/{version}/scheduler/tasks/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def enableSchedulerTask(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def enable_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/scheduler/tasks/{Id}/enable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/tasks/{Id}/enable',
-            method='PUT',
+            target="hub",
+            path="/{version}/scheduler/tasks/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def getSchedulerTask(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def get_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/scheduler/tasks/{id}"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/tasks/{id}',
-            method='GET',
+            target="hub",
+            path="/{version}/scheduler/tasks/{id}",
+            method="GET",
+            path_params={"id": id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def getSchedulerTasks(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def get_scheduler_tasks(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/scheduler/tasks"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/tasks',
-            method='GET',
+            target="hub",
+            path="/{version}/scheduler/tasks",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def saveSchedulerTask(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def save_scheduler_task(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """POST /{version}/scheduler/tasks"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/scheduler/tasks',
-            method='POST',
+            target="hub",
+            path="/{version}/scheduler/tasks",
+            method="POST",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+
+class AsyncSchedulerModule:
+    def __init__(self, transport: AsyncTransport) -> None:
+        self._transport = transport
+
+    async def disable_scheduler(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/scheduler/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/disable",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_scheduler(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/scheduler/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/enable",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """DELETE /{version}/scheduler/tasks/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/scheduler/tasks/{Id}/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/scheduler/tasks/{Id}/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_scheduler_task(self, id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/scheduler/tasks/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_scheduler_tasks(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/scheduler/tasks"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_scheduler_task(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """POST /{version}/scheduler/tasks"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks",
+            method="POST",
+            path_params={},
+            request=request or {},
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )

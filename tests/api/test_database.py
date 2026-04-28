@@ -1,172 +1,154 @@
 from __future__ import annotations
 
 from norbix_python import Norbix, NorbixError
-from ..helpers import make_client, stub_request_for_path
+from ..helpers import make_client
 
 
 def test_api_database_module_surface() -> None:
     client, _ = make_client()
     module = client.api.database
-    assert callable(module.findTerms)
-    assert callable(module.findTermsChildren)
-    assert callable(module.getDatabaseSchema)
-    assert callable(module.getDatabaseSchemas)
+    assert callable(module.find_terms)
+    assert callable(module.find_terms_children)
+    assert callable(module.get_database_schema)
+    assert callable(module.get_database_schemas)
     assert callable(module.aggregate)
-    assert callable(module.changeResponsibility)
+    assert callable(module.change_responsibility)
     assert callable(module.count)
-    assert callable(module.deleteMany)
-    assert callable(module.deleteOne)
+    assert callable(module.delete_many)
+    assert callable(module.delete_one)
     assert callable(module.distinct)
-    assert callable(module.executeAggregate)
+    assert callable(module.execute_aggregate)
     assert callable(module.find)
-    assert callable(module.findOne)
-    assert callable(module.insertMany)
-    assert callable(module.insertOne)
-    assert callable(module.replaceOne)
-    assert callable(module.updateMany)
-    assert callable(module.updateOne)
+    assert callable(module.find_one)
+    assert callable(module.insert_many)
+    assert callable(module.insert_one)
+    assert callable(module.replace_one)
+    assert callable(module.update_many)
+    assert callable(module.update_one)
 
 
-def test_api_database_findTerms_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/taxonomies/{taxonomyName}/terms') if True else {}
-    client.api.database.findTerms(payload)
+def test_api_database_find_terms_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.find_terms(taxonomy_name="stub-taxonomyName")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_findTermsChildren_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/taxonomies/{taxonomyName}/terms/{parentId}/children') if True else {}
-    client.api.database.findTermsChildren(payload)
+def test_api_database_find_terms_children_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.find_terms_children(taxonomy_name="stub-taxonomyName", parent_id="stub-parentId")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_getDatabaseSchema_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/schemas/{id}') if True else {}
-    client.api.database.getDatabaseSchema(payload)
+def test_api_database_get_database_schema_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.get_database_schema(id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_getDatabaseSchemas_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/schemas') if False else {}
-    client.api.database.getDatabaseSchemas(payload)
+def test_api_database_get_database_schemas_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.get_database_schemas({})
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_api_database_aggregate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/aggregate') if True else {}
-    client.api.database.aggregate(payload)
+    client, transport = make_client(account_id=None)
+    client.api.database.aggregate(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_changeResponsibility_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/{id}/responsibility') if True else {}
-    client.api.database.changeResponsibility(payload)
+def test_api_database_change_responsibility_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.change_responsibility(collection_name="stub-collectionName", id="stub-id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_api_database_count_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/count') if True else {}
-    client.api.database.count(payload)
+    client, transport = make_client(account_id=None)
+    client.api.database.count(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_deleteMany_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/many') if True else {}
-    client.api.database.deleteMany(payload)
+def test_api_database_delete_many_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.delete_many(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_deleteOne_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/{id}') if True else {}
-    client.api.database.deleteOne(payload)
+def test_api_database_delete_one_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.delete_one(collection_name="stub-collectionName", id="stub-id")
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_api_database_distinct_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/distinct') if True else {}
-    client.api.database.distinct(payload)
+    client, transport = make_client(account_id=None)
+    client.api.database.distinct(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_executeAggregate_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/aggregates/{aggregateId}/execute') if True else {}
-    client.api.database.executeAggregate(payload)
+def test_api_database_execute_aggregate_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.execute_aggregate(collection_name="stub-collectionName", aggregate_id="stub-aggregateId")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_api_database_find_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}') if True else {}
-    client.api.database.find(payload)
+    client, transport = make_client(account_id=None)
+    client.api.database.find(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_findOne_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/{id}') if True else {}
-    client.api.database.findOne(payload)
+def test_api_database_find_one_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.find_one(collection_name="stub-collectionName", id="stub-id")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_insertMany_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/many') if True else {}
-    client.api.database.insertMany(payload)
+def test_api_database_insert_many_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.insert_many(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_insertOne_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}') if True else {}
-    client.api.database.insertOne(payload)
+def test_api_database_insert_one_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.insert_one(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_replaceOne_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/{id}/replace') if True else {}
-    client.api.database.replaceOne(payload)
+def test_api_database_replace_one_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.replace_one(collection_name="stub-collectionName", id="stub-id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_updateMany_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/many') if True else {}
-    client.api.database.updateMany(payload)
+def test_api_database_update_many_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.update_many(collection_name="stub-collectionName")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_api_database_updateOne_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1' if False else None)
-    payload = stub_request_for_path('/{version}/database/collections/{collectionName}/{id}') if True else {}
-    client.api.database.updateOne(payload)
+def test_api_database_update_one_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.database.update_one(collection_name="stub-collectionName", id="stub-id")
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

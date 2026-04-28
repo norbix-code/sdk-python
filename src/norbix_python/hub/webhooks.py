@@ -2,104 +2,221 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..transport import Transport
+from ..transport import AsyncTransport, Transport
 
 class WebhooksModule:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
 
-    def getWebhookIntegration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def get_webhook_integration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/webhooks/integration"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/integration',
-            method='GET',
+            target="hub",
+            path="/{version}/webhooks/integration",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def revealWebhookIntegrationSecret(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def reveal_webhook_integration_secret(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """GET /{version}/webhooks/integration/secret"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/integration/secret',
-            method='GET',
+            target="hub",
+            path="/{version}/webhooks/integration/secret",
+            method="GET",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def rotateWebhookIntegrationSecret(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def rotate_webhook_integration_secret(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """POST /{version}/webhooks/integration/secret/rotate"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/integration/secret/rotate',
-            method='POST',
+            target="hub",
+            path="/{version}/webhooks/integration/secret/rotate",
+            method="POST",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def updateWebhookIntegrationExtraHeaders(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def update_webhook_integration_extra_headers(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/webhooks/integration/extra-headers"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/integration/extra-headers',
-            method='PUT',
+            target="hub",
+            path="/{version}/webhooks/integration/extra-headers",
+            method="PUT",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def disableWebhookDestination(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def disable_webhook_destination(self, destination_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/webhooks/destinations/{DestinationId}/disable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/destinations/{DestinationId}/disable',
-            method='PUT',
+            target="hub",
+            path="/{version}/webhooks/destinations/{DestinationId}/disable",
+            method="PUT",
+            path_params={"DestinationId": destination_id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def enableWebhookDestination(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def enable_webhook_destination(self, destination_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """PUT /{version}/webhooks/destinations/{DestinationId}/enable"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/destinations/{DestinationId}/enable',
-            method='PUT',
+            target="hub",
+            path="/{version}/webhooks/destinations/{DestinationId}/enable",
+            method="PUT",
+            path_params={"DestinationId": destination_id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def removeWebhookDestination(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def remove_webhook_destination(self, destination_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """DELETE /{version}/webhooks/destinations/{DestinationId}"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/destinations/{DestinationId}',
-            method='DELETE',
+            target="hub",
+            path="/{version}/webhooks/destinations/{DestinationId}",
+            method="DELETE",
+            path_params={"DestinationId": destination_id},
             request=request or {},
-            scope='project',
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def saveWebhookDestination(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+    def save_webhook_destination(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
         """POST /{version}/webhooks/destinations"""
         return self._transport.send(
-            target='hub',
-            path='/{version}/webhooks/destinations',
-            method='POST',
+            target="hub",
+            path="/{version}/webhooks/destinations",
+            method="POST",
+            path_params={},
             request=request or {},
-            scope='project',
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+
+class AsyncWebhooksModule:
+    def __init__(self, transport: AsyncTransport) -> None:
+        self._transport = transport
+
+    async def get_webhook_integration(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/webhooks/integration"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/integration",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def reveal_webhook_integration_secret(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """GET /{version}/webhooks/integration/secret"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/integration/secret",
+            method="GET",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def rotate_webhook_integration_secret(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """POST /{version}/webhooks/integration/secret/rotate"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/integration/secret/rotate",
+            method="POST",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_webhook_integration_extra_headers(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/webhooks/integration/extra-headers"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/integration/extra-headers",
+            method="PUT",
+            path_params={},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_webhook_destination(self, destination_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/webhooks/destinations/{DestinationId}/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/destinations/{DestinationId}/disable",
+            method="PUT",
+            path_params={"DestinationId": destination_id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_webhook_destination(self, destination_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """PUT /{version}/webhooks/destinations/{DestinationId}/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/destinations/{DestinationId}/enable",
+            method="PUT",
+            path_params={"DestinationId": destination_id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def remove_webhook_destination(self, destination_id: str, *, request: dict[str, Any] | None = None, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """DELETE /{version}/webhooks/destinations/{DestinationId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/destinations/{DestinationId}",
+            method="DELETE",
+            path_params={"DestinationId": destination_id},
+            request=request or {},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_webhook_destination(self, request: dict[str, Any] | None = None, *, timeout: float | None = None, bearer_token: str | None = None) -> Any:
+        """POST /{version}/webhooks/destinations"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/webhooks/destinations",
+            method="POST",
+            path_params={},
+            request=request or {},
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
