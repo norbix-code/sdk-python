@@ -48,11 +48,14 @@ jobs:
       - name: Semantic release version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: uv run semantic-release version
 
-      - name: Semantic release publish
+      - name: Publish to PyPI
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: uv run semantic-release publish
+        run: |
+          if ls dist/*.whl >/dev/null 2>&1; then
+            uv publish --token "$PYPI_TOKEN" dist/*
+          else
+            echo "No new release artifacts produced; skipping PyPI publish."
+          fi
