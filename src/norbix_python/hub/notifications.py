@@ -4,7 +4,6 @@ from typing import Any
 
 from ..transport import AsyncTransport, Transport
 
-
 class NotificationsModule:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport

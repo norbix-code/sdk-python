@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from ..transport import AsyncTransport, Transport
-from .account import AccountModule, AsyncAccountModule
-from .ai import AiModule, AsyncAiModule
+
+from .account import AsyncAccountModule, AccountModule
+from .ai import AsyncAiModule, AiModule
 from .database import AsyncDatabaseModule, DatabaseModule
 from .echo import AsyncEchoModule, EchoModule
 from .email import AsyncEmailModule, EmailModule

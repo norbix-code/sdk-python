@@ -5,8 +5,11 @@
 [![Python](https://img.shields.io/badge/python-%3E=3.10-blue)](https://python.org)
 [![License](https://img.shields.io/pypi/l/norbix-python.svg)](./LICENSE)
 
-Official Python SDK for [Norbix](https://norbix.dev). One client wraps both the
-**API** (project-scoped data) and **Hub** (project/account configuration).
+Official Python SDK for [Norbix](https://norbix.dev).
+Use split clients with flat module access:
+
+- `NorbixApi` for API scope (`client.database`, `client.membership`, ...)
+- `NorbixHub` for Hub scope (`client.database`, `client.account`, ...)
 
 ## Install
 
@@ -19,22 +22,21 @@ Optional: load `.env` in apps with `python-dotenv` (`load_dotenv()` before const
 ## Quickstart
 
 ```python
-from norbix_python import Norbix
+from norbix_python import NorbixApi
 
 # Service mode
-norbix = Norbix(api_key="<api_key>", project_id="proj_123")
+norbix = NorbixApi(api_key="<api_key>", project_id="proj_123")
 
-norbix.api.database.find("orders", take=20, skip=0, orderBy=[{"field": "createdAt", "direction": "desc"}])
-norbix.hub.database.get_database_schemas()
+norbix.database.find("orders", take=20, skip=0, orderBy=[{"field": "createdAt", "direction": "desc"}])
 ```
 
 ```python
 # User mode
-from norbix_python import LoginCredentials, Norbix
+from norbix_python import LoginCredentials, NorbixApi
 
-norbix = Norbix(project_id="proj_123")
+norbix = NorbixApi(project_id="proj_123")
 norbix.login(LoginCredentials(user_name="alice@team.io", password="secret"))
-norbix.api.database.find("orders", take=10)
+norbix.database.find("orders", take=10)
 ```
 
 ### Async client
@@ -54,12 +56,12 @@ async def main() -> None:
 ### 1) List recent orders (API scope)
 
 ```python
-from norbix_python import DatabaseFindResult, Norbix, NorbixError
+from norbix_python import DatabaseFindResult, NorbixApi, NorbixError
 
-norbix = Norbix(api_key="sk_live_xxx", project_id="proj_123")
+norbix = NorbixApi(api_key="sk_live_xxx", project_id="proj_123")
 
 try:
-    raw = norbix.api.database.find("orders", take=20, skip=0, orderBy=[{"field": "createdAt", "direction": "desc"}])
+    raw = norbix.database.find("orders", take=20, skip=0, orderBy=[{"field": "createdAt", "direction": "desc"}])
     typed = DatabaseFindResult.model_validate(raw) if isinstance(raw, dict) else DatabaseFindResult()
     items = typed.results
     print(f"Fetched {len(items)} orders")
@@ -70,23 +72,23 @@ except NorbixError as exc:
 ### 2) Login as user and load profile
 
 ```python
-from norbix_python import LoginCredentials, Norbix
+from norbix_python import LoginCredentials, NorbixApi
 
-norbix = Norbix(project_id="proj_123")
+norbix = NorbixApi(project_id="proj_123")
 
 auth = norbix.login(LoginCredentials(user_name="alice@team.io", password="secret"))
 print("Logged in, token prefix:", str(auth.get("bearerToken", ""))[:16])
 
-users = norbix.api.membership.get_users()
+users = norbix.membership.get_users()
 print("Users response:", users)
 ```
 
 ### 3) Account-scoped Hub call (requires account_id)
 
 ```python
-from norbix_python import Norbix
+from norbix_python import NorbixHub
 
-norbix = Norbix(
+norbix = NorbixHub(
     api_key="sk_live_xxx",
     project_id="proj_123",
     account_id="acc_456",  # required for account-scoped endpoints
@@ -119,12 +121,12 @@ API keys and JWTs are sent as `Authorization: Bearer ...` (document your backend
 NORBIX_API_KEY=sk_live_...
 NORBIX_PROJECT_ID=proj_123
 NORBIX_ACCOUNT_ID=acc_456
-NORBIX_API_URL=https://api.norbix.dev
-NORBIX_HUB_URL=https://hub.norbix.dev
+NORBIX_API_URL=https://api.norbix.ai
+NORBIX_HUB_URL=https://hub.norbix.ai
 ```
 
 ```python
-norbix = Norbix()  # reads from environment when values omitted
+norbix = NorbixApi()  # reads from environment when values omitted
 ```
 
 ## Project vs account scope

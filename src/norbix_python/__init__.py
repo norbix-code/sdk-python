@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .client import AsyncNorbix, LoginCredentials, Norbix
+from .client import AsyncNorbix, LoginCredentials, Norbix, NorbixApi, NorbixHub
 from .errors import (
     AuthenticationError,
     NorbixError,
@@ -17,6 +17,8 @@ __all__ = [
     "DatabaseFindResult",
     "LoginCredentials",
     "Norbix",
+    "NorbixApi",
+    "NorbixHub",
     "NorbixError",
     "NotFoundError",
     "RateLimitError",

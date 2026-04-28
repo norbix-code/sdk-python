@@ -4,7 +4,7 @@ import httpx
 
 import pytest
 
-from norbix_python import LoginCredentials, Norbix, NorbixError
+from norbix_python import LoginCredentials, Norbix, NorbixApi, NorbixHub
 from norbix_python.models import AuthLoginResult
 
 
@@ -41,3 +41,21 @@ def test_context_manager_closes() -> None:
     with Norbix(project_id="p1", http_client=c) as _client:
         pass
     assert c.is_closed
+
+
+def test_api_and_hub_split_clients_have_flat_modules() -> None:
+    api = NorbixApi(project_id="p1", api_key="k1")
+    hub = NorbixHub(project_id="p1", api_key="k1", account_id="a1")
+    assert callable(api.database.find)
+    assert callable(api.membership.get_users)
+    assert callable(hub.database.get_database_schemas)
+    assert callable(hub.membership.disable_membership)
+    api.close()
+    hub.close()
+
+
+def test_default_urls_are_norbix_ai() -> None:
+    c = Norbix(project_id="p1", api_key="k1")
+    assert c._transport._cfg.base_url_api == "https://api.norbix.ai"
+    assert c._transport._cfg.base_url_hub == "https://hub.norbix.ai"
+    c.close()
