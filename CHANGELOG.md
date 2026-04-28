@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.1 (2026-04-28)
+
+### Bug Fixes
+
+- **ci**: Run semantic-release publish after version
+  ([`6deb16d`](https://github.com/norbix-code/sdk-python/commit/6deb16dec02d2c739e216c5a82b72078acdebf7a))
+
+
 ## v1.0.0 (2026-04-28)
 
 ### Bug Fixes
