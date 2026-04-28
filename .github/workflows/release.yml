@@ -45,8 +45,14 @@ jobs:
             echo "Existing semantic-release tags found. Skipping bootstrap."
           fi
 
-      - name: Semantic release
+      - name: Semantic release version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: uv run semantic-release version
+
+      - name: Semantic release publish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: uv run semantic-release publish
