@@ -1,0 +1,34 @@
+# CHANGELOG
+
+<!-- version list -->
+
+## v1.0.0 (2026-04-28)
+
+### Bug Fixes
+
+- Normalize generated python imports for ruff
+  ([`3bb658a`](https://github.com/norbix-code/sdk-python/commit/3bb658a47c96df81825e0cd38cbd418adbcab3e3))
+
+- Trigger initial pypi publish
+  ([`9d32ddc`](https://github.com/norbix-code/sdk-python/commit/9d32ddcf604920b2ecac84d59f5b5d574071f7c6))
+
+- **ci**: Use semantic-release version for pypi publishing
+  ([`d2a4a81`](https://github.com/norbix-code/sdk-python/commit/d2a4a816b33ad0c0144fdeacee556a74f35efece))
+
+### Continuous Integration
+
+- Normalize generated python modules before drift check
+  ([`4e8d920`](https://github.com/norbix-code/sdk-python/commit/4e8d9200d8792b6c5569f71bb18b18267b41e071))
+
+- Remove endpoint generation from python pipeline
+  ([`aae4e66`](https://github.com/norbix-code/sdk-python/commit/aae4e66d47380c476f79f139f78658642bd8257e))
+
+### Features
+
+- Split python clients into api and hub surfaces
+  ([`3864f46`](https://github.com/norbix-code/sdk-python/commit/3864f4623ed33c959785cf757c0588eac305ddf1))
+
+
+## v0.0.0 (2026-04-28)
+
+- Initial Release
