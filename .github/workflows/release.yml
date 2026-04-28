@@ -33,6 +33,18 @@ jobs:
         run: |
           uv run pytest
 
+      - name: Bootstrap initial semantic-release tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if ! git tag -l "v*" | grep -q .; then
+            echo "No semantic-release tags found. Bootstrapping v0.0.0"
+            git tag v0.0.0
+            git push origin v0.0.0
+          else
+            echo "Existing semantic-release tags found. Skipping bootstrap."
+          fi
+
       - name: Semantic release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
