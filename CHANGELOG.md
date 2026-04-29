@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v1.1.1 (2026-04-29)
+
+### Bug Fixes
+
+- **release**: Trigger package release after policy alignment
+  ([`2d6a2dc`](https://github.com/norbix-code/sdk-python/commit/2d6a2dc1dd49c6e5298429c5b32bdbd191325b2c))
+
+### Chores
+
+- Align generation policy for committed generated outputs
+  ([`a40c492`](https://github.com/norbix-code/sdk-python/commit/a40c492be287f70a78ca805d5f74daa7916e75d1))
+
+
 ## v1.1.0 (2026-04-28)
 
 ### Features
