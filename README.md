@@ -94,7 +94,7 @@ norbix = NorbixHub(
     account_id="acc_456",  # required for account-scoped endpoints
 )
 
-account = norbix.hub.account.get_account_profile()
+account = norbix.account.get_account_profile()
 print(account)
 ```
 
