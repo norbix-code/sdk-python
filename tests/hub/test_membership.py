@@ -208,3 +208,36 @@ def test_hub_membership_set_membership_integration_as_default_request_shape() ->
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+
+def test_hub_membership_new_endpoints_surface() -> None:
+    client, _ = make_client()
+    module = client.hub.membership
+    assert callable(module.get_passkey_settings)
+    assert callable(module.save_passkey_settings)
+    assert callable(module.get_policy_options)
+
+
+def test_hub_membership_get_passkey_settings_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.membership.get_passkey_settings()
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+
+
+def test_hub_membership_save_passkey_settings_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.membership.save_passkey_settings()
+    assert transport.last_request['method'] == 'POST'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+
+
+def test_hub_membership_get_policy_options_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.membership.get_policy_options()
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+

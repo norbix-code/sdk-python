@@ -9,6 +9,8 @@ def test_hub_files_module_surface() -> None:
     module = client.hub.files
     assert callable(module.disable_files)
     assert callable(module.enable_files)
+    assert callable(module.get_folder_files)
+    assert callable(module.get_file)
     assert callable(module.delete_files_trigger)
     assert callable(module.disable_files_trigger)
     assert callable(module.enable_files_trigger)
@@ -126,5 +128,19 @@ def test_hub_files_set_files_integration_as_default_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.files.set_files_integration_as_default(id="stub-Id")
     assert transport.last_request['method'] == 'PUT'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+
+def test_hub_files_get_folder_files_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.files.get_folder_files()
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+
+def test_hub_files_get_file_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.files.get_file()
+    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')

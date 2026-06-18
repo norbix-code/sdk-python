@@ -893,6 +893,773 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/contacts"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/merge"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/merge",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/contacts/{contactId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}",
+            method="DELETE",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/contacts/{contactId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}",
+            method="GET",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/identities"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/identities",
+            method="POST",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def remove_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/contacts/{contactId}/identities/{identityId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}",
+            method="DELETE",
+            path_params={"contactId": contact_id, "identityId": identity_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def promote_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/identities/{identityId}/promote"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}/promote",
+            method="POST",
+            path_params={"contactId": contact_id, "identityId": identity_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def grant_contact_consent(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def unsubscribe_contact(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def razor_syntax_check(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/templates/razor-syntax-check"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/templates/razor-syntax-check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_email_validation_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/validation/integrations"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/validation/integrations",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_email_validation_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/validation/integrations/test"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/validation/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaigns(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_push_campaign(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/campaigns"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/push/campaigns/{Id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{campaignId}/messages"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{campaignId}/messages",
+            method="GET",
+            path_params={"campaignId": campaign_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{campaignId}/messages/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{campaignId}/messages/{id}",
+            method="GET",
+            path_params={"campaignId": campaign_id, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign_batches(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/batches"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/batches",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign_batch_notifications(self, id: str, batch_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/batches/{batchId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/batches/{batchId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign_batch_notification(self, id: str, batch_id: str, notification_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/batches/{batchId}/{notificationId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/batches/{batchId}/{notificationId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id, "notificationId": notification_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign_statistics(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/stats"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/stats",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def check_integration_availability(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/integrations/app/check"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/integrations/app/check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_code_mash_ios_app_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/integrations/test/codemash-app"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/integrations/test/codemash-app",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/settings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/settings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaigns(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_sms_campaign(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/campaigns"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{campaignId}/messages",
+            method="GET",
+            path_params={"campaignId": campaign_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{id}",
+            method="GET",
+            path_params={"campaignId": campaign_id, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_sms_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/sms/campaigns/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}",
+            method="DELETE",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaign_batches(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/batches"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/batches",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaign_batch_notifications(self, id: str, batch_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/batches/{batchId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/batches/{batchId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaign_batch_notification(self, id: str, batch_id: str, notification_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/batches/{batchId}/{notificationId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/batches/{batchId}/{notificationId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id, "notificationId": notification_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_campaign_statistics(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/stats"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/stats",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def disable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/disable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/disable",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def enable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/enable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/enable",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_integrations(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/integrations"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_sms_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/integrations"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def confirm_sms_integration_human_delivery(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/integrations/confirm-human-delivery"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/confirm-human-delivery",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_sms_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/integrations/test"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/sms/integrations/{Id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_sms_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/integrations/{Id}/default"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}/default",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def disable_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/integrations/{Id}/disable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def enable_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/integrations/{Id}/enable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/integrations/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def preview_sms_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/preview"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/preview",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/settings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/settings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_templates(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/templates"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_sms_template(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_sms_template(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/templates"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def sms_razor_syntax_check(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates/razor-syntax-check"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/razor-syntax-check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/sms/templates/{Id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def archive_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/templates/{Id}/archive"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}/archive",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def clone_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates/{Id}/clone"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}/clone",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def un_archive_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/templates/{Id}/unarchive"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}/unarchive",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/templates/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_message_content_tokens(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/templates/{id}/tokens"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{id}/tokens",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncNotificationsModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1776,6 +2543,773 @@ class AsyncNotificationsModule:
             path="/{version}/notifications/push/devices",
             method="POST",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/contacts"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/merge"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/merge",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/contacts/{contactId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}",
+            method="DELETE",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/contacts/{contactId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}",
+            method="GET",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/identities"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/identities",
+            method="POST",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def remove_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/contacts/{contactId}/identities/{identityId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}",
+            method="DELETE",
+            path_params={"contactId": contact_id, "identityId": identity_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def promote_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/identities/{identityId}/promote"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}/promote",
+            method="POST",
+            path_params={"contactId": contact_id, "identityId": identity_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def grant_contact_consent(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def unsubscribe_contact(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def razor_syntax_check(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/templates/razor-syntax-check"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/templates/razor-syntax-check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_email_validation_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/validation/integrations"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/validation/integrations",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_email_validation_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/validation/integrations/test"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/validation/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaigns(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_push_campaign(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/campaigns"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/push/campaigns/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{campaignId}/messages"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{campaignId}/messages",
+            method="GET",
+            path_params={"campaignId": campaign_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{campaignId}/messages/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{campaignId}/messages/{id}",
+            method="GET",
+            path_params={"campaignId": campaign_id, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign_batches(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/batches"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/batches",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign_batch_notifications(self, id: str, batch_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/batches/{batchId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/batches/{batchId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign_batch_notification(self, id: str, batch_id: str, notification_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/batches/{batchId}/{notificationId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/batches/{batchId}/{notificationId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id, "notificationId": notification_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign_statistics(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/campaigns/{id}/stats"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{id}/stats",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def check_integration_availability(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/integrations/app/check"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/integrations/app/check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_code_mash_ios_app_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/integrations/test/codemash-app"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/integrations/test/codemash-app",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/settings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/settings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaigns(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_sms_campaign(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/campaigns"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{campaignId}/messages",
+            method="GET",
+            path_params={"campaignId": campaign_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{id}",
+            method="GET",
+            path_params={"campaignId": campaign_id, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_sms_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/sms/campaigns/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}",
+            method="DELETE",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaign_batches(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/batches"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/batches",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaign_batch_notifications(self, id: str, batch_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/batches/{batchId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/batches/{batchId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaign_batch_notification(self, id: str, batch_id: str, notification_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/batches/{batchId}/{notificationId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/batches/{batchId}/{notificationId}",
+            method="GET",
+            path_params={"id": id, "batchId": batch_id, "notificationId": notification_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_campaign_statistics(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/campaigns/{id}/stats"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{id}/stats",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/disable",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/enable",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_integrations(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/integrations"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_sms_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/integrations"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def confirm_sms_integration_human_delivery(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/integrations/confirm-human-delivery"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/confirm-human-delivery",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_sms_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/integrations/test"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/sms/integrations/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_sms_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/integrations/{Id}/default"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}/default",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/integrations/{Id}/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/integrations/{Id}/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/integrations/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/integrations/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def preview_sms_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/preview"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/preview",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/settings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/settings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_templates(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/templates"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_sms_template(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_sms_template(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/templates"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def sms_razor_syntax_check(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates/razor-syntax-check"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/razor-syntax-check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/sms/templates/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def archive_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/templates/{Id}/archive"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}/archive",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def clone_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates/{Id}/clone"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}/clone",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def un_archive_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/notifications/sms/templates/{Id}/unarchive"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{Id}/unarchive",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/templates/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_message_content_tokens(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/templates/{id}/tokens"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/templates/{id}/tokens",
+            method="GET",
+            path_params={"id": id},
             request=request,
             scope="project",
             timeout=timeout,

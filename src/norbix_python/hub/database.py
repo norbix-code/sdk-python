@@ -542,6 +542,45 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def get_allowed_flex_tiers(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/integrations/flex-tiers"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/integrations/flex-tiers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_database_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/integrations/test"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def reveal_managed_flex_connection_string(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/integrations/{Id}/connection-string"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/integrations/{Id}/connection-string",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncDatabaseModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1074,6 +1113,45 @@ class AsyncDatabaseModule:
             path="/{version}/database/aggregates/test",
             method="POST",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_allowed_flex_tiers(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/integrations/flex-tiers"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/integrations/flex-tiers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_database_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/integrations/test"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def reveal_managed_flex_connection_string(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/integrations/{Id}/connection-string"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/integrations/{Id}/connection-string",
+            method="GET",
+            path_params={"Id": id},
             request=request,
             scope="project",
             timeout=timeout,

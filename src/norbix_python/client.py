@@ -16,6 +16,19 @@ DEFAULT_VERSION = "v2"
 DEFAULT_TIMEOUT = 30.0
 
 
+def _compose_regional_url(default_url: str, region: str | None) -> str:
+    """Prefix the region code as a subdomain of an SDK-default base URL.
+
+    e.g. ("https://api.norbix.ai", "nb-eu-germany") →
+    "https://nb-eu-germany.api.norbix.ai". Only ever applied to the SDK
+    defaults — user-supplied base URLs are never rewritten.
+    """
+    if not region:
+        return default_url
+    scheme, _, host = default_url.partition("://")
+    return f"{scheme}://{region}.{host}"
+
+
 class LoginCredentials(BaseModel):
     """Login payload; serializes to camelCase keys expected by the API."""
 
@@ -32,6 +45,8 @@ def _build_config(
     api_key: str | None,
     bearer_token: str | None,
     account_id: str | None,
+    env: str | None,
+    region: str | None,
     base_url_api: str | None,
     base_url_hub: str | None,
     api_version: str | None,
@@ -50,6 +65,17 @@ def _build_config(
     resolved_base_url_hub = base_url_hub or os.getenv("NORBIX_HUB_URL") or DEFAULT_BASE_URL_HUB
     resolved_api_version = api_version or os.getenv("NORBIX_API_VERSION") or DEFAULT_VERSION
     resolved_hub_version = hub_version or os.getenv("NORBIX_HUB_VERSION") or DEFAULT_VERSION
+    # Region: explicit setting → NORBIX_REGION env var → unset (no header).
+    resolved_region = region or os.getenv("NORBIX_REGION") or None
+    base_url_api_is_default = resolved_base_url_api == DEFAULT_BASE_URL_API
+    base_url_hub_is_default = resolved_base_url_hub == DEFAULT_BASE_URL_HUB
+    if resolved_region:
+        # Regional base URL auto-compose applies only to the SDK-default
+        # base URLs; user-supplied base URLs are never rewritten.
+        if base_url_api_is_default:
+            resolved_base_url_api = _compose_regional_url(DEFAULT_BASE_URL_API, resolved_region)
+        if base_url_hub_is_default:
+            resolved_base_url_hub = _compose_regional_url(DEFAULT_BASE_URL_HUB, resolved_region)
     return TransportConfig(
         api_key=api_key or os.getenv("NORBIX_API_KEY"),
         bearer_token=bearer_token or os.getenv("NORBIX_BEARER_TOKEN"),
@@ -60,6 +86,10 @@ def _build_config(
         api_version=resolved_api_version,
         hub_version=resolved_hub_version,
         timeout=timeout or DEFAULT_TIMEOUT,
+        env=env or os.getenv("NORBIX_ENV") or "PROD",
+        region=resolved_region,
+        base_url_api_is_default=base_url_api_is_default,
+        base_url_hub_is_default=base_url_hub_is_default,
         default_headers=default_headers or {},
     )
 
@@ -95,6 +125,35 @@ class _AuthMixin:
         self._transport._cfg.project_id = project_id
         self._transport._cfg.account_id = account_id
 
+    def set_env(self, env: str | None) -> None:
+        """Switch the project environment for subsequent requests (norbix-env header).
+
+        Pass "PROD" or None to return to production.
+        """
+        self._transport._cfg.env = env or "PROD"
+
+    def get_env(self) -> str:
+        """Current project environment the client targets (defaults to "PROD")."""
+        return self._transport._cfg.env
+
+    def set_region(self, region: str | None) -> None:
+        """Switch the Norbix region for subsequent requests (nb-region header).
+
+        Pass None to clear the region (no header is sent). SDK-default base
+        URLs are recomposed (e.g. https://nb-eu-germany.api.norbix.ai);
+        user-supplied base URLs are never rewritten.
+        """
+        cfg = self._transport._cfg
+        cfg.region = region or None
+        if cfg.base_url_api_is_default:
+            cfg.base_url_api = _compose_regional_url(DEFAULT_BASE_URL_API, cfg.region)
+        if cfg.base_url_hub_is_default:
+            cfg.base_url_hub = _compose_regional_url(DEFAULT_BASE_URL_HUB, cfg.region)
+
+    def get_region(self) -> str | None:
+        """Current Norbix region the client targets (None when unset)."""
+        return self._transport._cfg.region
+
     def is_authenticated(self) -> bool:
         return bool(self._transport._cfg.bearer_token or self._transport._cfg.api_key)
 
@@ -107,6 +166,8 @@ class Norbix(_AuthMixin):
         api_key: str | None = None,
         bearer_token: str | None = None,
         account_id: str | None = None,
+        env: str | None = None,
+        region: str | None = None,
         base_url_api: str | None = None,
         base_url_hub: str | None = None,
         api_version: str | None = None,
@@ -120,6 +181,8 @@ class Norbix(_AuthMixin):
             api_key=api_key,
             bearer_token=bearer_token,
             account_id=account_id,
+            env=env,
+            region=region,
             base_url_api=base_url_api,
             base_url_hub=base_url_hub,
             api_version=api_version,
@@ -152,6 +215,8 @@ class NorbixApi(_AuthMixin):
         api_key: str | None = None,
         bearer_token: str | None = None,
         account_id: str | None = None,
+        env: str | None = None,
+        region: str | None = None,
         base_url_api: str | None = None,
         api_version: str | None = None,
         timeout: float | None = None,
@@ -163,6 +228,8 @@ class NorbixApi(_AuthMixin):
             api_key=api_key,
             bearer_token=bearer_token,
             account_id=account_id,
+            env=env,
+            region=region,
             base_url_api=base_url_api,
             base_url_hub=None,
             api_version=api_version,
@@ -177,10 +244,12 @@ class NorbixApi(_AuthMixin):
         self.membership = api.membership
         self.chat = api.chat
         self.echo = api.echo
+        self.files = api.files
         self.Database = self.database
         self.Membership = self.membership
         self.Chat = self.chat
         self.Echo = self.echo
+        self.Files = self.files
 
     def close(self) -> None:
         self._transport.close()
@@ -196,6 +265,8 @@ class NorbixHub(_AuthMixin):
         api_key: str | None = None,
         bearer_token: str | None = None,
         account_id: str | None = None,
+        env: str | None = None,
+        region: str | None = None,
         base_url_hub: str | None = None,
         hub_version: str | None = None,
         timeout: float | None = None,
@@ -207,6 +278,8 @@ class NorbixHub(_AuthMixin):
             api_key=api_key,
             bearer_token=bearer_token,
             account_id=account_id,
+            env=env,
+            region=region,
             base_url_api=None,
             base_url_hub=base_url_hub,
             api_version=None,
@@ -219,28 +292,36 @@ class NorbixHub(_AuthMixin):
         hub = HubNamespace(self._transport)
         self.account = hub.account
         self.ai = hub.ai
+        self.code = hub.code
         self.database = hub.database
         self.echo = hub.echo
         self.email = hub.email
+        self.environments = hub.environments
         self.files = hub.files
         self.internal = hub.internal
         self.logs = hub.logs
         self.membership = hub.membership
         self.notifications = hub.notifications
         self.payments = hub.payments
+        self.regions = hub.regions
+        self.resources = hub.resources
         self.scheduler = hub.scheduler
         self.webhooks = hub.webhooks
         self.Account = self.account
         self.Ai = self.ai
+        self.Code = self.code
         self.Database = self.database
         self.Echo = self.echo
         self.Email = self.email
+        self.Environments = self.environments
         self.Files = self.files
         self.Internal = self.internal
         self.Logs = self.logs
         self.Membership = self.membership
         self.Notifications = self.notifications
         self.Payments = self.payments
+        self.Regions = self.regions
+        self.Resources = self.resources
         self.Scheduler = self.scheduler
         self.Webhooks = self.webhooks
 
@@ -258,6 +339,8 @@ class AsyncNorbix:
         api_key: str | None = None,
         bearer_token: str | None = None,
         account_id: str | None = None,
+        env: str | None = None,
+        region: str | None = None,
         base_url_api: str | None = None,
         base_url_hub: str | None = None,
         api_version: str | None = None,
@@ -271,6 +354,8 @@ class AsyncNorbix:
             api_key=api_key,
             bearer_token=bearer_token,
             account_id=account_id,
+            env=env,
+            region=region,
             base_url_api=base_url_api,
             base_url_hub=base_url_hub,
             api_version=api_version,
@@ -313,6 +398,31 @@ class AsyncNorbix:
 
     def set_api_key(self, api_key: str | None) -> None:
         self._transport._cfg.api_key = api_key
+
+    def set_env(self, env: str | None) -> None:
+        """Switch the project environment for subsequent requests (norbix-env header)."""
+        self._transport._cfg.env = env or "PROD"
+
+    def get_env(self) -> str:
+        """Current project environment the client targets (defaults to "PROD")."""
+        return self._transport._cfg.env
+
+    def set_region(self, region: str | None) -> None:
+        """Switch the Norbix region for subsequent requests (nb-region header).
+
+        Pass None to clear the region (no header is sent). SDK-default base
+        URLs are recomposed; user-supplied base URLs are never rewritten.
+        """
+        cfg = self._transport._cfg
+        cfg.region = region or None
+        if cfg.base_url_api_is_default:
+            cfg.base_url_api = _compose_regional_url(DEFAULT_BASE_URL_API, cfg.region)
+        if cfg.base_url_hub_is_default:
+            cfg.base_url_hub = _compose_regional_url(DEFAULT_BASE_URL_HUB, cfg.region)
+
+    def get_region(self) -> str | None:
+        """Current Norbix region the client targets (None when unset)."""
+        return self._transport._cfg.region
 
     def is_authenticated(self) -> bool:
         return bool(self._transport._cfg.bearer_token or self._transport._cfg.api_key)

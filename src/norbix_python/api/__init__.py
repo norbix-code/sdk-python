@@ -4,6 +4,7 @@ from ..transport import AsyncTransport, Transport
 from .chat import AsyncChatModule, ChatModule
 from .database import AsyncDatabaseModule, DatabaseModule
 from .echo import AsyncEchoModule, EchoModule
+from .files import AsyncFilesModule, FilesModule
 from .membership import AsyncMembershipModule, MembershipModule
 
 
@@ -12,6 +13,7 @@ class ApiNamespace:
         self.chat = ChatModule(transport)
         self.database = DatabaseModule(transport)
         self.echo = EchoModule(transport)
+        self.files = FilesModule(transport)
         self.membership = MembershipModule(transport)
 
 
@@ -20,4 +22,5 @@ class AsyncApiNamespace:
         self.chat = AsyncChatModule(transport)
         self.database = AsyncDatabaseModule(transport)
         self.echo = AsyncEchoModule(transport)
+        self.files = AsyncFilesModule(transport)
         self.membership = AsyncMembershipModule(transport)

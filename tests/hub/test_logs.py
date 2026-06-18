@@ -80,3 +80,18 @@ def test_hub_logs_test_logging_integration_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+
+def test_hub_logs_new_endpoints_surface() -> None:
+    client, _ = make_client()
+    module = client.hub.logs
+    assert callable(module.get_logs_by_correlation_id)
+
+
+def test_hub_logs_get_logs_by_correlation_id_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.logs.get_logs_by_correlation_id()
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+

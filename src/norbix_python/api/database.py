@@ -35,6 +35,32 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def find_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{taxonomyName}/terms/tree"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/database/taxonomies/{taxonomyName}/terms/tree",
+            method="GET",
+            path_params={"taxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def find_taxonomy_tree(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/tree"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/database/taxonomies/tree",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_database_schema(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/database/schemas/{id}"""
         return self._transport.send(
@@ -268,6 +294,32 @@ class AsyncDatabaseModule:
             path="/{version}/database/taxonomies/{taxonomyName}/terms/{parentId}/children",
             method="GET",
             path_params={"taxonomyName": taxonomy_name, "parentId": parent_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def find_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{taxonomyName}/terms/tree"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/database/taxonomies/{taxonomyName}/terms/tree",
+            method="GET",
+            path_params={"taxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def find_taxonomy_tree(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/tree"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/database/taxonomies/tree",
+            method="GET",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,

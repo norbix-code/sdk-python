@@ -126,6 +126,19 @@ class LogsModule:
             bearer_token=bearer_token,
         )
 
+    def get_logs_by_correlation_id(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs/audit"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/logs/audit",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncLogsModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -241,6 +254,19 @@ class AsyncLogsModule:
             target="hub",
             path="/{version}/logs/integrations/test",
             method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_logs_by_correlation_id(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs/audit"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/logs/audit",
+            method="GET",
             path_params={},
             request=request,
             scope="project",

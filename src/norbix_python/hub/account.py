@@ -178,14 +178,22 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
-    def create_project(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/account/projects"""
+    def create_project(self, *, primary_region: str | None = None, additional_regions: list[str] | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects
+
+        ``primary_region`` / ``additional_regions`` optionally pin the new
+        project to Norbix regions (region codes, e.g. "nb-eu-germany").
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/account/projects",
             method="POST",
             path_params={},
-            request=request,
+            request={
+                "primaryRegion": primary_region,
+                "additionalRegions": additional_regions,
+                **request,
+            },
             scope="account",
             timeout=timeout,
             bearer_token=bearer_token,
@@ -664,14 +672,22 @@ class AsyncAccountModule:
             bearer_token=bearer_token,
         )
 
-    async def create_project(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/account/projects"""
+    async def create_project(self, *, primary_region: str | None = None, additional_regions: list[str] | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects
+
+        ``primary_region`` / ``additional_regions`` optionally pin the new
+        project to Norbix regions (region codes, e.g. "nb-eu-germany").
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/account/projects",
             method="POST",
             path_params={},
-            request=request,
+            request={
+                "primaryRegion": primary_region,
+                "additionalRegions": additional_regions,
+                **request,
+            },
             scope="account",
             timeout=timeout,
             bearer_token=bearer_token,

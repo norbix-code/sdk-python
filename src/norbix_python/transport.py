@@ -30,6 +30,10 @@ class TransportConfig:
     api_version: str
     hub_version: str
     timeout: float
+    env: str = "PROD"
+    region: str | None = None
+    base_url_api_is_default: bool = False
+    base_url_hub_is_default: bool = False
     default_headers: dict[str, str] = field(default_factory=dict)
 
 
@@ -52,6 +56,8 @@ class Transport:
         scope: Scope = "project",
         timeout: float | None = None,
         bearer_token: str | None = None,
+        env: str | None = None,
+        region: str | None = None,
     ) -> Any:
         if scope == "account" and not self._cfg.account_id:
             raise NorbixError(
@@ -86,6 +92,16 @@ class Transport:
         headers["X-CM-ProjectId"] = self._cfg.project_id
         if self._cfg.account_id:
             headers["X-CM-AccountId"] = self._cfg.account_id
+        # Environment selector: per-call override wins over the client default.
+        # "PROD" is the backend default, so the header is omitted for it.
+        resolved_env = env if env is not None else self._cfg.env
+        if resolved_env and resolved_env != "PROD":
+            headers["norbix-env"] = resolved_env
+        # Region selector: per-call override wins over the client default.
+        # There is no default region — the header is omitted when unset.
+        resolved_region = region if region is not None else self._cfg.region
+        if resolved_region:
+            headers["nb-region"] = resolved_region
         if body is not None:
             headers["Content-Type"] = "application/json"
 
@@ -175,6 +191,8 @@ class AsyncTransport:
         scope: Scope = "project",
         timeout: float | None = None,
         bearer_token: str | None = None,
+        env: str | None = None,
+        region: str | None = None,
     ) -> Any:
         if scope == "account" and not self._cfg.account_id:
             raise NorbixError(
@@ -209,6 +227,16 @@ class AsyncTransport:
         headers["X-CM-ProjectId"] = self._cfg.project_id
         if self._cfg.account_id:
             headers["X-CM-AccountId"] = self._cfg.account_id
+        # Environment selector: per-call override wins over the client default.
+        # "PROD" is the backend default, so the header is omitted for it.
+        resolved_env = env if env is not None else self._cfg.env
+        if resolved_env and resolved_env != "PROD":
+            headers["norbix-env"] = resolved_env
+        # Region selector: per-call override wins over the client default.
+        # There is no default region — the header is omitted when unset.
+        resolved_region = region if region is not None else self._cfg.region
+        if resolved_region:
+            headers["nb-region"] = resolved_region
         if body is not None:
             headers["Content-Type"] = "application/json"
 

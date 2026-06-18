@@ -35,6 +35,32 @@ class FilesModule:
             bearer_token=bearer_token,
         )
 
+    def get_folder_files(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/folder"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/folder",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_file(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/item"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/item",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def delete_files_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """DELETE /{version}/files/triggers/{triggerId}"""
         return self._transport.send(
@@ -227,6 +253,32 @@ class AsyncFilesModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/files/enable",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_folder_files(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/folder"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/folder",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_file(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/item"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/item",
             method="GET",
             path_params={},
             request=request,
