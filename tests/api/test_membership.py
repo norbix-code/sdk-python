@@ -173,6 +173,14 @@ def test_api_membership_new_endpoints_surface() -> None:
     assert callable(module.use_recovery_code)
     assert callable(module.refresh_passkey_token)
     assert callable(module.link_identity)
+    assert callable(module.change_password)
+    assert callable(module.request_password_reset)
+    assert callable(module.confirm_password_reset)
+    assert callable(module.map_auth_to_user)
+    assert callable(module.set_contact_roles)
+    assert callable(module.grant_contact_consent)
+    assert callable(module.unsubscribe_contact)
+    assert callable(module.set_contact_tag_subscription)
 
 
 def test_api_membership_confirm_email_verification_request_shape() -> None:
@@ -301,4 +309,25 @@ def test_api_membership_link_identity_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+
+def test_api_membership_change_password_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.membership.change_password(currentPassword="old", newPassword="new")
+    assert transport.last_request['method'] == 'POST'
+    assert '/membership/userauth/password/change' in transport.last_request['url']
+
+
+def test_api_membership_request_password_reset_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.membership.request_password_reset(email="a@b.c")
+    assert transport.last_request['method'] == 'POST'
+    assert '/membership/userauth/password/reset/request' in transport.last_request['url']
+
+
+def test_api_membership_confirm_password_reset_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.membership.confirm_password_reset(token="t", newPassword="new")
+    assert transport.last_request['method'] == 'POST'
+    assert '/membership/userauth/password/reset/confirm' in transport.last_request['url']
 

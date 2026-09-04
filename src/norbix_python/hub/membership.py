@@ -373,6 +373,140 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
+    def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{contactId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}",
+            method="GET",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{contactId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}",
+            method="DELETE",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/merge"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/merge",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/identities",
+            method="POST",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def remove_contact_identity(
+        self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any
+    ) -> Any:
+        """DELETE /{version}/membership/users/{contactId}/identities/{authId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/identities/{authId}",
+            method="DELETE",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def promote_contact_identity(
+        self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any
+    ) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities/{authId}/promote"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/identities/{authId}/promote",
+            method="POST",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_authentication_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/authentication"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/authentication",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_password_complexity(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/authorization/password-complexity"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/authorization/password-complexity",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncMembershipModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -735,6 +869,140 @@ class AsyncMembershipModule:
             target="hub",
             path="/{version}/membership/policies/new/options",
             method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{contactId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}",
+            method="GET",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{contactId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}",
+            method="DELETE",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/merge"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/merge",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/identities",
+            method="POST",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def remove_contact_identity(
+        self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any
+    ) -> Any:
+        """DELETE /{version}/membership/users/{contactId}/identities/{authId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/identities/{authId}",
+            method="DELETE",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def promote_contact_identity(
+        self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any
+    ) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities/{authId}/promote"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/identities/{authId}/promote",
+            method="POST",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_authentication_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/authentication"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/authentication",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_password_complexity(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/authorization/password-complexity"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/authorization/password-complexity",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",

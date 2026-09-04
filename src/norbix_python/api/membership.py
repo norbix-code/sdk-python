@@ -10,10 +10,10 @@ class MembershipModule:
         self._transport = transport
 
     def block_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/membership/users/block"""
+        """PATCH /{version}/membership/auth/block"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/block",
+            path="/{version}/membership/auth/block",
             method="PATCH",
             path_params={},
             request=request,
@@ -23,10 +23,10 @@ class MembershipModule:
         )
 
     def save_system_user_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/service"""
+        """POST /{version}/membership/auth/register/service"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/service",
+            path="/{version}/membership/auth/register/service",
             method="POST",
             path_params={},
             request=request,
@@ -36,10 +36,10 @@ class MembershipModule:
         )
 
     def save_guest_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/guest"""
+        """POST /{version}/membership/auth/register/guest"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/guest",
+            path="/{version}/membership/auth/register/guest",
             method="POST",
             path_params={},
             request=request,
@@ -49,10 +49,10 @@ class MembershipModule:
         )
 
     def save_user_name_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/user-name"""
+        """POST /{version}/membership/auth/register/user-name"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/user-name",
+            path="/{version}/membership/auth/register/user-name",
             method="POST",
             path_params={},
             request=request,
@@ -62,10 +62,10 @@ class MembershipModule:
         )
 
     def save_email_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/email"""
+        """POST /{version}/membership/auth/register/email"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/email",
+            path="/{version}/membership/auth/register/email",
             method="POST",
             path_params={},
             request=request,
@@ -75,10 +75,10 @@ class MembershipModule:
         )
 
     def save_phone_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/phone"""
+        """POST /{version}/membership/auth/register/phone"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/phone",
+            path="/{version}/membership/auth/register/phone",
             method="POST",
             path_params={},
             request=request,
@@ -88,10 +88,10 @@ class MembershipModule:
         )
 
     def save_phone_user_name_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/phone-with-permissions"""
+        """POST /{version}/membership/auth/register/phone-with-permissions"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/phone-with-permissions",
+            path="/{version}/membership/auth/register/phone-with-permissions",
             method="POST",
             path_params={},
             request=request,
@@ -101,10 +101,10 @@ class MembershipModule:
         )
 
     def save_email_user_name_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/email-with-permissions"""
+        """POST /{version}/membership/auth/register/email-with-permissions"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/email-with-permissions",
+            path="/{version}/membership/auth/register/email-with-permissions",
             method="POST",
             path_params={},
             request=request,
@@ -114,10 +114,10 @@ class MembershipModule:
         )
 
     def save_user_name_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/user-name-with-permissions"""
+        """POST /{version}/membership/auth/register/user-name-with-permissions"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/user-name-with-permissions",
+            path="/{version}/membership/auth/register/user-name-with-permissions",
             method="POST",
             path_params={},
             request=request,
@@ -127,10 +127,10 @@ class MembershipModule:
         )
 
     def delete_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/membership/users"""
+        """DELETE /{version}/membership/auth"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users",
+            path="/{version}/membership/auth",
             method="DELETE",
             path_params={},
             request=request,
@@ -140,10 +140,10 @@ class MembershipModule:
         )
 
     def get_user(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/users/{id}"""
+        """GET /{version}/membership/auth/{id}"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/{id}",
+            path="/{version}/membership/auth/{id}",
             method="GET",
             path_params={"id": id},
             request=request,
@@ -153,10 +153,10 @@ class MembershipModule:
         )
 
     def get_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/users"""
+        """GET /{version}/membership/auth"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users",
+            path="/{version}/membership/auth",
             method="GET",
             path_params={},
             request=request,
@@ -166,10 +166,10 @@ class MembershipModule:
         )
 
     def get_user_preferences(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/users/{id}/preferences"""
+        """GET /{version}/membership/auth/{id}/preferences"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/{id}/preferences",
+            path="/{version}/membership/auth/{id}/preferences",
             method="GET",
             path_params={"id": id},
             request=request,
@@ -179,10 +179,10 @@ class MembershipModule:
         )
 
     def invite_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/invite"""
+        """POST /{version}/membership/auth/invite"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/invite",
+            path="/{version}/membership/auth/invite",
             method="POST",
             path_params={},
             request=request,
@@ -192,10 +192,10 @@ class MembershipModule:
         )
 
     def assign_role_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users/assign-roles"""
+        """PUT /{version}/membership/auth/assign-roles"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/assign-roles",
+            path="/{version}/membership/auth/assign-roles",
             method="PUT",
             path_params={},
             request=request,
@@ -205,10 +205,10 @@ class MembershipModule:
         )
 
     def unblock_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/membership/users/unblock"""
+        """PATCH /{version}/membership/auth/unblock"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/unblock",
+            path="/{version}/membership/auth/unblock",
             method="PATCH",
             path_params={},
             request=request,
@@ -218,10 +218,10 @@ class MembershipModule:
         )
 
     def update_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users"""
+        """PUT /{version}/membership/auth"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users",
+            path="/{version}/membership/auth",
             method="PUT",
             path_params={},
             request=request,
@@ -231,10 +231,10 @@ class MembershipModule:
         )
 
     def update_user_preferences(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users/{id}/preferences"""
+        """PUT /{version}/membership/auth/{id}/preferences"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/{id}/preferences",
+            path="/{version}/membership/auth/{id}/preferences",
             method="PUT",
             path_params={"id": id},
             request=request,
@@ -439,12 +439,131 @@ class MembershipModule:
         )
 
     def link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/{userId}/link-identity"""
+        """POST /{version}/membership/auth/{userId}/link-identity"""
         return self._transport.send(
             target="api",
-            path="/{version}/membership/users/{userId}/link-identity",
+            path="/{version}/membership/auth/{userId}/link-identity",
             method="POST",
             path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def change_password(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/change"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/change",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def request_password_reset(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/reset/request"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/reset/request",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def confirm_password_reset(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/reset/confirm"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/reset/confirm",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def map_auth_to_user(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{userId}/map-auth"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{userId}/map-auth",
+            method="POST",
+            path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_contact_roles(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/users/{userId}/roles"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{userId}/roles",
+            method="PUT",
+            path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def grant_contact_consent(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/consent"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/consent",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def unsubscribe_contact(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_contact_tag_subscription(
+        self,
+        contact_id: str,
+        comm_channel: str,
+        channel: str,
+        tag: str,
+        *,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """PUT /{version}/membership/users/{contactId}/marketing-state/{commChannel}/{channel}/tags/{tag}"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{commChannel}/{channel}/tags/{tag}",
+            method="PUT",
+            path_params={
+                "contactId": contact_id,
+                "commChannel": comm_channel,
+                "channel": channel,
+                "tag": tag,
+            },
             request=request,
             scope="project",
             timeout=timeout,
@@ -457,10 +576,10 @@ class AsyncMembershipModule:
         self._transport = transport
 
     async def block_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/membership/users/block"""
+        """PATCH /{version}/membership/auth/block"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/block",
+            path="/{version}/membership/auth/block",
             method="PATCH",
             path_params={},
             request=request,
@@ -470,10 +589,10 @@ class AsyncMembershipModule:
         )
 
     async def save_system_user_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/service"""
+        """POST /{version}/membership/auth/register/service"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/service",
+            path="/{version}/membership/auth/register/service",
             method="POST",
             path_params={},
             request=request,
@@ -483,10 +602,10 @@ class AsyncMembershipModule:
         )
 
     async def save_guest_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/guest"""
+        """POST /{version}/membership/auth/register/guest"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/guest",
+            path="/{version}/membership/auth/register/guest",
             method="POST",
             path_params={},
             request=request,
@@ -496,10 +615,10 @@ class AsyncMembershipModule:
         )
 
     async def save_user_name_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/user-name"""
+        """POST /{version}/membership/auth/register/user-name"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/user-name",
+            path="/{version}/membership/auth/register/user-name",
             method="POST",
             path_params={},
             request=request,
@@ -509,10 +628,10 @@ class AsyncMembershipModule:
         )
 
     async def save_email_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/email"""
+        """POST /{version}/membership/auth/register/email"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/email",
+            path="/{version}/membership/auth/register/email",
             method="POST",
             path_params={},
             request=request,
@@ -522,10 +641,10 @@ class AsyncMembershipModule:
         )
 
     async def save_phone_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/phone"""
+        """POST /{version}/membership/auth/register/phone"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/phone",
+            path="/{version}/membership/auth/register/phone",
             method="POST",
             path_params={},
             request=request,
@@ -535,10 +654,10 @@ class AsyncMembershipModule:
         )
 
     async def save_phone_user_name_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/phone-with-permissions"""
+        """POST /{version}/membership/auth/register/phone-with-permissions"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/phone-with-permissions",
+            path="/{version}/membership/auth/register/phone-with-permissions",
             method="POST",
             path_params={},
             request=request,
@@ -548,10 +667,10 @@ class AsyncMembershipModule:
         )
 
     async def save_email_user_name_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/email-with-permissions"""
+        """POST /{version}/membership/auth/register/email-with-permissions"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/email-with-permissions",
+            path="/{version}/membership/auth/register/email-with-permissions",
             method="POST",
             path_params={},
             request=request,
@@ -561,10 +680,10 @@ class AsyncMembershipModule:
         )
 
     async def save_user_name_with_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/register/user-name-with-permissions"""
+        """POST /{version}/membership/auth/register/user-name-with-permissions"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/register/user-name-with-permissions",
+            path="/{version}/membership/auth/register/user-name-with-permissions",
             method="POST",
             path_params={},
             request=request,
@@ -574,10 +693,10 @@ class AsyncMembershipModule:
         )
 
     async def delete_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/membership/users"""
+        """DELETE /{version}/membership/auth"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users",
+            path="/{version}/membership/auth",
             method="DELETE",
             path_params={},
             request=request,
@@ -587,10 +706,10 @@ class AsyncMembershipModule:
         )
 
     async def get_user(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/users/{id}"""
+        """GET /{version}/membership/auth/{id}"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/{id}",
+            path="/{version}/membership/auth/{id}",
             method="GET",
             path_params={"id": id},
             request=request,
@@ -600,10 +719,10 @@ class AsyncMembershipModule:
         )
 
     async def get_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/users"""
+        """GET /{version}/membership/auth"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users",
+            path="/{version}/membership/auth",
             method="GET",
             path_params={},
             request=request,
@@ -613,10 +732,10 @@ class AsyncMembershipModule:
         )
 
     async def get_user_preferences(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/users/{id}/preferences"""
+        """GET /{version}/membership/auth/{id}/preferences"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/{id}/preferences",
+            path="/{version}/membership/auth/{id}/preferences",
             method="GET",
             path_params={"id": id},
             request=request,
@@ -626,10 +745,10 @@ class AsyncMembershipModule:
         )
 
     async def invite_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/invite"""
+        """POST /{version}/membership/auth/invite"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/invite",
+            path="/{version}/membership/auth/invite",
             method="POST",
             path_params={},
             request=request,
@@ -639,10 +758,10 @@ class AsyncMembershipModule:
         )
 
     async def assign_role_permissions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users/assign-roles"""
+        """PUT /{version}/membership/auth/assign-roles"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/assign-roles",
+            path="/{version}/membership/auth/assign-roles",
             method="PUT",
             path_params={},
             request=request,
@@ -652,10 +771,10 @@ class AsyncMembershipModule:
         )
 
     async def unblock_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/membership/users/unblock"""
+        """PATCH /{version}/membership/auth/unblock"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/unblock",
+            path="/{version}/membership/auth/unblock",
             method="PATCH",
             path_params={},
             request=request,
@@ -665,10 +784,10 @@ class AsyncMembershipModule:
         )
 
     async def update_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users"""
+        """PUT /{version}/membership/auth"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users",
+            path="/{version}/membership/auth",
             method="PUT",
             path_params={},
             request=request,
@@ -678,10 +797,10 @@ class AsyncMembershipModule:
         )
 
     async def update_user_preferences(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users/{id}/preferences"""
+        """PUT /{version}/membership/auth/{id}/preferences"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/{id}/preferences",
+            path="/{version}/membership/auth/{id}/preferences",
             method="PUT",
             path_params={"id": id},
             request=request,
@@ -886,12 +1005,131 @@ class AsyncMembershipModule:
         )
 
     async def link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/users/{userId}/link-identity"""
+        """POST /{version}/membership/auth/{userId}/link-identity"""
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/users/{userId}/link-identity",
+            path="/{version}/membership/auth/{userId}/link-identity",
             method="POST",
             path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def change_password(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/change"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/change",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def request_password_reset(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/reset/request"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/reset/request",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def confirm_password_reset(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/reset/confirm"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/reset/confirm",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def map_auth_to_user(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{userId}/map-auth"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{userId}/map-auth",
+            method="POST",
+            path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_contact_roles(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/users/{userId}/roles"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{userId}/roles",
+            method="PUT",
+            path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def grant_contact_consent(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/consent"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/consent",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def unsubscribe_contact(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_contact_tag_subscription(
+        self,
+        contact_id: str,
+        comm_channel: str,
+        channel: str,
+        tag: str,
+        *,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """PUT /{version}/membership/users/{contactId}/marketing-state/{commChannel}/{channel}/tags/{tag}"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{commChannel}/{channel}/tags/{tag}",
+            method="PUT",
+            path_params={
+                "contactId": contact_id,
+                "commChannel": comm_channel,
+                "channel": channel,
+                "tag": tag,
+            },
             request=request,
             scope="project",
             timeout=timeout,
