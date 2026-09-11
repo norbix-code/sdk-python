@@ -633,6 +633,19 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def get_push_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/disable-dependencies"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/disable-dependencies",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def archive_push_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/notifications/push/templates/{Id}/archive"""
         return self._transport.send(
@@ -743,6 +756,19 @@ class NotificationsModule:
             target="hub",
             path="/{version}/notifications/push/templates",
             method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def render_push(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/templates/render"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/templates/render",
+            method="POST",
             path_params={},
             request=request,
             scope="project",
@@ -1101,6 +1127,19 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def stop_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/campaigns/{Id}/stop"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{Id}/stop",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_push_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{campaignId}/messages"""
         return self._transport.send(
@@ -1186,6 +1225,19 @@ class NotificationsModule:
             path="/{version}/notifications/push/campaigns/{id}/stats",
             method="GET",
             path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def preview_push_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/preview"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/preview",
+            method="GET",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,
@@ -2289,6 +2341,19 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def get_push_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/disable-dependencies"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/disable-dependencies",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def archive_push_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/notifications/push/templates/{Id}/archive"""
         return await self._transport.send(
@@ -2399,6 +2464,19 @@ class AsyncNotificationsModule:
             target="hub",
             path="/{version}/notifications/push/templates",
             method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def render_push(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/templates/render"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/templates/render",
+            method="POST",
             path_params={},
             request=request,
             scope="project",
@@ -2757,6 +2835,19 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def stop_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/campaigns/{Id}/stop"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{Id}/stop",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_push_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{campaignId}/messages"""
         return await self._transport.send(
@@ -2842,6 +2933,19 @@ class AsyncNotificationsModule:
             path="/{version}/notifications/push/campaigns/{id}/stats",
             method="GET",
             path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def preview_push_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/preview"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/preview",
+            method="GET",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,
