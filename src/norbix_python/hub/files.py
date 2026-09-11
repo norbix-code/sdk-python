@@ -217,6 +217,19 @@ class FilesModule:
             bearer_token=bearer_token,
         )
 
+    def test_files_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/integrations/test"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def set_files_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/files/integrations/{Id}/default"""
         return self._transport.send(
@@ -435,6 +448,19 @@ class AsyncFilesModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/files/integrations",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_files_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/integrations/test"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/integrations/test",
             method="POST",
             path_params={},
             request=request,

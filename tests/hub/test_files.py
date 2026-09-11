@@ -24,7 +24,15 @@ def test_hub_files_module_surface() -> None:
     assert callable(module.get_files_integrations)
     assert callable(module.save_files_integration)
     assert callable(module.set_files_integration_as_default)
+    assert callable(module.test_files_integration)
 
+
+def test_hub_files_test_files_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.files.test_files_integration(integrationId="stub-integrationId")
+    assert transport.last_request['method'] == 'POST'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
 
 def test_hub_files_disable_files_request_shape() -> None:
     client, transport = make_client(account_id=None)
