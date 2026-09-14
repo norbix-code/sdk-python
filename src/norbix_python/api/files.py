@@ -120,6 +120,10 @@ class FilesModule:
     def get_public_file(self, public_id: str, name: str, *, timeout: float | None = None, **request: Any) -> Any:
         """GET /{version}/files/public/{publicId}/{name}
 
+        The gateway declares the route as /{version}/files/public/{PublicId}/{Name*} —
+        written out here exactly as the gateway spells it, so the SDK coverage
+        matrix can see that the two agree (knowledge.md K23).
+
         Reads a file somebody made public.
 
         **No sign-in and no project id.** The SDK deliberately sends no
@@ -268,6 +272,10 @@ class AsyncFilesModule:
 
     async def get_public_file(self, public_id: str, name: str, *, timeout: float | None = None, **request: Any) -> Any:
         """GET /{version}/files/public/{publicId}/{name}
+
+        The gateway declares the route as /{version}/files/public/{PublicId}/{Name*} —
+        written out here exactly as the gateway spells it, so the SDK coverage
+        matrix can see that the two agree (knowledge.md K23).
 
         Reads a file somebody made public.
 
