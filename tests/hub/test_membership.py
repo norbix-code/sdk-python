@@ -216,6 +216,16 @@ def test_hub_membership_new_endpoints_surface() -> None:
     assert callable(module.get_passkey_settings)
     assert callable(module.save_passkey_settings)
     assert callable(module.get_policy_options)
+    assert callable(module.create_contact)
+    assert callable(module.get_all_contacts)
+    assert callable(module.get_contact)
+    assert callable(module.delete_contact)
+    assert callable(module.merge_contacts)
+    assert callable(module.add_contact_identity)
+    assert callable(module.remove_contact_identity)
+    assert callable(module.promote_contact_identity)
+    assert callable(module.update_authentication_settings)
+    assert callable(module.update_password_complexity)
 
 
 def test_hub_membership_get_passkey_settings_request_shape() -> None:
@@ -240,4 +250,18 @@ def test_hub_membership_get_policy_options_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+
+def test_hub_membership_create_contact_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.membership.create_contact()
+    assert transport.last_request['method'] == 'POST'
+    assert '/membership/users' in transport.last_request['url']
+
+
+def test_hub_membership_update_password_complexity_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.membership.update_password_complexity()
+    assert transport.last_request['method'] == 'PUT'
+    assert '/membership/authorization/password-complexity' in transport.last_request['url']
 
