@@ -22,6 +22,10 @@ Access with `norbix.hub.files`.
 | `save_files_integration` | `POST` | `/{version}/files/integrations` | `project` |
 | `set_files_integration_as_default` | `PUT` | `/{version}/files/integrations/{Id}/default` | `project` |
 | `test_files_integration` | `POST` | `/{version}/files/integrations/test` | `project` |
+| `make_file_public` | `POST` | `/{version}/files/item/public` | `project` |
+| `make_file_private` | `POST` | `/{version}/files/item/private` | `project` |
+| `make_folder_public` | `POST` | `/{version}/files/folder/public` | `project` |
+| `make_folder_private` | `POST` | `/{version}/files/folder/private` | `project` |
 
 ## What the parts are
 
@@ -34,3 +38,57 @@ Access with `norbix.hub.files`.
 
 Uploading and downloading file bytes is on the public API side — see
 [API · Files](../api/files.md).
+
+## Public file links
+
+A file, or a whole folder, can be made readable by anyone holding a link — no
+sign-in, no project id, no account. Norbix keeps a record and mints an
+unguessable id that looks like `nbpf_7hK2…`; the link is then
+
+```
+https://<your api host>/v3/files/public/nbpf_7hK2…/invoice.pdf
+```
+
+```python
+# one file
+result = client.hub.files.make_file_public(
+    filesIntegrationId=integration_id,
+    path="invoices/invoice.pdf",
+)
+public_id = result["id"]          # "nbpf_7hK2abc"
+
+# take it back
+client.hub.files.make_file_private(
+    filesIntegrationId=integration_id,
+    path="invoices/invoice.pdf",
+)
+
+# a whole folder — one record, however many files are under it
+folder = client.hub.files.make_folder_public(
+    filesIntegrationId=integration_id,
+    path="invoices",
+)
+# every file under invoices/ is now readable at
+# https://<api host>/v3/files/public/<folder["id"]>/<path inside the folder>
+
+client.hub.files.make_folder_private(
+    filesIntegrationId=integration_id,
+    path="invoices",
+)
+```
+
+Four rules worth knowing:
+
+* **Publishing a folder is one record**, whatever is under it, at any depth.
+* **Asking twice gives the same id back.** The first link is already in
+  somebody's hands; a second id would leave it live and invisible.
+* **A file cannot be made private on its own while a folder above it is
+  public.** The call is refused (`CM-ERRORS-FILES-021`) and the message names
+  the folder to switch off.
+* **The root cannot be published**, and a folder link with nothing after it is
+  a `404` — publishing a prefix must not publish its listing.
+
+After any of these, `get_file` and `list_files` report `isPublic` and
+`publicUrl` on the file, and a listing carries `publicFolders`. Opening the
+link itself is on the public API side — see
+[API · Files](../api/files.md#reading-a-public-link).

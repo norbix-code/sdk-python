@@ -44,3 +44,33 @@ client.api.files.commit_upload(
 `get_signed_url` returns a short-lived address anyone can open, which suits a
 browser preview or a download link. `download_file_api` streams the bytes
 through Norbix instead.
+
+## Reading a public link
+
+`get_public_file` reads a file somebody made public with
+[`hub.files.make_file_public`](../hub/files.md#public-file-links).
+
+**This call carries no sign-in and no project id.** The SDK deliberately sends
+no `Authorization` header for it, even when the client you call it on is signed
+in. That is what public means: the link has to work in an e-mail, in an
+`<img src>`, or in a browser on a stranger's phone, and the unguessable
+`nbpf_…` id is the whole credential.
+
+```python
+pdf_bytes = client.api.files.get_public_file("nbpf_7hK2abc", "invoice.pdf")
+
+# a file inside a published folder — the path keeps its slashes
+report = client.api.files.get_public_file("nbpf_folder1", "2026/q1/report.pdf")
+```
+
+It gives back raw `bytes`. When the storage provider signs its own links
+(Amazon S3, Azure Blob, Google Cloud Storage) Norbix answers `302` and the call
+follows the redirect, so the bytes come straight from the provider.
+
+Every miss is the same plain `404` — an unknown id, a name that does not match,
+a file made private again, a file gone from storage. A more precise answer
+would tell a stranger that the file is there.
+
+The link is a plain HTTP address, so anything that can do a `GET` can read it —
+`httpx`, `curl`, an `<img>` tag. You do not need this SDK, or a Norbix client
+at all, to open one; the method is here for code that already has a client.

@@ -13,6 +13,11 @@ from .errors import NorbixError, error_from_http
 
 HttpVerb = Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
 Scope = Literal["project", "account", "unauthenticated"]
+# How to read a successful response body. "json" (the default) parses it.
+# "binary" gives back the raw bytes — for an endpoint that answers with a
+# file rather than a document, such as a public file link. Parsing a PDF as
+# JSON quietly hands back its text instead (10b-files slice SDK-2).
+ResponseType = Literal["json", "binary"]
 Target = Literal["api", "hub"]
 
 _IDEMPOTENT_VERBS: frozenset[str] = frozenset({"GET", "DELETE"})
@@ -58,6 +63,8 @@ class Transport:
         bearer_token: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        response_type: ResponseType = "json",
+        follow_redirects: bool = False,
     ) -> Any:
         if scope == "account" and not self._cfg.account_id:
             raise NorbixError(
@@ -112,6 +119,7 @@ class Transport:
                 headers=headers,
                 json=body,
                 timeout=timeout or self._cfg.timeout,
+                follow_redirects=follow_redirects,
             )
         except httpx.HTTPError as exc:
             raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
@@ -130,6 +138,8 @@ class Transport:
                 details=data,
             )
 
+        if response_type == "binary":
+            return response.content
         if response.status_code == 204 or not response.content:
             return None
         try:
@@ -145,6 +155,7 @@ class Transport:
         headers: dict[str, str],
         json: dict[str, Any] | None,
         timeout: float,
+        follow_redirects: bool = False,
     ) -> httpx.Response:
         attempt = 0
         last_response: httpx.Response | None = None
@@ -155,6 +166,7 @@ class Transport:
                 headers=headers,
                 json=json,
                 timeout=timeout,
+                follow_redirects=follow_redirects,
             )
             last_response = response
             if response.status_code < 400:
@@ -193,6 +205,8 @@ class AsyncTransport:
         bearer_token: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        response_type: ResponseType = "json",
+        follow_redirects: bool = False,
     ) -> Any:
         if scope == "account" and not self._cfg.account_id:
             raise NorbixError(
@@ -247,6 +261,7 @@ class AsyncTransport:
                 headers=headers,
                 json=body,
                 timeout=timeout or self._cfg.timeout,
+                follow_redirects=follow_redirects,
             )
         except httpx.HTTPError as exc:
             raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
@@ -265,6 +280,8 @@ class AsyncTransport:
                 details=data,
             )
 
+        if response_type == "binary":
+            return response.content
         if response.status_code == 204 or not response.content:
             return None
         try:
@@ -280,12 +297,18 @@ class AsyncTransport:
         headers: dict[str, str],
         json: dict[str, Any] | None,
         timeout: float,
+        follow_redirects: bool = False,
     ) -> httpx.Response:
         attempt = 0
         last_response: httpx.Response | None = None
         while attempt < _DEFAULT_MAX_RETRIES:
             response = await self._client.request(
-                method=method, url=url, headers=headers, json=json, timeout=timeout
+                method=method,
+                url=url,
+                headers=headers,
+                json=json,
+                timeout=timeout,
+                follow_redirects=follow_redirects,
             )
             last_response = response
             if response.status_code < 400:
