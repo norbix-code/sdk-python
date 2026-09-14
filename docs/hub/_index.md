@@ -7,7 +7,7 @@
 | [`database`](./database.md) | 41 |
 | [`echo`](./echo.md) | 1 |
 | [`email`](./email.md) | 1 |
-| [`files`](./files.md) | 18 |
+| [`files`](./files.md) | 22 |
 | [`internal`](./internal.md) | 1 |
 | [`logs`](./logs.md) | 9 |
 | [`membership`](./membership.md) | 25 |

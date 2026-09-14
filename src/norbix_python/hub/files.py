@@ -243,6 +243,97 @@ class FilesModule:
             bearer_token=bearer_token,
         )
 
+    # ------------------------------------------------------------------
+    # Public file links (10b-files slice PUB). Hand-added by slice SDK-2 in
+    # the shape the module generator produces.
+    #
+    # A file, or a whole folder, can be made readable by anyone holding a
+    # link — no sign-in, no project id. The gateway mints an unguessable
+    # ``nbpf_…`` id and the link is
+    # ``https://<api host>/v3/files/public/nbpf_…/invoice.pdf``.
+    #
+    # Worth knowing before you call these:
+    #   * publishing a folder is ONE record, whatever is under it;
+    #   * asking twice gives the same id back;
+    #   * a file cannot be made private on its own while a folder above it
+    #     is public (CM-ERRORS-FILES-021) — switch the folder off instead;
+    #   * the root cannot be published.
+    # ------------------------------------------------------------------
+
+    def make_file_public(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/item/public
+
+        Makes one file readable by anyone holding its link. The file has to
+        exist already. Answers with ``id`` — the ``nbpf_…`` public id.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/item/public",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def make_file_private(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/item/private
+
+        Takes the file's public link away; opening it afterwards gives a 404.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/item/private",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def make_folder_public(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/folder/public
+
+        Publishes a whole folder prefix — one record, however many files sit
+        under it, at any depth. Answers with the ``nbpf_…`` id.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/folder/public",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def make_folder_private(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/folder/private
+
+        Takes back every link inside the folder, per-file links included.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/folder/private",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncFilesModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -476,6 +567,97 @@ class AsyncFilesModule:
             path="/{version}/files/integrations/{Id}/default",
             method="PUT",
             path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    # ------------------------------------------------------------------
+    # Public file links (10b-files slice PUB). Hand-added by slice SDK-2 in
+    # the shape the module generator produces.
+    #
+    # A file, or a whole folder, can be made readable by anyone holding a
+    # link — no sign-in, no project id. The gateway mints an unguessable
+    # ``nbpf_…`` id and the link is
+    # ``https://<api host>/v3/files/public/nbpf_…/invoice.pdf``.
+    #
+    # Worth knowing before you call these:
+    #   * publishing a folder is ONE record, whatever is under it;
+    #   * asking twice gives the same id back;
+    #   * a file cannot be made private on its own while a folder above it
+    #     is public (CM-ERRORS-FILES-021) — switch the folder off instead;
+    #   * the root cannot be published.
+    # ------------------------------------------------------------------
+
+    async def make_file_public(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/item/public
+
+        Makes one file readable by anyone holding its link. The file has to
+        exist already. Answers with ``id`` — the ``nbpf_…`` public id.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/item/public",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def make_file_private(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/item/private
+
+        Takes the file's public link away; opening it afterwards gives a 404.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/item/private",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def make_folder_public(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/folder/public
+
+        Publishes a whole folder prefix — one record, however many files sit
+        under it, at any depth. Answers with the ``nbpf_…`` id.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/folder/public",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def make_folder_private(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/folder/private
+
+        Takes back every link inside the folder, per-file links included.
+
+        Keyword arguments: ``filesIntegrationId``, ``path``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/folder/private",
+            method="POST",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,

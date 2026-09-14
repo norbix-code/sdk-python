@@ -113,6 +113,46 @@ class FilesModule:
             bearer_token=bearer_token,
         )
 
+    # ------------------------------------------------------------------
+    # The public file link (10b-files slice PUB). Hand-added by slice SDK-2.
+    # ------------------------------------------------------------------
+
+    def get_public_file(self, public_id: str, name: str, *, timeout: float | None = None, **request: Any) -> Any:
+        """GET /{version}/files/public/{publicId}/{name}
+
+        Reads a file somebody made public.
+
+        **No sign-in and no project id.** The SDK deliberately sends no
+        ``Authorization`` header for this call, even when the client is signed
+        in: the link has to work in an e-mail, in an ``<img src>``, or in a
+        browser on a stranger's phone. The unguessable ``nbpf_…`` id is the
+        whole credential.
+
+        Gives back the file's raw ``bytes``. When the storage provider signs
+        its own links (Amazon S3, Azure Blob, Google Cloud Storage) the gateway
+        answers 302 and this call follows the redirect, so the bytes come from
+        the provider and never pass through Norbix.
+
+        ``name`` is the file's name for a file link, or the path inside the
+        folder for a folder link (``2026/q1/report.pdf``); its slashes stay
+        slashes.
+
+        Every miss is the same plain 404 — an unknown id, a name that does not
+        match, a file made private again, a file gone from storage. A more
+        precise answer would tell a stranger the file is there.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/files/public/{publicId}/{name}",
+            method="GET",
+            path_params={"publicId": public_id, "name": name},
+            request=request,
+            scope="unauthenticated",
+            timeout=timeout,
+            response_type="binary",
+            follow_redirects=True,
+        )
+
 
 class AsyncFilesModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -220,4 +260,44 @@ class AsyncFilesModule:
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
+        )
+
+    # ------------------------------------------------------------------
+    # The public file link (10b-files slice PUB). Hand-added by slice SDK-2.
+    # ------------------------------------------------------------------
+
+    async def get_public_file(self, public_id: str, name: str, *, timeout: float | None = None, **request: Any) -> Any:
+        """GET /{version}/files/public/{publicId}/{name}
+
+        Reads a file somebody made public.
+
+        **No sign-in and no project id.** The SDK deliberately sends no
+        ``Authorization`` header for this call, even when the client is signed
+        in: the link has to work in an e-mail, in an ``<img src>``, or in a
+        browser on a stranger's phone. The unguessable ``nbpf_…`` id is the
+        whole credential.
+
+        Gives back the file's raw ``bytes``. When the storage provider signs
+        its own links (Amazon S3, Azure Blob, Google Cloud Storage) the gateway
+        answers 302 and this call follows the redirect, so the bytes come from
+        the provider and never pass through Norbix.
+
+        ``name`` is the file's name for a file link, or the path inside the
+        folder for a folder link (``2026/q1/report.pdf``); its slashes stay
+        slashes.
+
+        Every miss is the same plain 404 — an unknown id, a name that does not
+        match, a file made private again, a file gone from storage. A more
+        precise answer would tell a stranger the file is there.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/files/public/{publicId}/{name}",
+            method="GET",
+            path_params={"publicId": public_id, "name": name},
+            request=request,
+            scope="unauthenticated",
+            timeout=timeout,
+            response_type="binary",
+            follow_redirects=True,
         )
