@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/python-%3E=3.10-blue)](https://python.org)
 [![License](https://img.shields.io/pypi/l/norbix.svg)](./LICENSE)
 
-Official Python SDK for [Norbix](https://norbix.dev).
+Official Python SDK for [Norbix](https://norbix.ai).
 Use split clients with flat module access:
 
 - `NorbixApi` for API scope (`client.database`, `client.membership`, ...)

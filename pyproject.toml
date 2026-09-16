@@ -10,7 +10,7 @@ keywords = ["norbix", "sdk", "python", "api", "hub", "baas"]
 dependencies = ["httpx>=0.27.0", "pydantic>=2.0"]
 
 [project.urls]
-Homepage = "https://norbix.dev"
+Homepage = "https://norbix.ai"
 Repository = "https://github.com/norbix-dev/norbix-python"
 Issues = "https://github.com/norbix-dev/norbix-python/issues"
 
