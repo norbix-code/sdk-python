@@ -1,9 +1,36 @@
 name: Release
 
+# Publishes `norbix` to PyPI via python-semantic-release on every push to `main`
+# (and prerelease branches `next` / `beta`). The next version comes from
+# conventional commits since the last `v*` tag.
+#
+# `main` is protected (changes only through pull requests), so the release does
+# NOT commit back: `semantic-release version --no-commit` stamps the version
+# into pyproject.toml / __init__.py only in the job's working tree, builds with
+# it, tags the current commit, pushes just the tag and creates the GitHub
+# Release. `version` in pyproject.toml on main stays stale; the tag is the
+# source of truth. CHANGELOG.md is no longer written (release notes live on
+# GitHub Releases).
+#
+# Required secrets:
+#   - PYPI_API_TOKEN — PyPI API token for the `norbix` project.
+#   - GITHUB_TOKEN   — provided automatically; tag + GitHub Release.
+
 on:
   push:
     branches: [main, next, beta]
   workflow_dispatch:
+    inputs:
+      republish:
+        description: >-
+          Recovery mode — skip semantic-release and build + publish the latest
+          git tag to PyPI (use when a tag exists but the PyPI upload failed).
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -13,49 +40,81 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-22.04
+    name: semantic-release
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: astral-sh/setup-uv@v5
-        with:
-          version: "latest"
+      - name: Sync branch tip
+        # A run checks out its triggering SHA. When several merges land close
+        # together that SHA is already behind origin; release from the remote
+        # tip instead so a quick follow-up merge never swallows a release.
+        if: github.event_name != 'workflow_dispatch' || inputs.republish != true
+        run: |
+          git fetch origin "${GITHUB_REF_NAME}"
+          git checkout "${GITHUB_REF_NAME}"
+          git reset --hard "origin/${GITHUB_REF_NAME}"
 
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v10
         with:
-          python-version: "3.12"
+          version: 'latest'
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
       - name: Install dependencies
         run: uv sync --all-groups
 
-      - name: Test before release
-        run: |
-          uv run pytest
+      - name: Lint
+        run: uv run ruff check .
 
-      - name: Bootstrap initial semantic-release tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if ! git tag -l "v*" | grep -q .; then
-            echo "No semantic-release tags found. Bootstrapping v0.0.0"
-            git tag v0.0.0
-            git push origin v0.0.0
-          else
-            echo "Existing semantic-release tags found. Skipping bootstrap."
-          fi
+      - name: Typecheck
+        run: uv run mypy src
+
+      - name: Test
+        run: uv run pytest
 
       - name: Semantic release version
+        if: github.event_name != 'workflow_dispatch' || inputs.republish != true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: uv run semantic-release version
+        # --no-commit: stamp + build + tag without a commit (main is protected).
+        # --push pushes the tag only and enables the GitHub Release.
+        run: uv run semantic-release version --no-commit --no-changelog --push
+
+      - name: Republish build (recovery)
+        if: github.event_name == 'workflow_dispatch' && inputs.republish == true
+        run: |
+          TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*')
+          VERSION="${TAG#v}"
+          echo "Recovery build: ${VERSION} (from tag ${TAG})"
+          git checkout --detach "${TAG}"
+          uv sync --all-groups
+          uv version "${VERSION}"
+          sed -i -E "s/^__version__ = \".*\"/__version__ = \"${VERSION}\"/" src/norbix_python/__init__.py
+          rm -rf dist
+          uv build
 
       - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           if ls dist/*.whl >/dev/null 2>&1; then
-            uv publish --token "$PYPI_TOKEN" dist/*
+            # --check-url skips files PyPI already has, so a re-run is safe.
+            uv publish --token "$PYPI_TOKEN" --check-url https://pypi.org/simple/ dist/*
           else
             echo "No new release artifacts produced; skipping PyPI publish."
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Release · ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          TAG=$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null || true)
+          if [ -n "$TAG" ]; then
+            echo "Latest tag: \`${TAG}\` — notes: ${{ github.server_url }}/${{ github.repository }}/releases/tag/${TAG}" >> $GITHUB_STEP_SUMMARY
           fi

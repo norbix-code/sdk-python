@@ -5,22 +5,56 @@ on:
   push:
     branches: [main, next, beta]
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest supported (requires-python >=3.10), the main dev version, newest.
+        python: ['3.10', '3.12', '3.13']
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
         with:
-          version: "latest"
-      - uses: actions/setup-python@v5
+          version: 'latest'
+      - uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
       - name: Install dependencies
-        run: uv sync --all-groups
+        run: uv sync --all-groups --python ${{ matrix.python }}
       - name: Lint
         run: uv run ruff check .
       - name: Typecheck
         run: uv run mypy src
       - name: Test
         run: uv run pytest
+
+  package:
+    name: Build package
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
+        with:
+          version: 'latest'
+      - name: uv build
+        run: uv build
+      - name: Check contents
+        run: |
+          ls -la dist
+          python3 - <<'EOF'
+          import sys, zipfile, glob
+          whl = glob.glob("dist/*.whl")[0]
+          names = zipfile.ZipFile(whl).namelist()
+          print(len(names), "files in", whl)
+          if not any(n.startswith("norbix_python/") for n in names):
+              sys.exit("::error::norbix_python package missing from the wheel")
+          leaked = [n for n in names if n.startswith(("tests/", "references/", "docs/"))]
+          if leaked:
+              sys.exit(f"::error::files that must not ship: {leaked}")
+          EOF
