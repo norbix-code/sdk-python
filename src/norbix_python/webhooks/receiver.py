@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import json
 import os
-from collections.abc import Awaitable, Callable, Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from typing import Any
 
 from .errors import NorbixWebhookParseError, NorbixWebhookSignatureError
@@ -169,7 +169,9 @@ class _BaseReceiver:
         return payload, event, ctx
 
     @staticmethod
-    def _result(envelope: WebhookEnvelope, verified: bool | None, handled: bool) -> WebhookHandleResult:
+    def _result(
+        envelope: WebhookEnvelope, verified: bool | None, handled: bool
+    ) -> WebhookHandleResult:
         return WebhookHandleResult(
             event=envelope.event,
             deliveryId=envelope.id,
