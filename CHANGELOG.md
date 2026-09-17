@@ -1,5 +1,7 @@
 # CHANGELOG
 
+> Release notes after 1.1.1 are published on [GitHub Releases](https://github.com/norbix-code/sdk-python/releases); this file is no longer updated.
+
 <!-- version list -->
 
 ## v1.1.1 (2026-04-29)
