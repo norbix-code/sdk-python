@@ -124,7 +124,9 @@ class FilesModule:
         the ``files:create`` permission, because the probe writes to the storage.
 
         Gives back a dict with ``items`` — one entry per step, each with
-        ``operation``, ``result`` (``"OK"`` or ``"Failed"``) and ``errors``.
+        ``operation`` (``UploadFile``, ``GetFile``, ``GetAllFiles``, ``DeleteFile``),
+        ``result`` (``"OK"``, ``"FAILED"``, or ``"NOT_TESTED"`` once an earlier
+        step failed) and ``errors``.
         """
         return self._transport.send(
             target="api",
@@ -301,7 +303,9 @@ class AsyncFilesModule:
         the ``files:create`` permission, because the probe writes to the storage.
 
         Gives back a dict with ``items`` — one entry per step, each with
-        ``operation``, ``result`` (``"OK"`` or ``"Failed"``) and ``errors``.
+        ``operation`` (``UploadFile``, ``GetFile``, ``GetAllFiles``, ``DeleteFile``),
+        ``result`` (``"OK"``, ``"FAILED"``, or ``"NOT_TESTED"`` once an earlier
+        step failed) and ``errors``.
         """
         return await self._transport.send(
             target="api",

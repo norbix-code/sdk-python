@@ -212,10 +212,10 @@ def test_delete_many_files() -> None:
 
 PROBE_ANSWER = {
     "items": [
-        {"operation": "Upload", "result": "OK", "errors": []},
-        {"operation": "Read", "result": "OK", "errors": []},
-        {"operation": "List", "result": "OK", "errors": []},
-        {"operation": "Delete", "result": "Failed", "errors": ["Access denied"]},
+        {"operation": "UploadFile", "result": "OK", "errors": []},
+        {"operation": "GetFile", "result": "FAILED", "errors": ["Access denied"]},
+        {"operation": "GetAllFiles", "result": "NOT_TESTED", "errors": []},
+        {"operation": "DeleteFile", "result": "NOT_TESTED", "errors": []},
     ],
     "responseStatus": {"errorCode": "", "message": ""},
 }
@@ -282,9 +282,14 @@ def test_api_test_files_integration_gives_back_the_parsed_items() -> None:
 
     result = client.api.files.test_files_integration(INTEGRATION_ID)
 
-    assert [item["operation"] for item in result["items"]] == ["Upload", "Read", "List", "Delete"]
+    assert [item["operation"] for item in result["items"]] == [
+        "UploadFile",
+        "GetFile",
+        "GetAllFiles",
+        "DeleteFile",
+    ]
     assert result["items"][0]["result"] == "OK"
-    assert result["items"][3] == {"operation": "Delete", "result": "Failed", "errors": ["Access denied"]}
+    assert result["items"][1] == {"operation": "GetFile", "result": "FAILED", "errors": ["Access denied"]}
 
 
 def test_api_test_files_integration_error_status_raises() -> None:
@@ -326,4 +331,4 @@ def test_api_test_files_integration_async() -> None:
     assert request["method"] == "POST"
     assert urlparse(request["url"]).path == f"/v2/files/{INTEGRATION_ID}/test"
     assert request["headers"]["x-cm-projectid"] == "test-project"
-    assert result["items"][2]["operation"] == "List"
+    assert result["items"][2]["operation"] == "GetAllFiles"

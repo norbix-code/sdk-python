@@ -57,12 +57,14 @@ needs the `files:create` permission.
 result = client.api.files.test_files_integration(integration_id)
 for step in result["items"]:
     print(step["operation"], step["result"], step.get("errors"))
-# Upload OK None
-# Read OK None
+# UploadFile OK None
+# GetFile OK None
 # ...
 ```
 
-Each item has `operation`, `result` (`"OK"` or `"Failed"`) and `errors`.
+Each item has `operation` (`UploadFile`, `GetFile`, `GetAllFiles`,
+`DeleteFile`, in that order), `result` (`"OK"`, `"FAILED"`, or `"NOT_TESTED"`
+once an earlier step failed) and `errors`.
 When the gateway answers with an error status (for example for an unknown
 integration id), the call raises a `NorbixError`, like the other methods; the
 gateway's `responseStatus` is in the error's `details`.
