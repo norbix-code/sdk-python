@@ -113,6 +113,30 @@ class FilesModule:
             bearer_token=bearer_token,
         )
 
+    def test_files_integration(self, files_integration_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/{filesIntegrationId}/test
+
+        Hand-added by slice API-TEST (10b-files, #39) — the public API twin of
+        ``hub.files.test_files_integration`` (``POST /{version}/files/integrations/test``).
+
+        Runs a live probe against the storage integration: it uploads a small
+        file, reads it back, lists the folder and deletes the file again. Needs
+        the ``files:create`` permission, because the probe writes to the storage.
+
+        Gives back a dict with ``items`` — one entry per step, each with
+        ``operation``, ``result`` (``"OK"`` or ``"Failed"``) and ``errors``.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/files/{filesIntegrationId}/test",
+            method="POST",
+            path_params={"filesIntegrationId": files_integration_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     # ------------------------------------------------------------------
     # The public file link (10b-files slice PUB). Hand-added by slice SDK-2.
     # ------------------------------------------------------------------
@@ -258,6 +282,30 @@ class AsyncFilesModule:
         return await self._transport.send(
             target="api",
             path="/{version}/files/{filesIntegrationId}/upload-url",
+            method="POST",
+            path_params={"filesIntegrationId": files_integration_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_files_integration(self, files_integration_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/files/{filesIntegrationId}/test
+
+        Hand-added by slice API-TEST (10b-files, #39) — the public API twin of
+        ``hub.files.test_files_integration`` (``POST /{version}/files/integrations/test``).
+
+        Runs a live probe against the storage integration: it uploads a small
+        file, reads it back, lists the folder and deletes the file again. Needs
+        the ``files:create`` permission, because the probe writes to the storage.
+
+        Gives back a dict with ``items`` — one entry per step, each with
+        ``operation``, ``result`` (``"OK"`` or ``"Failed"``) and ``errors``.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/files/{filesIntegrationId}/test",
             method="POST",
             path_params={"filesIntegrationId": files_integration_id},
             request=request,
