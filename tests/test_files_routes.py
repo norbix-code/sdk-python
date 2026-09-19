@@ -5,15 +5,24 @@ only check the HTTP verb and that the address starts with ``https://``. A method
 pointed at the wrong path would still pass them. These tests check the path
 itself, and that the values the caller passes reach the query string or the body.
 
-One test per endpoint: 12 on the hub (the dashboard API) and 8 on the public API.
+One test per endpoint: 12 on the hub (the dashboard API) and 9 on the public API,
+plus a few more for ``api.files.test_files_integration`` (slice API-TEST, #39).
 Each test builds its own client and its own fake response, so the order the tests
 run in does not matter and no real storage provider is contacted.
 """
 
 from __future__ import annotations
 
+import asyncio
 import json
+from typing import Any
 from urllib.parse import urlparse
+
+import httpx
+import pytest
+
+from norbix_python import AsyncNorbix, Norbix
+from norbix_python.errors import ValidationError
 
 from .helpers import make_client
 
@@ -193,3 +202,133 @@ def test_delete_many_files() -> None:
     )
     method, path, _, _ = _sent(transport)
     assert (method, path) == ("DELETE", f"/v2/files/{INTEGRATION_ID}/bulk")
+
+
+# --- public API: testing an integration (slice API-TEST, #39) ----------------
+#
+# POST /{version}/files/{filesIntegrationId}/test is the public API twin of the
+# hub's POST /{version}/files/integrations/test. The two must not be mixed up:
+# the id goes in the path here, in the body there.
+
+PROBE_ANSWER = {
+    "items": [
+        {"operation": "UploadFile", "result": "OK", "errors": []},
+        {"operation": "GetFile", "result": "FAILED", "errors": ["Access denied"]},
+        {"operation": "GetAllFiles", "result": "NOT_TESTED", "errors": []},
+        {"operation": "DeleteFile", "result": "NOT_TESTED", "errors": []},
+    ],
+    "responseStatus": {"errorCode": "", "message": ""},
+}
+
+
+class _Answers(httpx.BaseTransport):
+    """Records the request and answers with a fixed status and JSON body."""
+
+    def __init__(self, status: int, payload: dict[str, Any]) -> None:
+        self.status = status
+        self.payload = payload
+        self.last_request: dict[str, Any] | None = None
+
+    def handle_request(self, request: httpx.Request) -> httpx.Response:
+        self.last_request = {
+            "method": request.method,
+            "url": str(request.url),
+            "headers": dict(request.headers),
+            "body": request.content.decode("utf-8") if request.content else "",
+        }
+        return httpx.Response(self.status, json=self.payload)
+
+
+class _AsyncAnswers(httpx.AsyncBaseTransport):
+    def __init__(self, status: int, payload: dict[str, Any]) -> None:
+        self.status = status
+        self.payload = payload
+        self.last_request: dict[str, Any] | None = None
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        self.last_request = {
+            "method": request.method,
+            "url": str(request.url),
+            "headers": dict(request.headers),
+            "body": request.content.decode("utf-8") if request.content else "",
+        }
+        return httpx.Response(self.status, json=self.payload)
+
+
+def test_api_test_files_integration_route() -> None:
+    client, transport = make_client()
+    client.api.files.test_files_integration(INTEGRATION_ID)
+    method, path, _, body = _sent(transport)
+    assert (method, path) == ("POST", f"/v2/files/{INTEGRATION_ID}/test")
+    # The id travels in the path only, not in the body as on the hub route.
+    assert "integrationId" not in body
+
+
+def test_api_test_files_integration_sends_project_scope_headers() -> None:
+    client, transport = make_client()
+    client.api.files.test_files_integration(INTEGRATION_ID)
+    headers = transport.last_request["headers"]
+    assert headers["authorization"] == "Bearer test-token"
+    assert headers["x-cm-projectid"] == "test-project"
+
+
+def test_api_test_files_integration_gives_back_the_parsed_items() -> None:
+    transport = _Answers(200, PROBE_ANSWER)
+    client = Norbix(
+        project_id="test-project",
+        bearer_token="test-token",
+        http_client=httpx.Client(transport=transport),
+    )
+
+    result = client.api.files.test_files_integration(INTEGRATION_ID)
+
+    assert [item["operation"] for item in result["items"]] == [
+        "UploadFile",
+        "GetFile",
+        "GetAllFiles",
+        "DeleteFile",
+    ]
+    assert result["items"][0]["result"] == "OK"
+    assert result["items"][1] == {"operation": "GetFile", "result": "FAILED", "errors": ["Access denied"]}
+
+
+def test_api_test_files_integration_error_status_raises() -> None:
+    answer = {
+        "responseStatus": {
+            "errorCode": "IntegrationNotFound",
+            "message": "Files integration was not found",
+        }
+    }
+    transport = _Answers(400, answer)
+    client = Norbix(
+        project_id="test-project",
+        bearer_token="test-token",
+        http_client=httpx.Client(transport=transport),
+    )
+
+    with pytest.raises(ValidationError) as caught:
+        client.api.files.test_files_integration(INTEGRATION_ID)
+
+    assert caught.value.status == 400
+    assert caught.value.details["responseStatus"]["errorCode"] == "IntegrationNotFound"
+
+
+def test_api_test_files_integration_async() -> None:
+    transport = _AsyncAnswers(200, PROBE_ANSWER)
+    client = AsyncNorbix(
+        project_id="test-project",
+        bearer_token="test-token",
+        http_client=httpx.AsyncClient(transport=transport),
+    )
+
+    async def run() -> Any:
+        return await client.api.files.test_files_integration(INTEGRATION_ID)
+
+    result = asyncio.run(run())
+
+    request = transport.last_request
+    assert request is not None
+    assert request["method"] == "POST"
+    assert urlparse(request["url"]).path == f"/v2/files/{INTEGRATION_ID}/test"
+    assert request["headers"]["x-cm-projectid"] == "test-project"
+    assert result["items"][2]["operation"] == "GetAllFiles"
