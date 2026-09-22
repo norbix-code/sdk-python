@@ -80,6 +80,28 @@ client.hub.notifications.register_device(
 )
 ```
 
+## Listing registered devices
+
+`get_push_devices` returns the devices registered in the project, each with
+the user it belongs to. Narrow it with `userId`, `deviceKey` (the provider
+token) or `platform` (`ios`, `android`, `chrome`, `safari`, `expo`); a word
+outside that list is refused rather than answered with an empty page.
+
+```python
+devices = client.hub.notifications.get_push_devices(platform="ios")
+```
+
+Devices are stored inside their user, so a page is a page of **users** and
+carries every matching device those users hold. Follow `hasMore` rather than
+stopping at the first short page.
+
+`get_push_device` takes one device id and answers with the device and its
+owner:
+
+```python
+device = client.hub.notifications.get_push_device("pnd_123")
+```
+
 ## Known gaps
 
 | what | why |
