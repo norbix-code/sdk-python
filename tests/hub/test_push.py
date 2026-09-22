@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 
@@ -12,7 +13,7 @@ from ..helpers import make_client
 
 The generated test file asserts each push method's verb and that the URL is
 https. This file adds the two things it cannot see: the fully-resolved path of
-every one of the 37 push routes, and the polymorphic bodies that the server
+every one of the 39 push routes, and the polymorphic bodies that the server
 routes on.
 
 Only the Fake provider is used for a send path — it is the sandbox that accepts
@@ -25,6 +26,7 @@ BATCH_ID = "batch_1"
 NOTIFICATION_ID = "notif_1"
 TEMPLATE_ID = "tpl_1"
 INTEGRATION_ID = "int_1"
+DEVICE_ID = "pnd_1"
 
 BASE = "/v2/notifications/push"
 
@@ -201,6 +203,13 @@ PUSH_CASES: list[PushCase] = [
     ),
     # devices
     ("register_device", "POST", f"{BASE}/devices", lambda m: m.register_device()),
+    ("get_push_devices", "GET", f"{BASE}/devices", lambda m: m.get_push_devices()),
+    (
+        "get_push_device",
+        "GET",
+        f"{BASE}/devices/{DEVICE_ID}",
+        lambda m: m.get_push_device(DEVICE_ID),
+    ),
 ]
 
 
@@ -225,8 +234,8 @@ def test_push_endpoint_hits_the_expected_route(
 
 
 def test_push_surface_size() -> None:
-    """37 live push routes. A new one changes this count, so it cannot arrive untested."""
-    assert len(PUSH_CASES) == 37
+    """39 live push routes. A new one changes this count, so it cannot arrive untested."""
+    assert len(PUSH_CASES) == 39
 
 
 def test_push_call_sends_auth_and_project_headers() -> None:
@@ -380,6 +389,36 @@ def test_register_device_sends_the_device_shape() -> None:
     body = json.loads(transport.last_request["body"])
     assert body["pushDeviceDto"] == device
     assert body["userId"] == "user_1"
+
+
+def test_get_push_devices_narrows_by_user_token_and_platform() -> None:
+    """Gateway Hub.Push/Devices/GetAll.cs: the three filters travel as query fields."""
+    client, transport = make_client()
+    client.hub.notifications.get_push_devices(
+        userId="user_1", deviceKey="device_1", platform="ios"
+    )
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+
+    # A GET carries its filters in the query string, not a body.
+    url = urlparse(transport.last_request["url"])
+    assert url.path == f"{BASE}/devices"
+    assert parse_qs(url.query) == {
+        "userId": ["user_1"],
+        "deviceKey": ["device_1"],
+        "platform": ["ios"],
+    }
+
+
+def test_get_push_device_fills_the_route_token() -> None:
+    """The device id is a route token, not a body field."""
+    client, transport = make_client()
+    client.hub.notifications.get_push_device(DEVICE_ID)
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+    assert urlparse(transport.last_request["url"]).path == f"{BASE}/devices/{DEVICE_ID}"
 
 
 def test_async_module_exposes_the_same_push_surface() -> None:

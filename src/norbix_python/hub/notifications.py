@@ -919,6 +919,36 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def get_push_devices(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/devices
+
+        Narrow the list with userId, deviceKey (the provider token) or
+        platform (ios, android, chrome, safari, expo).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/devices",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_device(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/devices/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/devices/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/contacts"""
         return self._transport.send(
@@ -2621,6 +2651,36 @@ class AsyncNotificationsModule:
             path="/{version}/notifications/push/devices",
             method="POST",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_devices(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/devices
+
+        Narrow the list with userId, deviceKey (the provider token) or
+        platform (ios, android, chrome, safari, expo).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/devices",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_device(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/push/devices/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/devices/{id}",
+            method="GET",
+            path_params={"id": id},
             request=request,
             scope="project",
             timeout=timeout,
