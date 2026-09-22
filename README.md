@@ -98,6 +98,43 @@ account = norbix.account.get_account_profile()
 print(account)
 ```
 
+## Errors
+
+```python
+from norbix_python import NorbixError
+
+try:
+    norbix.files.get_file_info(integration_id, path="a/b.txt")
+except NorbixError as exc:
+    # http_status / error_code are the names every Norbix SDK uses.
+    # status / code are the same values, kept for older code.
+    print(exc.http_status, exc.error_code, exc.message)
+    for item in exc.errors:
+        print(item.error_code, item.field_name, item.message)
+    print(exc.body)  # the answer exactly as it arrived
+```
+
+`message` and `error_code` are the gateway's own. The gateway puts them inside
+`responseStatus.errors[]`, so the SDK reads that list first, takes the first
+entry for the message and the code, and keeps every entry in `errors`. Only
+when the body has no `responseStatus` are the top-level `message` and
+`errorCode` read. `Request failed (HTTP <status>)` with the code
+`HTTP_<status>` is the last fallback, used when the body says nothing — a 500
+page that is not JSON, say.
+
+### Breaking change — a refused call now raises
+
+The gateway answers a business refusal (an unknown id, a rule that says no)
+with **HTTP 200** and `responseStatus.isSuccess = False`. The SDK used to hand
+that answer back as a normal value, so code carried on as if the call had
+worked. It now raises a `NorbixError` with `http_status` 200 and the gateway's
+message and error code.
+
+If your code checked `result["responseStatus"]["isSuccess"]` itself, move that
+check into a `try / except`. Endpoints that answer with raw bytes rather than a
+document (file download, the public file link) are not JSON and are unchanged.
+Both the sync and the async client follow the same rule.
+
 ## Breaking changes (recent major-style refresh)
 
 - Methods use **snake_case** (`find_one`, `get_database_schemas`) instead of camelCase.

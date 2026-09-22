@@ -9,7 +9,7 @@ from urllib.parse import urlencode
 
 import httpx
 
-from .errors import NorbixError, error_from_http
+from .errors import NorbixError, error_from_body, says_it_failed
 
 HttpVerb = Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
 Scope = Literal["project", "account", "unauthenticated"]
@@ -125,27 +125,33 @@ class Transport:
             raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
 
         if response.status_code >= 400:
-            data: dict[str, Any]
             try:
-                parsed = response.json()
-                data = parsed if isinstance(parsed, dict) else {}
+                parsed: Any = response.json()
             except ValueError:
-                data = {}
-            raise error_from_http(
-                message=data.get("message", response.text or "Request failed"),
+                parsed = None
+            raise error_from_body(
+                body=parsed,
                 status=response.status_code,
-                code=data.get("errorCode", f"HTTP_{response.status_code}"),
-                details=data,
+                text=response.text,
             )
 
+        # An endpoint that answers with a file, not a document. Those answers
+        # are not JSON, so the check below does not apply to them.
         if response_type == "binary":
             return response.content
         if response.status_code == 204 or not response.content:
             return None
         try:
-            return response.json()
+            parsed_ok: Any = response.json()
         except ValueError:
             return response.text
+
+        # A 2xx does not mean the call worked: the gateway answers a business
+        # refusal with HTTP 200 and responseStatus.isSuccess = False, and that
+        # is a failure the caller must see (10b-files, issue #67).
+        if says_it_failed(parsed_ok):
+            raise error_from_body(body=parsed_ok, status=response.status_code)
+        return parsed_ok
 
     def _request_with_retries(
         self,
@@ -267,27 +273,33 @@ class AsyncTransport:
             raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
 
         if response.status_code >= 400:
-            data: dict[str, Any]
             try:
-                parsed = response.json()
-                data = parsed if isinstance(parsed, dict) else {}
+                parsed: Any = response.json()
             except ValueError:
-                data = {}
-            raise error_from_http(
-                message=data.get("message", response.text or "Request failed"),
+                parsed = None
+            raise error_from_body(
+                body=parsed,
                 status=response.status_code,
-                code=data.get("errorCode", f"HTTP_{response.status_code}"),
-                details=data,
+                text=response.text,
             )
 
+        # An endpoint that answers with a file, not a document. Those answers
+        # are not JSON, so the check below does not apply to them.
         if response_type == "binary":
             return response.content
         if response.status_code == 204 or not response.content:
             return None
         try:
-            return response.json()
+            parsed_ok: Any = response.json()
         except ValueError:
             return response.text
+
+        # A 2xx does not mean the call worked: the gateway answers a business
+        # refusal with HTTP 200 and responseStatus.isSuccess = False, and that
+        # is a failure the caller must see (10b-files, issue #67).
+        if says_it_failed(parsed_ok):
+            raise error_from_body(body=parsed_ok, status=response.status_code)
+        return parsed_ok
 
     async def _request_with_retries(
         self,
