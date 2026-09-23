@@ -12,6 +12,7 @@ Access with `norbix.api.files`.
 | `download_file_api` | `GET` | `/{version}/files/{filesIntegrationId}/download` | `project` |
 | `delete_file_api` | `DELETE` | `/{version}/files/{filesIntegrationId}` | `project` |
 | `delete_many_files_api` | `DELETE` | `/{version}/files/{filesIntegrationId}/bulk` | `project` |
+| `test_files_integration` | `POST` | `/{version}/files/{filesIntegrationId}/test` | `project` |
 
 `filesIntegrationId` names the storage integration to work with. Get it from
 `norbix.hub.files.get_files_integrations()`.
@@ -44,6 +45,34 @@ client.api.files.commit_upload(
 `get_signed_url` returns a short-lived address anyone can open, which suits a
 browser preview or a download link. `download_file_api` streams the bytes
 through Norbix instead.
+
+## Testing an integration
+
+`test_files_integration` checks that a storage integration really works. It
+runs a live probe: it uploads a small file, reads it back, lists the folder and
+deletes the file again. Because the probe writes to the storage, the API key
+needs the `files:create` permission.
+
+```python
+result = client.api.files.test_files_integration(integration_id)
+for step in result["items"]:
+    print(step["operation"], step["result"], step.get("errors"))
+# UploadFile OK None
+# GetFile OK None
+# ...
+```
+
+Each item has `operation` (`UploadFile`, `GetFile`, `GetAllFiles`,
+`DeleteFile`, in that order), `result` (`"OK"`, `"FAILED"`, or `"NOT_TESTED"`
+once an earlier step failed) and `errors`.
+When the gateway answers with an error status (for example for an unknown
+integration id), the call raises a `NorbixError`, like the other methods; the
+gateway's `responseStatus` is in the error's `details`.
+
+The dashboard has its own method for the same probe,
+[`hub.files.test_files_integration`](../hub/files.md), which takes the id in the
+body (`integrationId=...`) instead of the path. This one is for code that uses
+an API key.
 
 ## Reading a public link
 
