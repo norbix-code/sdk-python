@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from collections.abc import Callable
 from typing import Any
+from urllib.parse import parse_qs, urlparse
 
 import pytest
 
@@ -12,7 +13,7 @@ from ..helpers import make_client
 
 The generated test file asserts each push method's verb and that the URL is
 https. This file adds the two things it cannot see: the fully-resolved path of
-every one of the 37 push routes, and the polymorphic bodies that the server
+every one of the 39 push routes, and the polymorphic bodies that the server
 routes on.
 
 Only the Fake provider is used for a send path — it is the sandbox that accepts
@@ -25,6 +26,7 @@ BATCH_ID = "batch_1"
 NOTIFICATION_ID = "notif_1"
 TEMPLATE_ID = "tpl_1"
 INTEGRATION_ID = "int_1"
+DEVICE_ID = "pnd_1"
 
 BASE = "/v2/notifications/push"
 
@@ -201,6 +203,13 @@ PUSH_CASES: list[PushCase] = [
     ),
     # devices
     ("register_device", "POST", f"{BASE}/devices", lambda m: m.register_device()),
+    ("get_push_devices", "GET", f"{BASE}/devices", lambda m: m.get_push_devices()),
+    (
+        "get_push_device",
+        "GET",
+        f"{BASE}/devices/{DEVICE_ID}",
+        lambda m: m.get_push_device(DEVICE_ID),
+    ),
 ]
 
 
@@ -225,8 +234,8 @@ def test_push_endpoint_hits_the_expected_route(
 
 
 def test_push_surface_size() -> None:
-    """37 live push routes. A new one changes this count, so it cannot arrive untested."""
-    assert len(PUSH_CASES) == 37
+    """39 live push routes. A new one changes this count, so it cannot arrive untested."""
+    assert len(PUSH_CASES) == 39
 
 
 def test_push_call_sends_auth_and_project_headers() -> None:
@@ -239,62 +248,177 @@ def test_push_call_sends_auth_and_project_headers() -> None:
     assert headers["x-cm-projectid"] == "test-project"
 
 
-CAMPAIGN_AUDIENCES = [
-    ("allUsers", {"templateId": TEMPLATE_ID, "userTags": ["beta"]}, "userTags"),
-    ("specifiedUsers", {"templateId": TEMPLATE_ID, "userRecipients": ["user_1"]}, "userRecipients"),
-    ("accountUsers", {"templateId": TEMPLATE_ID, "userRecipients": ["acct_1"]}, "userRecipients"),
-    ("collection", {"templateId": TEMPLATE_ID, "schemaName": "subscribers"}, "schemaName"),
-    (
-        "devices",
-        {"templateId": TEMPLATE_ID, "devices": [{"token": "device_1", "deliveryFamily": "ios"}]},
-        "devices",
-    ),
+# The five campaign targets, with the fields the gateway reads for each one.
+# Source of truth: gateway Hub.Push/Campaigns/Create.PushTo*.cs (field names)
+# and Create_.cs (PushCampaignRequestDtoJsonConverter picks the record from
+# `source`, case-insensitive). Note `rolesNames` on allUsers but `roleNames` on
+# collection — the gateway spells them differently.
+CAMPAIGN_TARGETS: list[tuple[str, dict[str, Any]]] = [
+    ("allUsers", {"rolesNames": ["admin"], "userTags": ["beta"]}),
+    ("specifiedUsers", {"userRecipients": ["user_1"]}),
+    ("accountUsers", {"userRecipients": ["acct_user_1"]}),
+    ("collection", {"schemaName": "subscribers", "fields": ["owner"], "fieldType": "User"}),
+    ("devices", {"devices": [{"token": "device_1", "deliveryFamily": "Ios"}]}),
 ]
+
+# PushCampaignRecipientsSourceTypes in the gateway — exactly these five.
+GATEWAY_TARGETS = {"allusers", "specifiedusers", "accountusers", "collection", "devices"}
 
 
 @pytest.mark.parametrize(
-    ("source", "fields", "own_field"),
-    CAMPAIGN_AUDIENCES,
-    ids=[case[0] for case in CAMPAIGN_AUDIENCES],
+    ("source", "fields"),
+    CAMPAIGN_TARGETS,
+    ids=[case[0] for case in CAMPAIGN_TARGETS],
 )
-def test_create_push_campaign_carries_the_audience_shape(
-    source: str, fields: dict[str, Any], own_field: str
-) -> None:
+def test_create_push_campaign_sends_the_target_shape(source: str, fields: dict[str, Any]) -> None:
     client, transport = make_client()
-    client.hub.notifications.create_push_campaign(campaign={"source": source, **fields})
+    client.hub.notifications.create_push_campaign(
+        campaign={"source": source, "templateId": TEMPLATE_ID, **fields}
+    )
 
     assert transport.last_request is not None
     campaign = json.loads(transport.last_request["body"])["campaign"]
     # The discriminator has to reach the wire as the name — the server reads it
-    # with a string parse and rejects a number.
-    assert campaign["source"] == source
-    assert campaign["templateId"] == TEMPLATE_ID
-    assert own_field in campaign
+    # with GetString() and rejects a number.
+    assert campaign == {"source": source, "templateId": TEMPLATE_ID, **fields}
 
 
-PUSH_PROVIDERS = [
-    "Fake",
-    "AndroidFirebase",
-    "AppleApns",
-    "CodeMashChromePlugin",
-    "ChromeWeb",
-    "EdgeWeb",
-    "FirefoxWeb",
-    "SafariPush",
+def test_campaign_targets_match_the_gateway() -> None:
+    assert {source.lower() for source, _ in CAMPAIGN_TARGETS} == GATEWAY_TARGETS
+    assert len(CAMPAIGN_TARGETS) == len(GATEWAY_TARGETS)
+
+
+# The eight providers the gateway's save converter accepts, with the fields each
+# one validates. Source of truth: gateway Hub.Push/Integrations/Save_.cs (the
+# switch arms of PushIntegrationRequestDtoJsonConverter) and Save.<Provider>.cs
+# (the fields). The Chrome extension is `ChromePush`: `CodeMashChromePlugin`
+# also exists in the generated enum, but no switch arm takes it, so the gateway
+# answers "Unsupported provider".
+#
+# Every value is a dummy; nothing here leaves the process.
+_VAPID = {"vapidPublicKey": "vapid-public", "vapidPrivateKey": "vapid-private"}
+PUSH_PROVIDERS: list[tuple[str, dict[str, Any]]] = [
+    ("Fake", {}),
+    (
+        "AndroidFirebase",
+        {
+            "projectId": "firebase-project",
+            "clientEmail": "push@firebase-project.iam.example.com",
+            "serviceAccountJson": '{"type":"service_account"}',
+        },
+    ),
+    (
+        "AppleApns",
+        {
+            "teamId": "TEAM123456",
+            "appBundleId": "com.example.app",
+            "keyId": "KEY1234567",
+            "privateKey": "-----BEGIN PRIVATE KEY-----dummy",
+            "isProduction": False,
+        },
+    ),
+    (
+        "ChromePush",
+        {
+            "extensionId": "3f2504e0-4f89-11d3-9a0c-0305e82c3301",
+            **_VAPID,
+            "subject": "mailto:push@example.com",
+        },
+    ),
+    ("ChromeWeb", {**_VAPID, "subject": "mailto:push@example.com"}),
+    ("EdgeWeb", {**_VAPID}),
+    ("FirefoxWeb", {**_VAPID}),
+    (
+        "SafariPush",
+        {
+            "websitePushId": "web.com.example",
+            "certificateP12Base64": "ZHVtbXk=",
+            "certificatePassword": "dummy",
+        },
+    ),
 ]
 
+# The switch arms of PushIntegrationRequestDtoJsonConverter.Read.
+GATEWAY_PROVIDERS = {
+    "AppleApns",
+    "AndroidFirebase",
+    "SafariPush",
+    "ChromeWeb",
+    "FirefoxWeb",
+    "EdgeWeb",
+    "ChromePush",
+    "Fake",
+}
 
-@pytest.mark.parametrize("provider", PUSH_PROVIDERS)
-def test_save_push_integration_carries_the_provider_shape(provider: str) -> None:
+
+@pytest.mark.parametrize(
+    ("provider", "fields"),
+    PUSH_PROVIDERS,
+    ids=[case[0] for case in PUSH_PROVIDERS],
+)
+def test_save_push_integration_sends_the_provider_shape(
+    provider: str, fields: dict[str, Any]
+) -> None:
     client, transport = make_client()
-    client.hub.notifications.save_push_integration(
-        integration={"provider": provider, "integrationName": f"test-{provider}", "isEnabled": True}
+    integration = {
+        "provider": provider,
+        "integrationName": f"test-{provider}",
+        "isEnabled": True,
+        **fields,
+    }
+    client.hub.notifications.save_push_integration(integration=integration)
+
+    assert transport.last_request is not None
+    assert json.loads(transport.last_request["body"])["integration"] == integration
+
+
+def test_push_providers_match_the_gateway() -> None:
+    assert {provider for provider, _ in PUSH_PROVIDERS} == GATEWAY_PROVIDERS
+    assert len(PUSH_PROVIDERS) == len(GATEWAY_PROVIDERS)
+
+
+def test_register_device_sends_the_device_shape() -> None:
+    """Gateway Hub.Push/Devices/Create.cs + PushDeviceDto.cs: `deviceOs` and `token` are required."""
+    client, transport = make_client()
+    device = {"deviceOs": "iOS", "token": "device_1", "modelName": "iPhone"}
+    client.hub.notifications.register_device(userId="user_1", pushDeviceDto=device)
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert transport.last_request["url"].endswith(f"{BASE}/devices")
+    body = json.loads(transport.last_request["body"])
+    assert body["pushDeviceDto"] == device
+    assert body["userId"] == "user_1"
+
+
+def test_get_push_devices_narrows_by_user_token_and_platform() -> None:
+    """Gateway Hub.Push/Devices/GetAll.cs: the three filters travel as query fields."""
+    client, transport = make_client()
+    client.hub.notifications.get_push_devices(
+        userId="user_1", deviceKey="device_1", platform="ios"
     )
 
     assert transport.last_request is not None
-    integration = json.loads(transport.last_request["body"])["integration"]
-    assert integration["provider"] == provider
-    assert integration["integrationName"] == f"test-{provider}"
+    assert transport.last_request["method"] == "GET"
+
+    # A GET carries its filters in the query string, not a body.
+    url = urlparse(transport.last_request["url"])
+    assert url.path == f"{BASE}/devices"
+    assert parse_qs(url.query) == {
+        "userId": ["user_1"],
+        "deviceKey": ["device_1"],
+        "platform": ["ios"],
+    }
+
+
+def test_get_push_device_fills_the_route_token() -> None:
+    """The device id is a route token, not a body field."""
+    client, transport = make_client()
+    client.hub.notifications.get_push_device(DEVICE_ID)
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+    assert urlparse(transport.last_request["url"]).path == f"{BASE}/devices/{DEVICE_ID}"
 
 
 def test_async_module_exposes_the_same_push_surface() -> None:
