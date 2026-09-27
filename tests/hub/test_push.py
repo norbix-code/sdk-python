@@ -13,7 +13,7 @@ from ..helpers import make_client
 
 The generated test file asserts each push method's verb and that the URL is
 https. This file adds the two things it cannot see: the fully-resolved path of
-every one of the 39 push routes, and the polymorphic bodies that the server
+every one of the 38 push routes, and the polymorphic bodies that the server
 routes on.
 
 Only the Fake provider is used for a send path — it is the sandbox that accepts
@@ -88,12 +88,6 @@ PUSH_CASES: list[PushCase] = [
         "POST",
         f"{BASE}/integrations/confirm-human-delivery",
         lambda m: m.confirm_push_integration_human_delivery(),
-    ),
-    (
-        "register_code_mash_app_push_integration",
-        "POST",
-        f"{BASE}/integrations/app/request",
-        lambda m: m.register_code_mash_app_push_integration(),
     ),
     # templates
     ("get_push_templates", "GET", f"{BASE}/templates", lambda m: m.get_push_templates()),
@@ -221,8 +215,7 @@ PUSH_CASES: list[PushCase] = [
 def test_push_endpoint_hits_the_expected_route(
     name: str, verb: str, path: str, call: Callable[[Any], Any]
 ) -> None:
-    # register_code_mash_app_push_integration is account-scoped, so the client
-    # needs an account id; the rest ignore it.
+    # The client carries an account id; project-scoped routes ignore it.
     client, transport = make_client(account_id="acct_1")
     call(client.hub.notifications)
 
@@ -234,8 +227,8 @@ def test_push_endpoint_hits_the_expected_route(
 
 
 def test_push_surface_size() -> None:
-    """39 live push routes. A new one changes this count, so it cannot arrive untested."""
-    assert len(PUSH_CASES) == 39
+    """38 live push routes. A new one changes this count, so it cannot arrive untested."""
+    assert len(PUSH_CASES) == 38
 
 
 def test_push_call_sends_auth_and_project_headers() -> None:
