@@ -73,7 +73,6 @@ def test_hub_notifications_module_surface() -> None:
     assert callable(module.save_push_integration)
     assert callable(module.set_push_integration_as_default)
     assert callable(module.test_push_integration)
-    assert callable(module.register_code_mash_app_push_integration)
     assert callable(module.register_device)
 
 
@@ -539,22 +538,6 @@ def test_hub_notifications_test_push_integration_request_shape() -> None:
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_register_code_mash_app_push_integration_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1')
-    client.hub.notifications.register_code_mash_app_push_integration()
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-def test_hub_notifications_register_code_mash_app_push_integration_requires_account_scope() -> None:
-    client = Norbix(project_id='p1', bearer_token='token')
-    try:
-        client.hub.notifications.register_code_mash_app_push_integration()
-    except NorbixError as exc:
-        assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
-    else:
-        raise AssertionError('Expected account scope error')
-
 def test_hub_notifications_register_device_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.notifications.register_device()
@@ -589,8 +572,6 @@ def test_hub_notifications_new_endpoints_surface() -> None:
     assert callable(module.get_push_campaign_batch_notifications)
     assert callable(module.get_push_campaign_batch_notification)
     assert callable(module.get_push_campaign_statistics)
-    assert callable(module.check_integration_availability)
-    assert callable(module.test_code_mash_ios_app_integration)
     assert callable(module.get_push_settings)
     assert callable(module.get_sms_campaigns)
     assert callable(module.create_sms_campaign)
@@ -807,22 +788,6 @@ def test_hub_notifications_get_push_campaign_statistics_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.notifications.get_push_campaign_statistics(id="stub-id")
     assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_notifications_check_integration_availability_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.notifications.check_integration_availability()
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_notifications_test_code_mash_ios_app_integration_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.notifications.test_code_mash_ios_app_integration()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 

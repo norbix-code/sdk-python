@@ -101,10 +101,3 @@ owner:
 ```python
 device = client.hub.notifications.get_push_device("pnd_123")
 ```
-
-## Known gaps
-
-| what | why |
-|---|---|
-| `check_integration_availability` and the CodeMash-app test call | they point at gateway routes that are commented out, so they are not callable. |
-| `get_push_campaign_message` | the gateway route declares an `{id}` token that no request field matches, so the endpoint is unreliable until that is fixed. |

@@ -893,19 +893,6 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
-    def register_code_mash_app_push_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/integrations/app/request"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/integrations/app/request",
-            method="POST",
-            path_params={},
-            request=request,
-            scope="account",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def register_device(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/notifications/push/devices"""
         return self._transport.send(
@@ -1267,32 +1254,6 @@ class NotificationsModule:
             target="hub",
             path="/{version}/notifications/push/preview",
             method="GET",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def check_integration_availability(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/integrations/app/check"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/integrations/app/check",
-            method="POST",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def test_code_mash_ios_app_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/integrations/test/codemash-app"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/integrations/test/codemash-app",
-            method="POST",
             path_params={},
             request=request,
             scope="project",
@@ -2631,19 +2592,6 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
-    async def register_code_mash_app_push_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/integrations/app/request"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/integrations/app/request",
-            method="POST",
-            path_params={},
-            request=request,
-            scope="account",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     async def register_device(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/notifications/push/devices"""
         return await self._transport.send(
@@ -3005,32 +2953,6 @@ class AsyncNotificationsModule:
             target="hub",
             path="/{version}/notifications/push/preview",
             method="GET",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def check_integration_availability(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/integrations/app/check"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/integrations/app/check",
-            method="POST",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def test_code_mash_ios_app_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/integrations/test/codemash-app"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/integrations/test/codemash-app",
-            method="POST",
             path_params={},
             request=request,
             scope="project",

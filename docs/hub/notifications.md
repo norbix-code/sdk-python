@@ -70,7 +70,6 @@ Access with `norbix.hub.notifications`.
 | `save_push_integration` | `POST` | `/{version}/notifications/push/integrations` | `project` |
 | `set_push_integration_as_default` | `PUT` | `/{version}/notifications/push/integrations/{Id}/default` | `project` |
 | `test_push_integration` | `POST` | `/{version}/notifications/push/integrations/test` | `project` |
-| `register_code_mash_app_push_integration` | `POST` | `/{version}/notifications/push/integrations/app/request` | `account` |
 | `register_device` | `POST` | `/{version}/notifications/push/devices` | `project` |
 | `get_push_disable_dependencies` | `GET` | `/{version}/notifications/push/disable-dependencies` | `project` |
 | `get_push_settings` | `GET` | `/{version}/notifications/push/settings` | `project` |
