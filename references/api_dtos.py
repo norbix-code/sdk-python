@@ -1,6 +1,6 @@
 """ Options:
-Date: 2026-09-04 14:55:41
-Version: 10.08
+Date: 2026-09-28 20:36:22
+Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5002
 
@@ -68,397 +68,6 @@ class IVersionBasedRequest:
 
 class IHasCorrelationIdRequest:
     correlation_id: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class EmailAddress:
-    address: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class DisplayName:
-    value: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AggregateId:
-    value: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountId(AggregateId, IHasDomainEntityId):
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class UtcDateTime:
-    pass
-
-
-class TimeUnit(str, Enum):
-    TICKS = 'Ticks'
-    MILLISECONDS = 'Milliseconds'
-    SECONDS = 'Seconds'
-    MINUTES = 'Minutes'
-    HOURS = 'Hours'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ExpirationToken:
-    items: int = 0
-    unit: Optional[TimeUnit] = None
-    value: int = 0
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CodeMashSubscriptionId(AggregateId):
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectId(AggregateId, IHasDomainEntityId):
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class IntegrationId(AggregateId, IHasDomainEntityId):
-    pass
-
-
-class ResourceRefKind(str, Enum):
-    CONTACT = 'Contact'
-    DOCUMENT = 'Document'
-    FILE = 'File'
-    PAYMENT_CUSTOMER = 'PaymentCustomer'
-    ORDER = 'Order'
-    PAYMENT = 'Payment'
-    PRODUCT = 'Product'
-    INTEGRATION = 'Integration'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ResourceRef:
-    project_id: Optional[ProjectId] = None
-    integration_id: Optional[IntegrationId] = None
-    kind: Optional[ResourceRefKind] = None
-
-
-class ResourceSource(str, Enum):
-    NORBIX = 'Norbix'
-    STRIPE = 'Stripe'
-    SHOPIFY = 'Shopify'
-    PAY_PAL = 'PayPal'
-    ADYEN = 'Adyen'
-    MOLLIE = 'Mollie'
-    PADDLE = 'Paddle'
-    LEMON_SQUEEZY = 'LemonSqueezy'
-    APPLE_IN_APP = 'AppleInApp'
-    GOOGLE_IN_APP = 'GoogleInApp'
-    AUTHORIZE_NET = 'AuthorizeNet'
-    BRAINTREE = 'Braintree'
-    CHECK_OUT_COM = 'CheckOutCom'
-    WOO_COMMERCE = 'WooCommerce'
-    MAGENTO = 'Magento'
-    WORLDPAY = 'Worldpay'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PaymentCustomerRef(ResourceRef):
-    kind: Optional[ResourceRefKind] = None
-    source: Optional[ResourceSource] = None
-    external_id: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class Quantity:
-    value: int = 0
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CodeMashManagedServiceSubscription:
-    subscription_id: Optional[CodeMashSubscriptionId] = None
-    payment_customer_ref: Optional[PaymentCustomerRef] = None
-    ref_subscription_id: Optional[str] = None
-    issued_on: Optional[UtcDateTime] = None
-    will_expire_on: Optional[UtcDateTime] = None
-    project_cap: Optional[Quantity] = None
-    is_trial: bool = False
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class DomainUrl:
-    value: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CodeMashLicense(CodeMashManagedServiceSubscription):
-    domain: Optional[DomainUrl] = None
-    account_id: Optional[AccountId] = None
-    is_enterprise: bool = False
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class Tag:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TagDescription:
-    display_name: Optional[DisplayName] = None
-    description: Optional[str] = None
-
-
-TContent = TypeVar('TContent')
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class MessageTranslation(Generic[TContent]):
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TagTranslation(MessageTranslation[TagDescription]):
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class BaseTagDefinition:
-    tag: Optional[Tag] = None
-    translations: List[TagTranslation] = field(default_factory=list)
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GroupDefinition(BaseTagDefinition):
-    pass
-
-
-class CommunicationChannel(str, Enum):
-    TRANSACTIONAL = 'Transactional'
-    MARKETING = 'Marketing'
-    SYSTEM = 'System'
-
-
-class DeliveryChannel(str, Enum):
-    EMAIL = 'Email'
-    PUSH = 'Push'
-    SMS = 'Sms'
-    WEB_PUSH = 'WebPush'
-    IN_APP = 'InApp'
-    CHAT_BOT = 'ChatBot'
-    CHAT_PLATFORM = 'ChatPlatform'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TagDefinition(BaseTagDefinition):
-    default_delivery: Dict[str, bool] = field(default_factory=dict)
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectName:
-    name: Optional[str] = None
-    unique_name: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class NorbixRegion:
-    code: Optional[str] = None
-
-
-class Continent(str, Enum):
-    AFRICA = 'Africa'
-    ANTARCTICA = 'Antarctica'
-    ASIA = 'Asia'
-    EUROPE = 'Europe'
-    NORTH_AMERICA = 'NorthAmerica'
-    OCEANIA = 'Oceania'
-    SOUTH_AMERICA = 'SouthAmerica'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectRegion:
-    region: Optional[NorbixRegion] = None
-    name: Optional[str] = None
-    continent: Optional[Continent] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class Language:
-    code: Optional[str] = None
-    name: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class FileResourceId:
-    value: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class FileChecksum:
-    algorithm: Optional[str] = None
-    hash: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class FileResource:
-    id: Optional[FileResourceId] = None
-    original_file_name: Optional[str] = None
-    extension: Optional[str] = None
-    size_bytes: Optional[int] = None
-    checksum: Optional[FileChecksum] = None
-    stored_file_name: Optional[str] = None
-
-
-class FileProvider(str, Enum):
-    LOCAL = 'Local'
-    AWS_S3 = 'AwsS3'
-    AZURE_BLOB_STORAGE = 'AzureBlobStorage'
-    GOOGLE_CLOUD_STORAGE = 'GoogleCloudStorage'
-    FTP = 'Ftp'
-    APPLE_I_CLOUD = 'AppleICloud'
-    DROP_BOX = 'DropBox'
-    GOOGLE_DRIVE = 'GoogleDrive'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class FileResourceRef:
-    resource: Optional[FileResource] = None
-    integration_id: Optional[IntegrationId] = None
-    provider: Optional[FileProvider] = None
-    path: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectLogo:
-    file_resource: Optional[FileResourceRef] = None
-    public_url: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectIcon:
-    file_resource: Optional[FileResourceRef] = None
-    public_url: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class BrandColor:
-    value: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TimeZone:
-    zone_id: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GroupTags:
-    group: Optional[Tag] = None
-    tags: List[Tag] = field(default_factory=list)
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunicationChannel:
-    channel: Optional[CommunicationChannel] = None
-    groups: List[GroupTags] = field(default_factory=list)
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunication:
-    channels: List[ProjectCommunicationChannel] = field(default_factory=list)
-    groups: List[GroupDefinition] = field(default_factory=list)
-    tags: List[TagDefinition] = field(default_factory=list)
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AuthId(IHasDomainEntityId):
-    value: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class DeviceId:
-    id: Optional[str] = None
-
-
-class DeviceType(str, Enum):
-    UNKNOWN = 'Unknown'
-    PHONE = 'Phone'
-    TABLET = 'Tablet'
-    DESKTOP = 'Desktop'
-    TV = 'Tv'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushDeviceToken:
-    token: Optional[str] = None
-
-
-class PushDeviceDeliveryFamily(str, Enum):
-    IOS = 'Ios'
-    ANDROID = 'Android'
-    CHROME = 'Chrome'
-    SAFARI = 'Safari'
-    EXPO = 'Expo'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushDeviceDeliveryToken:
-    push_device_token: Optional[PushDeviceToken] = None
-    delivery_family: Optional[PushDeviceDeliveryFamily] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushDevice:
-    id: Optional[DeviceId] = None
-    brand: Optional[str] = None
-    manufacturer: Optional[str] = None
-    model_name: Optional[str] = None
-    device_name: Optional[str] = None
-    device_type: Optional[DeviceType] = None
-    os_name: Optional[str] = None
-    os_version: Optional[str] = None
-    platform_api_level: Optional[int] = None
-    token: Optional[PushDeviceDeliveryToken] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -569,29 +178,6 @@ class SaveUserWithRolesBase(SaveUser):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class Env:
-    value: Optional[str] = None
-    is_prod: bool = False
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CursorArgs(ICursorArgs):
-    field: Optional[str] = None
-    order: int = 0
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PagingArgs:
-    cursor_args: Optional[CursorArgs] = None
-    page_size: Optional[int] = None
-    starting_after: Optional[str] = None
-    ending_before: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
 class CodeMashListPaginationRequestBase(RequestBase, IHasProjectId, IHasEnv):
     # @ApiMember(DataType="string", Description="ID of your project. Can be passed in a header as norbix-project-id.", IsRequired=true, Name="norbix-project-id", ParameterType="header")
     project_id: Optional[str] = None
@@ -607,7 +193,6 @@ class CodeMashListPaginationRequestBase(RequestBase, IHasProjectId, IHasEnv):
     """
 
 
-    resolved_env: Optional[Env] = None
     # @ApiMember(DataType="string", Description="Cursor token — fetch the page AFTER this item.", Name="startingAfter", ParameterType="query")
     starting_after: Optional[str] = None
     """
@@ -629,112 +214,24 @@ class CodeMashListPaginationRequestBase(RequestBase, IHasProjectId, IHasEnv):
     """
 
 
-    # @ApiMember(DataType="object", Description="Paging", Name="paging", ParameterType="body")
-    paging: Optional[PagingArgs] = None
-    """
-    Paging
-    """
-
-
 class IPasskeyCeremonyRequest:
     pass
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class Integration(IIntegrationIdentification, IHasDomainEntityId):
-    integration_id: Optional[IntegrationId] = None
-    env: Optional[Env] = None
-    capability: Optional[str] = None
-    is_system_owned: bool = False
-    integration_name: Optional[DisplayName] = None
-    is_enabled: bool = False
-    is_configured: bool = False
-    last_integration_test_at_utc: Optional[datetime.datetime] = None
-    last_integration_test_succeeded: Optional[bool] = None
-    last_integration_test_error_messages: Optional[IReadOnlyList[str]] = None
-    human_delivery_confirmed_at_utc: Optional[datetime.datetime] = None
-    is_approved_that_it_works: bool = False
-
-
-class PushProvider(str, Enum):
-    APPLE_APNS = 'AppleApns'
-    SAFARI_WEB = 'SafariWeb'
-    SAFARI_PUSH = 'SafariPush'
-    ANDROID_FIREBASE = 'AndroidFirebase'
-    CHROME_WEB = 'ChromeWeb'
-    FIREFOX_WEB = 'FirefoxWeb'
-    EDGE_WEB = 'EdgeWeb'
-    CHROME_PUSH = 'ChromePush'
-    CODE_MASH_IOS_APP = 'CodeMashIosApp'
-    CODE_MASH_ANDROID_APP = 'CodeMashAndroidApp'
-    CODE_MASH_SAFARI_PLUGIN = 'CodeMashSafariPlugin'
-    CODE_MASH_SAFARI_WEB = 'CodeMashSafariWeb'
-    CODE_MASH_CHROME_PLUGIN = 'CodeMashChromePlugin'
-    CODE_MASH_CHROME_WEB = 'CodeMashChromeWeb'
-    EXPO = 'Expo'
-    FAKE = 'Fake'
+class CursorArgs(ICursorArgs):
+    field: Optional[str] = None
+    order: int = 0
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class PushIntegration(Integration):
-    provider: Optional[PushProvider] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TemplateId:
-    value: Optional[str] = None
-
-
-TMessageContent = TypeVar('TMessageContent')
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class Template(Generic[TMessageContent], IBindableContract):
-    template_id: Optional[TemplateId] = None
-    template_name: Optional[DisplayName] = None
-    translations: List[MessageTranslation[TMessageContent]] = field(default_factory=list)
-    communication_channel: Optional[CommunicationChannel] = None
-    is_active: bool = False
-    description: Optional[str] = None
-    tags: Optional[List[Tag]] = None
-    file_integration_id: Optional[IntegrationId] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TemplateCode:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTitle:
-    value: Optional[TemplateCode] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushBody:
-    value: Optional[TemplateCode] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushMessageContent:
-    title: Optional[PushTitle] = None
-    sub_title: Optional[PushTitle] = None
-    body: Optional[PushBody] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTemplate(Template[PushMessageContent]):
-    pass
+class PagingArgs:
+    cursor_args: Optional[CursorArgs] = None
+    page_size: Optional[int] = None
+    starting_after: Optional[str] = None
+    ending_before: Optional[str] = None
 
 
 class CodeMashRelease(str, Enum):
@@ -770,6 +267,16 @@ class EchoRegionDto:
     display_name: Optional[str] = None
     api_url: Optional[str] = None
     hub_url: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EchoAgentDto:
+    mcp_url: Optional[str] = None
+    o_auth_metadata_url: Optional[str] = None
+    installation_type: Optional[str] = None
+    onboarding_docs_url: Optional[str] = None
+    tools_url: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1028,6 +535,7 @@ class TriggerDto(IHasViewId):
     description: Optional[str] = None
     is_enabled: bool = False
     activation_code: Optional[str] = None
+    saved_by_auth_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1075,6 +583,17 @@ class FileResourceDto:
     checksum: Optional[FileChecksumDto] = None
 
 
+class FileProvider(str, Enum):
+    LOCAL = 'Local'
+    AWS_S3 = 'AwsS3'
+    AZURE_BLOB_STORAGE = 'AzureBlobStorage'
+    GOOGLE_CLOUD_STORAGE = 'GoogleCloudStorage'
+    FTP = 'Ftp'
+    APPLE_I_CLOUD = 'AppleICloud'
+    DROP_BOX = 'DropBox'
+    GOOGLE_DRIVE = 'GoogleDrive'
+
+
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class FileResourceRefDto:
@@ -1082,16 +601,25 @@ class FileResourceRefDto:
     integration_id: Optional[str] = None
     provider: Optional[FileProvider] = None
     path: Optional[str] = None
+    public_url: Optional[str] = None
+    is_public: bool = False
 
 
-class IHasDomainEntityId:
-    view_id: Optional[str] = None
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PublicFolderDto:
+    path: Optional[str] = None
+    public_id: Optional[str] = None
+    public_url: Optional[str] = None
+    inherited: bool = False
 
 
-class IIntegrationIdentification:
-    integration_id: Optional[IntegrationId] = None
-    capability: Optional[str] = None
-    is_system_owned: bool = False
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class IntegrationTestResultItemDto:
+    operation: Optional[str] = None
+    result: Optional[str] = None
+    errors: Optional[IReadOnlyList[str]] = None
 
 
 class IBindableContract:
@@ -1228,6 +756,7 @@ class EchoResponse:
     grace_days_left: Optional[int] = None
     installation_domain: Optional[str] = None
     licensing_docs_url: Optional[str] = None
+    agent: Optional[EchoAgentDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1250,12 +779,6 @@ class PublicLegalDocumentDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class AskChatResponse(ResponseBase):
-    result: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
 class GetUserResponse(ResponseBase):
     user: Optional[AuthDto] = None
 
@@ -1270,6 +793,12 @@ class GetUsersResponse(ResponseBase):
 @dataclass
 class GetUserPreferencesResponse(ResponseBase):
     preferences: Optional[UserMarketingPreferencesDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PasskeyOkResponse(ResponseBase):
+    pass
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1292,12 +821,6 @@ class PasskeyAuthTokensResponse(ResponseBase):
 @dataclass
 class PasskeyListResponse(ResponseBase):
     passkeys: List[PasskeyListItemDto] = field(default_factory=list)
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PasskeyOkResponse(ResponseBase):
-    pass
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1412,12 +935,19 @@ class GetSignedUrlResponse(ResponseBase):
 class ListFilesResponse(ResponseBase):
     list: Optional[PaginatedResponse[FileResourceRefDto]] = None
     folders: Optional[IList[str]] = None
+    public_folders: Optional[IList[PublicFolderDto]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class RequestUploadUrlResponse(ResponseBase):
     url: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TestFilesIntegrationResponse(ResponseBase):
+    items: Optional[IReadOnlyList[IntegrationTestResultItemDto]] = None
 
 
 # @Route("/{version}/echo", "GET")
@@ -1440,254 +970,6 @@ class GetPublicProjectConfig(RequestBase, IReturn[PublicProjectConfigDto]):
 class GetPublicProjectLegal(RequestBase, IReturn[PublicLegalDocumentDto]):
     project_id: Optional[str] = None
     kind: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountCreated:
-    email: Optional[EmailAddress] = None
-    display_name: Optional[DisplayName] = None
-    account_id: Optional[AccountId] = None
-    created_on: Optional[UtcDateTime] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountVerified:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountSetAsActive:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountValidationTokenIssued:
-    expiration: Optional[ExpirationToken] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountBlocked:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountProfileUpdated:
-    display_name: Optional[DisplayName] = None
-    billing_email: Optional[EmailAddress] = None
-    operations_email: Optional[EmailAddress] = None
-    security_email: Optional[EmailAddress] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountSetAsInactive:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountUnregistered:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class LicenseCreated:
-    license: Optional[CodeMashLicense] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CustomerCreated:
-    payment_customer_ref: Optional[PaymentCustomerRef] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class SubscriptionChanged:
-    subscription: Optional[CodeMashManagedServiceSubscription] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class SubscriptionCanceled:
-    payment_customer_ref: Optional[PaymentCustomerRef] = None
-    subscription_id: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunicationGroupSaved:
-    group: Optional[GroupDefinition] = None
-    channel: Optional[CommunicationChannel] = None
-    origin_channel: Optional[CommunicationChannel] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunicationTagFromGroupDeleted:
-    group_tag: Optional[Tag] = None
-    removed_tag: Optional[Tag] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunicationGroupDeleted:
-    group_tag: Optional[Tag] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunicationTagSaved:
-    tag: Optional[TagDefinition] = None
-    group_tag: Optional[Tag] = None
-    channel: Optional[CommunicationChannel] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunicationTagDeleted:
-    tag: Optional[Tag] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCreated:
-    id: Optional[ProjectId] = None
-    name: Optional[ProjectName] = None
-    database_integration_id: Optional[IntegrationId] = None
-    primary_region: Optional[ProjectRegion] = None
-    additional_regions: Optional[List[ProjectRegion]] = None
-    description: Optional[str] = None
-    is_provisioning: bool = False
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectDeleted:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectActivated:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectDisabled:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectNameChanged:
-    project_name: Optional[ProjectName] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectDescriptionChanged:
-    description: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectMarketingUrlChanged:
-    url: Optional[DomainUrl] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectAllowedOriginsChanged:
-    origins: Optional[List[DomainUrl]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectDefaultLanguageChanged:
-    language: Optional[Language] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectLanguagesChanged:
-    languages: List[Language] = field(default_factory=list)
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectLogoChanged:
-    logo: Optional[ProjectLogo] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectIconChanged:
-    icon: Optional[ProjectIcon] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectMainColorChanged:
-    color: Optional[BrandColor] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectAccentColorChanged:
-    color: Optional[BrandColor] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectRegionsChanged:
-    primary_region: Optional[ProjectRegion] = None
-    additional_regions: Optional[List[ProjectRegion]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectTimeZoneChanged:
-    time_zone: Optional[TimeZone] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectPaymentZonesChanged:
-    payment_zones: Optional[List[TimeZone]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectCommunicationSet:
-    project_communication: Optional[ProjectCommunication] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AccountUserPushDeviceCreated:
-    auth_id: Optional[AuthId] = None
-    push_device: Optional[PushDevice] = None
-
-
-# @Route("/{version}/chat/complete", "POST")
-# @Api(Description="AI")
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AskChatRequest(CodeMashRequestBase, IReturn[AskChatResponse]):
-    """
-    AI
-    """
-
-    prompt: Optional[str] = None
 
 
 # @Route("/{version}/membership/auth/block", "PATCH")
@@ -2236,6 +1518,82 @@ class UpdateUserPreferencesRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     """
 
 
+# @Route("/{version}/membership/userauth/password/change", "POST")
+# @Api(Description="Membership · Password")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ChangePasswordRequest(CodeMashRequestBase, IReturn[PasskeyOkResponse]):
+    """
+    Membership · Password
+    """
+
+    # @ApiMember(Description="The member's current password.", IsRequired=true)
+    current_password: Optional[str] = None
+    """
+    The member's current password.
+    """
+
+
+    # @ApiMember(Description="The new password. Validated against the project's complexity policy.", IsRequired=true)
+    new_password: Optional[str] = None
+    """
+    The new password. Validated against the project's complexity policy.
+    """
+
+
+    # @ApiMember(Description="Database integration id. Optional — defaults to the request environment's default integration.")
+    database_integration_id: Optional[str] = None
+    """
+    Database integration id. Optional — defaults to the request environment's default integration.
+    """
+
+
+# @Route("/{version}/membership/userauth/password/reset/request", "POST")
+# @Api(Description="Membership · Password")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RequestPasswordResetRequest(CodeMashRequestBase, IReturn[PasskeyOkResponse]):
+    """
+    Membership · Password
+    """
+
+    # @ApiMember(Description="Email address to send the reset link to.", IsRequired=true)
+    email: Optional[str] = None
+    """
+    Email address to send the reset link to.
+    """
+
+
+# @Route("/{version}/membership/userauth/password/reset/confirm", "POST")
+# @Api(Description="Membership · Password")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ConfirmPasswordResetRequest(CodeMashRequestBase, IReturn[PasskeyOkResponse]):
+    """
+    Membership · Password
+    """
+
+    # @ApiMember(Description="One-time reset token from the email link.", IsRequired=true)
+    token: Optional[str] = None
+    """
+    One-time reset token from the email link.
+    """
+
+
+    # @ApiMember(Description="The new password. Validated against the project's complexity policy.", IsRequired=true)
+    new_password: Optional[str] = None
+    """
+    The new password. Validated against the project's complexity policy.
+    """
+
+
+    # @ApiMember(Description="Database integration id. Optional — defaults to the request environment's default integration.")
+    database_integration_id: Optional[str] = None
+    """
+    Database integration id. Optional — defaults to the request environment's default integration.
+    """
+
+
 # @Route("/{version}/membership/userauth/passkey/authentication-options", "POST")
 # @Api(Description="Membership · Passkey")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2774,6 +2132,34 @@ class CommitUploadRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     file_name: Optional[str] = None
 
 
+# @Route("/{version}/files/{filesIntegrationId}/content", "GET")
+# @Api(Description="Files")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetFileContentRequest(RequestBase, IReturn[bytes]):
+    """
+    Files
+    """
+
+    files_integration_id: Optional[str] = None
+    path: Optional[str] = None
+    token: Optional[str] = None
+
+
+# @Route("/{version}/files/{filesIntegrationId}/content", "PUT")
+# @Api(Description="Files")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PutFileContentRequest(RequestBase, IReturn[EmptyResponse]):
+    """
+    Files
+    """
+
+    files_integration_id: Optional[str] = None
+    path: Optional[str] = None
+    token: Optional[str] = None
+
+
 # @Route("/{version}/files/{filesIntegrationId}", "DELETE")
 # @Api(Description="Files")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2853,6 +2239,19 @@ class ListFilesRequest(CodeMashListPaginationRequestBase, IReturn[ListFilesRespo
     path: Optional[str] = None
 
 
+# @Route("/{version}/files/public/{PublicId}/{Name*}", "GET")
+# @Api(Description="Files")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetPublicFileRequest(RequestBase, IReturn[bytes]):
+    """
+    Files
+    """
+
+    public_id: Optional[str] = None
+    name: Optional[str] = None
+
+
 # @Route("/{version}/files/{filesIntegrationId}/upload-url", "POST")
 # @Api(Description="Files")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2868,113 +2267,14 @@ class RequestUploadUrlRequest(CodeMashRequestBase, IReturn[RequestUploadUrlRespo
     expiration_seconds: Optional[int] = None
 
 
+# @Route("/{version}/files/{filesIntegrationId}/test", "POST")
+# @Api(Description="Files")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class PushIntegrationSaved:
-    integration: Optional[PushIntegration] = None
+class TestFilesIntegrationRequest(CodeMashRequestBase, IReturn[TestFilesIntegrationResponse]):
+    """
+    Files
+    """
 
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushIntegrationRenamed:
-    id: Optional[IntegrationId] = None
-    name: Optional[DisplayName] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushIntegrationSetAsDefault:
-    env: Optional[Env] = None
-    id: Optional[IntegrationId] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushIntegrationDeleted:
-    id: Optional[IntegrationId] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushIntegrationEnabled:
-    id: Optional[IntegrationId] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushIntegrationDisabled:
-    id: Optional[IntegrationId] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushServiceEstablished:
-    default_templates: Optional[List[PushTemplate]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushServiceEnabled:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushServiceDisabled:
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTemplateCreated:
-    template_id: Optional[TemplateId] = None
-    display_name: Optional[DisplayName] = None
-    translations: List[MessageTranslation[PushMessageContent]] = field(default_factory=list)
-    channel: Optional[CommunicationChannel] = None
-    description: Optional[str] = None
-    tags: Optional[List[Tag]] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTemplateUpdated:
-    template_id: Optional[TemplateId] = None
-    display_name: Optional[DisplayName] = None
-    translations: List[MessageTranslation[PushMessageContent]] = field(default_factory=list)
-    channel: Optional[CommunicationChannel] = None
-    description: Optional[str] = None
-    tags: Optional[List[Tag]] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTemplateDeleted:
-    template_id: Optional[TemplateId] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTemplateArchived:
-    template_id: Optional[TemplateId] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTemplateUnArchived:
-    template_id: Optional[TemplateId] = None
-    env: Optional[Env] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushTemplateMirrored:
-    template: Optional[PushTemplate] = None
+    files_integration_id: Optional[str] = None
 
