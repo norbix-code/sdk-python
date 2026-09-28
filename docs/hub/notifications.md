@@ -47,7 +47,7 @@ Access with `norbix.hub.notifications`.
 | `get_email_campaign_batch_notification` | `GET` | `/{version}/notifications/email/campaigns/{id}/batches/{batchId}/{notificationId}` | `project` |
 | `get_email_campaign_batch_notifications` | `GET` | `/{version}/notifications/email/campaigns/{id}/batches/{batchId}` | `project` |
 | `get_email_campaign_statistics` | `GET` | `/{version}/notifications/email/campaigns/{id}/stats` | `project` |
-| `preview_email_notification` | `GET` | `/{version}/notifications/email/preview` | `project` |
+| `preview_email_notification` | `GET` | `/{version}/notifications/email/preview` | `optional` |
 | `get_email_campaign_message` | `GET` | `/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}` | `project` |
 | `get_email_campaign_messages` | `GET` | `/{version}/notifications/emails/campaigns/{campaignId}/messages` | `project` |
 | `disable_push` | `GET` | `/{version}/notifications/push/disable` | `project` |
@@ -85,7 +85,7 @@ Access with `norbix.hub.notifications`.
 | `get_push_campaign_statistics` | `GET` | `/{version}/notifications/push/campaigns/{id}/stats` | `project` |
 | `get_push_campaign_messages` | `GET` | `/{version}/notifications/push/campaigns/{campaignId}/messages` | `project` |
 | `get_push_campaign_message` | `GET` | `/{version}/notifications/push/campaigns/{campaignId}/messages/{id}` | `project` |
-| `preview_push_notification` | `GET` | `/{version}/notifications/push/preview` | `project` |
+| `preview_push_notification` | `GET` | `/{version}/notifications/push/preview` | `optional` |
 
 Every push method above has an async twin on `client.hub.notifications` when
 the client is an `AsyncNorbix`. See [push.md](./push.md) for how to pick a
