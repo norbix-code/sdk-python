@@ -12,7 +12,9 @@ import httpx
 from .errors import NorbixError, error_from_body, says_it_failed
 
 HttpVerb = Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
-Scope = Literal["project", "account", "unauthenticated"]
+# "optional": auth is sent when the client has a token, never required — used
+# by the signed notification preview links.
+Scope = Literal["project", "account", "unauthenticated", "optional"]
 # How to read a successful response body. "json" (the default) parses it.
 # "binary" gives back the raw bytes — for an endpoint that answers with a
 # file rather than a document, such as a public file link. Parsing a PDF as
@@ -89,12 +91,13 @@ class Transport:
 
         if scope != "unauthenticated":
             token = bearer_token or self._cfg.bearer_token or self._cfg.api_key
-            if not token:
+            if not token and scope != "optional":
                 raise NorbixError(
                     message="Not authenticated. Provide api_key / bearer_token or login first.",
                     code="NORBIX_NOT_AUTHENTICATED",
                 )
-            headers["Authorization"] = f"Bearer {token}"
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
 
         headers["X-CM-ProjectId"] = self._cfg.project_id
         if self._cfg.account_id:
@@ -237,12 +240,13 @@ class AsyncTransport:
 
         if scope != "unauthenticated":
             token = bearer_token or self._cfg.bearer_token or self._cfg.api_key
-            if not token:
+            if not token and scope != "optional":
                 raise NorbixError(
                     message="Not authenticated. Provide api_key / bearer_token or login first.",
                     code="NORBIX_NOT_AUTHENTICATED",
                 )
-            headers["Authorization"] = f"Bearer {token}"
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
 
         headers["X-CM-ProjectId"] = self._cfg.project_id
         if self._cfg.account_id:
