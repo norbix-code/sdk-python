@@ -98,6 +98,25 @@ account = norbix.account.get_account_profile()
 print(account)
 ```
 
+### 4) Preview a notification with its signed link (no sign-in)
+
+A preview link carries a signed `hash`. The hash alone is the key: no API key
+and no login are needed. If the client does have a key or a token, it is still
+sent.
+
+```python
+from norbix_python import NorbixHub
+
+norbix = NorbixHub(project_id="proj_123")  # no api_key, no bearer_token
+
+preview = norbix.notifications.preview_push_notification(hash=signed_link)
+```
+
+`preview_email_notification` and `preview_sms_notification` work the same way.
+A signed-in member can pass `projectId` + `notificationId` instead of `hash`.
+The gateway answers `401` for a bad or expired link, `403` for a missing
+permission and `400` for a malformed request.
+
 ## Errors
 
 ```python
@@ -282,6 +301,7 @@ async def main() -> None:
 - `project_id` is required (set explicitly or via env).
 - `account_id` is optional
 - Account-scoped Hub methods raise `NORBIX_ACCOUNT_SCOPE_REQUIRED` if `account_id` is not configured
+- Optional-scope methods (the signed notification preview links) send auth when the client has a token and never require one
 
 ## SDK maintenance
 

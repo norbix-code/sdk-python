@@ -569,14 +569,18 @@ class NotificationsModule:
         )
 
     def preview_email_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/email/preview"""
+        """GET /{version}/notifications/email/preview
+
+        Opens with a signed link alone: pass ``hash=...`` and no credentials
+        are needed. Auth is still sent when the client has a token.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/email/preview",
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1249,14 +1253,18 @@ class NotificationsModule:
         )
 
     def preview_push_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/preview"""
+        """GET /{version}/notifications/push/preview
+
+        Opens with a signed link alone: pass ``hash=...`` and no credentials
+        are needed. Auth is still sent when the client has a token.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/push/preview",
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1548,14 +1556,18 @@ class NotificationsModule:
         )
 
     def preview_sms_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/preview"""
+        """GET /{version}/notifications/sms/preview
+
+        Opens with a signed link alone: pass ``hash=...`` and no credentials
+        are needed. Auth is still sent when the client has a token.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/preview",
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -2268,14 +2280,18 @@ class AsyncNotificationsModule:
         )
 
     async def preview_email_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/email/preview"""
+        """GET /{version}/notifications/email/preview
+
+        Opens with a signed link alone: pass ``hash=...`` and no credentials
+        are needed. Auth is still sent when the client has a token.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/email/preview",
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -2948,14 +2964,18 @@ class AsyncNotificationsModule:
         )
 
     async def preview_push_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/preview"""
+        """GET /{version}/notifications/push/preview
+
+        Opens with a signed link alone: pass ``hash=...`` and no credentials
+        are needed. Auth is still sent when the client has a token.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/push/preview",
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -3247,14 +3267,18 @@ class AsyncNotificationsModule:
         )
 
     async def preview_sms_notification(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/preview"""
+        """GET /{version}/notifications/sms/preview
+
+        Opens with a signed link alone: pass ``hash=...`` and no credentials
+        are needed. Auth is still sent when the client has a token.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/preview",
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
