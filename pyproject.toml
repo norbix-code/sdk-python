@@ -66,6 +66,8 @@ upload_to_pypi = true
 build_command = "uv build"
 commit_message = "chore(release): {version}"
 tag_format = "v{version}"
+# Breaking changes release as minor until the public launch (see README "Versioning").
+commit_parser = "scripts/release_parser.py:MinorUntilLaunchParser"
 major_on_zero = false
 
 [tool.semantic_release.branches.main]
