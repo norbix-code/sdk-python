@@ -43,7 +43,6 @@ def test_hub_account_module_surface() -> None:
     assert callable(module.get_account_collaborators)
     assert callable(module.send_invite_to_team_member)
     assert callable(module.get_licenses)
-    assert callable(module.ask_chat)
 
 
 def test_hub_account_get_account_profile_request_shape() -> None:
@@ -617,22 +616,6 @@ def test_hub_account_get_licenses_requires_account_scope() -> None:
     client = Norbix(project_id='p1', bearer_token='token')
     try:
         client.hub.account.get_licenses()
-    except NorbixError as exc:
-        assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
-    else:
-        raise AssertionError('Expected account scope error')
-
-def test_hub_account_ask_chat_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1')
-    client.hub.account.ask_chat()
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-def test_hub_account_ask_chat_requires_account_scope() -> None:
-    client = Norbix(project_id='p1', bearer_token='token')
-    try:
-        client.hub.account.ask_chat()
     except NorbixError as exc:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:

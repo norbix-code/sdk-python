@@ -242,12 +242,10 @@ class NorbixApi(_AuthMixin):
         api = ApiNamespace(self._transport)
         self.database = api.database
         self.membership = api.membership
-        self.chat = api.chat
         self.echo = api.echo
         self.files = api.files
         self.Database = self.database
         self.Membership = self.membership
-        self.Chat = self.chat
         self.Echo = self.echo
         self.Files = self.files
 
