@@ -485,19 +485,6 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
-    def ask_chat(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/account/chat/complete"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/account/chat/complete",
-            method="POST",
-            path_params={},
-            request=request,
-            scope="account",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
 
 class AsyncAccountModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -972,19 +959,6 @@ class AsyncAccountModule:
             target="hub",
             path="/{version}/account/licenses",
             method="GET",
-            path_params={},
-            request=request,
-            scope="account",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def ask_chat(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/account/chat/complete"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/account/chat/complete",
-            method="POST",
             path_params={},
             request=request,
             scope="account",

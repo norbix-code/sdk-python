@@ -40,4 +40,3 @@ Access with `norbix.hub.account`.
 | `get_account_collaborators` | `GET` | `/{version}/account/collaborators` | `account` |
 | `send_invite_to_team_member` | `POST` | `/{version}/account/team/member/invite` | `account` |
 | `get_licenses` | `GET` | `/{version}/account/licenses` | `account` |
-| `ask_chat` | `POST` | `/{version}/account/chat/complete` | `account` |
