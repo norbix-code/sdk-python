@@ -620,3 +620,85 @@ def test_hub_account_get_licenses_requires_account_scope() -> None:
         assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
     else:
         raise AssertionError('Expected account scope error')
+
+def test_hub_account_wave3_module_surface() -> None:
+    client, _ = make_client()
+    module = client.hub.account
+    assert callable(module.get_project_ai_settings)
+    assert callable(module.update_project_ai_settings)
+    assert callable(module.create_project_ai_assistant)
+    assert callable(module.update_project_ai_assistant)
+    assert callable(module.delete_project_ai_assistant)
+    assert callable(module.get_project_ai_usage)
+    assert callable(module.set_admin_portal_enabled)
+
+
+def test_hub_account_get_project_ai_settings_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.account.get_project_ai_settings(project_id="stub-projectId")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['url'].endswith('/v2/account/projects/stub-projectId/ai/settings')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_account_update_project_ai_settings_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.account.update_project_ai_settings(project_id="stub-projectId")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'PUT'
+    assert transport.last_request['url'].endswith('/v2/account/projects/stub-projectId/ai/settings')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_account_create_project_ai_assistant_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.account.create_project_ai_assistant(project_id="stub-projectId")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'POST'
+    assert transport.last_request['url'].endswith('/v2/account/projects/stub-projectId/ai/assistants')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_account_update_project_ai_assistant_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.account.update_project_ai_assistant(project_id="stub-projectId", assistant_id="stub-assistantId")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'PUT'
+    assert transport.last_request['url'].endswith('/v2/account/projects/stub-projectId/ai/assistants/stub-assistantId')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_account_delete_project_ai_assistant_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.account.delete_project_ai_assistant(project_id="stub-projectId", assistant_id="stub-assistantId")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'DELETE'
+    assert transport.last_request['url'].endswith('/v2/account/projects/stub-projectId/ai/assistants/stub-assistantId')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_account_get_project_ai_usage_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.account.get_project_ai_usage(project_id="stub-projectId")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['url'].endswith('/v2/account/projects/stub-projectId/ai/usage')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_account_set_admin_portal_enabled_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.account.set_admin_portal_enabled(project_id="stub-projectId")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'PUT'
+    assert transport.last_request['url'].endswith('/v2/account/projects/stub-projectId/admin-portal/enabled')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+

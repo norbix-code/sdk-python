@@ -117,6 +117,32 @@ A signed-in member can pass `projectId` + `notificationId` instead of `hash`.
 The gateway answers `401` for a bad or expired link, `403` for a missing
 permission and `400` for a malformed request.
 
+## End-user AI chat and project AI settings
+
+A signed-in project user (bearer token from login) talks to the project's AI
+assistant through `norbix.api.ai`. `start_end_user_chat_turn` answers at once
+with a `turnId`; the answer streams over the gateway's SSE endpoint on the
+user's own channel `ai-chat:{projectId}:{authId}` (events `ai.chat.turn.*`,
+`ai.chat.session.*`). A subscription to another user's channel is refused with
+403 and `responseStatus.errorCode = "AiChatChannelRefused"` — do not retry it.
+
+```python
+avail = norbix.api.ai.get_end_user_chat_availability()
+session = norbix.api.ai.create_end_user_chat_session(title="Help")
+turn = norbix.api.ai.start_end_user_chat_turn(sessionId=session["id"], message="What can you do?")
+entries = norbix.api.ai.get_end_user_chat_entries(session_id=session["id"])
+```
+
+Project owners configure the assistant on the Hub: `norbix.hub.account`
+(`get_project_ai_settings`, `update_project_ai_settings`,
+`create_project_ai_assistant`, `update_project_ai_assistant`,
+`delete_project_ai_assistant`, `get_project_ai_usage`, `set_admin_portal_enabled`)
+and `norbix.hub.ai` (`get_embedding_integrations`, `save_embedding_integration`,
+`get_embedding_integration`, `delete_embedding_integration`,
+`test_embedding_integration`, `set_llm_integration_as_default`). Full tables:
+[docs/api/ai.md](./docs/api/ai.md), [docs/hub/ai.md](./docs/hub/ai.md),
+[docs/hub/account.md](./docs/hub/account.md).
+
 ## Errors
 
 ```python

@@ -485,6 +485,97 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def get_project_ai_settings(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/settings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/settings",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_ai_settings(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/settings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/settings",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_project_ai_assistant(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/{projectId}/ai/assistants"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/assistants",
+            method="POST",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_ai_assistant(self, project_id: str, assistant_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/assistants/{assistantId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/assistants/{assistantId}",
+            method="PUT",
+            path_params={"projectId": project_id, "assistantId": assistant_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_project_ai_assistant(self, project_id: str, assistant_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/projects/{projectId}/ai/assistants/{assistantId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/assistants/{assistantId}",
+            method="DELETE",
+            path_params={"projectId": project_id, "assistantId": assistant_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_project_ai_usage(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/usage"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/usage",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_admin_portal_enabled(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/admin-portal/enabled"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/admin-portal/enabled",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncAccountModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -962,6 +1053,97 @@ class AsyncAccountModule:
             path_params={},
             request=request,
             scope="account",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_project_ai_settings(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/settings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/settings",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_ai_settings(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/settings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/settings",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_project_ai_assistant(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/{projectId}/ai/assistants"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/assistants",
+            method="POST",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_ai_assistant(self, project_id: str, assistant_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/assistants/{assistantId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/assistants/{assistantId}",
+            method="PUT",
+            path_params={"projectId": project_id, "assistantId": assistant_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_project_ai_assistant(self, project_id: str, assistant_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/projects/{projectId}/ai/assistants/{assistantId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/assistants/{assistantId}",
+            method="DELETE",
+            path_params={"projectId": project_id, "assistantId": assistant_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_project_ai_usage(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/usage"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/usage",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_admin_portal_enabled(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/admin-portal/enabled"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/admin-portal/enabled",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )

@@ -191,6 +191,84 @@ class AiModule:
             bearer_token=bearer_token,
         )
 
+    def get_embedding_integrations(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/integrations/embeddings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_embedding_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/integrations/embeddings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_embedding_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/integrations/embeddings/{Id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_embedding_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/ai/integrations/embeddings/{Id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_embedding_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/integrations/embeddings/{Id}/test"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings/{Id}/test",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_llm_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/ai/integrations/llms/{Id}/default"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/llms/{Id}/default",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncAiModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -372,6 +450,84 @@ class AsyncAiModule:
             path="/{version}/ai/integrations/mcp/test",
             method="POST",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_embedding_integrations(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/integrations/embeddings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_embedding_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/integrations/embeddings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_embedding_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/integrations/embeddings/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_embedding_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/ai/integrations/embeddings/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_embedding_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/integrations/embeddings/{Id}/test"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/embeddings/{Id}/test",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_llm_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/ai/integrations/llms/{Id}/default"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/integrations/llms/{Id}/default",
+            method="PUT",
+            path_params={"Id": id},
             request=request,
             scope="project",
             timeout=timeout,

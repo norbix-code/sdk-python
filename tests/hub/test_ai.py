@@ -120,3 +120,74 @@ def test_hub_ai_test_mcp_integration_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+def test_hub_ai_wave3_module_surface() -> None:
+    client, _ = make_client()
+    module = client.hub.ai
+    assert callable(module.get_embedding_integrations)
+    assert callable(module.save_embedding_integration)
+    assert callable(module.get_embedding_integration)
+    assert callable(module.delete_embedding_integration)
+    assert callable(module.test_embedding_integration)
+    assert callable(module.set_llm_integration_as_default)
+
+
+def test_hub_ai_get_embedding_integrations_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.get_embedding_integrations()
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['url'].endswith('/v2/ai/integrations/embeddings')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_ai_save_embedding_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.save_embedding_integration()
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'POST'
+    assert transport.last_request['url'].endswith('/v2/ai/integrations/embeddings')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_ai_get_embedding_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.get_embedding_integration(id="stub-Id")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['url'].endswith('/v2/ai/integrations/embeddings/stub-Id')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_ai_delete_embedding_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.delete_embedding_integration(id="stub-Id")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'DELETE'
+    assert transport.last_request['url'].endswith('/v2/ai/integrations/embeddings/stub-Id')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_ai_test_embedding_integration_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.test_embedding_integration(id="stub-Id")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'POST'
+    assert transport.last_request['url'].endswith('/v2/ai/integrations/embeddings/stub-Id/test')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
+
+def test_hub_ai_set_llm_integration_as_default_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.set_llm_integration_as_default(id="stub-Id")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'PUT'
+    assert transport.last_request['url'].endswith('/v2/ai/integrations/llms/stub-Id/default')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+
