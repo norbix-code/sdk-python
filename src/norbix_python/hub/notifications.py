@@ -585,19 +585,6 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
-    def get_email_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/emails/campaigns/{campaignId}/messages/{id}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def get_email_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/emails/campaigns/{campaignId}/messages"""
         return self._transport.send(
@@ -1174,19 +1161,6 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
-    def get_push_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/campaigns/{campaignId}/messages/{id}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def get_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{id}"""
         return self._transport.send(
@@ -1328,19 +1302,6 @@ class NotificationsModule:
             path="/{version}/notifications/sms/campaigns/{campaignId}/messages",
             method="GET",
             path_params={"campaignId": campaign_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "notificationId": id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -2322,19 +2283,6 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
-    async def get_email_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/emails/campaigns/{campaignId}/messages/{id}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     async def get_email_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/emails/campaigns/{campaignId}/messages"""
         return await self._transport.send(
@@ -2911,19 +2859,6 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
-    async def get_push_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/campaigns/{campaignId}/messages/{id}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     async def get_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{id}"""
         return await self._transport.send(
@@ -3065,19 +3000,6 @@ class AsyncNotificationsModule:
             path="/{version}/notifications/sms/campaigns/{campaignId}/messages",
             method="GET",
             path_params={"campaignId": campaign_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "notificationId": id},
             request=request,
             scope="project",
             timeout=timeout,

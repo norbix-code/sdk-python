@@ -13,7 +13,7 @@ from ..helpers import make_client
 
 The generated test file asserts each push method's verb and that the URL is
 https. This file adds the two things it cannot see: the fully-resolved path of
-every one of the 38 push routes, and the polymorphic bodies that the server
+every one of the 37 push routes, and the polymorphic bodies that the server
 routes on.
 
 Only the Fake provider is used for a send path — it is the sandbox that accepts
@@ -184,12 +184,6 @@ PUSH_CASES: list[PushCase] = [
         lambda m: m.get_push_campaign_messages(campaign_id=CAMPAIGN_ID),
     ),
     (
-        "get_push_campaign_message",
-        "GET",
-        f"{BASE}/campaigns/{CAMPAIGN_ID}/messages/{NOTIFICATION_ID}",
-        lambda m: m.get_push_campaign_message(campaign_id=CAMPAIGN_ID, id=NOTIFICATION_ID),
-    ),
-    (
         "preview_push_notification",
         "GET",
         f"{BASE}/preview",
@@ -227,8 +221,8 @@ def test_push_endpoint_hits_the_expected_route(
 
 
 def test_push_surface_size() -> None:
-    """38 live push routes. A new one changes this count, so it cannot arrive untested."""
-    assert len(PUSH_CASES) == 38
+    """37 live push routes. A new one changes this count, so it cannot arrive untested."""
+    assert len(PUSH_CASES) == 37
 
 
 def test_push_call_sends_auth_and_project_headers() -> None:

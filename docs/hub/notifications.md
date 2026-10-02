@@ -48,7 +48,6 @@ Access with `norbix.hub.notifications`.
 | `get_email_campaign_batch_notifications` | `GET` | `/{version}/notifications/email/campaigns/{id}/batches/{batchId}` | `project` |
 | `get_email_campaign_statistics` | `GET` | `/{version}/notifications/email/campaigns/{id}/stats` | `project` |
 | `preview_email_notification` | `GET` | `/{version}/notifications/email/preview` | `optional` |
-| `get_email_campaign_message` | `GET` | `/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}` | `project` |
 | `get_email_campaign_messages` | `GET` | `/{version}/notifications/emails/campaigns/{campaignId}/messages` | `project` |
 | `disable_sms` | `GET` | `/{version}/notifications/sms/disable` | `project` |
 | `enable_sms` | `GET` | `/{version}/notifications/sms/enable` | `project` |
@@ -83,7 +82,6 @@ Access with `norbix.hub.notifications`.
 | `get_sms_campaign_batch_notification` | `GET` | `/{version}/notifications/sms/campaigns/{id}/batches/{batchId}/{notificationId}` | `project` |
 | `get_sms_campaign_statistics` | `GET` | `/{version}/notifications/sms/campaigns/{id}/stats` | `project` |
 | `get_sms_campaign_messages` | `GET` | `/{version}/notifications/sms/campaigns/{campaignId}/messages` | `project` |
-| `get_sms_campaign_message` | `GET` | `/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}` | `project` |
 | `preview_sms_notification` | `GET` | `/{version}/notifications/sms/preview` | `optional` |
 | `disable_push` | `GET` | `/{version}/notifications/push/disable` | `project` |
 | `enable_push` | `GET` | `/{version}/notifications/push/enable` | `project` |
@@ -119,7 +117,6 @@ Access with `norbix.hub.notifications`.
 | `get_push_campaign_batch_notification` | `GET` | `/{version}/notifications/push/campaigns/{id}/batches/{batchId}/{notificationId}` | `project` |
 | `get_push_campaign_statistics` | `GET` | `/{version}/notifications/push/campaigns/{id}/stats` | `project` |
 | `get_push_campaign_messages` | `GET` | `/{version}/notifications/push/campaigns/{campaignId}/messages` | `project` |
-| `get_push_campaign_message` | `GET` | `/{version}/notifications/push/campaigns/{campaignId}/messages/{id}` | `project` |
 | `preview_push_notification` | `GET` | `/{version}/notifications/push/preview` | `optional` |
 
 Every method above has an async twin on `client.hub.notifications` when the

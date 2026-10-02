@@ -86,20 +86,21 @@ rendered = client.hub.notifications.render_sms(
 
 ## Reading one message of a campaign
 
-`get_sms_campaign_message` takes the campaign id and the notification id in the
-route; the batch id is required as well but is not part of the route, so it is
-sent as a query value:
+Use `get_sms_campaign_batch_notification` with the campaign id, the batch id
+and the notification id (route `…/campaigns/{id}/batches/{batchId}/{notificationId}`):
 
 ```python
-message = client.hub.notifications.get_sms_campaign_message(
-    campaign_id="camp_1",
-    id="notif_1",
-    campaignBatchId="batch_1",
+message = client.hub.notifications.get_sms_campaign_batch_notification(
+    id="camp_1",
+    batch_id="batch_1",
+    notification_id="notif_1",
 )
 ```
 
 Get the ids from `get_sms_campaigns`, `get_sms_campaign_batches` and
-`get_sms_campaign_messages`.
+`get_sms_campaign_batch_notifications`. The older `get_sms_campaign_message`
+(`…/campaigns/{campaignId}/messages/{notificationId}`) was removed together
+with its gateway route.
 
 ## Preview with a signed link
 

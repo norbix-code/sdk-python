@@ -51,7 +51,6 @@ def test_hub_notifications_module_surface() -> None:
     assert callable(module.get_email_campaign_batch_notifications)
     assert callable(module.get_email_campaign_statistics)
     assert callable(module.preview_email_notification)
-    assert callable(module.get_email_campaign_message)
     assert callable(module.get_email_campaign_messages)
     assert callable(module.disable_push)
     assert callable(module.enable_push)
@@ -384,13 +383,6 @@ def test_hub_notifications_preview_email_notification_request_shape() -> None:
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-def test_hub_notifications_get_email_campaign_message_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.notifications.get_email_campaign_message(campaign_id="stub-campaignId", id="stub-id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
 def test_hub_notifications_get_email_campaign_messages_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.notifications.get_email_campaign_messages(campaign_id="stub-campaignId")
@@ -566,7 +558,6 @@ def test_hub_notifications_new_endpoints_surface() -> None:
     assert callable(module.create_push_campaign)
     assert callable(module.delete_push_campaign)
     assert callable(module.get_push_campaign_messages)
-    assert callable(module.get_push_campaign_message)
     assert callable(module.get_push_campaign)
     assert callable(module.get_push_campaign_batches)
     assert callable(module.get_push_campaign_batch_notifications)
@@ -577,7 +568,6 @@ def test_hub_notifications_new_endpoints_surface() -> None:
     assert callable(module.create_sms_campaign)
     assert callable(module.stop_sms_campaign)
     assert callable(module.get_sms_campaign_messages)
-    assert callable(module.get_sms_campaign_message)
     assert callable(module.delete_sms_campaign)
     assert callable(module.get_sms_campaign)
     assert callable(module.get_sms_campaign_batches)
@@ -746,13 +736,6 @@ def test_hub_notifications_get_push_campaign_messages_request_shape() -> None:
     assert transport.last_request['url'].startswith('https://')
 
 
-def test_hub_notifications_get_push_campaign_message_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.notifications.get_push_campaign_message(campaign_id="stub-campaign_id", id="stub-id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
 
 def test_hub_notifications_get_push_campaign_request_shape() -> None:
     client, transport = make_client(account_id=None)
@@ -833,13 +816,6 @@ def test_hub_notifications_get_sms_campaign_messages_request_shape() -> None:
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
-
-def test_hub_notifications_get_sms_campaign_message_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.notifications.get_sms_campaign_message(campaign_id="stub-campaign_id", id="stub-id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
 
 
 def test_hub_notifications_delete_sms_campaign_request_shape() -> None:
