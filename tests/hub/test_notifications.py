@@ -575,6 +575,7 @@ def test_hub_notifications_new_endpoints_surface() -> None:
     assert callable(module.get_push_settings)
     assert callable(module.get_sms_campaigns)
     assert callable(module.create_sms_campaign)
+    assert callable(module.stop_sms_campaign)
     assert callable(module.get_sms_campaign_messages)
     assert callable(module.get_sms_campaign_message)
     assert callable(module.delete_sms_campaign)
@@ -584,6 +585,7 @@ def test_hub_notifications_new_endpoints_surface() -> None:
     assert callable(module.get_sms_campaign_batch_notification)
     assert callable(module.get_sms_campaign_statistics)
     assert callable(module.disable_sms)
+    assert callable(module.get_sms_disable_dependencies)
     assert callable(module.enable_sms)
     assert callable(module.get_sms_integrations)
     assert callable(module.save_sms_integration)
@@ -599,7 +601,7 @@ def test_hub_notifications_new_endpoints_surface() -> None:
     assert callable(module.get_sms_templates)
     assert callable(module.create_sms_template)
     assert callable(module.update_sms_template)
-    assert callable(module.sms_razor_syntax_check)
+    assert callable(module.render_sms)
     assert callable(module.delete_sms_template)
     assert callable(module.archive_sms_template)
     assert callable(module.clone_sms_template)
@@ -816,6 +818,14 @@ def test_hub_notifications_create_sms_campaign_request_shape() -> None:
     assert transport.last_request['url'].startswith('https://')
 
 
+def test_hub_notifications_stop_sms_campaign_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.stop_sms_campaign(id="stub-id")
+    assert transport.last_request['method'] == 'POST'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+
+
 def test_hub_notifications_get_sms_campaign_messages_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.notifications.get_sms_campaign_messages(campaign_id="stub-campaign_id")
@@ -883,6 +893,14 @@ def test_hub_notifications_get_sms_campaign_statistics_request_shape() -> None:
 def test_hub_notifications_disable_sms_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.notifications.disable_sms()
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request is not None
+    assert transport.last_request['url'].startswith('https://')
+
+
+def test_hub_notifications_get_sms_disable_dependencies_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.notifications.get_sms_disable_dependencies()
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -1008,9 +1026,9 @@ def test_hub_notifications_update_sms_template_request_shape() -> None:
     assert transport.last_request['url'].startswith('https://')
 
 
-def test_hub_notifications_sms_razor_syntax_check_request_shape() -> None:
+def test_hub_notifications_render_sms_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.notifications.sms_razor_syntax_check()
+    client.hub.notifications.render_sms()
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
