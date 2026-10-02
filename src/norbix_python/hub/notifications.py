@@ -48,6 +48,22 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def get_email_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/email/disable-dependencies
+
+        Lists what depends on the Email module (campaigns, triggers) before you turn it off.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/disable-dependencies",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def enable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/enable"""
         return self._transport.send(
@@ -261,6 +277,23 @@ class NotificationsModule:
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/email/integrations/confirm-human-delivery",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def check_email_integration_domain_health(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/integrations/domain-health
+
+        Informational only: returns the SPF / DMARC / DKIM records found in DNS for the
+        integration's sender domain (pass ``integrationId=...``). It never blocks the integration.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/integrations/domain-health",
             method="POST",
             path_params={},
             request=request,
@@ -483,6 +516,22 @@ class NotificationsModule:
             target="hub",
             path="/{version}/notifications/email/campaigns/{Id}",
             method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def stop_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/campaigns/{Id}/stop
+
+        The campaign stops at its next batch; batches already sent stay sent.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/campaigns/{Id}/stop",
+            method="POST",
             path_params={"Id": id},
             request=request,
             scope="project",
@@ -1746,6 +1795,22 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def get_email_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/email/disable-dependencies
+
+        Lists what depends on the Email module (campaigns, triggers) before you turn it off.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/disable-dependencies",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def enable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/enable"""
         return await self._transport.send(
@@ -1959,6 +2024,23 @@ class AsyncNotificationsModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/email/integrations/confirm-human-delivery",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def check_email_integration_domain_health(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/integrations/domain-health
+
+        Informational only: returns the SPF / DMARC / DKIM records found in DNS for the
+        integration's sender domain (pass ``integrationId=...``). It never blocks the integration.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/integrations/domain-health",
             method="POST",
             path_params={},
             request=request,
@@ -2181,6 +2263,22 @@ class AsyncNotificationsModule:
             target="hub",
             path="/{version}/notifications/email/campaigns/{Id}",
             method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def stop_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/campaigns/{Id}/stop
+
+        The campaign stops at its next batch; batches already sent stay sent.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/campaigns/{Id}/stop",
+            method="POST",
             path_params={"Id": id},
             request=request,
             scope="project",

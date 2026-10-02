@@ -7,6 +7,7 @@ Access with `norbix.hub.notifications`.
 | `get_user_notification_preferences` | `GET` | `/{version}/notifications/user/preferences` | `project` |
 | `update_user_notifications_preferences` | `PUT` | `/{version}/notifications/user/preferences` | `project` |
 | `disable_email` | `GET` | `/{version}/notifications/email/disable` | `project` |
+| `get_email_disable_dependencies` | `GET` | `/{version}/notifications/email/disable-dependencies` | `project` |
 | `enable_email` | `GET` | `/{version}/notifications/email/enable` | `project` |
 | `attach_file_to_template` | `POST` | `/{version}/notifications/email/templates/attachments` | `project` |
 | `create_email_template` | `POST` | `/{version}/notifications/email/templates` | `project` |
@@ -24,6 +25,7 @@ Access with `norbix.hub.notifications`.
 | `save_email_signature` | `POST` | `/{version}/notifications/email/signatures` | `project` |
 | `get_email_settings` | `GET` | `/{version}/notifications/email/settings` | `project` |
 | `confirm_email_integration_human_delivery` | `POST` | `/{version}/notifications/email/integrations/confirm-human-delivery` | `project` |
+| `check_email_integration_domain_health` | `POST` | `/{version}/notifications/email/integrations/domain-health` | `project` |
 | `delete_email_integration` | `DELETE` | `/{version}/notifications/email/integrations/{Id}` | `project` |
 | `disable_email_integration` | `PUT` | `/{version}/notifications/email/integrations/{Id}/disable` | `project` |
 | `enable_email_integration` | `PUT` | `/{version}/notifications/email/integrations/{Id}/enable` | `project` |
@@ -41,6 +43,7 @@ Access with `norbix.hub.notifications`.
 | `save_email_footer` | `POST` | `/{version}/notifications/email/footers` | `project` |
 | `create_email_campaign` | `POST` | `/{version}/notifications/email/campaigns` | `project` |
 | `delete_email_campaign` | `DELETE` | `/{version}/notifications/email/campaigns/{Id}` | `project` |
+| `stop_email_campaign` | `POST` | `/{version}/notifications/email/campaigns/{Id}/stop` | `project` |
 | `get_email_campaign` | `GET` | `/{version}/notifications/email/campaigns/{id}` | `project` |
 | `get_email_campaigns` | `GET` | `/{version}/notifications/email/campaigns` | `project` |
 | `get_email_campaign_batches` | `GET` | `/{version}/notifications/email/campaigns/{id}/batches` | `project` |
