@@ -441,3 +441,40 @@ def test_async_modules_expose_the_same_email_surface() -> None:
         if not name.startswith("_") and "email" in name and not hasattr(async_cls, name)
     )
     assert missing == []
+
+
+@pytest.mark.usefixtures("_no_env_credentials")
+def test_one_click_unsubscribe_needs_no_sign_in() -> None:
+    """The gateway does not authenticate it; with no credentials it still goes out, no Authorization."""
+    seen: list[httpx.Request] = []
+    client = Norbix(
+        project_id="test-project",
+        http_client=httpx.Client(transport=httpx.MockTransport(_capture(seen))),
+    )
+
+    client.hub.email.one_click_unsubscribe(token=TOKEN)
+
+    assert len(seen) == 1
+    assert seen[0].method == "POST"
+    assert urlparse(str(seen[0].url)).path == "/v2/email/one-click-unsubscribe"
+    assert seen[0].headers.get("Authorization") is None
+
+
+@pytest.mark.usefixtures("_no_env_credentials")
+def test_async_one_click_unsubscribe_needs_no_sign_in() -> None:
+    seen: list[httpx.Request] = []
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(_capture(seen))),
+        )
+        try:
+            await client.hub.email.one_click_unsubscribe(token=TOKEN)
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert len(seen) == 1
+    assert seen[0].headers.get("Authorization") is None
