@@ -576,6 +576,97 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def update_project_admin_url(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/admin-url
+
+        Overrides the project's Admin Portal URL. Body: ``url``. Pass ``url=""`` to go back
+        to the standard ``pr_{id}.admin.{host}`` address (a ``None`` value is not sent).
+        Request DTO: UpdateProjectAdminUrl.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-url",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_legal_documents(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal
+
+        Saves the project's Terms and Privacy Policy as Markdown.
+        Body: ``termsMarkdown``, ``privacyMarkdown``. Both are replaced on every call:
+        a field left out or empty clears that document.
+        Request DTO: UpdateProjectLegalDocuments.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_expose_legal(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal/expose
+
+        Turns the public legal pages on or off. Body: ``exposed`` (bool).
+        When on, ``api.public.get_public_project_legal`` serves the documents.
+        Request DTO: UpdateProjectExposeLegal.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_admin_portal_structure(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/admin-portal/structure
+
+        Reads what the project's Admin Portal shows: ``projectId``, ``adminPortalEnabled``,
+        ``displayName`` and the ``modules`` in its navigation.
+        Request DTO: GetAdminPortalStructure.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/admin-portal/structure",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def assign_admin_portal_service_user(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/settings/admin-portal/service-user
+
+        Assigns an existing service user as the project's Admin Portal service user.
+        Body: ``serviceUserId`` (required).
+        Request DTO: AssignAdminPortalServiceUserRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-portal/service-user",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncAccountModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1140,6 +1231,97 @@ class AsyncAccountModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/account/projects/{projectId}/admin-portal/enabled",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_admin_url(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/admin-url
+
+        Overrides the project's Admin Portal URL. Body: ``url``. Pass ``url=""`` to go back
+        to the standard ``pr_{id}.admin.{host}`` address (a ``None`` value is not sent).
+        Request DTO: UpdateProjectAdminUrl.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-url",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_legal_documents(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal
+
+        Saves the project's Terms and Privacy Policy as Markdown.
+        Body: ``termsMarkdown``, ``privacyMarkdown``. Both are replaced on every call:
+        a field left out or empty clears that document.
+        Request DTO: UpdateProjectLegalDocuments.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_expose_legal(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal/expose
+
+        Turns the public legal pages on or off. Body: ``exposed`` (bool).
+        When on, ``api.public.get_public_project_legal`` serves the documents.
+        Request DTO: UpdateProjectExposeLegal.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_admin_portal_structure(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/admin-portal/structure
+
+        Reads what the project's Admin Portal shows: ``projectId``, ``adminPortalEnabled``,
+        ``displayName`` and the ``modules`` in its navigation.
+        Request DTO: GetAdminPortalStructure.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/admin-portal/structure",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def assign_admin_portal_service_user(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/settings/admin-portal/service-user
+
+        Assigns an existing service user as the project's Admin Portal service user.
+        Body: ``serviceUserId`` (required).
+        Request DTO: AssignAdminPortalServiceUserRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-portal/service-user",
             method="PUT",
             path_params={"projectId": project_id},
             request=request,
