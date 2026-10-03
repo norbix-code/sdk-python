@@ -10,7 +10,7 @@ Not in scope: AI plans, knowledge search, AI credits (decided internal); changes
 2. [done] feat(sdk-python:account:settings): admin URL, legal documents, expose legal, admin portal structure, admin portal service user
 3. [done] feat(sdk-python:account:ai-service-users): create, list, delete AI service users, rotate and revoke their keys
 4. [done] feat(sdk-python:account:mcp): the developer MCP endpoint — send a message (POST), read the server stream (GET), end the session (DELETE)
-5. [todo] feat(sdk-python:api:public): new `api.public` module — public project config and public legal document, no sign-in
+5. [done] feat(sdk-python:api:public): new `api.public` module — public project config and public legal document, no sign-in
 6. [todo] docs(sdk-python:project): docs pages, docs index and README section for all of the above
 7. [todo] release(sdk-python:project): ruff, mypy, pytest green; push branch; open one pull request to main
 
