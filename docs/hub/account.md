@@ -40,3 +40,10 @@ Access with `norbix.hub.account`.
 | `get_account_collaborators` | `GET` | `/{version}/account/collaborators` | `account` |
 | `send_invite_to_team_member` | `POST` | `/{version}/account/team/member/invite` | `account` |
 | `get_licenses` | `GET` | `/{version}/account/licenses` | `account` |
+| `get_project_ai_settings` | `GET` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
+| `update_project_ai_settings` | `PUT` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
+| `create_project_ai_assistant` | `POST` | `/{version}/account/projects/{projectId}/ai/assistants` | `project` |
+| `update_project_ai_assistant` | `PUT` | `/{version}/account/projects/{projectId}/ai/assistants/{assistantId}` | `project` |
+| `delete_project_ai_assistant` | `DELETE` | `/{version}/account/projects/{projectId}/ai/assistants/{assistantId}` | `project` |
+| `get_project_ai_usage` | `GET` | `/{version}/account/projects/{projectId}/ai/usage` | `project` |
+| `set_admin_portal_enabled` | `PUT` | `/{version}/account/projects/{projectId}/admin-portal/enabled` | `project` |

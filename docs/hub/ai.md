@@ -18,3 +18,9 @@ Access with `norbix.hub.ai`.
 | `get_mcp_integrations` | `GET` | `/{version}/ai/integrations/mcp/integrations` | `project` |
 | `save_mcp_integration` | `POST` | `/{version}/ai/integrations/mcp/` | `project` |
 | `test_mcp_integration` | `POST` | `/{version}/ai/integrations/mcp/test` | `project` |
+| `get_embedding_integrations` | `GET` | `/{version}/ai/integrations/embeddings` | `project` |
+| `save_embedding_integration` | `POST` | `/{version}/ai/integrations/embeddings` | `project` |
+| `get_embedding_integration` | `GET` | `/{version}/ai/integrations/embeddings/{Id}` | `project` |
+| `delete_embedding_integration` | `DELETE` | `/{version}/ai/integrations/embeddings/{Id}` | `project` |
+| `test_embedding_integration` | `POST` | `/{version}/ai/integrations/embeddings/{Id}/test` | `project` |
+| `set_llm_integration_as_default` | `PUT` | `/{version}/ai/integrations/llms/{Id}/default` | `project` |
