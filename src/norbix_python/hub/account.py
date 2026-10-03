@@ -1,8 +1,66 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from ..transport import AsyncTransport, Transport
+
+# ----------------------------------------------------------------------
+# The developer MCP endpoint (Streamable HTTP, MCP revision 2025-11-25).
+# One route, three verbs. The session id travels in the Mcp-Session-Id
+# response header of ``initialize``, so these calls give back an envelope:
+#   {"status": int, "sessionId": str | None, "body": the JSON-RPC answer
+#    (dict) or None, "events": [JSON-RPC messages from an SSE answer]}
+# ----------------------------------------------------------------------
+
+_MCP_PATH = "/{version}/account/mcp"
+
+
+def _mcp_headers(
+    accept: str,
+    session_id: str | None,
+    protocol_version: str | None,
+    last_event_id: str | None = None,
+) -> dict[str, str]:
+    headers = {"Accept": accept}
+    if session_id:
+        headers["Mcp-Session-Id"] = session_id
+    if protocol_version:
+        headers["MCP-Protocol-Version"] = protocol_version
+    if last_event_id:
+        headers["Last-Event-ID"] = last_event_id
+    return headers
+
+
+def _sse_messages(text: str) -> list[Any]:
+    """The JSON messages of an SSE body; events with no JSON data (priming, ping) are skipped."""
+    messages: list[Any] = []
+    for block in text.replace("\r\n", "\n").split("\n\n"):
+        data = "\n".join(line[5:].lstrip(" ") for line in block.split("\n") if line.startswith("data:"))
+        if not data:
+            continue
+        try:
+            messages.append(json.loads(data))
+        except ValueError:
+            continue
+    return messages
+
+
+def _mcp_result(envelope: dict[str, Any]) -> dict[str, Any]:
+    headers = envelope["headers"]
+    raw = envelope["body"]
+    events: list[Any] = []
+    body: Any = raw
+    if "text/event-stream" in headers.get("content-type", "") and isinstance(raw, str):
+        events = _sse_messages(raw)
+        answers = [m for m in events if isinstance(m, dict) and "id" in m and ("result" in m or "error" in m)]
+        body = answers[-1] if answers else None
+    return {
+        "status": envelope["status"],
+        "sessionId": headers.get("mcp-session-id"),
+        "body": body,
+        "events": events,
+    }
 
 
 class AccountModule:
@@ -576,6 +634,330 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def update_project_admin_url(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/admin-url
+
+        Overrides the project's Admin Portal URL. Body: ``url``. Pass ``url=""`` to go back
+        to the standard ``pr_{id}.admin.{host}`` address (a ``None`` value is not sent).
+        Request DTO: UpdateProjectAdminUrl.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-url",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_legal_documents(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal
+
+        Saves the project's Terms and Privacy Policy as Markdown.
+        Body: ``termsMarkdown``, ``privacyMarkdown``. Both are replaced on every call:
+        a field left out or empty clears that document.
+        Request DTO: UpdateProjectLegalDocuments.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_expose_legal(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal/expose
+
+        Turns the public legal pages on or off. Body: ``exposed`` (bool).
+        When on, ``api.public.get_public_project_legal`` serves the documents.
+        Request DTO: UpdateProjectExposeLegal.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_expose_brand(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/brand/expose
+
+        Sets whether the brand (name, colors, logo, icon) is returned by the public
+        Admin Portal config, ``api.public.get_public_project_config``. On by default.
+        Body: ``exposed`` (bool).
+        Request DTO: UpdateProjectExposeBrand.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/brand/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_expose_auth(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/auth/expose
+
+        Sets whether the sign-in methods (email / phone / username) and the password
+        policy are returned by the public Admin Portal config,
+        ``api.public.get_public_project_config``. Off by default. Body: ``exposed`` (bool).
+        Request DTO: UpdateProjectExposeAuth.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/auth/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_admin_portal_structure(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/admin-portal/structure
+
+        Reads what the project's Admin Portal shows: ``projectId``, ``adminPortalEnabled``,
+        ``displayName`` and the ``modules`` in its navigation.
+        Request DTO: GetAdminPortalStructure.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/admin-portal/structure",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def assign_admin_portal_service_user(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/settings/admin-portal/service-user
+
+        Assigns an existing service user as the project's Admin Portal service user.
+        Body: ``serviceUserId`` (required).
+        Request DTO: AssignAdminPortalServiceUserRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-portal/service-user",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_ai_service_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users
+
+        Creates an AI service user — a scoped credential for an AI agent (for example an MCP client).
+        Body: ``name`` (required) and ``scope`` (required) — a dict with ``reach``,
+        ``projectId``, ``rights`` and ``envs`` that says what the agent may touch.
+        The answer carries the new key once; store it, it is never shown again.
+        Request DTO: CreateAiServiceUserRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def list_ai_service_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/ai/service-users
+
+        Lists the account's AI service users and their keys (key values are never returned).
+        Request DTO: ListAiServiceUsersRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def rotate_ai_service_user_key(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users/{Id}/keys
+
+        Issues a new key for an AI service user (``aisu_…``). Optional body ``revokeKeyId``
+        revokes an old key (``aisk_…``) in the same call. The new key is shown once.
+        Request DTO: RotateAiServiceUserKeyRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys",
+            method="POST",
+            path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def revoke_ai_service_user_key(self, service_user_id: str, key_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}/keys/{KeyId}
+
+        Revokes one key (``aisk_…``) of an AI service user (``aisu_…``).
+        Request DTO: RevokeAiServiceUserKeyRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys/{KeyId}",
+            method="DELETE",
+            path_params={"Id": service_user_id, "KeyId": key_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_ai_service_user(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}
+
+        Deletes an AI service user (``aisu_…``) and every key it has.
+        Request DTO: DeleteAiServiceUserRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}",
+            method="DELETE",
+            path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def mcp(
+        self,
+        message: dict[str, Any],
+        *,
+        session_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """POST /{version}/account/mcp
+
+        Sends one JSON-RPC 2.0 message to the Norbix MCP server
+        (``initialize``, ``tools/list``, ``tools/call``, ``prompts/*``,
+        ``resources/*``, ``ping``, or a notification).
+
+        Start with ``initialize``: the answer's ``sessionId`` must be passed as
+        ``session_id`` on every later call. ``toolsets`` narrows ``tools/list``
+        (for example ``"ai:campaigns,ai:project-context"``).
+
+        Gives back ``{"status", "sessionId", "body", "events"}``. ``body`` is
+        the JSON-RPC answer (``None`` for a notification, answered 202). A
+        ``tools/call`` may be answered as an SSE stream: then ``events`` holds
+        every message of the stream and ``body`` is the final answer.
+
+        Signs in with the client's token — a dashboard session, a JWT, or an
+        AI service user key (``nbsu_…``, see ``create_ai_service_user``).
+        A missing or expired session raises ``NorbixError`` (400 / 404).
+        """
+        envelope = self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="POST",
+            path_params={},
+            request=dict(message),
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json, text/event-stream", session_id, protocol_version),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    def mcp_stream(
+        self,
+        session_id: str,
+        *,
+        last_event_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /{version}/account/mcp
+
+        Reads the server-to-client SSE stream of a session (server
+        notifications such as ``notifications/tools/list_changed``).
+        ``last_event_id`` resumes a dropped stream.
+
+        This SDK does not stream: the call returns when the server closes the
+        stream (after its maximum stream time) or when ``timeout`` runs out —
+        set ``timeout`` above the server's stream time. ``events`` holds the
+        messages received.
+        """
+        envelope = self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="GET",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("text/event-stream", session_id, protocol_version, last_event_id),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    def mcp_end_session(
+        self,
+        session_id: str,
+        *,
+        protocol_version: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """DELETE /{version}/account/mcp
+
+        Ends the MCP session named by ``session_id``.
+        """
+        envelope = self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="DELETE",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json", session_id, protocol_version),
+        )
+        return _mcp_result(envelope)
+
 
 class AsyncAccountModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1147,3 +1529,327 @@ class AsyncAccountModule:
             timeout=timeout,
             bearer_token=bearer_token,
         )
+
+    async def update_project_admin_url(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/admin-url
+
+        Overrides the project's Admin Portal URL. Body: ``url``. Pass ``url=""`` to go back
+        to the standard ``pr_{id}.admin.{host}`` address (a ``None`` value is not sent).
+        Request DTO: UpdateProjectAdminUrl.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-url",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_legal_documents(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal
+
+        Saves the project's Terms and Privacy Policy as Markdown.
+        Body: ``termsMarkdown``, ``privacyMarkdown``. Both are replaced on every call:
+        a field left out or empty clears that document.
+        Request DTO: UpdateProjectLegalDocuments.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_expose_legal(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/legal/expose
+
+        Turns the public legal pages on or off. Body: ``exposed`` (bool).
+        When on, ``api.public.get_public_project_legal`` serves the documents.
+        Request DTO: UpdateProjectExposeLegal.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/legal/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_expose_brand(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/brand/expose
+
+        Sets whether the brand (name, colors, logo, icon) is returned by the public
+        Admin Portal config, ``api.public.get_public_project_config``. On by default.
+        Body: ``exposed`` (bool).
+        Request DTO: UpdateProjectExposeBrand.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/brand/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_expose_auth(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/{projectId}/settings/auth/expose
+
+        Sets whether the sign-in methods (email / phone / username) and the password
+        policy are returned by the public Admin Portal config,
+        ``api.public.get_public_project_config``. Off by default. Body: ``exposed`` (bool).
+        Request DTO: UpdateProjectExposeAuth.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/auth/expose",
+            method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_admin_portal_structure(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/admin-portal/structure
+
+        Reads what the project's Admin Portal shows: ``projectId``, ``adminPortalEnabled``,
+        ``displayName`` and the ``modules`` in its navigation.
+        Request DTO: GetAdminPortalStructure.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/admin-portal/structure",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def assign_admin_portal_service_user(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/settings/admin-portal/service-user
+
+        Assigns an existing service user as the project's Admin Portal service user.
+        Body: ``serviceUserId`` (required).
+        Request DTO: AssignAdminPortalServiceUserRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/admin-portal/service-user",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_ai_service_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users
+
+        Creates an AI service user — a scoped credential for an AI agent (for example an MCP client).
+        Body: ``name`` (required) and ``scope`` (required) — a dict with ``reach``,
+        ``projectId``, ``rights`` and ``envs`` that says what the agent may touch.
+        The answer carries the new key once; store it, it is never shown again.
+        Request DTO: CreateAiServiceUserRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def list_ai_service_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/ai/service-users
+
+        Lists the account's AI service users and their keys (key values are never returned).
+        Request DTO: ListAiServiceUsersRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def rotate_ai_service_user_key(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users/{Id}/keys
+
+        Issues a new key for an AI service user (``aisu_…``). Optional body ``revokeKeyId``
+        revokes an old key (``aisk_…``) in the same call. The new key is shown once.
+        Request DTO: RotateAiServiceUserKeyRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys",
+            method="POST",
+            path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def revoke_ai_service_user_key(self, service_user_id: str, key_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}/keys/{KeyId}
+
+        Revokes one key (``aisk_…``) of an AI service user (``aisu_…``).
+        Request DTO: RevokeAiServiceUserKeyRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys/{KeyId}",
+            method="DELETE",
+            path_params={"Id": service_user_id, "KeyId": key_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_ai_service_user(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}
+
+        Deletes an AI service user (``aisu_…``) and every key it has.
+        Request DTO: DeleteAiServiceUserRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}",
+            method="DELETE",
+            path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def mcp(
+        self,
+        message: dict[str, Any],
+        *,
+        session_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """POST /{version}/account/mcp
+
+        Sends one JSON-RPC 2.0 message to the Norbix MCP server
+        (``initialize``, ``tools/list``, ``tools/call``, ``prompts/*``,
+        ``resources/*``, ``ping``, or a notification).
+
+        Start with ``initialize``: the answer's ``sessionId`` must be passed as
+        ``session_id`` on every later call. ``toolsets`` narrows ``tools/list``
+        (for example ``"ai:campaigns,ai:project-context"``).
+
+        Gives back ``{"status", "sessionId", "body", "events"}``. ``body`` is
+        the JSON-RPC answer (``None`` for a notification, answered 202). A
+        ``tools/call`` may be answered as an SSE stream: then ``events`` holds
+        every message of the stream and ``body`` is the final answer.
+
+        Signs in with the client's token — a dashboard session, a JWT, or an
+        AI service user key (``nbsu_…``, see ``create_ai_service_user``).
+        A missing or expired session raises ``NorbixError`` (400 / 404).
+        """
+        envelope = await self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="POST",
+            path_params={},
+            request=dict(message),
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json, text/event-stream", session_id, protocol_version),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    async def mcp_stream(
+        self,
+        session_id: str,
+        *,
+        last_event_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /{version}/account/mcp
+
+        Reads the server-to-client SSE stream of a session (server
+        notifications such as ``notifications/tools/list_changed``).
+        ``last_event_id`` resumes a dropped stream.
+
+        This SDK does not stream: the call returns when the server closes the
+        stream (after its maximum stream time) or when ``timeout`` runs out —
+        set ``timeout`` above the server's stream time. ``events`` holds the
+        messages received.
+        """
+        envelope = await self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="GET",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("text/event-stream", session_id, protocol_version, last_event_id),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    async def mcp_end_session(
+        self,
+        session_id: str,
+        *,
+        protocol_version: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """DELETE /{version}/account/mcp
+
+        Ends the MCP session named by ``session_id``.
+        """
+        envelope = await self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="DELETE",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json", session_id, protocol_version),
+        )
+        return _mcp_result(envelope)

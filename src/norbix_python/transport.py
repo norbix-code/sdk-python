@@ -19,7 +19,10 @@ Scope = Literal["project", "account", "unauthenticated", "optional"]
 # "binary" gives back the raw bytes — for an endpoint that answers with a
 # file rather than a document, such as a public file link. Parsing a PDF as
 # JSON quietly hands back its text instead (10b-files slice SDK-2).
-ResponseType = Literal["json", "binary"]
+# "envelope" gives back {"status", "headers", "body"} without the business
+# refusal check — for a protocol endpoint whose answer headers matter, such
+# as the MCP endpoint (its session id travels in a response header).
+ResponseType = Literal["json", "binary", "envelope"]
 Target = Literal["api", "hub"]
 
 _IDEMPOTENT_VERBS: frozenset[str] = frozenset({"GET", "DELETE"})
@@ -67,6 +70,8 @@ class Transport:
         region: str | None = None,
         response_type: ResponseType = "json",
         follow_redirects: bool = False,
+        extra_headers: dict[str, str] | None = None,
+        query: dict[str, Any] | None = None,
     ) -> Any:
         if scope == "account" and not self._cfg.account_id:
             raise NorbixError(
@@ -87,6 +92,7 @@ class Transport:
             path_params=params,
             request=req,
         )
+        url = _with_query(url, query)
         headers = {"Accept": "application/json", **self._cfg.default_headers}
 
         if scope != "unauthenticated":
@@ -114,6 +120,10 @@ class Transport:
             headers["nb-region"] = resolved_region
         if body is not None:
             headers["Content-Type"] = "application/json"
+        # Per-call headers win over everything above (e.g. the MCP endpoint
+        # needs its own Accept and its session headers).
+        if extra_headers:
+            headers.update(extra_headers)
 
         try:
             response = self._request_with_retries(
@@ -142,6 +152,8 @@ class Transport:
         # are not JSON, so the check below does not apply to them.
         if response_type == "binary":
             return response.content
+        if response_type == "envelope":
+            return _envelope(response)
         if response.status_code == 204 or not response.content:
             return None
         try:
@@ -216,6 +228,8 @@ class AsyncTransport:
         region: str | None = None,
         response_type: ResponseType = "json",
         follow_redirects: bool = False,
+        extra_headers: dict[str, str] | None = None,
+        query: dict[str, Any] | None = None,
     ) -> Any:
         if scope == "account" and not self._cfg.account_id:
             raise NorbixError(
@@ -236,6 +250,7 @@ class AsyncTransport:
             path_params=params,
             request=req,
         )
+        url = _with_query(url, query)
         headers = {"Accept": "application/json", **self._cfg.default_headers}
 
         if scope != "unauthenticated":
@@ -263,6 +278,10 @@ class AsyncTransport:
             headers["nb-region"] = resolved_region
         if body is not None:
             headers["Content-Type"] = "application/json"
+        # Per-call headers win over everything above (e.g. the MCP endpoint
+        # needs its own Accept and its session headers).
+        if extra_headers:
+            headers.update(extra_headers)
 
         try:
             response = await self._request_with_retries(
@@ -291,6 +310,8 @@ class AsyncTransport:
         # are not JSON, so the check below does not apply to them.
         if response_type == "binary":
             return response.content
+        if response_type == "envelope":
+            return _envelope(response)
         if response.status_code == 204 or not response.content:
             return None
         try:
@@ -378,6 +399,31 @@ def _build_url_and_body(
         )
         return (f"{url}?{query}" if query else url, None)
     return (url, remaining if remaining else None)
+
+
+def _with_query(url: str, query: dict[str, Any] | None) -> str:
+    """Append query parameters that always go in the URL, whatever the verb."""
+    if not query:
+        return url
+    pairs = [(k, _stringify(v)) for k, v in query.items() if v is not None]
+    if not pairs:
+        return url
+    return f"{url}{'&' if '?' in url else '?'}{urlencode(pairs)}"
+
+
+def _envelope(response: httpx.Response) -> dict[str, Any]:
+    """Status, headers (lower-case names) and body (parsed JSON, else text, else None)."""
+    body: Any = None
+    if response.content:
+        try:
+            body = response.json()
+        except ValueError:
+            body = response.text
+    return {
+        "status": response.status_code,
+        "headers": {k.lower(): v for k, v in response.headers.items()},
+        "body": body,
+    }
 
 
 def _to_iterable(value: Any) -> list[Any]:
