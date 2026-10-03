@@ -148,7 +148,9 @@ and `norbix.hub.ai` (`get_embedding_integrations`, `save_embedding_integration`,
 Project owners manage the Admin Portal and legal pages on the Hub,
 `norbix.hub.account`: `update_project_admin_url`, `update_project_legal_documents`,
 `update_project_expose_legal`, `get_admin_portal_structure`,
-`assign_admin_portal_service_user`.
+`assign_admin_portal_service_user`. Two switches choose what the public Admin
+Portal config shows: `update_project_expose_brand` (brand, on by default) and
+`update_project_expose_auth` (sign-in methods and password policy, off by default).
 
 Once the legal pages are exposed, anyone can read them — and the project's
 public config — from the API host with no sign-in, `norbix.api.public`:

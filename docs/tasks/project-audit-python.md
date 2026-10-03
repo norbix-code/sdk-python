@@ -13,12 +13,14 @@ Not in scope: AI plans, knowledge search, AI credits (decided internal); changes
 5. [done] feat(sdk-python:api:public): new `api.public` module — public project config and public legal document, no sign-in
 6. [done] docs(sdk-python:project): docs pages, docs index and README section for all of the above
 7. [done] release(sdk-python:project): ruff, mypy, pytest green; push branch; open one pull request to main — https://github.com/norbix-code/sdk-python/pull/25
+8. [done] feat(sdk-python:account:settings): expose brand and expose auth switches (item B3b; gateway routes from item B1) — `update_project_expose_brand`, `update_project_expose_auth`, sync + async, tests, docs; pushed to pull request #25
 
 ## Checks
 - `uv run ruff check .` — All checks passed
 - `uv run mypy src` — Success: no issues found in 37 source files
 - `uv run pytest` — 799 passed (31 new: 20 settings/service-user shapes, 7 MCP, 4 public)
 - venv lives outside the repo: `UV_PROJECT_ENVIRONMENT=~/scratch/project-python/venv`
+- Step 8 re-run (venv `~/scratch/project-b3b/venv`): ruff All checks passed; mypy no issues in 37 source files; pytest 803 passed (4 new: brand + auth, sync + async)
 
 ## Changes
 | file (absolute, branch audit/project) | what changed | step |
@@ -36,6 +38,9 @@ Not in scope: AI plans, knowledge search, AI credits (decided internal); changes
 | /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/docs/api/public.md | new page | 6 |
 | /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/docs/api/_index.md, /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/docs/hub/_index.md | `public` row; account count 36 → 56 | 6 |
 | /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/README.md | module list mentions `client.public`; new section "Project settings, public pages, MCP and AI service users" | 6 |
+| /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/src/norbix_python/hub/account.py | `update_project_expose_brand`, `update_project_expose_auth` (sync + async) | 8 |
+| /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/tests/hub/test_account_project.py | 2 table rows (brand sends `exposed: false`, so a false body is checked too) | 8 |
+| /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/docs/hub/account.md, /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/docs/hub/_index.md, /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/README.md | 2 rows; account count 56 → 58; README sentence on the two switches | 8 |
 
 ## Findings
 fix(sdk-python:client:api): the flat `NorbixApi` client has no `ai`, although `api.ai` exists since the AI pull request #23 — open, not fixed here
@@ -99,6 +104,8 @@ fix(sdk-python:transport): the body drops every `None` value, so a caller cannot
 
 docs(sdk-python:docs:index): endpoint counts in the docs index pages are stale (hub ai says 14, page has 20; hub email 1 vs 2; api database 18 vs 20; api files 10 vs 9; push and sms pages missing from the index) — open; only account and public fixed here
     where: /Users/djovaisas/Projects/norbix/worktrees/sdks/norbix-python/audit/project/docs/hub/_index.md:6 (branch audit/project)
+
+docs(sdk-python:hub:account): the two new switches have no matching request DTO class in the SDK — none needed, the Python SDK sends `**request` keyword bodies with no generated types — no action
 
 ## Rejected / moved out
 - decision(sdk-python:account:ai): AI plans, knowledge search and AI credits not added — rejected — decided internal by the campaign brief — none
