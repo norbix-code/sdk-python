@@ -1,8 +1,66 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from ..transport import AsyncTransport, Transport
+
+# ----------------------------------------------------------------------
+# The developer MCP endpoint (Streamable HTTP, MCP revision 2025-11-25).
+# One route, three verbs. The session id travels in the Mcp-Session-Id
+# response header of ``initialize``, so these calls give back an envelope:
+#   {"status": int, "sessionId": str | None, "body": the JSON-RPC answer
+#    (dict) or None, "events": [JSON-RPC messages from an SSE answer]}
+# ----------------------------------------------------------------------
+
+_MCP_PATH = "/{version}/account/mcp"
+
+
+def _mcp_headers(
+    accept: str,
+    session_id: str | None,
+    protocol_version: str | None,
+    last_event_id: str | None = None,
+) -> dict[str, str]:
+    headers = {"Accept": accept}
+    if session_id:
+        headers["Mcp-Session-Id"] = session_id
+    if protocol_version:
+        headers["MCP-Protocol-Version"] = protocol_version
+    if last_event_id:
+        headers["Last-Event-ID"] = last_event_id
+    return headers
+
+
+def _sse_messages(text: str) -> list[Any]:
+    """The JSON messages of an SSE body; events with no JSON data (priming, ping) are skipped."""
+    messages: list[Any] = []
+    for block in text.replace("\r\n", "\n").split("\n\n"):
+        data = "\n".join(line[5:].lstrip(" ") for line in block.split("\n") if line.startswith("data:"))
+        if not data:
+            continue
+        try:
+            messages.append(json.loads(data))
+        except ValueError:
+            continue
+    return messages
+
+
+def _mcp_result(envelope: dict[str, Any]) -> dict[str, Any]:
+    headers = envelope["headers"]
+    raw = envelope["body"]
+    events: list[Any] = []
+    body: Any = raw
+    if "text/event-stream" in headers.get("content-type", "") and isinstance(raw, str):
+        events = _sse_messages(raw)
+        answers = [m for m in events if isinstance(m, dict) and "id" in m and ("result" in m or "error" in m)]
+        body = answers[-1] if answers else None
+    return {
+        "status": envelope["status"],
+        "sessionId": headers.get("mcp-session-id"),
+        "body": body,
+        "events": events,
+    }
 
 
 class AccountModule:
@@ -756,6 +814,112 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def mcp(
+        self,
+        message: dict[str, Any],
+        *,
+        session_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """POST /{version}/account/mcp
+
+        Sends one JSON-RPC 2.0 message to the Norbix MCP server
+        (``initialize``, ``tools/list``, ``tools/call``, ``prompts/*``,
+        ``resources/*``, ``ping``, or a notification).
+
+        Start with ``initialize``: the answer's ``sessionId`` must be passed as
+        ``session_id`` on every later call. ``toolsets`` narrows ``tools/list``
+        (for example ``"ai:campaigns,ai:project-context"``).
+
+        Gives back ``{"status", "sessionId", "body", "events"}``. ``body`` is
+        the JSON-RPC answer (``None`` for a notification, answered 202). A
+        ``tools/call`` may be answered as an SSE stream: then ``events`` holds
+        every message of the stream and ``body`` is the final answer.
+
+        Signs in with the client's token — a dashboard session, a JWT, or an
+        AI service user key (``nbsu_…``, see ``create_ai_service_user``).
+        A missing or expired session raises ``NorbixError`` (400 / 404).
+        """
+        envelope = self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="POST",
+            path_params={},
+            request=dict(message),
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json, text/event-stream", session_id, protocol_version),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    def mcp_stream(
+        self,
+        session_id: str,
+        *,
+        last_event_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /{version}/account/mcp
+
+        Reads the server-to-client SSE stream of a session (server
+        notifications such as ``notifications/tools/list_changed``).
+        ``last_event_id`` resumes a dropped stream.
+
+        This SDK does not stream: the call returns when the server closes the
+        stream (after its maximum stream time) or when ``timeout`` runs out —
+        set ``timeout`` above the server's stream time. ``events`` holds the
+        messages received.
+        """
+        envelope = self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="GET",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("text/event-stream", session_id, protocol_version, last_event_id),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    def mcp_end_session(
+        self,
+        session_id: str,
+        *,
+        protocol_version: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """DELETE /{version}/account/mcp
+
+        Ends the MCP session named by ``session_id``.
+        """
+        envelope = self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="DELETE",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json", session_id, protocol_version),
+        )
+        return _mcp_result(envelope)
+
 
 class AsyncAccountModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1507,3 +1671,109 @@ class AsyncAccountModule:
             timeout=timeout,
             bearer_token=bearer_token,
         )
+
+    async def mcp(
+        self,
+        message: dict[str, Any],
+        *,
+        session_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """POST /{version}/account/mcp
+
+        Sends one JSON-RPC 2.0 message to the Norbix MCP server
+        (``initialize``, ``tools/list``, ``tools/call``, ``prompts/*``,
+        ``resources/*``, ``ping``, or a notification).
+
+        Start with ``initialize``: the answer's ``sessionId`` must be passed as
+        ``session_id`` on every later call. ``toolsets`` narrows ``tools/list``
+        (for example ``"ai:campaigns,ai:project-context"``).
+
+        Gives back ``{"status", "sessionId", "body", "events"}``. ``body`` is
+        the JSON-RPC answer (``None`` for a notification, answered 202). A
+        ``tools/call`` may be answered as an SSE stream: then ``events`` holds
+        every message of the stream and ``body`` is the final answer.
+
+        Signs in with the client's token — a dashboard session, a JWT, or an
+        AI service user key (``nbsu_…``, see ``create_ai_service_user``).
+        A missing or expired session raises ``NorbixError`` (400 / 404).
+        """
+        envelope = await self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="POST",
+            path_params={},
+            request=dict(message),
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json, text/event-stream", session_id, protocol_version),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    async def mcp_stream(
+        self,
+        session_id: str,
+        *,
+        last_event_id: str | None = None,
+        protocol_version: str | None = None,
+        toolsets: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /{version}/account/mcp
+
+        Reads the server-to-client SSE stream of a session (server
+        notifications such as ``notifications/tools/list_changed``).
+        ``last_event_id`` resumes a dropped stream.
+
+        This SDK does not stream: the call returns when the server closes the
+        stream (after its maximum stream time) or when ``timeout`` runs out —
+        set ``timeout`` above the server's stream time. ``events`` holds the
+        messages received.
+        """
+        envelope = await self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="GET",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("text/event-stream", session_id, protocol_version, last_event_id),
+            query={"toolsets": toolsets},
+        )
+        return _mcp_result(envelope)
+
+    async def mcp_end_session(
+        self,
+        session_id: str,
+        *,
+        protocol_version: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+    ) -> dict[str, Any]:
+        """DELETE /{version}/account/mcp
+
+        Ends the MCP session named by ``session_id``.
+        """
+        envelope = await self._transport.send(
+            target="hub",
+            path=_MCP_PATH,
+            method="DELETE",
+            path_params={},
+            request={},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+            response_type="envelope",
+            extra_headers=_mcp_headers("application/json", session_id, protocol_version),
+        )
+        return _mcp_result(envelope)
