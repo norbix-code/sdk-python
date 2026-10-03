@@ -8,7 +8,7 @@
 Official Python SDK for [Norbix](https://norbix.ai).
 Use split clients with flat module access:
 
-- `NorbixApi` for API scope (`client.database`, `client.membership`, ...)
+- `NorbixApi` for API scope (`client.database`, `client.membership`, `client.public`, ...)
 - `NorbixHub` for Hub scope (`client.database`, `client.account`, ...)
 
 ## Install
@@ -142,6 +142,30 @@ and `norbix.hub.ai` (`get_embedding_integrations`, `save_embedding_integration`,
 `test_embedding_integration`, `set_llm_integration_as_default`). Full tables:
 [docs/api/ai.md](./docs/api/ai.md), [docs/hub/ai.md](./docs/hub/ai.md),
 [docs/hub/account.md](./docs/hub/account.md).
+
+## Project settings, public pages, MCP and AI service users
+
+Project owners manage the Admin Portal and legal pages on the Hub,
+`norbix.hub.account`: `update_project_admin_url`, `update_project_legal_documents`,
+`update_project_expose_legal`, `get_admin_portal_structure`,
+`assign_admin_portal_service_user`.
+
+Once the legal pages are exposed, anyone can read them — and the project's
+public config — from the API host with no sign-in, `norbix.api.public`:
+
+```python
+norbix.hub.account.update_project_legal_documents("proj_123", termsMarkdown="# Terms", privacyMarkdown="# Privacy")
+norbix.hub.account.update_project_expose_legal("proj_123", exposed=True)
+norbix.api.public.get_public_project_legal("proj_123", "terms")  # {"kind", "title", "body", "available"}
+norbix.api.public.get_public_project_config("proj_123")
+```
+
+AI agents reach Norbix through the developer MCP endpoint with an AI service
+user key: `create_ai_service_user`, `list_ai_service_users`,
+`rotate_ai_service_user_key`, `revoke_ai_service_user_key`,
+`delete_ai_service_user`, then `mcp` / `mcp_stream` / `mcp_end_session`.
+Full tables and an MCP example: [docs/hub/account.md](./docs/hub/account.md),
+[docs/api/public.md](./docs/api/public.md).
 
 ## Errors
 
