@@ -50,6 +50,41 @@ Access with `norbix.hub.notifications`.
 | `preview_email_notification` | `GET` | `/{version}/notifications/email/preview` | `optional` |
 | `get_email_campaign_message` | `GET` | `/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}` | `project` |
 | `get_email_campaign_messages` | `GET` | `/{version}/notifications/emails/campaigns/{campaignId}/messages` | `project` |
+| `disable_sms` | `GET` | `/{version}/notifications/sms/disable` | `project` |
+| `enable_sms` | `GET` | `/{version}/notifications/sms/enable` | `project` |
+| `get_sms_disable_dependencies` | `GET` | `/{version}/notifications/sms/disable-dependencies` | `project` |
+| `get_sms_settings` | `GET` | `/{version}/notifications/sms/settings` | `project` |
+| `get_sms_integrations` | `GET` | `/{version}/notifications/sms/integrations` | `project` |
+| `save_sms_integration` | `POST` | `/{version}/notifications/sms/integrations` | `project` |
+| `get_sms_integration` | `GET` | `/{version}/notifications/sms/integrations/{id}` | `project` |
+| `enable_sms_integration` | `PUT` | `/{version}/notifications/sms/integrations/{Id}/enable` | `project` |
+| `disable_sms_integration` | `PUT` | `/{version}/notifications/sms/integrations/{Id}/disable` | `project` |
+| `set_sms_integration_as_default` | `PUT` | `/{version}/notifications/sms/integrations/{Id}/default` | `project` |
+| `delete_sms_integration` | `DELETE` | `/{version}/notifications/sms/integrations/{Id}` | `project` |
+| `test_sms_integration` | `POST` | `/{version}/notifications/sms/integrations/test` | `project` |
+| `confirm_sms_integration_human_delivery` | `POST` | `/{version}/notifications/sms/integrations/confirm-human-delivery` | `project` |
+| `get_sms_templates` | `GET` | `/{version}/notifications/sms/templates` | `project` |
+| `create_sms_template` | `POST` | `/{version}/notifications/sms/templates` | `project` |
+| `update_sms_template` | `PUT` | `/{version}/notifications/sms/templates` | `project` |
+| `get_sms_template` | `GET` | `/{version}/notifications/sms/templates/{id}` | `project` |
+| `delete_sms_template` | `DELETE` | `/{version}/notifications/sms/templates/{Id}` | `project` |
+| `archive_sms_template` | `PUT` | `/{version}/notifications/sms/templates/{Id}/archive` | `project` |
+| `un_archive_sms_template` | `PUT` | `/{version}/notifications/sms/templates/{Id}/unarchive` | `project` |
+| `clone_sms_template` | `POST` | `/{version}/notifications/sms/templates/{Id}/clone` | `project` |
+| `get_sms_message_content_tokens` | `GET` | `/{version}/notifications/sms/templates/{id}/tokens` | `project` |
+| `render_sms` | `POST` | `/{version}/notifications/sms/templates/render` | `project` |
+| `get_sms_campaigns` | `GET` | `/{version}/notifications/sms/campaigns` | `project` |
+| `create_sms_campaign` | `POST` | `/{version}/notifications/sms/campaigns` | `project` |
+| `get_sms_campaign` | `GET` | `/{version}/notifications/sms/campaigns/{id}` | `project` |
+| `delete_sms_campaign` | `DELETE` | `/{version}/notifications/sms/campaigns/{id}` | `project` |
+| `stop_sms_campaign` | `POST` | `/{version}/notifications/sms/campaigns/{Id}/stop` | `project` |
+| `get_sms_campaign_batches` | `GET` | `/{version}/notifications/sms/campaigns/{id}/batches` | `project` |
+| `get_sms_campaign_batch_notifications` | `GET` | `/{version}/notifications/sms/campaigns/{id}/batches/{batchId}` | `project` |
+| `get_sms_campaign_batch_notification` | `GET` | `/{version}/notifications/sms/campaigns/{id}/batches/{batchId}/{notificationId}` | `project` |
+| `get_sms_campaign_statistics` | `GET` | `/{version}/notifications/sms/campaigns/{id}/stats` | `project` |
+| `get_sms_campaign_messages` | `GET` | `/{version}/notifications/sms/campaigns/{campaignId}/messages` | `project` |
+| `get_sms_campaign_message` | `GET` | `/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}` | `project` |
+| `preview_sms_notification` | `GET` | `/{version}/notifications/sms/preview` | `optional` |
 | `disable_push` | `GET` | `/{version}/notifications/push/disable` | `project` |
 | `enable_push` | `GET` | `/{version}/notifications/push/enable` | `project` |
 | `archive_push_template` | `PUT` | `/{version}/notifications/push/templates/{Id}/archive` | `project` |
@@ -87,6 +122,7 @@ Access with `norbix.hub.notifications`.
 | `get_push_campaign_message` | `GET` | `/{version}/notifications/push/campaigns/{campaignId}/messages/{id}` | `project` |
 | `preview_push_notification` | `GET` | `/{version}/notifications/push/preview` | `optional` |
 
-Every push method above has an async twin on `client.hub.notifications` when
-the client is an `AsyncNorbix`. See [push.md](./push.md) for how to pick a
-campaign audience and a push provider.
+Every method above has an async twin on `client.hub.notifications` when the
+client is an `AsyncNorbix`. See [push.md](./push.md) for how to pick a push
+campaign audience and a push provider, and [sms.md](./sms.md) for the same two
+choices on an SMS campaign.

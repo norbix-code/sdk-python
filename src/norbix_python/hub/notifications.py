@@ -1308,6 +1308,19 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def stop_sms_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/campaigns/{Id}/stop"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{Id}/stop",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_sms_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/sms/campaigns/{campaignId}/messages"""
         return self._transport.send(
@@ -1322,12 +1335,12 @@ class NotificationsModule:
         )
 
     def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{id}"""
+        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}"""
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{id}",
+            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}",
             method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
+            path_params={"campaignId": campaign_id, "notificationId": id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -1417,6 +1430,19 @@ class NotificationsModule:
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/disable",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_sms_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/disable-dependencies"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/disable-dependencies",
             method="GET",
             path_params={},
             request=request,
@@ -1624,11 +1650,11 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
-    def sms_razor_syntax_check(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/sms/templates/razor-syntax-check"""
+    def render_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates/render"""
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/sms/templates/razor-syntax-check",
+            path="/{version}/notifications/sms/templates/render",
             method="POST",
             path_params={},
             request=request,
@@ -3019,6 +3045,19 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def stop_sms_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/campaigns/{Id}/stop"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{Id}/stop",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_sms_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/sms/campaigns/{campaignId}/messages"""
         return await self._transport.send(
@@ -3033,12 +3072,12 @@ class AsyncNotificationsModule:
         )
 
     async def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{id}"""
+        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}"""
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{id}",
+            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}",
             method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
+            path_params={"campaignId": campaign_id, "notificationId": id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -3128,6 +3167,19 @@ class AsyncNotificationsModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/disable",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_sms_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/sms/disable-dependencies"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/disable-dependencies",
             method="GET",
             path_params={},
             request=request,
@@ -3335,11 +3387,11 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
-    async def sms_razor_syntax_check(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/sms/templates/razor-syntax-check"""
+    async def render_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/sms/templates/render"""
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/sms/templates/razor-syntax-check",
+            path="/{version}/notifications/sms/templates/render",
             method="POST",
             path_params={},
             request=request,
