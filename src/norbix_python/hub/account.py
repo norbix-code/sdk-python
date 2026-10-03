@@ -667,6 +667,95 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def create_ai_service_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users
+
+        Creates an AI service user — a scoped credential for an AI agent (for example an MCP client).
+        Body: ``name`` (required) and ``scope`` (required) — a dict with ``reach``,
+        ``projectId``, ``rights`` and ``envs`` that says what the agent may touch.
+        The answer carries the new key once; store it, it is never shown again.
+        Request DTO: CreateAiServiceUserRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def list_ai_service_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/ai/service-users
+
+        Lists the account's AI service users and their keys (key values are never returned).
+        Request DTO: ListAiServiceUsersRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def rotate_ai_service_user_key(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users/{Id}/keys
+
+        Issues a new key for an AI service user (``aisu_…``). Optional body ``revokeKeyId``
+        revokes an old key (``aisk_…``) in the same call. The new key is shown once.
+        Request DTO: RotateAiServiceUserKeyRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys",
+            method="POST",
+            path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def revoke_ai_service_user_key(self, service_user_id: str, key_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}/keys/{KeyId}
+
+        Revokes one key (``aisk_…``) of an AI service user (``aisu_…``).
+        Request DTO: RevokeAiServiceUserKeyRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys/{KeyId}",
+            method="DELETE",
+            path_params={"Id": service_user_id, "KeyId": key_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_ai_service_user(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}
+
+        Deletes an AI service user (``aisu_…``) and every key it has.
+        Request DTO: DeleteAiServiceUserRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}",
+            method="DELETE",
+            path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncAccountModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1324,6 +1413,95 @@ class AsyncAccountModule:
             path="/{version}/account/projects/{projectId}/settings/admin-portal/service-user",
             method="PUT",
             path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_ai_service_user(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users
+
+        Creates an AI service user — a scoped credential for an AI agent (for example an MCP client).
+        Body: ``name`` (required) and ``scope`` (required) — a dict with ``reach``,
+        ``projectId``, ``rights`` and ``envs`` that says what the agent may touch.
+        The answer carries the new key once; store it, it is never shown again.
+        Request DTO: CreateAiServiceUserRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def list_ai_service_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/ai/service-users
+
+        Lists the account's AI service users and their keys (key values are never returned).
+        Request DTO: ListAiServiceUsersRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def rotate_ai_service_user_key(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/ai/service-users/{Id}/keys
+
+        Issues a new key for an AI service user (``aisu_…``). Optional body ``revokeKeyId``
+        revokes an old key (``aisk_…``) in the same call. The new key is shown once.
+        Request DTO: RotateAiServiceUserKeyRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys",
+            method="POST",
+            path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def revoke_ai_service_user_key(self, service_user_id: str, key_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}/keys/{KeyId}
+
+        Revokes one key (``aisk_…``) of an AI service user (``aisu_…``).
+        Request DTO: RevokeAiServiceUserKeyRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}/keys/{KeyId}",
+            method="DELETE",
+            path_params={"Id": service_user_id, "KeyId": key_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_ai_service_user(self, service_user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/account/ai/service-users/{Id}
+
+        Deletes an AI service user (``aisu_…``) and every key it has.
+        Request DTO: DeleteAiServiceUserRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/ai/service-users/{Id}",
+            method="DELETE",
+            path_params={"Id": service_user_id},
             request=request,
             scope="project",
             timeout=timeout,

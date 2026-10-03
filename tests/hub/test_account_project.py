@@ -27,6 +27,14 @@ CASES: list[tuple[str, tuple[str, ...], dict[str, Any], str, str, dict[str, Any]
      "/account/projects/pr_1/admin-portal/structure", None),
     ("assign_admin_portal_service_user", ("pr_1",), {"serviceUserId": "su_1"}, "PUT",
      "/account/projects/pr_1/settings/admin-portal/service-user", {"serviceUserId": "su_1"}),
+    ("create_ai_service_user", (), {"name": "Claude Code on my laptop", "scope": {"reach": "project", "projectId": "pr_1", "rights": "read", "envs": ["TEST"]}}, "POST",
+     "/account/ai/service-users", {"name": "Claude Code on my laptop", "scope": {"reach": "project", "projectId": "pr_1", "rights": "read", "envs": ["TEST"]}}),
+    ("list_ai_service_users", (), {}, "GET", "/account/ai/service-users", None),
+    ("rotate_ai_service_user_key", ("aisu_1",), {"revokeKeyId": "aisk_old"}, "POST",
+     "/account/ai/service-users/aisu_1/keys", {"revokeKeyId": "aisk_old"}),
+    ("revoke_ai_service_user_key", ("aisu_1", "aisk_1"), {}, "DELETE",
+     "/account/ai/service-users/aisu_1/keys/aisk_1", None),
+    ("delete_ai_service_user", ("aisu_1",), {}, "DELETE", "/account/ai/service-users/aisu_1", None),
 ]
 
 
