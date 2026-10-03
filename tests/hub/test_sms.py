@@ -18,7 +18,7 @@ from ..helpers import make_client
 
 The generated test file asserts each SMS method's verb and that the URL is
 https. This file adds what it cannot see: the fully-resolved path of every one
-of the 35 SMS routes, and the bodies whose shape the server picks from a value
+of the 34 SMS routes, and the bodies whose shape the server picks from a value
 inside the body (the campaign audience and the integration provider).
 
 Only the Fake provider is used for a send path — it is the sandbox that accepts
@@ -189,12 +189,6 @@ SMS_CASES: list[SmsCase] = [
         lambda m: m.get_sms_campaign_messages(campaign_id=CAMPAIGN_ID),
     ),
     (
-        "get_sms_campaign_message",
-        "GET",
-        f"{BASE}/campaigns/{CAMPAIGN_ID}/messages/{NOTIFICATION_ID}",
-        lambda m: m.get_sms_campaign_message(campaign_id=CAMPAIGN_ID, id=NOTIFICATION_ID),
-    ),
-    (
         "preview_sms_notification",
         "GET",
         f"{BASE}/preview",
@@ -223,9 +217,9 @@ def test_sms_endpoint_hits_the_expected_route(
 
 
 def test_sms_surface_size() -> None:
-    """35 live SMS routes in the gateway. A new one changes this count, so it cannot arrive untested."""
-    assert len(SMS_CASES) == 35
-    assert len({case[0] for case in SMS_CASES}) == 35
+    """34 live SMS routes in the gateway. A new one changes this count, so it cannot arrive untested."""
+    assert len(SMS_CASES) == 34
+    assert len({case[0] for case in SMS_CASES}) == 34
 
 
 def test_sms_call_sends_auth_and_project_headers() -> None:
@@ -440,21 +434,6 @@ def test_stop_sms_campaign_fills_the_route_token_and_sends_no_body() -> None:
     assert transport.last_request["body"] == ""
 
 
-def test_get_sms_campaign_message_sends_the_batch_id_as_a_query_value() -> None:
-    """The gateway route carries the campaign and notification ids; the batch id
-    is required too but is not in the route, so it travels as a query value."""
-    client, transport = make_client()
-    client.hub.notifications.get_sms_campaign_message(
-        campaign_id=CAMPAIGN_ID, id=NOTIFICATION_ID, campaignBatchId=BATCH_ID
-    )
-
-    assert transport.last_request is not None
-    url = urlparse(transport.last_request["url"])
-    assert transport.last_request["method"] == "GET"
-    assert url.path == f"{BASE}/campaigns/{CAMPAIGN_ID}/messages/{NOTIFICATION_ID}"
-    assert parse_qs(url.query) == {"campaignBatchId": [BATCH_ID]}
-
-
 def test_get_sms_campaigns_sends_its_filters_as_query_values() -> None:
     client, transport = make_client()
     client.hub.notifications.get_sms_campaigns(templateId=TEMPLATE_ID, pageSize=10, pageNumber=0)
@@ -487,9 +466,6 @@ def test_async_module_exposes_the_same_sms_surface() -> None:
             for name, _, _, _ in SMS_CASES:
                 assert inspect.iscoroutinefunction(getattr(module, name)), name
             await module.stop_sms_campaign(id=CAMPAIGN_ID)
-            await module.get_sms_campaign_message(
-                campaign_id=CAMPAIGN_ID, id=NOTIFICATION_ID, campaignBatchId=BATCH_ID
-            )
         finally:
             await client.aclose()
 
@@ -497,5 +473,4 @@ def test_async_module_exposes_the_same_sms_surface() -> None:
 
     assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
         ("POST", f"{BASE}/campaigns/{CAMPAIGN_ID}/stop"),
-        ("GET", f"{BASE}/campaigns/{CAMPAIGN_ID}/messages/{NOTIFICATION_ID}"),
     ]

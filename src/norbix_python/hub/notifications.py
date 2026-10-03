@@ -48,6 +48,22 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def get_email_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/email/disable-dependencies
+
+        Lists what depends on the Email module (campaigns, triggers) before you turn it off.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/disable-dependencies",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def enable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/enable"""
         return self._transport.send(
@@ -261,6 +277,23 @@ class NotificationsModule:
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/email/integrations/confirm-human-delivery",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def check_email_integration_domain_health(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/integrations/domain-health
+
+        Informational only: returns the SPF / DMARC / DKIM records found in DNS for the
+        integration's sender domain (pass ``integrationId=...``). It never blocks the integration.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/integrations/domain-health",
             method="POST",
             path_params={},
             request=request,
@@ -490,6 +523,22 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def stop_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/campaigns/{Id}/stop
+
+        The campaign stops at its next batch; batches already sent stay sent.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/campaigns/{Id}/stop",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/campaigns/{id}"""
         return self._transport.send(
@@ -581,19 +630,6 @@ class NotificationsModule:
             path_params={},
             request=request,
             scope="optional",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_email_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/emails/campaigns/{campaignId}/messages/{id}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1174,19 +1210,6 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
-    def get_push_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/campaigns/{campaignId}/messages/{id}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def get_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{id}"""
         return self._transport.send(
@@ -1328,19 +1351,6 @@ class NotificationsModule:
             path="/{version}/notifications/sms/campaigns/{campaignId}/messages",
             method="GET",
             path_params={"campaignId": campaign_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "notificationId": id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -1785,6 +1795,22 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def get_email_disable_dependencies(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/notifications/email/disable-dependencies
+
+        Lists what depends on the Email module (campaigns, triggers) before you turn it off.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/disable-dependencies",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def enable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/enable"""
         return await self._transport.send(
@@ -1998,6 +2024,23 @@ class AsyncNotificationsModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/email/integrations/confirm-human-delivery",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def check_email_integration_domain_health(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/integrations/domain-health
+
+        Informational only: returns the SPF / DMARC / DKIM records found in DNS for the
+        integration's sender domain (pass ``integrationId=...``). It never blocks the integration.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/integrations/domain-health",
             method="POST",
             path_params={},
             request=request,
@@ -2227,6 +2270,22 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def stop_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/email/campaigns/{Id}/stop
+
+        The campaign stops at its next batch; batches already sent stay sent.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/campaigns/{Id}/stop",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/campaigns/{id}"""
         return await self._transport.send(
@@ -2318,19 +2377,6 @@ class AsyncNotificationsModule:
             path_params={},
             request=request,
             scope="optional",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_email_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/emails/campaigns/{campaignId}/messages/{id}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/emails/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -2911,19 +2957,6 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
-    async def get_push_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/campaigns/{campaignId}/messages/{id}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/push/campaigns/{campaignId}/messages/{id}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     async def get_push_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{id}"""
         return await self._transport.send(
@@ -3065,19 +3098,6 @@ class AsyncNotificationsModule:
             path="/{version}/notifications/sms/campaigns/{campaignId}/messages",
             method="GET",
             path_params={"campaignId": campaign_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_sms_campaign_message(self, campaign_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}",
-            method="GET",
-            path_params={"campaignId": campaign_id, "notificationId": id},
             request=request,
             scope="project",
             timeout=timeout,
