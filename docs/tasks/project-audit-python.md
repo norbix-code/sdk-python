@@ -12,7 +12,7 @@ Not in scope: AI plans, knowledge search, AI credits (decided internal); changes
 4. [done] feat(sdk-python:account:mcp): the developer MCP endpoint — send a message (POST), read the server stream (GET), end the session (DELETE)
 5. [done] feat(sdk-python:api:public): new `api.public` module — public project config and public legal document, no sign-in
 6. [done] docs(sdk-python:project): docs pages, docs index and README section for all of the above
-7. [doing] release(sdk-python:project): ruff, mypy, pytest green; push branch; open one pull request to main
+7. [done] release(sdk-python:project): ruff, mypy, pytest green; push branch; open one pull request to main — https://github.com/norbix-code/sdk-python/pull/25
 
 ## Checks
 - `uv run ruff check .` — All checks passed
