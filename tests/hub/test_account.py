@@ -702,3 +702,58 @@ def test_hub_account_set_admin_portal_enabled_request_shape() -> None:
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
     assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
 
+
+def test_hub_account_check_project_languages_request_shape() -> None:
+    import json
+    from urllib.parse import urlparse
+
+    client, transport = make_client(account_id='acc-1')
+    client.hub.account.check_project_languages(
+        project_id="proj-1", defaultLanguage="en", languages=["en", "de"]
+    )
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v2/account/projects/proj-1/settings/languages/check'
+    assert json.loads(transport.last_request['body']) == {"defaultLanguage": "en", "languages": ["en", "de"]}
+    assert transport.last_request['headers']['x-cm-accountid'] == 'acc-1'
+
+def test_hub_account_check_project_languages_requires_account_scope() -> None:
+    client = Norbix(project_id='p1', bearer_token='token')
+    try:
+        client.hub.account.check_project_languages(project_id="stub")
+    except NorbixError as exc:
+        assert exc.code == 'NORBIX_ACCOUNT_SCOPE_REQUIRED'
+    else:
+        raise AssertionError('Expected account scope error')
+
+def test_async_hub_account_check_project_languages_hits_the_route() -> None:
+    import asyncio
+    import json
+    from urllib.parse import urlparse
+
+    import httpx
+
+    from norbix_python import AsyncNorbix
+
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={"templates": []})
+
+    async def run() -> object:
+        client = AsyncNorbix(
+            project_id='test-project',
+            bearer_token='test-token',
+            account_id='acc-1',
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        try:
+            return await client.hub.account.check_project_languages(project_id="proj-1", languages=["en"])
+        finally:
+            await client.aclose()
+
+    assert asyncio.run(run()) == {"templates": []}
+    assert [(r.method, urlparse(str(r.url)).path, json.loads(r.content)) for r in seen] == [
+        ('POST', '/v2/account/projects/proj-1/settings/languages/check', {"languages": ["en"]}),
+    ]

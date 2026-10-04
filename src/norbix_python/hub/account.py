@@ -439,6 +439,26 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    # HAND-WRITTEN: not produced by scripts/generate_endpoints.py — keep on regeneration.
+    def check_project_languages(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/{projectId}/settings/languages/check
+
+        Dry run before ``update_project_languages``: lists the templates that miss
+        a proposed language. Pass ``defaultLanguage=...`` and/or ``languages=[...]``;
+        omit one to use the current value. Changes nothing. Response:
+        ``{"templates": [...]}``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/languages/check",
+            method="POST",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="account",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def update_project_languages(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PATCH /{version}/account/projects/{projectId}/settings/languages"""
         return self._transport.send(
@@ -1328,6 +1348,26 @@ class AsyncAccountModule:
             target="hub",
             path="/{version}/account/projects/{projectId}/enable",
             method="PATCH",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="account",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    # HAND-WRITTEN: not produced by scripts/generate_endpoints.py — keep on regeneration.
+    async def check_project_languages(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/{projectId}/settings/languages/check
+
+        Dry run before ``update_project_languages``: lists the templates that miss
+        a proposed language. Pass ``defaultLanguage=...`` and/or ``languages=[...]``;
+        omit one to use the current value. Changes nothing. Response:
+        ``{"templates": [...]}``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/settings/languages/check",
+            method="POST",
             path_params={"projectId": project_id},
             request=request,
             scope="account",
