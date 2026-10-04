@@ -10,11 +10,11 @@ class SchedulerModule:
         self._transport = transport
 
     def disable_scheduler(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/scheduler/disable"""
+        """PUT /{version}/scheduler/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/scheduler/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -23,11 +23,11 @@ class SchedulerModule:
         )
 
     def enable_scheduler(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/scheduler/enable"""
+        """PUT /{version}/scheduler/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/scheduler/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -101,7 +101,17 @@ class SchedulerModule:
         )
 
     def save_scheduler_task(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/scheduler/tasks"""
+        """POST /{version}/scheduler/tasks
+
+        Create (no ``taskId``) or update (``taskId="tsk_..."``) a scheduled task.
+        Keyword arguments become the JSON body: ``initiatorUserId`` (the caller or a
+        project service user, ``usr_...``), ``name``, ``cron`` (5 fields, UTC),
+        ``isEnabled``, ``stopOnError``, optional ``description`` and ``task``.
+        ``task`` is ``{"type": "EmailCampaign", "campaign": {...}, "databaseIntegrationId": ...}``
+        — ``EmailCampaign`` is the only task type the gateway runs today; ``campaign``
+        is the email campaign body (``source``, ``templateId`` and that source's
+        audience fields). See docs/hub/scheduler.md.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/scheduler/tasks",
@@ -119,11 +129,11 @@ class AsyncSchedulerModule:
         self._transport = transport
 
     async def disable_scheduler(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/scheduler/disable"""
+        """PUT /{version}/scheduler/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/scheduler/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -132,11 +142,11 @@ class AsyncSchedulerModule:
         )
 
     async def enable_scheduler(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/scheduler/enable"""
+        """PUT /{version}/scheduler/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/scheduler/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -210,7 +220,17 @@ class AsyncSchedulerModule:
         )
 
     async def save_scheduler_task(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/scheduler/tasks"""
+        """POST /{version}/scheduler/tasks
+
+        Create (no ``taskId``) or update (``taskId="tsk_..."``) a scheduled task.
+        Keyword arguments become the JSON body: ``initiatorUserId`` (the caller or a
+        project service user, ``usr_...``), ``name``, ``cron`` (5 fields, UTC),
+        ``isEnabled``, ``stopOnError``, optional ``description`` and ``task``.
+        ``task`` is ``{"type": "EmailCampaign", "campaign": {...}, "databaseIntegrationId": ...}``
+        — ``EmailCampaign`` is the only task type the gateway runs today; ``campaign``
+        is the email campaign body (``source``, ``templateId`` and that source's
+        audience fields). See docs/hub/scheduler.md.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/scheduler/tasks",
