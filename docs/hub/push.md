@@ -21,8 +21,9 @@ field plus the audience's own fields:
 | rows of a database collection | `collection` | `schemaName`, `fields` (the record fields that hold the recipient), `fieldType` (`User` or `Email`), optional `roleNames`, `languages` |
 | raw device tokens | `devices` | `devices`: a list of `{ token, deliveryFamily }`, `deliveryFamily` one of `Ios`, `Android`, `Chrome`, `Safari`, `Expo` |
 
-Every target also takes `templateId` (required) and the optional `integrationId`,
-`language`, `notes`, `campaignTime` (Unix seconds) and `mappedTokens`. Note the
+Every target also takes `templateId` and `integrationId` (both required —
+`integrationId` is the push provider, from `get_push_integrations`), and the
+optional `language`, `notes`, `campaignTime` (Unix seconds) and `mappedTokens`. Note the
 spelling: `rolesNames` on `allUsers`, but `roleNames` on `collection` — the
 gateway names them differently.
 
@@ -31,6 +32,7 @@ client.hub.notifications.create_push_campaign(
     campaign={
         "source": "allUsers",
         "templateId": "tpl_123",
+        "integrationId": "int_push",
         "userTags": ["beta"],
     }
 )

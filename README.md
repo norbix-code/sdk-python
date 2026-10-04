@@ -169,6 +169,44 @@ user key: `create_ai_service_user`, `list_ai_service_users`,
 Full tables and an MCP example: [docs/hub/account.md](./docs/hub/account.md),
 [docs/api/public.md](./docs/api/public.md).
 
+## Campaigns and triggers: the provider integration id
+
+The server now **requires the provider integration id** when you create an
+Email, Push or SMS campaign, and on every trigger action. Pick it from
+`get_email_integrations` / `get_push_integrations` / `get_sms_integrations`.
+Email and Push put it inside `campaign`; SMS sends it at the top level, next to
+(and different from) `databaseIntegrationId`:
+
+```python
+norbix.hub.notifications.create_email_campaign(
+    campaign={"templateId": "tpl_123", "integrationId": "int_email", "source": "allUsers"}
+)
+norbix.hub.notifications.create_push_campaign(
+    campaign={"source": "allUsers", "templateId": "tpl_456", "integrationId": "int_push"}
+)
+norbix.hub.notifications.create_sms_campaign(
+    templateId="tpl_789",
+    integrationId="int_sms",
+    deliveryType="PhoneNumbers",
+    phoneNumbers={"recipientsSourceType": "PhoneNumbers", "phoneNumbers": ["+37060000000"]},
+)
+```
+
+A trigger action (`save_schema_trigger`, `save_files_trigger`,
+`save_membership_trigger`, `save_payments_trigger`) takes the same required
+`integrationId`, plus the optional `language` (template language) and
+`initiatorId` (who the send is attributed to) on Email, Push and SMS actions.
+Two related calls:
+
+- `norbix.hub.triggers.get_triggers_needing_attention(triggerType="Schema")` —
+  triggers that need a fix (for example, their provider is gone); `{"items": [...]}`.
+- `norbix.hub.account.check_project_languages(project_id, languages=["en", "de"])` —
+  a dry run before `update_project_languages`: which templates miss a language;
+  `{"templates": [...]}`. Account scope.
+
+Details: [docs/hub/triggers.md](./docs/hub/triggers.md),
+[docs/hub/sms.md](./docs/hub/sms.md), [docs/hub/push.md](./docs/hub/push.md).
+
 ## Errors
 
 ```python
@@ -364,6 +402,10 @@ uv run python scripts/generate_endpoints.py
 ```
 
 This refreshes `src/norbix_python/api/`, `hub/`, matching tests under `tests/api` and `tests/hub`, and docs under `docs/`.
+
+Some methods are **hand-written** and marked `HAND-WRITTEN` in the source
+(`hub/triggers.py`, its registration in `hub/__init__.py`, and
+`account.check_project_languages`). Keep them when you regenerate.
 
 ## Development
 
