@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-09-28 20:36:25
+Date: 2026-10-04 14:16:09
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -211,6 +211,7 @@ class TriggerType(str, Enum):
     SCHEMA = 'Schema'
     FILES = 'Files'
     PAYMENTS = 'Payments'
+    AI = 'Ai'
 
 
 class TriggerActionType(str, Enum):
@@ -1029,6 +1030,13 @@ class LlmProvider(str, Enum):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class LlmModelOptionRequest:
+    id: Optional[str] = None
+    display_name: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class LlmIntegrationRequest:
     integration_id: Optional[str] = None
     provider: Optional[LlmProvider] = None
@@ -1036,6 +1044,8 @@ class LlmIntegrationRequest:
     is_enabled: bool = False
     endpoint: Optional[str] = None
     default_model: Optional[str] = None
+    is_default: bool = False
+    models: Optional[List[LlmModelOptionRequest]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1353,6 +1363,8 @@ class EmailCampaignDeliverySettingsDto:
 class TriggerActionEmailDto(TriggerActionDto):
     template_id: Optional[str] = None
     delivery_settings: Optional[EmailCampaignDeliverySettingsDto] = None
+    language: Optional[str] = None
+    initiator_id: Optional[str] = None
 
 
 class PushCampaignRecipientsSourceTypes(str, Enum):
@@ -1377,6 +1389,8 @@ class PushCampaignDeliverySettingsDto:
 class TriggerActionPushDto(TriggerActionDto):
     template_id: Optional[str] = None
     delivery_settings: Optional[PushCampaignDeliverySettingsDto] = None
+    language: Optional[str] = None
+    initiator_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1430,6 +1444,8 @@ class SmsCampaignDeliverySettingsDto:
 class TriggerActionSmsDto(TriggerActionDto):
     template_id: Optional[str] = None
     delivery_settings: Optional[SmsCampaignDeliverySettingsDto] = None
+    language: Optional[str] = None
+    initiator_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1604,11 +1620,20 @@ class EmailToCollectionRecordsDeliverySettingsDto(EmailCampaignDeliverySettingsD
     languages: Optional[List[str]] = None
 
 
+class PushDeviceDeliveryFamily(str, Enum):
+    IOS = 'Ios'
+    ANDROID = 'Android'
+    CHROME = 'Chrome'
+    SAFARI = 'Safari'
+    EXPO = 'Expo'
+
+
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class PushToAllUsersDeliverySettingsDto(PushCampaignDeliverySettingsDto):
     roles_names: Optional[List[str]] = None
     user_tags: Optional[List[str]] = None
+    platforms: Optional[List[PushDeviceDeliveryFamily]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1621,6 +1646,7 @@ class PushToUsersDeliverySettingsDto(PushCampaignDeliverySettingsDto):
 @dataclass
 class PushToAccountUsersDeliverySettingsDto(PushCampaignDeliverySettingsDto):
     recipients: List[str] = field(default_factory=list)
+    platforms: Optional[List[PushDeviceDeliveryFamily]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1631,14 +1657,6 @@ class PushToCollectionRecordsDeliverySettingsDto(PushCampaignDeliverySettingsDto
     schema_name: Optional[str] = None
     role_names: Optional[List[str]] = None
     languages: Optional[List[str]] = None
-
-
-class PushDeviceDeliveryFamily(str, Enum):
-    IOS = 'Ios'
-    ANDROID = 'Android'
-    CHROME = 'Chrome'
-    SAFARI = 'Safari'
-    EXPO = 'Expo'
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1699,12 +1717,23 @@ class IntegrationDto(IHasViewId):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class LlmModelOptionDto:
+    id: Optional[str] = None
+    display_name: Optional[str] = None
+    input_credit_rate: Decimal = decimal.Decimal(0)
+    output_credit_rate: Decimal = decimal.Decimal(0)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class LlmIntegrationDto(IntegrationDto):
     provider: Optional[LlmProvider] = None
     base_url: Optional[str] = None
     default_model: Optional[str] = None
     is_configured: bool = False
     is_system_owned: bool = False
+    is_default: bool = False
+    models: List[LlmModelOptionDto] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2461,6 +2490,20 @@ class SchedulerTaskDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class SchedulerTaskRequest:
+    type: Optional[SchedulerTaskType] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EmailCampaignSchedulerTaskRequest(SchedulerTaskRequest):
+    type: Optional[SchedulerTaskType] = None
+    campaign: Optional[EmailCampaignRequest] = None
+    database_integration_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MongoDbAggregateDto(IHasViewId):
     view_id: Optional[str] = None
     display_name: Optional[str] = None
@@ -2693,6 +2736,11 @@ class AiChatEntrySourceWireDto:
     artifact_id: Optional[str] = None
     label: Optional[str] = None
     step: Optional[int] = None
+    number: Optional[int] = None
+    source_kind: Optional[str] = None
+    source_id: Optional[str] = None
+    score: Optional[float] = None
+    cited: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2863,15 +2911,6 @@ class IHasCorrelationIdRequest:
     correlation_id: Optional[str] = None
 
 
-class SubscriptionType(str, Enum):
-    MANAGED_SERVICE = 'ManagedService'
-    LICENSE = 'License'
-
-
-class IHasAccountId:
-    account_id: Optional[str] = None
-
-
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class CodeMashRequestBase(RequestBase, IHasProjectId, IHasEnv):
@@ -2895,6 +2934,15 @@ class IHasProjectId:
 
 class IHasEnv:
     env: Optional[str] = None
+
+
+class SubscriptionType(str, Enum):
+    MANAGED_SERVICE = 'ManagedService'
+    LICENSE = 'License'
+
+
+class IHasAccountId:
+    account_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2938,6 +2986,127 @@ class DeliveryChannel(str, Enum):
 @dataclass
 class TagDefinitionDto(TagDefinitionBaseDto):
     default_delivery: Dict[str, bool] = field(default_factory=dict)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiPlanModelDto:
+    llm_integration_id: Optional[str] = None
+    model: Optional[str] = None
+
+
+class AiPlanQuotaUnit(str, Enum):
+    NONE = 'None'
+    CREDITS = 'Credits'
+    TOKENS = 'Tokens'
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiPlanFeaturesDto:
+    attachments: bool = False
+    rag: bool = False
+    memory: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiPlanDto:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    allowed_assistant_ids: List[str] = field(default_factory=list)
+    allowed_models: List[AiPlanModelDto] = field(default_factory=list)
+    quota_unit: Optional[AiPlanQuotaUnit] = None
+    monthly_quota: int = 0
+    features: Optional[AiPlanFeaturesDto] = None
+    quota_reached_message: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiPlanRoleAssignmentDto:
+    role_id: Optional[str] = None
+    plan_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ProjectAiAssistantRequestBase(CodeMashRequestBase):
+    # @ApiMember(Description="Name shown to end users. Required, at most 100 characters, unique in the project.")
+    name: Optional[str] = None
+    """
+    Name shown to end users. Required, at most 100 characters, unique in the project.
+    """
+
+
+    # @ApiMember(Description="First message end users see. Public. At most 2 000 characters.")
+    welcome_message: Optional[str] = None
+    """
+    First message end users see. Public. At most 2 000 characters.
+    """
+
+
+    # @ApiMember(Description="Instructions for the model. Never shown to end users. At most 20 000 characters.")
+    system_prompt: Optional[str] = None
+    """
+    Instructions for the model. Never shown to end users. At most 20 000 characters.
+    """
+
+
+    # @ApiMember(Description="Own-scope toolsets the assistant may use: own:records (the user's own database records), own:profile (their profile), own:preferences (their marketing preferences), own:knowledge (search_knowledge — the user's own and the project-wide knowledge). Any other name is refused.")
+    toolsets: Optional[List[str]] = None
+    """
+    Own-scope toolsets the assistant may use: own:records (the user's own database records), own:profile (their profile), own:preferences (their marketing preferences), own:knowledge (search_knowledge — the user's own and the project-wide knowledge). Any other name is refused.
+    """
+
+
+    # @ApiMember(Description="The assistant's own LLM integration id (int_…). Empty = the project's default LLM.")
+    llm_integration_id: Optional[str] = None
+    """
+    The assistant's own LLM integration id (int_…). Empty = the project's default LLM.
+    """
+
+
+    # @ApiMember(Description="Model name. Empty = the integration's default model.")
+    model: Optional[str] = None
+    """
+    Model name. Empty = the integration's default model.
+    """
+
+
+    # @ApiMember(Description="True to let the assistant remember facts about the end user across chats.")
+    memory_enabled: bool = False
+    """
+    True to let the assistant remember facts about the end user across chats.
+    """
+
+
+    # @ApiMember(Description="Knowledge the assistant retrieves from before each answer and cites as [n]: record (records of schemas with embed on), file (uploaded files, when the project embeds them), message (the user's earlier chats, assistants with memory). Empty = no automatic retrieval.")
+    rag_source_ids: Optional[List[str]] = None
+    """
+    Knowledge the assistant retrieves from before each answer and cites as [n]: record (records of schemas with embed on), file (uploaded files, when the project embeds them), message (the user's earlier chats, assistants with memory). Empty = no automatic retrieval.
+    """
+
+
+    # @ApiMember(Description="Best relevance (0–1) below which the answer says the knowledge does not match strongly. Empty = 0.5; 0 = never.")
+    weak_match_threshold: Optional[float] = None
+    """
+    Best relevance (0–1) below which the answer says the knowledge does not match strongly. Empty = 0.5; 0 = never.
+    """
+
+
+    # @ApiMember(Description="AI plan (quota) id. Optional.")
+    plan_id: Optional[str] = None
+    """
+    AI plan (quota) id. Optional.
+    """
+
+
+    # @ApiMember(Description="True to make this the project's default assistant; the previous default stops being default.")
+    is_default: bool = False
+    """
+    True to make this the project's default assistant; the previous default stops being default.
+    """
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3019,6 +3188,15 @@ class SchemaSettingsDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class SchemaEmbedSettingsDto:
+    enabled: bool = False
+    fields: List[str] = field(default_factory=list)
+    embedding_integration_id: Optional[str] = None
+    per_user: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class SchemaListColumnDto:
     field: Optional[str] = None
 
@@ -3044,6 +3222,30 @@ class ImportColumnMappingDto:
     csv_header: Optional[str] = None
     property_name: Optional[str] = None
     dont_import_on_error: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AggregateId:
+    value: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ProjectId(AggregateId, IHasDomainEntityId):
+    pass
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class IntegrationId(AggregateId, IHasDomainEntityId):
+    pass
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TaxonomyId(AggregateId, IHasDomainEntityId):
+    pass
 
 
 class EmailValidationProvider(IntEnum):
@@ -3243,10 +3445,22 @@ class ChatScreenContextDto:
     view_id: Optional[str] = None
 
 
+class EmbeddingProvider(str, Enum):
+    VOYAGE = 'Voyage'
+    OPEN_A_I = 'OpenAI'
+
+
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class SchedulerTaskRequest:
-    type: Optional[SchedulerTaskType] = None
+class EmbeddingIntegrationRequest:
+    integration_id: Optional[str] = None
+    provider: Optional[EmbeddingProvider] = None
+    integration_name: Optional[str] = None
+    is_enabled: bool = False
+    endpoint: Optional[str] = None
+    model: Optional[str] = None
+    dimension: int = 0
+    api_key: Optional[str] = None
 
 
 class ResourceKindDto(str, Enum):
@@ -3361,6 +3575,30 @@ class PublicAuthDto:
     passkey: bool = False
     methods: Optional[List[str]] = None
     password_policy: Optional[PublicPasswordPolicyDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PublicAiAssistantDto:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    welcome: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PublicAiChatDto:
+    enabled: bool = False
+    assistants: List[PublicAiAssistantDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TriggerAttentionDto:
+    trigger_id: Optional[str] = None
+    trigger_type: Optional[TriggerType] = None
+    reason: Optional[str] = None
+    at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3549,6 +3787,36 @@ class AuthenticationFlowSummaryDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class AiAssistantDto:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    welcome_message: Optional[str] = None
+    system_prompt: Optional[str] = None
+    toolsets: List[str] = field(default_factory=list)
+    llm_integration_id: Optional[str] = None
+    model: Optional[str] = None
+    memory_enabled: bool = False
+    rag_source_ids: List[str] = field(default_factory=list)
+    weak_match_threshold: Optional[float] = None
+    plan_id: Optional[str] = None
+    is_default: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ProjectAiSettingsDto:
+    enabled: bool = False
+    default_llm_integration_id: Optional[str] = None
+    default_model: Optional[str] = None
+    assistants: List[AiAssistantDto] = field(default_factory=list)
+    embed_files: bool = False
+    plans: List[AiPlanDto] = field(default_factory=list)
+    plan_role_assignments: List[AiPlanRoleAssignmentDto] = field(default_factory=list)
+    default_plan_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class TriggerDto(IHasViewId):
     type: Optional[TriggerType] = None
     view_id: Optional[str] = None
@@ -3587,6 +3855,7 @@ class EmailDto:
 @dataclass
 class AiDto:
     is_enabled: bool = False
+    default_integration_view_ids: Dict[str, str] = field(default_factory=dict)
     default_integration_view_id: Optional[str] = None
 
 
@@ -3751,6 +4020,7 @@ class ProjectDto(IHasViewId, IBindableContract):
     admin_portal_service_user_id: Optional[str] = None
     membership_authentication_flows: Optional[List[AuthenticationFlowSummaryDto]] = None
     expose_legal_to_admin_portal: bool = False
+    ai_chat: Optional[ProjectAiSettingsDto] = None
     legal_terms_markdown: Optional[str] = None
     legal_privacy_markdown: Optional[str] = None
     environments: List[str] = field(default_factory=list)
@@ -3792,6 +4062,117 @@ class ProjectListItemDto:
     unique_name: Optional[str] = None
     primary_region: Optional[ProjectRegionDto] = None
     additional_regions: Optional[List[ProjectRegionDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiCreditPackCheckoutDto:
+    url: Optional[str] = None
+    session_id: Optional[str] = None
+    pack: Optional[str] = None
+    credits: int = 0
+    price_euro_cents: int = 0
+    purchase_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ProjectAiPlansDto:
+    plans: List[AiPlanDto] = field(default_factory=list)
+    roles: List[AiPlanRoleAssignmentDto] = field(default_factory=list)
+    default_plan_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiUserPlanAssignmentDto:
+    user_id: Optional[str] = None
+    plan_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiUserPlansDto:
+    users: List[AiUserPlanAssignmentDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiUsageGroupDto:
+    id: Optional[str] = None
+    llm_input_tokens: int = 0
+    llm_output_tokens: int = 0
+    embedding_tokens: int = 0
+    rerank_calls: int = 0
+    total_tokens: int = 0
+    chargeable_tokens: int = 0
+    chargeable_rerank_calls: int = 0
+    credits: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiWalletLineDto:
+    kind: Optional[str] = None
+    credits: int = 0
+    reference: Optional[str] = None
+    purchased_balance: int = 0
+    included_used: Optional[int] = None
+    purchased_used: Optional[int] = None
+    at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ProjectAiWalletDto:
+    period: Optional[str] = None
+    included_credits: int = 0
+    purchased_credits: int = 0
+    consumed_credits: int = 0
+    remaining_credits: int = 0
+    status: Optional[str] = None
+    lines: List[AiWalletLineDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ProjectAiUsageDto:
+    period: Optional[str] = None
+    totals: Optional[AiUsageGroupDto] = None
+    assistants: List[AiUsageGroupDto] = field(default_factory=list)
+    top_users: List[AiUsageGroupDto] = field(default_factory=list)
+    models: List[AiUsageGroupDto] = field(default_factory=list)
+    wallet: Optional[ProjectAiWalletDto] = None
+
+
+# @Flags()
+class ApplicationModule(IntEnum):
+    ACCOUNT = 0
+    MEMBERSHIP = 1
+    DATABASE = 2
+    FILES = 4
+    CODE = 8
+    EMAIL = 16
+    PUSH = 32
+    PAYMENT = 64
+    SCHEDULER = 128
+    LOGGING = 256
+    SERVER_EVENTS = 512
+    AI = 1024
+    SMS = 2048
+    PROJECT = 4096
+    COMPLIANCE = 8192
+    CONTACTS = 16384
+    MARKETPLACE = 32768
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TemplateLanguageGapDto:
+    module: Optional[ApplicationModule] = None
+    template_id: Optional[str] = None
+    template_name: Optional[str] = None
+    missing_languages: List[str] = field(default_factory=list)
 
 
 TViewModelProjection = TypeVar('TViewModelProjection')
@@ -4346,6 +4727,7 @@ class SchemaDto(IHasViewId):
     visual_schema: Optional[VisualSchemaDto] = None
     published_at: datetime.datetime = datetime.datetime(1, 1, 1)
     settings: Optional[SchemaSettingsDto] = None
+    embed: Optional[SchemaEmbedSettingsDto] = None
     triggers: Optional[List[TriggerDto]] = None
 
 
@@ -4641,6 +5023,14 @@ class EmailIntegrationListProjection(IntegrationListProjection):
     sender_display_name: Optional[str] = None
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EmailLinkPreferencesDto:
+    email_address: Optional[str] = None
+    unsubscribed_from_marketing: bool = False
+    block_reasons: List[str] = field(default_factory=list)
+
+
 class CampaignStatus(str, Enum):
     PENDING = 'Pending'
     REGISTERED = 'Registered'
@@ -4801,7 +5191,7 @@ class CampaignStatsDto:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SmsTemplateListProjection(TemplateListProjection):
-    pass
+    languages: List[str] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4907,7 +5297,7 @@ class CodeIntegrationListProjection(IntegrationListProjection):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class PushTemplateListProjection(TemplateListProjection):
-    pass
+    languages: List[str] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4938,6 +5328,15 @@ class PushDeviceListProjection:
     os_name: Optional[str] = None
     os_version: Optional[str] = None
     platform_api_level: Optional[int] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PushAudienceCountDto:
+    devices: int = 0
+    recipients: int = 0
+    skipped_user_ids: int = 0
+    is_capped: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5032,6 +5431,7 @@ class TenantLogEntryDto:
 class AgentOnboardingSnippet:
     client: Optional[str] = None
     config: Optional[str] = None
+    auth: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5087,6 +5487,66 @@ class ChatSessionListItem:
     updated_at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
     is_archived: bool = False
     is_pinned: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ScaffoldStep:
+    order: int = 0
+    kind: Optional[str] = None
+    title: Optional[str] = None
+    tool: Optional[str] = None
+    arguments: Optional[JsonObject] = None
+    check_tool: Optional[str] = None
+    template_ref: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ScaffoldIssue:
+    where: Optional[str] = None
+    code: Optional[str] = None
+    message: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ScaffoldStepReportWithLink:
+    order: int = 0
+    title: Optional[str] = None
+    tool: Optional[str] = None
+    status: Optional[str] = None
+    id: Optional[str] = None
+    dashboard_url: Optional[str] = None
+    note: Optional[str] = None
+    errors: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ScaffoldApplyReport:
+    completed: bool = False
+    project_id: Optional[str] = None
+    project_url: Optional[str] = None
+    summary: Optional[str] = None
+    steps: List[ScaffoldStepReportWithLink] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TemplatePreviewPartResult:
+    name: Optional[str] = None
+    rendered: Optional[str] = None
+    errors: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TemplatePreview:
+    channel: Optional[str] = None
+    ok: bool = False
+    parts: Optional[IReadOnlyList[TemplatePreviewPartResult]] = None
+    errors: Optional[IReadOnlyList[str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5267,12 +5727,52 @@ class WorkItemWireDto:
     done_conditions: List[WorkItemDoneConditionWireDto] = field(default_factory=list)
 
 
+class AiTriggerType(str, Enum):
+    ON_CREDITS_WARNING = 'OnCreditsWarning'
+    ON_CREDITS_EXHAUSTED = 'OnCreditsExhausted'
+    ON_QUOTA_WARNING = 'OnQuotaWarning'
+    ON_QUOTA_EXHAUSTED = 'OnQuotaExhausted'
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiTriggerProjectionList(TriggerProjectionList):
+    type: Optional[AiTriggerType] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiTriggerDto(TriggerDto):
+    when: Optional[AiTriggerType] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EmbeddingIntegrationDto(IntegrationDto):
+    provider: Optional[EmbeddingProvider] = None
+    model: Optional[str] = None
+    dimension: int = 0
+    base_url: Optional[str] = None
+    is_configured: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EmbeddingIntegrationListProjection(IntegrationListProjection):
+    embedding_provider: Optional[EmbeddingProvider] = None
+    model: Optional[str] = None
+    dimension: int = 0
+    is_configured: bool = False
+
+
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class LlmIntegrationListProjection(IntegrationListProjection):
     llm_provider: Optional[LlmProvider] = None
     base_url: Optional[str] = None
     default_model: Optional[str] = None
+    is_default: bool = False
+    models: List[LlmModelOptionDto] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5808,6 +6308,10 @@ class IHasRazorTemplateCode:
     pass
 
 
+class IHasDomainEntityId:
+    view_id: Optional[str] = None
+
+
 class IHasResponsibleUserId:
     user_id: Optional[str] = None
 
@@ -5948,6 +6452,7 @@ class PublicProjectConfigDto:
     admin_portal_enabled: bool = False
     branding: Optional[PublicBrandDto] = None
     auth: Optional[PublicAuthDto] = None
+    ai_chat: Optional[PublicAiChatDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5957,6 +6462,12 @@ class PublicLegalDocumentDto:
     title: Optional[str] = None
     body: Optional[str] = None
     available: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetTriggersNeedingAttentionResponse(ResponseBase):
+    items: List[TriggerAttentionDto] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6047,6 +6558,48 @@ class AdminPortalStructureDto:
     admin_portal_enabled: bool = False
     display_name: Optional[str] = None
     modules: List[AdminPortalModuleDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CreateAiCreditPackCheckoutResponse(ResponseBase):
+    result: Optional[AiCreditPackCheckoutDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiPlansResponse(ResponseBase):
+    result: Optional[ProjectAiPlansDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectAiPlansResponse(ResponseBase):
+    plan_ids: List[str] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiUserPlansResponse(ResponseBase):
+    result: Optional[AiUserPlansDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiSettingsResponse(ResponseBase):
+    result: Optional[ProjectAiSettingsDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiUsageResponse(ResponseBase):
+    result: Optional[ProjectAiUsageDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CheckProjectLanguagesResponse(ResponseBase):
+    templates: List[TemplateLanguageGapDto] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6625,6 +7178,12 @@ class GetEmailFootersResponse(ResponseBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class GetEmailPreferencesByLinkResponse(ResponseBase):
+    item: Optional[EmailLinkPreferencesDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class GetEmailCampaignResponse(ResponseBase):
     item: Optional[EmailCampaignDto] = None
 
@@ -6665,12 +7224,6 @@ class GetEmailCampaignStatisticsResponse(ResponseBase):
 class PreviewEmailNotificationResponse(ResponseBase):
     subject: Optional[str] = None
     body: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GetEmailCampaignMessageResponse(ResponseBase):
-    email_message_entity: Optional[EmailCampaignBatchNotificationDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6770,12 +7323,6 @@ class GetSmsCampaignStatisticsResponse(ResponseBase):
 @dataclass
 class PreviewSmsNotificationResponse(ResponseBase):
     body: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GetSmsCampaignMessageResponse(ResponseBase):
-    sms_message_entity: Optional[SmsCampaignBatchNotificationDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6943,6 +7490,12 @@ class GetPushDevicesResponse(ResponseBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class GetPushCampaignAudienceCountResponse(ResponseBase):
+    result: Optional[PushAudienceCountDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class GetPushCampaignResponse(ResponseBase):
     item: Optional[PushCampaignDto] = None
 
@@ -6984,12 +7537,6 @@ class PreviewPushNotificationResponse(ResponseBase):
     title: Optional[str] = None
     body: Optional[str] = None
     subtitle: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GetPushCampaignMessageResponse(ResponseBase):
-    push_message_entity: Optional[PushCampaignBatchNotificationDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7160,6 +7707,32 @@ class ChatTurnResponse(ResponseBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class ScaffoldProjectResponse(ResponseBase):
+    mode: Optional[str] = None
+    env: Optional[str] = None
+    valid: bool = False
+    plan: Optional[List[ScaffoldStep]] = None
+    defaults: Optional[List[str]] = None
+    issues: Optional[List[ScaffoldIssue]] = None
+    report: Optional[ScaffoldApplyReport] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ValidateSchemaResponse(ResponseBase):
+    valid: bool = False
+    issues: Optional[List[ScaffoldIssue]] = None
+    collections: Optional[List[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RenderTemplatePreviewResponse(ResponseBase):
+    preview: Optional[TemplatePreview] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class GetProjectBriefResponse(ResponseBase):
     project_id: Optional[str] = None
     snapshot: Optional[ProjectBriefSnapshotWireDto] = None
@@ -7187,6 +7760,38 @@ class GetWorkItemResponse(ResponseBase):
 class ExportWorkItemResponse(ResponseBase):
     work_item_id: Optional[str] = None
     markdown: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetAiTriggersResponse(GetTriggersResponse):
+    list: Optional[PaginatedResponse[AiTriggerProjectionList]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetAiTriggerResponse(GetTriggerResponse):
+    trigger: Optional[AiTriggerDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEmbeddingIntegrationResponse(ResponseBase):
+    item: Optional[EmbeddingIntegrationDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEmbeddingIntegrationsResponse(ResponseBase):
+    list: Optional[PaginatedResponse[EmbeddingIntegrationListProjection]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TestEmbeddingIntegrationResponse(ResponseBase):
+    dimension: Optional[int] = None
+    latency_ms: Optional[int] = None
+    total_tokens: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7969,6 +8574,7 @@ class InternalsTypeGen:
     typegen_192__webhook_integration_dto: Optional[WebhookIntegrationDto] = None
     typegen_193__webhook_destination_dto: Optional[WebhookDestinationDto] = None
     typegen_194__scheduler_task_dto: Optional[SchedulerTaskDto] = None
+    typegen_249__email_campaign_scheduler_task_request: Optional[EmailCampaignSchedulerTaskRequest] = None
     typegen_195__mongo_db_aggregate_dto: Optional[MongoDbAggregateDto] = None
     typegen_196__marketplace_integration_dto: Optional[MarketplaceIntegrationDto] = None
     typegen_197__marketplace_function_dto: Optional[MarketplaceFunctionDto] = None
@@ -8027,6 +8633,15 @@ class Echo(RequestBase, IReturn[EchoResponse]):
     pass
 
 
+# @Route("/{version}/public/projects/{ProjectId}/brand/{Kind}", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetPublicProjectBrandAsset(RequestBase, IReturn[bytes]):
+    project_id: Optional[str] = None
+    kind: Optional[str] = None
+    v: Optional[str] = None
+
+
 # @Route("/{version}/public/projects/{ProjectId}/config", "GET")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -8040,6 +8655,22 @@ class GetPublicProjectConfig(RequestBase, IReturn[PublicProjectConfigDto]):
 class GetPublicProjectLegal(RequestBase, IReturn[PublicLegalDocumentDto]):
     project_id: Optional[str] = None
     kind: Optional[str] = None
+
+
+# @Route("/{version}/triggers/attention", "GET")
+# @Api(Description="Get triggers that need attention")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetTriggersNeedingAttention(CodeMashRequestBase, IReturn[GetTriggersNeedingAttentionResponse]):
+    """
+    Get triggers that need attention
+    """
+
+    # @ApiMember(Description="Which triggers: Membership, Schema, Files, Payments or Ai.", IsRequired=true)
+    trigger_type: Optional[TriggerType] = None
+    """
+    Which triggers: Membership, Schema, Files, Payments or Ai.
+    """
 
 
 # @Route("/{version}/account/profile", "GET")
@@ -8465,6 +9096,54 @@ class GetProjectTokens(CodeMashRequestBase, IReturn[GetProjectTokensResponse]):
     membership_trigger_new_user_id: Optional[str] = None
 
 
+# @Route("/{version}/account/projects/{projectId}/admin-portal/enabled", "PUT")
+# @Api(Description="Turns the project's managed Admin Portal on or off")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SetAdminPortalEnabledRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Turns the project's managed Admin Portal on or off
+    """
+
+    # @ApiMember(Description="true turns the managed Admin Portal on; false turns it off.", IsRequired=true)
+    enabled: bool = False
+    """
+    true turns the managed Admin Portal on; false turns it off.
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/settings/brand/expose", "PATCH")
+# @Api(Description="Sets whether the project's brand is returned by the public Admin Portal config")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectExposeBrand(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Sets whether the project's brand is returned by the public Admin Portal config
+    """
+
+    # @ApiMember(Description="True to return the brand in the public Admin Portal config, false to hide it.")
+    exposed: bool = False
+    """
+    True to return the brand in the public Admin Portal config, false to hide it.
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/settings/auth/expose", "PATCH")
+# @Api(Description="Sets whether the project's sign-in methods and password policy are returned by the public Admin Portal config")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectExposeAuth(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Sets whether the project's sign-in methods and password policy are returned by the public Admin Portal config
+    """
+
+    # @ApiMember(Description="True to return sign-in methods and password policy in the public Admin Portal config, false to hide them.")
+    exposed: bool = False
+    """
+    True to return sign-in methods and password policy in the public Admin Portal config, false to hide them.
+    """
+
+
 # @Route("/{version}/account/projects/{projectId}/settings/admin-portal/service-user", "PUT")
 # @Api(Description="Assigns the project's Admin Portal service user")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8506,6 +9185,210 @@ class UpdateProjectAdminUrl(CodeMashRequestBase, IReturn[EmptyResponse]):
     url: Optional[str] = None
     """
     Custom admin-portal URL to use instead of the canonical address. Null/empty restores the canonical pr_{id}.admin.{host} address.
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/credits/checkout", "POST")
+# @Api(Description="Creates a Stripe Checkout session for one AI credit pack of the project and returns its URL")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CreateAiCreditPackCheckoutRequest(CodeMashRequestBase, IReturn[CreateAiCreditPackCheckoutResponse]):
+    """
+    Creates a Stripe Checkout session for one AI credit pack of the project and returns its URL
+    """
+
+    # @ApiMember(Description="The pack to buy: pack-10 (€10 = 1 000 credits), pack-50 (€50 = 5 000), pack-200 (€200 = 20 000). Net prices; 1 credit = €0.01.", IsRequired=true)
+    pack: Optional[str] = None
+    """
+    The pack to buy: pack-10 (€10 = 1 000 credits), pack-50 (€50 = 5 000), pack-200 (€200 = 20 000). Net prices; 1 credit = €0.01.
+    """
+
+
+    # @ApiMember(Description="Dashboard path the browser returns to after Stripe (aiCredits=paid or aiCredits=cancelled is added). Default: the dashboard root.")
+    return_url: Optional[str] = None
+    """
+    Dashboard path the browser returns to after Stripe (aiCredits=paid or aiCredits=cancelled is added). Default: the dashboard root.
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/plans", "GET")
+# @Api(Description="Reads the project's end-user AI plans, the role → plan map and the default plan")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiPlans(CodeMashRequestBase, IReturn[GetProjectAiPlansResponse]):
+    """
+    Reads the project's end-user AI plans, the role → plan map and the default plan
+    """
+
+    pass
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/plans", "PUT")
+# @Api(Description="Saves the project's end-user AI plans (the whole list)")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectAiPlans(CodeMashRequestBase, IReturn[UpdateProjectAiPlansResponse]):
+    """
+    Saves the project's end-user AI plans (the whole list)
+    """
+
+    # @ApiMember(Description="The complete list of plans (full replace).")
+    plans: Optional[List[AiPlanDto]] = None
+    """
+    The complete list of plans (full replace).
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/plans/assignments", "PUT")
+# @Api(Description="Saves which end-user AI plan each project role gets, and the default plan")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectAiPlanAssignments(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Saves which end-user AI plan each project role gets, and the default plan
+    """
+
+    # @ApiMember(Description="Role → plan rows, in order; the first row whose role the user has wins.")
+    roles: Optional[List[AiPlanRoleAssignmentDto]] = None
+    """
+    Role → plan rows, in order; the first row whose role the user has wins.
+    """
+
+
+    # @ApiMember(Description="Plan id (aip_…) of users with no per-user plan and no mapped role. Empty = no default.")
+    default_plan_id: Optional[str] = None
+    """
+    Plan id (aip_…) of users with no per-user plan and no mapped role. Empty = no default.
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/plans/users", "GET")
+# @Api(Description="Lists the users that have their own end-user AI plan")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiUserPlans(CodeMashRequestBase, IReturn[GetProjectAiUserPlansResponse]):
+    """
+    Lists the users that have their own end-user AI plan
+    """
+
+    pass
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/settings", "GET")
+# @Api(Description="Reads the project's AI chat settings for end users: on/off, default LLM and assistants")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiSettings(CodeMashRequestBase, IReturn[GetProjectAiSettingsResponse]):
+    """
+    Reads the project's AI chat settings for end users: on/off, default LLM and assistants
+    """
+
+    pass
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/settings", "PUT")
+# @Api(Description="Saves the project's AI chat settings: on/off and the default LLM")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectAiSettings(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Saves the project's AI chat settings: on/off and the default LLM
+    """
+
+    # @ApiMember(Description="True to show end-user AI chat in the Admin Portal, false to hide it.")
+    enabled: bool = False
+    """
+    True to show end-user AI chat in the Admin Portal, false to hide it.
+    """
+
+
+    # @ApiMember(Description="Default LLM integration id (int_…) for assistants without their own. Empty clears it.")
+    default_llm_integration_id: Optional[str] = None
+    """
+    Default LLM integration id (int_…) for assistants without their own. Empty clears it.
+    """
+
+
+    # @ApiMember(Description="Model of the default LLM. Empty = the integration's default model.")
+    default_model: Optional[str] = None
+    """
+    Model of the default LLM. Empty = the integration's default model.
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/knowledge", "PUT")
+# @Api(Description="Saves the project's AI knowledge switches: embed uploaded files")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectAiKnowledge(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Saves the project's AI knowledge switches: embed uploaded files
+    """
+
+    # @ApiMember(Description="True to put uploaded text files into the project's AI knowledge, false to stop.")
+    embed_files: bool = False
+    """
+    True to put uploaded text files into the project's AI knowledge, false to stop.
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/assistants", "POST")
+# @Api(Description="Adds an end-user AI assistant to the project")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CreateProjectAiAssistant(ProjectAiAssistantRequestBase, IReturn[IdResponse]):
+    """
+    Adds an end-user AI assistant to the project
+    """
+
+    pass
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/assistants/{assistantId}", "PUT")
+# @Api(Description="Updates an end-user AI assistant of the project (full replace)")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateProjectAiAssistant(ProjectAiAssistantRequestBase, IReturn[EmptyResponse]):
+    """
+    Updates an end-user AI assistant of the project (full replace)
+    """
+
+    # @ApiMember(Description="Id of the assistant (ast_…).", IsRequired=true)
+    assistant_id: Optional[str] = None
+    """
+    Id of the assistant (ast_…).
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/assistants/{assistantId}", "DELETE")
+# @Api(Description="Removes an end-user AI assistant from the project")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DeleteProjectAiAssistant(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Removes an end-user AI assistant from the project
+    """
+
+    # @ApiMember(Description="Id of the assistant (ast_…).", IsRequired=true)
+    assistant_id: Optional[str] = None
+    """
+    Id of the assistant (ast_…).
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/ai/usage", "GET")
+# @Api(Description="Reads the project's AI usage this month: totals, per assistant, top users, per model, and the credit wallet")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetProjectAiUsage(CodeMashRequestBase, IReturn[GetProjectAiUsageResponse]):
+    """
+    Reads the project's AI usage this month: totals, per assistant, top users, per model, and the credit wallet
+    """
+
+    # @ApiMember(Description="How many users to list, biggest first. 1–100, default 10.")
+    top: Optional[int] = None
+    """
+    How many users to list, biggest first. 1–100, default 10.
     """
 
 
@@ -8657,6 +9540,29 @@ class UpdateProjectLanguages(CodeMashRequestBase, IReturn[EmptyResponse]):
     languages: List[str] = field(default_factory=list)
     """
     The complete new list of language codes, e.g. ["en", "de", "lt"].
+    """
+
+
+# @Route("/{version}/account/projects/{projectId}/settings/languages/check", "POST")
+# @Api(Description="Checks which templates miss a (proposed) project language")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CheckProjectLanguages(CodeMashRequestBase, IReturn[CheckProjectLanguagesResponse]):
+    """
+    Checks which templates miss a (proposed) project language
+    """
+
+    # @ApiMember(Description="Proposed default language code. Omit to use the current one.")
+    default_language: Optional[str] = None
+    """
+    Proposed default language code. Omit to use the current one.
+    """
+
+
+    # @ApiMember(Description="Proposed complete language list. Omit to use the current one.")
+    languages: Optional[List[str]] = None
+    """
+    Proposed complete language list. Omit to use the current one.
     """
 
 
@@ -10632,6 +11538,29 @@ class UpdateDatabaseSchemaDraftRequest(CodeMashRequestBase, IReturn[EmptyRespons
     """
 
 
+# @Route("/{version}/database/schemas/{Id}/embed", "PUT")
+# @Api(Description="Saves a database schema's embed setting: which records go into the project's AI knowledge")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateDatabaseSchemaEmbedRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Saves a database schema's embed setting: which records go into the project's AI knowledge
+    """
+
+    # @ApiMember(Description="Schema id whose embed setting to save, from get_database_schemas.", IsRequired=true)
+    id: Optional[str] = None
+    """
+    Schema id whose embed setting to save, from get_database_schemas.
+    """
+
+
+    # @ApiMember(Description="The complete embed setting (full replace): enabled, fields, embeddingIntegrationId (empty = the project's default), perUser.", IsRequired=true)
+    embed: Optional[SchemaEmbedSettingsDto] = None
+    """
+    The complete embed setting (full replace): enabled, fields, embeddingIntegrationId (empty = the project's default), perUser.
+    """
+
+
 # @Route("/{version}/database/schemas/{Id}/list-settings", "PUT")
 # @Api(Description="Updates database schema records-list display settings")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -11560,6 +12489,47 @@ class ProcessCollectionImport:
     env: Optional[str] = None
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TermInserted:
+    project_id: Optional[ProjectId] = None
+    database_integration_id: Optional[IntegrationId] = None
+    taxonomy_id: Optional[TaxonomyId] = None
+    id: Optional[str] = None
+    document: Optional[Object] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TermUpdated:
+    project_id: Optional[ProjectId] = None
+    database_integration_id: Optional[IntegrationId] = None
+    taxonomy_id: Optional[TaxonomyId] = None
+    id: Optional[str] = None
+    from_: Optional[Object] = field(metadata=config(field_name='from'), default=None)
+    to: Optional[Object] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TermDeleted:
+    project_id: Optional[ProjectId] = None
+    database_integration_id: Optional[IntegrationId] = None
+    taxonomy_id: Optional[TaxonomyId] = None
+    id: Optional[str] = None
+    document: Optional[Object] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TermsDeleted:
+    project_id: Optional[ProjectId] = None
+    database_integration_id: Optional[IntegrationId] = None
+    taxonomy_id: Optional[TaxonomyId] = None
+    deleted_count: int = 0
+    filter: Optional[Object] = None
+
+
 # @Route("/{version}/files/disable", "GET")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -12450,6 +13420,22 @@ class OneClickUnsubscribeRequest(RequestBase, IReturn[EmptyResponse]):
     """
 
 
+# @Route("/{version}/email/preferences", "GET")
+# @Api(Description="Read the marketing e-mail preferences of the person a signed unsubscribe link belongs to. No sign-in: the link is the key.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEmailPreferencesByLinkRequest(RequestBase, IReturn[GetEmailPreferencesByLinkResponse]):
+    """
+    Read the marketing e-mail preferences of the person a signed unsubscribe link belongs to. No sign-in: the link is the key.
+    """
+
+    # @ApiMember(Description="The signed unsubscribe link token from the e-mail's Preferences or Unsubscribe link.", IsRequired=true, Name="token", ParameterType="query")
+    token: Optional[str] = None
+    """
+    The signed unsubscribe link token from the e-mail's Preferences or Unsubscribe link.
+    """
+
+
 # @Route("/{version}/notifications/email/campaigns", "POST")
 # @Api(Description="Create email campaign")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -12461,10 +13447,10 @@ class CreateEmailCampaignRequest(CodeMashRequestBase, IReturn[IdResponse]):
 
     campaign: Optional[EmailCampaignRequest] = None
     database_integration_id: Optional[str] = None
-    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.")
+    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
     send_now: Optional[bool] = None
     """
-    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.
+    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.
     """
 
 
@@ -12725,43 +13711,6 @@ class StopEmailCampaignRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     id: Optional[str] = None
     """
     The campaign id to stop.
-    """
-
-
-    # @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
-    database_integration_id: Optional[str] = None
-    """
-    Optional. Omit to use the project default database integration (resolved per environment).
-    """
-
-
-# @Route("/{version}/notifications/emails/campaigns/{campaignId}/messages/{notificationId}", "GET")
-# @Api(Description="Get an email campaign message")
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GetEmailCampaignMessage(CodeMashRequestBase, IReturn[GetEmailCampaignMessageResponse]):
-    """
-    Get an email campaign message
-    """
-
-    # @ApiMember(Description="The email campaign id. Get it from get_all_email_campaigns.", IsRequired=true)
-    campaign_id: Optional[str] = None
-    """
-    The email campaign id. Get it from get_all_email_campaigns.
-    """
-
-
-    # @ApiMember(Description="The campaign batch id. Get it from get_email_campaign_batches.", IsRequired=true)
-    campaign_batch_id: Optional[str] = None
-    """
-    The campaign batch id. Get it from get_email_campaign_batches.
-    """
-
-
-    # @ApiMember(Description="The notification (message) id to fetch. Get it from get_email_campaign_messages.", IsRequired=true)
-    notification_id: Optional[str] = None
-    """
-    The notification (message) id to fetch. Get it from get_email_campaign_messages.
     """
 
 
@@ -13192,6 +14141,13 @@ class CreateSmsCampaignRequest(CodeMashRequestBase, IReturn[IdResponse]):
     """
 
 
+    # @ApiMember(Description="SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it.", IsRequired=true)
+    integration_id: Optional[str] = None
+    """
+    SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it.
+    """
+
+
     # @ApiMember(Description="Optional language code forcing one template translation for every recipient.")
     language: Optional[str] = None
     """
@@ -13229,10 +14185,10 @@ class CreateSmsCampaignRequest(CodeMashRequestBase, IReturn[IdResponse]):
     """
 
 
-    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.")
+    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
     send_now: Optional[bool] = None
     """
-    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.
+    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.
     """
 
 
@@ -13475,43 +14431,6 @@ class StopSmsCampaignRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     id: Optional[str] = None
     """
     The campaign id to stop.
-    """
-
-
-    # @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
-    database_integration_id: Optional[str] = None
-    """
-    Optional. Omit to use the project default database integration (resolved per environment).
-    """
-
-
-# @Route("/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}", "GET")
-# @Api(Description="Gets campaign sms message details")
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GetSmsCampaignMessage(CodeMashRequestBase, IReturn[GetSmsCampaignMessageResponse]):
-    """
-    Gets campaign sms message details
-    """
-
-    # @ApiMember(Description="The campaign id. Get it from get_sms_campaigns.", IsRequired=true)
-    campaign_id: Optional[str] = None
-    """
-    The campaign id. Get it from get_sms_campaigns.
-    """
-
-
-    # @ApiMember(Description="The campaign batch id. Get it from get_sms_campaign_batches.", IsRequired=true)
-    campaign_batch_id: Optional[str] = None
-    """
-    The campaign batch id. Get it from get_sms_campaign_batches.
-    """
-
-
-    # @ApiMember(Description="The notification (message) id. Get it from get_sms_campaign_messages.", IsRequired=true)
-    notification_id: Optional[str] = None
-    """
-    The notification (message) id. Get it from get_sms_campaign_messages.
     """
 
 
@@ -13969,10 +14888,10 @@ class TestPushIntegration(CodeMashRequestBase, IReturn[TestEmailIntegrationRespo
     """
 
 
-    # @ApiMember(Description="Optional delivery family for the test token (e.g. Ios, Android, Chrome, Safari, Expo). Requires TestToken when set.")
+    # @ApiMember(Description="Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set.")
     delivery_family: Optional[str] = None
     """
-    Optional delivery family for the test token (e.g. Ios, Android, Chrome, Safari, Expo). Requires TestToken when set.
+    Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set.
     """
 
 
@@ -14060,10 +14979,10 @@ class GetPushDevices(CodeMashListPaginationRequestBase, IReturn[GetPushDevicesRe
     """
 
 
-    # @ApiMember(Description="Optional: only devices of this platform — ios, android, chrome, safari or expo.")
+    # @ApiMember(Description="Optional: only devices of this platform — ios, android, chrome or safari.")
     platform: Optional[str] = None
     """
-    Optional: only devices of this platform — ios, android, chrome, safari or expo.
+    Optional: only devices of this platform — ios, android, chrome or safari.
     """
 
 
@@ -14071,6 +14990,29 @@ class GetPushDevices(CodeMashListPaginationRequestBase, IReturn[GetPushDevicesRe
     database_integration_id: Optional[str] = None
     """
     Optional database integration id; omit to use the project's default.
+    """
+
+
+# @Route("/{version}/notifications/push/campaigns/audience-count", "POST")
+# @Api(Description="Count the devices a push campaign audience would reach")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetPushCampaignAudienceCountRequest(CodeMashRequestBase, IReturn[GetPushCampaignAudienceCountResponse]):
+    """
+    Count the devices a push campaign audience would reach
+    """
+
+    # @ApiMember(Description="The audience, in the same shape as CreatePushCampaignRequest.campaign. Template and send options are ignored.")
+    campaign: Optional[PushCampaignRequest] = None
+    """
+    The audience, in the same shape as CreatePushCampaignRequest.campaign. Template and send options are ignored.
+    """
+
+
+    # @ApiMember(Description="Optional. When omitted, the default database integration for the request's environment is used.")
+    database_integration_id: Optional[str] = None
+    """
+    Optional. When omitted, the default database integration for the request's environment is used.
     """
 
 
@@ -14085,10 +15027,10 @@ class CreatePushCampaignRequest(CodeMashRequestBase, IReturn[IdResponse]):
 
     campaign: Optional[PushCampaignRequest] = None
     database_integration_id: Optional[str] = None
-    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.")
+    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
     send_now: Optional[bool] = None
     """
-    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.
+    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.
     """
 
 
@@ -14338,43 +15280,6 @@ class StopPushCampaignRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     id: Optional[str] = None
     """
     The campaign id to stop.
-    """
-
-
-    # @ApiMember(Description="Optional database integration id; omit to use the project's default.")
-    database_integration_id: Optional[str] = None
-    """
-    Optional database integration id; omit to use the project's default.
-    """
-
-
-# @Route("/{version}/notifications/push/campaigns/{campaignId}/messages/{notificationId}", "GET")
-# @Api(Description="Gets campaign push notification details")
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GetPushCampaignMessage(CodeMashRequestBase, IReturn[GetPushCampaignMessageResponse]):
-    """
-    Gets campaign push notification details
-    """
-
-    # @ApiMember(Description="The push campaign id. Get it from get_push_campaigns.")
-    campaign_id: Optional[str] = None
-    """
-    The push campaign id. Get it from get_push_campaigns.
-    """
-
-
-    # @ApiMember(Description="The batch id. Get it from get_push_campaign_batches.")
-    campaign_batch_id: Optional[str] = None
-    """
-    The batch id. Get it from get_push_campaign_batches.
-    """
-
-
-    # @ApiMember(Description="The notification id within the batch.")
-    notification_id: Optional[str] = None
-    """
-    The notification id within the batch.
     """
 
 
@@ -15157,16 +16062,113 @@ class ChatTurnRequest(RequestBase, IReturn[ChatTurnResponse]):
     screen_context: Optional[ChatScreenContextDto] = None
 
 
+# @Route("/{version}/account/ai/scaffold", "POST")
+# @Api(Description="Plans (preview) or builds (apply) a whole project from one spec.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ScaffoldProjectRequest(RequestBase, IReturn[ScaffoldProjectResponse]):
+    """
+    Plans (preview) or builds (apply) a whole project from one spec.
+    """
+
+    # @ApiMember(Description="The project spec (a JSON object) — see the tool description.", IsRequired=true)
+    spec: Optional[str] = None
+    """
+    The project spec (a JSON object) — see the tool description.
+    """
+
+
+    # @ApiMember(Description="'preview' (writes nothing) or 'apply' (builds the project).", IsRequired=true)
+    mode: Optional[str] = None
+    """
+    'preview' (writes nothing) or 'apply' (builds the project).
+    """
+
+
+    env: Optional[str] = None
+
+
+# @Route("/{version}/account/ai/schemas/validate", "POST")
+# @Api(Description="Validates a collection schema without saving it.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ValidateSchemaRequest(RequestBase, IReturn[ValidateSchemaResponse]):
+    """
+    Validates a collection schema without saving it.
+    """
+
+    # @ApiMember(Description="The schema as JSON — see the tool description.", IsRequired=true)
+    schema_json: Optional[str] = None
+    """
+    The schema as JSON — see the tool description.
+    """
+
+
+# @Route("/{version}/account/ai/templates/render-preview", "POST")
+# @Api(Description="Renders an email, push or SMS template with sample data.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RenderTemplatePreviewRequest(RequestBase, IReturn[RenderTemplatePreviewResponse], IHasEnv):
+    """
+    Renders an email, push or SMS template with sample data.
+    """
+
+    # @ApiMember(Description="The project of templateId. Not needed to render a body.")
+    project_id: Optional[str] = None
+    """
+    The project of templateId. Not needed to render a body.
+    """
+
+
+    env: Optional[str] = None
+    # @ApiMember(Description="email | push | sms", IsRequired=true)
+    channel: Optional[str] = None
+    """
+    email | push | sms
+    """
+
+
+    # @ApiMember(Description="An existing template id (tmpl_…). Needs projectId. Leave empty to render body instead.")
+    template_id: Optional[str] = None
+    """
+    An existing template id (tmpl_…). Needs projectId. Leave empty to render body instead.
+    """
+
+
+    # @ApiMember(Description="Razor template text to render when there is no templateId.")
+    body: Optional[str] = None
+    """
+    Razor template text to render when there is no templateId.
+    """
+
+
+    # @ApiMember(Description="Email subject / push title / SMS subject to render with body. Optional.")
+    subject: Optional[str] = None
+    """
+    Email subject / push title / SMS subject to render with body. Optional.
+    """
+
+
+    # @ApiMember(Description="Sample data as a JSON object, read by the template as @Model.")
+    sample_data: Optional[str] = None
+    """
+    Sample data as a JSON object, read by the template as @Model.
+    """
+
+
 # @Route("/{version}/account/mcp", "POST")
-# @Api(Description="MCP server endpoint — JSON-RPC 2.0 over HTTP POST exposing the AI tool catalog.")
+# @Route("/{version}/account/mcp", "GET")
+# @Route("/{version}/account/mcp", "DELETE")
+# @Api(Description="MCP server endpoint (Streamable HTTP): JSON-RPC 2.0 over POST, server stream over GET, session end over DELETE.")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class McpRequest(IReturn[str]):
     """
-    MCP server endpoint — JSON-RPC 2.0 over HTTP POST exposing the AI tool catalog.
+    MCP server endpoint (Streamable HTTP): JSON-RPC 2.0 over POST, server stream over GET, session end over DELETE.
     """
 
     version: Optional[str] = None
+    toolsets: Optional[str] = None
     request_stream: Optional[bytes] = None
 
 
@@ -15244,6 +16246,212 @@ class MarkNeedsYouDoneRequest(CodeMashRequestBase, IReturn[IdResponse]):
     """
 
 
+# @Route("/{version}/ai/triggers", "POST")
+# @Api(Description="Save a trigger on an AI project event")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SaveAiProjectTrigger(SaveTrigger, IReturn[IdResponse]):
+    """
+    Save a trigger on an AI project event
+    """
+
+    pass
+
+
+# @Route("/{version}/ai/triggers", "GET")
+# @Api(Description="Gets the triggers on AI project events")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetAiProjectTriggers(GetTriggers, IReturn[GetAiTriggersResponse]):
+    """
+    Gets the triggers on AI project events
+    """
+
+    pass
+
+
+# @Route("/{version}/ai/triggers/{id}", "GET")
+# @Api(Description="Gets one trigger on an AI project event")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetAiProjectTrigger(GetTrigger, IReturn[GetAiTriggerResponse]):
+    """
+    Gets one trigger on an AI project event
+    """
+
+    pass
+
+
+# @Route("/{version}/ai/triggers/{triggerId}/enable", "PATCH")
+# @Api(Description="Enable a trigger on an AI project event")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EnableAiProjectTrigger(EnableTrigger, IReturn[EmptyResponse]):
+    """
+    Enable a trigger on an AI project event
+    """
+
+    pass
+
+
+# @Route("/{version}/ai/triggers/{triggerId}/disable", "PATCH")
+# @Api(Description="Disable a trigger on an AI project event")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DisableAiProjectTrigger(DisableTrigger, IReturn[EmptyResponse]):
+    """
+    Disable a trigger on an AI project event
+    """
+
+    pass
+
+
+# @Route("/{version}/ai/triggers/{triggerId}", "DELETE")
+# @Api(Description="Delete a trigger on an AI project event")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DeleteAiProjectTrigger(DeleteTrigger, IReturn[EmptyResponse]):
+    """
+    Delete a trigger on an AI project event
+    """
+
+    pass
+
+
+# @Route("/.well-known/oauth-protected-resource", "GET")
+# @Route("/.well-known/oauth-protected-resource/{Path*}", "GET")
+# @Api(Description="OAuth protected-resource metadata (RFC 9728) for the Hub MCP endpoint.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthProtectedResourceMetadataRequest(IReturn[str]):
+    """
+    OAuth protected-resource metadata (RFC 9728) for the Hub MCP endpoint.
+    """
+
+    path: Optional[str] = None
+
+
+# @Route("/.well-known/oauth-authorization-server", "GET")
+# @Route("/.well-known/oauth-authorization-server/{Path*}", "GET")
+# @Api(Description="OAuth authorization-server metadata (RFC 8414).")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthAuthorizationServerMetadataRequest(IReturn[str]):
+    """
+    OAuth authorization-server metadata (RFC 8414).
+    """
+
+    path: Optional[str] = None
+
+
+# @Route("/{version}/oauth/register", "POST")
+# @Api(Description="Registers an MCP client for OAuth (RFC 7591). Public clients only: PKCE, no secret.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthRegisterRequest(IReturn[str]):
+    """
+    Registers an MCP client for OAuth (RFC 7591). Public clients only: PKCE, no secret.
+    """
+
+    version: Optional[str] = None
+    request_stream: Optional[bytes] = None
+
+
+# @Route("/{version}/oauth/authorize", "GET")
+# @Api(Description="OAuth authorization endpoint: sign-in hint or the consent page (HTML).")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthAuthorizeRequest(IReturn[str]):
+    """
+    OAuth authorization endpoint: sign-in hint or the consent page (HTML).
+    """
+
+    version: Optional[str] = None
+
+
+# @Route("/{version}/oauth/authorize", "POST")
+# @Api(Description="OAuth authorization endpoint: the person's decision from the consent page.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthAuthorizeDecisionRequest(IReturn[str]):
+    """
+    OAuth authorization endpoint: the person's decision from the consent page.
+    """
+
+    version: Optional[str] = None
+
+
+# @Route("/{version}/oauth/token", "POST")
+# @Api(Description="OAuth token endpoint: authorization code (PKCE S256) or refresh token → access token.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthTokenRequest(IReturn[str]):
+    """
+    OAuth token endpoint: authorization code (PKCE S256) or refresh token → access token.
+    """
+
+    version: Optional[str] = None
+
+
+# @Route("/{version}/oauth/revoke", "POST")
+# @Api(Description="OAuth token revocation (RFC 7009): revokes the grant behind a refresh or access token.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthRevokeRequest(IReturn[str]):
+    """
+    OAuth token revocation (RFC 7009): revokes the grant behind a refresh or access token.
+    """
+
+    version: Optional[str] = None
+
+
+# @Route("/{version}/ai/integrations/embeddings/{Id}", "DELETE")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DeleteEmbeddingIntegrationRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    # @ApiMember(Description="Id of the embedding integration to delete.")
+    id: Optional[str] = None
+    """
+    Id of the embedding integration to delete.
+    """
+
+
+# @Route("/{version}/ai/integrations/embeddings/{Id}", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEmbeddingIntegration(CodeMashRequestBase, IReturn[GetEmbeddingIntegrationResponse]):
+    # @ApiMember(Description="Id of the embedding integration to fetch.")
+    id: Optional[str] = None
+    """
+    Id of the embedding integration to fetch.
+    """
+
+
+# @Route("/{version}/ai/integrations/embeddings", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEmbeddingIntegrations(CodeMashListPaginationRequestBase, IReturn[GetEmbeddingIntegrationsResponse]):
+    pass
+
+
+# @Route("/{version}/ai/integrations/embeddings", "POST")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SaveEmbeddingIntegration(CodeMashRequestBase, IReturn[IdResponse]):
+    integration: Optional[EmbeddingIntegrationRequest] = None
+
+
+# @Route("/{version}/ai/integrations/embeddings/{Id}/test", "POST")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TestEmbeddingIntegration(CodeMashRequestBase, IReturn[TestEmbeddingIntegrationResponse]):
+    # @ApiMember(Description="Id of the embedding integration to test.")
+    id: Optional[str] = None
+    """
+    Id of the embedding integration to test.
+    """
+
+
 # @Route("/{version}/ai/integrations/llms/{Id}", "DELETE")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -15300,6 +16508,17 @@ class GetLlmIntegrations(CodeMashListPaginationRequestBase, IReturn[GetLlmIntegr
 @dataclass
 class SaveLlmIntegration(CodeMashRequestBase, IReturn[IdResponse]):
     integration: Optional[LlmIntegrationRequest] = None
+
+
+# @Route("/{version}/ai/integrations/llms/{Id}/default", "PUT")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SetLlmIntegrationAsDefaultRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    # @ApiMember(Description="Id of the LLM integration to make the default.")
+    id: Optional[str] = None
+    """
+    Id of the LLM integration to make the default.
+    """
 
 
 # @Route("/{version}/ai/integrations/llms/test", "POST")
@@ -15380,6 +16599,23 @@ class TestMcpIntegration(CodeMashRequestBase, IReturn[TestLlmIntegrationResponse
     """
     Id of the MCP integration to test.
     """
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class IngestSourceMessage:
+    project_id: Optional[str] = None
+    env: Optional[str] = None
+    owner_auth_id: Optional[str] = None
+    source_kind: Optional[str] = None
+    source_id: Optional[str] = None
+    title: Optional[str] = None
+    content_type: Optional[str] = None
+    content: Optional[str] = None
+    embedding_integration_id: Optional[str] = None
+    removed: bool = False
+    metadata: Optional[Dict[str, str]] = None
+    owner_required: bool = False
 
 
 # @Route("/{version}/webhooks/integration", "GET")
@@ -15507,14 +16743,14 @@ class SaveWebhookDestinationRequest(CodeMashRequestBase, IReturn[SaveWebhookDest
     """
 
 
-# @Route("/{version}/scheduler/disable", "GET")
+# @Route("/{version}/scheduler/disable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class DisableScheduler(CodeMashRequestBase, IReturn[EmptyResponse]):
     pass
 
 
-# @Route("/{version}/scheduler/enable", "GET")
+# @Route("/{version}/scheduler/enable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EnableScheduler(CodeMashRequestBase, IReturn[EmptyResponse]):
@@ -15601,6 +16837,36 @@ class SaveSchedulerTaskRequest(CodeMashRequestBase, IReturn[IdResponse]):
 @dataclass
 class ResolveResources(CodeMashRequestBase, IReturn[ResolveResourcesResponse]):
     refs: Optional[IReadOnlyList[ResourceRefDto]] = None
+
+
+# @Route("/{version}/membership/users/{userId}/ai-plan", "PUT")
+# @Api(Description="Sets or removes one user's own end-user AI plan")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SetUserAiPlan(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Sets or removes one user's own end-user AI plan
+    """
+
+    # @ApiMember(Description="The human user id (ct_…).", IsRequired=true)
+    user_id: Optional[str] = None
+    """
+    The human user id (ct_…).
+    """
+
+
+    # @ApiMember(Description="The plan id (aip_…). Empty removes the user's own plan.")
+    plan_id: Optional[str] = None
+    """
+    The plan id (aip_…). Empty removes the user's own plan.
+    """
+
+
+    # @ApiMember(Description="Database integration id. Optional — defaults to the request environment's default integration.")
+    database_integration_id: Optional[str] = None
+    """
+    Database integration id. Optional — defaults to the request environment's default integration.
+    """
 
 
 # @Route("/{version}/membership/users", "POST")
