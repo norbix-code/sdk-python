@@ -25,13 +25,17 @@ and the settings object repeats the audience name in `recipientsSourceType`:
 Every settings object also takes `campaignTime` (Unix seconds, UTC — set a
 future time so the campaign can be reviewed in the dashboard first), and the
 optional `mappedTokens` and `respectTimeZoneSettings`. The request itself takes
-`templateId` (required), and the optional `language` and `databaseIntegrationId`.
+`templateId` and `integrationId` (both required — `integrationId` is the SMS
+provider, from `get_sms_integrations`), and the optional `language` and
+`databaseIntegrationId` (the database behind a `Collection` audience — a
+different id from `integrationId`).
 Note the spelling: `rolesNames` on `allUsers`, but `roleNames` on `collection` —
 the gateway names them differently.
 
 ```python
 client.hub.notifications.create_sms_campaign(
     templateId="tpl_123",
+    integrationId="int_sms",
     deliveryType="PhoneNumbers",
     phoneNumbers={
         "recipientsSourceType": "PhoneNumbers",

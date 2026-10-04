@@ -270,6 +270,18 @@ def test_create_push_campaign_sends_the_target_shape(source: str, fields: dict[s
     assert campaign == {"source": source, "templateId": TEMPLATE_ID, **fields}
 
 
+def test_create_push_campaign_sends_the_provider_integration_id_nested() -> None:
+    # The gateway requires the push provider id inside `campaign`.
+    client, transport = make_client()
+    client.hub.notifications.create_push_campaign(
+        campaign={"source": "allUsers", "templateId": TEMPLATE_ID, "integrationId": "int_1"}
+    )
+
+    assert transport.last_request is not None
+    body = json.loads(transport.last_request["body"])
+    assert body == {"campaign": {"source": "allUsers", "templateId": TEMPLATE_ID, "integrationId": "int_1"}}
+
+
 def test_campaign_targets_match_the_gateway() -> None:
     assert {source.lower() for source, _ in CAMPAIGN_TARGETS} == GATEWAY_TARGETS
     assert len(CAMPAIGN_TARGETS) == len(GATEWAY_TARGETS)

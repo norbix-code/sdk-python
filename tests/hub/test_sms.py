@@ -318,6 +318,32 @@ def test_campaign_audiences_match_the_gateway() -> None:
     assert len(CAMPAIGN_AUDIENCES) == len(GATEWAY_AUDIENCES)
 
 
+def test_create_sms_campaign_sends_the_provider_integration_id_top_level() -> None:
+    # The gateway requires the SMS provider id as a top-level `integrationId`.
+    # It is a different field from `databaseIntegrationId` (the database that
+    # holds a `Collection` audience), so both must reach the wire side by side.
+    client, transport = make_client()
+    client.hub.notifications.create_sms_campaign(
+        templateId=TEMPLATE_ID,
+        integrationId=INTEGRATION_ID,
+        databaseIntegrationId="db_1",
+        deliveryType="Collection",
+        collectionSettings={"schemaName": "subscribers", "fields": ["phone"], "campaignTime": CAMPAIGN_TIME},
+    )
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == f"{BASE}/campaigns"
+    body = json.loads(transport.last_request["body"])
+    assert body == {
+        "templateId": TEMPLATE_ID,
+        "integrationId": INTEGRATION_ID,
+        "databaseIntegrationId": "db_1",
+        "deliveryType": "Collection",
+        "collectionSettings": {"schemaName": "subscribers", "fields": ["phone"], "campaignTime": CAMPAIGN_TIME},
+    }
+
+
 # The eight providers the gateway's save converter accepts, with the fields
 # each one validates. Source of truth: gateway Hub.Sms/Integrations/Save_.cs
 # (the switch arms of the converter, read from `provider`) and

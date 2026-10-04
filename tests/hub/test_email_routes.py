@@ -478,3 +478,20 @@ def test_async_one_click_unsubscribe_needs_no_sign_in() -> None:
 
     assert len(seen) == 1
     assert seen[0].headers.get("Authorization") is None
+
+
+def test_create_email_campaign_sends_the_provider_integration_id_nested() -> None:
+    # The gateway requires the email provider id inside `campaign`.
+    import json
+
+    client, transport = make_client()
+    client.hub.notifications.create_email_campaign(
+        campaign={"templateId": "tpl_1", "integrationId": "int_1", "source": "allUsers"}
+    )
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == "/v2/notifications/email/campaigns"
+    assert json.loads(transport.last_request["body"]) == {
+        "campaign": {"templateId": "tpl_1", "integrationId": "int_1", "source": "allUsers"}
+    }
