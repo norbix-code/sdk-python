@@ -32,6 +32,7 @@ Access with `norbix.hub.account`.
 | `update_project_description` | `PATCH` | `/{version}/account/projects/{projectId}/settings/description` | `account` |
 | `disable_project` | `PATCH` | `/{version}/account/projects/{projectId}/disable` | `account` |
 | `enable_project` | `PATCH` | `/{version}/account/projects/{projectId}/enable` | `account` |
+| `check_project_languages` | `POST` | `/{version}/account/projects/{projectId}/settings/languages/check` | `account` |
 | `update_project_languages` | `PATCH` | `/{version}/account/projects/{projectId}/settings/languages` | `account` |
 | `update_project_url` | `PATCH` | `/{version}/account/projects/{projectId}/settings/url` | `account` |
 | `update_project_name` | `PATCH` | `/{version}/account/projects/{projectId}/settings/name` | `account` |

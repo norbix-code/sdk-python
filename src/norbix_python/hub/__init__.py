@@ -17,6 +17,7 @@ from .payments import AsyncPaymentsModule, PaymentsModule
 from .regions import AsyncRegionsModule, RegionsModule
 from .resources import AsyncResourcesModule, ResourcesModule
 from .scheduler import AsyncSchedulerModule, SchedulerModule
+from .triggers import AsyncTriggersModule, TriggersModule
 from .webhooks import AsyncWebhooksModule, WebhooksModule
 
 
@@ -38,6 +39,7 @@ class HubNamespace:
         self.regions = RegionsModule(transport)
         self.resources = ResourcesModule(transport)
         self.scheduler = SchedulerModule(transport)
+        self.triggers = TriggersModule(transport)  # hand-written, keep on regeneration
         self.webhooks = WebhooksModule(transport)
 
 
@@ -59,4 +61,5 @@ class AsyncHubNamespace:
         self.regions = AsyncRegionsModule(transport)
         self.resources = AsyncResourcesModule(transport)
         self.scheduler = AsyncSchedulerModule(transport)
+        self.triggers = AsyncTriggersModule(transport)  # hand-written, keep on regeneration
         self.webhooks = AsyncWebhooksModule(transport)

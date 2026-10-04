@@ -2,7 +2,7 @@
 
 | Module | Endpoints |
 | --- | ---: |
-| [`account`](./account.md) | 58 |
+| [`account`](./account.md) | 59 |
 | [`ai`](./ai.md) | 14 |
 | [`database`](./database.md) | 41 |
 | [`echo`](./echo.md) | 1 |
@@ -14,4 +14,5 @@
 | [`notifications`](./notifications.md) | 117 |
 | [`payments`](./payments.md) | 16 |
 | [`scheduler`](./scheduler.md) | 8 |
+| [`triggers`](./triggers.md) | 1 |
 | [`webhooks`](./webhooks.md) | 8 |
