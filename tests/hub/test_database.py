@@ -1,6 +1,16 @@
 from __future__ import annotations
 
-from norbix_python import Norbix, NorbixError
+import asyncio
+import inspect
+import json
+from collections.abc import Callable
+from typing import Any
+from urllib.parse import parse_qs, urlparse
+
+import httpx
+import pytest
+
+from norbix_python import AsyncNorbix, Norbix, NorbixError
 from ..helpers import make_client
 
 
@@ -369,3 +379,147 @@ def test_hub_database_reveal_managed_flex_connection_string_request_shape() -> N
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
+
+# --- Database audit (2026-10): Hub records, trees, list settings, embed, bundle ---
+#
+# The generated tests above check only the verb and the https scheme. The cases
+# below check the fully resolved path of every method added in the database
+# audit, that query values reach a GET and a JSON body reaches a write, and
+# that the async module has the same methods. Every call goes to a capture
+# transport; nothing leaves the process.
+
+
+DB = "/v2/database"
+COLL = "products"
+REC = "rec_1"
+SCHEMA = "sch_1"
+TAX = "services"
+AGG = "agg_1"
+
+DbCase = tuple[str, str, str, Callable[[Any], Any]]
+
+HUB_DB_AUDIT_CASES: list[DbCase] = [
+    # taxonomies
+    ("get_database_taxonomy_tree", "GET", f"{DB}/taxonomies/tree", lambda m: m.get_database_taxonomy_tree()),
+    ("get_database_merged_term_tree", "GET", f"{DB}/taxonomies/{TAX}/merged-tree", lambda m: m.get_database_merged_term_tree(TAX)),
+    ("get_database_taxonomy_term_tree", "GET", f"{DB}/taxonomies/{TAX}/terms/tree", lambda m: m.get_database_taxonomy_term_tree(TAX)),
+    # schemas
+    ("apply_database_schema_bundle", "POST", f"{DB}/schemas/apply-bundle", lambda m: m.apply_database_schema_bundle()),
+    ("get_database_schema_list_settings", "GET", f"{DB}/schemas/{SCHEMA}/list-settings", lambda m: m.get_database_schema_list_settings(SCHEMA)),
+    ("update_database_schema_list_settings", "PUT", f"{DB}/schemas/{SCHEMA}/list-settings", lambda m: m.update_database_schema_list_settings(SCHEMA)),
+    ("update_database_schema_embed", "PUT", f"{DB}/schemas/{SCHEMA}/embed", lambda m: m.update_database_schema_embed(SCHEMA)),
+    # collections / records
+    ("seed_collection_records", "POST", f"{DB}/collections/seed", lambda m: m.seed_collection_records()),
+    ("find_records", "GET", f"{DB}/collections/{COLL}", lambda m: m.find_records(COLL)),
+    ("insert_record", "POST", f"{DB}/collections/{COLL}", lambda m: m.insert_record(COLL)),
+    ("find_one_record", "GET", f"{DB}/collections/{COLL}/{REC}", lambda m: m.find_one_record(COLL, REC)),
+    ("update_one_record", "PUT", f"{DB}/collections/{COLL}/{REC}", lambda m: m.update_one_record(COLL, REC)),
+    ("delete_record", "DELETE", f"{DB}/collections/{COLL}/{REC}", lambda m: m.delete_record(COLL, REC)),
+    ("replace_record", "PUT", f"{DB}/collections/{COLL}/{REC}/replace", lambda m: m.replace_record(COLL, REC)),
+    ("change_record_responsibility", "PUT", f"{DB}/collections/{COLL}/{REC}/responsibility", lambda m: m.change_record_responsibility(COLL, REC)),
+    ("insert_many_records", "POST", f"{DB}/collections/{COLL}/many", lambda m: m.insert_many_records(COLL)),
+    ("update_many_records", "PUT", f"{DB}/collections/{COLL}/many", lambda m: m.update_many_records(COLL)),
+    ("delete_many_records", "DELETE", f"{DB}/collections/{COLL}/many", lambda m: m.delete_many_records(COLL)),
+    ("count_records", "GET", f"{DB}/collections/{COLL}/count", lambda m: m.count_records(COLL)),
+    ("distinct_record_values", "GET", f"{DB}/collections/{COLL}/distinct", lambda m: m.distinct_record_values(COLL)),
+    ("get_collection_indexes", "GET", f"{DB}/collections/{COLL}/indexes", lambda m: m.get_collection_indexes(COLL)),
+    ("aggregate_records", "POST", f"{DB}/collections/{COLL}/aggregate", lambda m: m.aggregate_records(COLL)),
+    ("execute_records_aggregate", "POST", f"{DB}/collections/{COLL}/aggregates/{AGG}/execute", lambda m: m.execute_records_aggregate(COLL, AGG)),
+]
+
+
+@pytest.mark.parametrize(
+    ("name", "verb", "path", "call"),
+    HUB_DB_AUDIT_CASES,
+    ids=[case[0] for case in HUB_DB_AUDIT_CASES],
+)
+def test_hub_database_audit_method_hits_the_gateway_route(
+    name: str, verb: str, path: str, call: Callable[[Any], Any]
+) -> None:
+    client, transport = make_client(account_id=None)
+    call(client.hub.database)
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == verb
+    url = urlparse(transport.last_request["url"])
+    assert url.netloc == "hub.norbix.ai"
+    assert url.path == path, f"{name}: got {transport.last_request['url']}, expected the path {path}"
+
+
+def test_hub_database_audit_surface_size() -> None:
+    """23 Hub database routes were missing before the audit; all of them are covered here."""
+    assert len(HUB_DB_AUDIT_CASES) == 23
+    assert len({case[0] for case in HUB_DB_AUDIT_CASES}) == 23
+
+
+def test_hub_database_find_records_sends_query_values() -> None:
+    client, transport = make_client()
+    client.hub.database.find_records(COLL, filter='{"status":"active"}', pageSize=5, pageNumber=2)
+
+    assert transport.last_request is not None
+    url = urlparse(transport.last_request["url"])
+    assert url.path == f"{DB}/collections/{COLL}"
+    assert parse_qs(url.query) == {
+        "filter": ['{"status":"active"}'],
+        "pageSize": ["5"],
+        "pageNumber": ["2"],
+    }
+    assert transport.last_request["body"] == ""
+
+
+def test_hub_database_insert_record_sends_the_document_as_json() -> None:
+    client, transport = make_client()
+    client.hub.database.insert_record(COLL, document={"title": "Lamp", "price": 12})
+
+    assert transport.last_request is not None
+    assert urlparse(transport.last_request["url"]).query == ""
+    assert json.loads(transport.last_request["body"]) == {"document": {"title": "Lamp", "price": 12}}
+
+
+def test_hub_database_update_schema_list_settings_keeps_the_id_in_the_path_only() -> None:
+    client, transport = make_client()
+    client.hub.database.update_database_schema_list_settings(SCHEMA, columns=["title", "price"])
+
+    assert transport.last_request is not None
+    assert urlparse(transport.last_request["url"]).path == f"{DB}/schemas/{SCHEMA}/list-settings"
+    assert json.loads(transport.last_request["body"]) == {"columns": ["title", "price"]}
+
+
+def test_hub_database_record_call_sends_auth_and_project_headers() -> None:
+    client, transport = make_client()
+    client.hub.database.count_records(COLL)
+
+    assert transport.last_request is not None
+    headers = transport.last_request["headers"]
+    assert headers["authorization"] == "Bearer test-token"
+    assert headers["x-cm-projectid"] == "test-project"
+
+
+def test_hub_database_audit_methods_exist_on_the_async_module() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        try:
+            module = client.hub.database
+            for name, _, _, _ in HUB_DB_AUDIT_CASES:
+                assert inspect.iscoroutinefunction(getattr(module, name)), name
+            await module.delete_record(COLL, REC)
+            await module.get_database_merged_term_tree(TAX)
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
+        ("DELETE", f"{DB}/collections/{COLL}/{REC}"),
+        ("GET", f"{DB}/taxonomies/{TAX}/merged-tree"),
+    ]
