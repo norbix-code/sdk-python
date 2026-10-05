@@ -581,6 +581,305 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def get_database_taxonomy_tree(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/tree"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/taxonomies/tree",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_database_merged_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{TaxonomyName}/merged-tree"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/taxonomies/{TaxonomyName}/merged-tree",
+            method="GET",
+            path_params={"TaxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_database_taxonomy_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{TaxonomyName}/terms/tree"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/taxonomies/{TaxonomyName}/terms/tree",
+            method="GET",
+            path_params={"TaxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def apply_database_schema_bundle(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/schemas/apply-bundle"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/apply-bundle",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_database_schema_list_settings(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/schemas/{Id}/list-settings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/list-settings",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_database_schema_list_settings(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/schemas/{Id}/list-settings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/list-settings",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_database_schema_embed(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/schemas/{Id}/embed"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/embed",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def aggregate_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}/aggregate"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/aggregate",
+            method="POST",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def change_record_responsibility(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}/responsibility"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}/responsibility",
+            method="PUT",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def count_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/count"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/count",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_many_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/database/collections/{collectionName}/many"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/many",
+            method="DELETE",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/database/collections/{collectionName}/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}",
+            method="DELETE",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def distinct_record_values(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/distinct"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/distinct",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def execute_records_aggregate(self, collection_name: str, aggregate_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}/aggregates/{aggregateId}/execute"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/aggregates/{aggregateId}/execute",
+            method="POST",
+            path_params={"collectionName": collection_name, "aggregateId": aggregate_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def find_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def find_one_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}",
+            method="GET",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_collection_indexes(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/indexes"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/indexes",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def insert_many_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}/many"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/many",
+            method="POST",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def insert_record(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}",
+            method="POST",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def replace_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}/replace"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}/replace",
+            method="PUT",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def seed_collection_records(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/seed"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/seed",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_many_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/many"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/many",
+            method="PUT",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_one_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}",
+            method="PUT",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncDatabaseModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1152,6 +1451,305 @@ class AsyncDatabaseModule:
             path="/{version}/database/integrations/{Id}/connection-string",
             method="GET",
             path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_database_taxonomy_tree(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/tree"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/taxonomies/tree",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_database_merged_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{TaxonomyName}/merged-tree"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/taxonomies/{TaxonomyName}/merged-tree",
+            method="GET",
+            path_params={"TaxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_database_taxonomy_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{TaxonomyName}/terms/tree"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/taxonomies/{TaxonomyName}/terms/tree",
+            method="GET",
+            path_params={"TaxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def apply_database_schema_bundle(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/schemas/apply-bundle"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/apply-bundle",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_database_schema_list_settings(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/schemas/{Id}/list-settings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/list-settings",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_database_schema_list_settings(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/schemas/{Id}/list-settings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/list-settings",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_database_schema_embed(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/schemas/{Id}/embed"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/embed",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def aggregate_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}/aggregate"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/aggregate",
+            method="POST",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def change_record_responsibility(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}/responsibility"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}/responsibility",
+            method="PUT",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def count_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/count"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/count",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_many_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/database/collections/{collectionName}/many"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/many",
+            method="DELETE",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/database/collections/{collectionName}/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}",
+            method="DELETE",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def distinct_record_values(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/distinct"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/distinct",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def execute_records_aggregate(self, collection_name: str, aggregate_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}/aggregates/{aggregateId}/execute"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/aggregates/{aggregateId}/execute",
+            method="POST",
+            path_params={"collectionName": collection_name, "aggregateId": aggregate_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def find_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def find_one_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}",
+            method="GET",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_collection_indexes(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/indexes"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/indexes",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def insert_many_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}/many"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/many",
+            method="POST",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def insert_record(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/{collectionName}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}",
+            method="POST",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def replace_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}/replace"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}/replace",
+            method="PUT",
+            path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def seed_collection_records(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/collections/seed"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/seed",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_many_records(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/many"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/many",
+            method="PUT",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_one_record(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/collections/{collectionName}/{id}",
+            method="PUT",
+            path_params={"collectionName": collection_name, "id": id},
             request=request,
             scope="project",
             timeout=timeout,
