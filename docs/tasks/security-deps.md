@@ -1,5 +1,5 @@
 # Security dependency update (2026-10-05)
-This file: /Users/djovaisas/Projects/norbix/worktrees/norbix-python/fix/security-deps/docs/tasks/security-deps.md (branch fix/security-deps)
+This file: https://github.com/norbix-code/sdk-python/blob/main/docs/tasks/security-deps.md (branch main; the worktree was removed after shipping)
 
 ## Goal
 Close the 7 open Dependabot security alerts on `norbix-code/sdk-python` `main` by moving
@@ -13,8 +13,9 @@ any change to the SDK's runtime dependencies (`httpx`, `pydantic`), any SDK code
 3. [done] chore(sdk-python:deps): take the Dependabot lock changes from #28 (GitPython 3.1.59 → 3.1.62) and #29 (urllib3 2.7.0 → 2.8.0) onto this branch
 4. [done] fix(sdk-python:deps): add uv constraint floors (urllib3 ≥ 2.8.0, GitPython ≥ 3.1.62) so a later re-lock cannot fall back to a vulnerable version
 5. [done] test(sdk-python): tests, ruff, mypy, build on Python 3.10, 3.12, 3.13 — local: 865 passed on each, ruff and mypy clean, wheel built; CI runs on the pull request
-6. [doing] release(sdk-python): ship with `nbx-ship --wait-release`, check the tag, the GitHub release and PyPI
-7. [todo] chore(sdk-python:deps): close Dependabot #28 and #29 with a comment pointing at the PR; check the 7 alerts are closed
+6. [done] release(sdk-python): shipped as #33 (rebase merge, all checks green) and released as v3.9.1 — tag on merge commit `cf164fd`, GitHub release published 08:13 UTC, PyPI `norbix 3.9.1` (wheel + sdist) with `Requires-Dist` still only httpx ≥ 0.27.0 and pydantic ≥ 2.0
+7. [done] chore(sdk-python:deps): Dependabot #28 and #29 closed with a comment pointing at #33, their branches deleted; all 7 alerts (#31–#37) are `fixed` at 08:13 UTC, 0 open alerts left
+8. [done] docs(sdk-python:tasks): this final update of the task file, shipped as a docs-only pull request (no release)
 
 ## Alerts
 Read with `nbx-gh api 'repos/norbix-code/sdk-python/dependabot/alerts?state=open'` on 2026-10-05: 7 open (4 high, 3 moderate).
@@ -36,7 +37,7 @@ pulls in urllib3 or GitPython. **No SDK user installs either package because of 
 Nothing blocks the fix: `python-semantic-release` 10.7.0 asks for `gitpython~=3.0` and `requests~=2.25`,
 and `requests` 2.33.1 asks for `urllib3<3,>=1.26`, so the patched versions fit without touching any other package.
 
-Evidence — who pulls the packages in (`uv tree --frozen --invert`, branch fix/security-deps, before the change):
+Evidence — who pulls the packages in (`uv tree --frozen --invert`, branch fix/security-deps, before the change, now merged):
 ```text
 urllib3 v2.7.0
 └── requests v2.33.1
@@ -50,7 +51,7 @@ gitpython v3.1.59
     └── norbix v1.1.1 (group: dev)                  <-- here: dev group only
 ```
 ```toml
-# pyproject.toml:10 and :18-24 (fix/security-deps) — runtime vs dev
+# pyproject.toml:10 and :18-24 (main) — runtime vs dev
 dependencies = ["httpx>=0.27.0", "pydantic>=2.0"]     # <-- here: runtime; no urllib3, no GitPython
 [dependency-groups]
 dev = [
@@ -67,15 +68,15 @@ dev = [
 ## Changes
 | file (absolute, branch) | what changed | step |
 |------|--------------|------|
-| /Users/djovaisas/Projects/norbix/worktrees/norbix-python/fix/security-deps/docs/tasks/security-deps.md (fix/security-deps) | this task file | 2 |
-| /Users/djovaisas/Projects/norbix/worktrees/norbix-python/fix/security-deps/uv.lock (fix/security-deps) | GitPython 3.1.59 → 3.1.62 (Dependabot #28 commit, cherry-picked) | 3 |
-| /Users/djovaisas/Projects/norbix/worktrees/norbix-python/fix/security-deps/uv.lock (fix/security-deps) | urllib3 2.7.0 → 2.8.0 (Dependabot #29 commit, cherry-picked) | 3 |
-| /Users/djovaisas/Projects/norbix/worktrees/norbix-python/fix/security-deps/pyproject.toml (fix/security-deps) | new `[tool.uv] constraint-dependencies` floors: gitpython ≥ 3.1.62, urllib3 ≥ 2.8.0 | 4 |
-| /Users/djovaisas/Projects/norbix/worktrees/norbix-python/fix/security-deps/uv.lock (fix/security-deps) | `[manifest] constraints` block recorded by `uv lock`; no package version moved | 4 |
+| https://github.com/norbix-code/sdk-python/blob/main/docs/tasks/security-deps.md (main) | this task file | 2 |
+| https://github.com/norbix-code/sdk-python/blob/main/uv.lock (main) | GitPython 3.1.59 → 3.1.62 (Dependabot #28 commit, cherry-picked) | 3 |
+| https://github.com/norbix-code/sdk-python/blob/main/uv.lock (main) | urllib3 2.7.0 → 2.8.0 (Dependabot #29 commit, cherry-picked) | 3 |
+| https://github.com/norbix-code/sdk-python/blob/main/pyproject.toml (main) | new `[tool.uv] constraint-dependencies` floors: gitpython ≥ 3.1.62, urllib3 ≥ 2.8.0 | 4 |
+| https://github.com/norbix-code/sdk-python/blob/main/uv.lock (main) | `[manifest] constraints` block recorded by `uv lock`; no package version moved | 4 |
 
 Evidence — the change (step 3 and 4):
 ```diff
-# uv.lock (fix/security-deps) — steps 3 and 4
+# uv.lock (main) — steps 3 and 4
 +[manifest]
 +constraints = [
 +    { name = "gitpython", specifier = ">=3.1.62" },
@@ -89,7 +90,7 @@ Evidence — the change (step 3 and 4):
 +version = "2.8.0"                                    # <-- fixes alerts 31, 32, 33
 ```
 ```toml
-# pyproject.toml:26-31 (fix/security-deps) — step 4, after
+# pyproject.toml:26-31 (main) — step 4, after
 [tool.uv]
 # Security floors for packages only the release tool pulls in (python-semantic-release →
 # GitPython, requests → urllib3). Locking only, never in the published wheel's metadata.
@@ -125,19 +126,24 @@ No major bump anywhere: GitPython stays on 3.1.x (3.2.0 exists; not needed), url
     tag=$(git tag --points-at "$sha" | head -1)      # <-- here: only the merge commit, not the tip the workflow released
 ```
 ```yaml
-# .github/workflows/release.yml:51-58 (fix/security-deps)
+# .github/workflows/release.yml:51-58 (main)
       - name: Sync branch tip
         ...
           git reset --hard "origin/${GITHUB_REF_NAME}"   # <-- here: the job may release a later commit
 ```
 - decision(sdk-python:release): the branch carries one `fix(deps)` commit, so the merge makes a patch release (expected v3.9.1). The wheel's code and dependencies are the same as v3.9.0; the release is how the brief asked to prove the cycle. Dependabot's own `chore(deps)` commits do not release. — done
 
+- chore(git:nbx-ship): the new release wait (changed 2026-10-05) worked on its first real run: it found Release run 37282223595 for `cf164fd`, waited for it, and printed `tag: v3.9.1 · GitHub release page: v3.9.1`; checked by hand against `nbx-gh release view v3.9.1` and PyPI — done (the tip-race gap above is still untested)
+    where: https://github.com/norbix-code/sdk-python/releases/tag/v3.9.1
+- chore(git:nbx-gh): `nbx-gh` picks the account from the folder it runs in; run from a gateway folder, the Dependabot alerts call fails with HTTP 403 and a misleading "needs the admin:repo_hook scope" hint. Happened once in this task (my loop ran from the wrong folder); running it from the sdk-python folder fixed it — left open, a clearer error would help
+    where: /Users/djovaisas/Projects/norbix/scripts/git/nbx-gh
+
 ## Rejected / moved out
 - decision(sdk-python:deps): raise `python-semantic-release` itself — rejected — 10.7.0 already allows the patched GitPython and requests/urllib3; a bump would change the release tool for no security gain
 - decision(sdk-python:deps): change runtime floors (`httpx`, `pydantic`) — rejected — neither depends on a vulnerable package; changing them would only narrow what SDK users can install
 
 ## Needs you
-(nothing yet)
+(nothing)
 
 ## Open questions
 (none)
