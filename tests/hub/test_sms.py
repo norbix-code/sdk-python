@@ -261,6 +261,15 @@ CAMPAIGN_AUDIENCES: list[tuple[str, str, dict[str, Any]]] = [
         },
     ),
     (
+        "AccountUsers",
+        "accountUsers",
+        {
+            "recipientsSourceType": "AccountUsers",
+            "recipients": ["owner_1", "member_2"],
+            "campaignTime": CAMPAIGN_TIME,
+        },
+    ),
+    (
         "Collection",
         "collection",
         {
@@ -282,8 +291,9 @@ CAMPAIGN_AUDIENCES: list[tuple[str, str, dict[str, Any]]] = [
     ),
 ]
 
-# The `Settings` switch arms in gateway Hub.Sms/Campaigns/Create.cs — exactly these four.
-GATEWAY_AUDIENCES = {"allusers", "specifiedusers", "collection", "phonenumbers"}
+# The `Settings` switch arms in gateway Hub.Sms/Campaigns/Create.cs — exactly these five.
+# AccountUsers = the account owner and team members by id (members without a phone are skipped).
+GATEWAY_AUDIENCES = {"allusers", "specifiedusers", "accountusers", "collection", "phonenumbers"}
 
 
 @pytest.mark.parametrize(
@@ -472,6 +482,17 @@ def test_get_sms_campaigns_sends_its_filters_as_query_values() -> None:
         "pageSize": ["10"],
         "pageNumber": ["0"],
     }
+
+
+def test_get_sms_campaigns_sends_the_campaign_id_filter() -> None:
+    # The gateway returns only the campaign with this id.
+    client, transport = make_client()
+    client.hub.notifications.get_sms_campaigns(campaignId=CAMPAIGN_ID, pageSize=10)
+
+    assert transport.last_request is not None
+    url = urlparse(transport.last_request["url"])
+    assert url.path == f"{BASE}/campaigns"
+    assert parse_qs(url.query) == {"campaignId": [CAMPAIGN_ID], "pageSize": ["10"]}
 
 
 def test_async_module_exposes_the_same_sms_surface() -> None:
