@@ -45,6 +45,12 @@ Access with `norbix.hub.database`.
 | `get_database_aggregates` | `GET` | `/{version}/database/aggregates` | `project` |
 | `save_database_aggregate` | `POST` | `/{version}/database/aggregates` | `project` |
 | `test_database_aggregate` | `POST` | `/{version}/database/aggregates/test` | `project` |
+| `create_collection_import` | `POST` | `/{version}/database/imports` | `project` |
+| `get_collection_imports` | `GET` | `/{version}/database/imports` | `project` |
+| `get_collection_import` | `GET` | `/{version}/database/imports/{Id}` | `project` |
+| `delete_collection_import` | `DELETE` | `/{version}/database/imports/{Id}` | `project` |
+| `request_import_upload_url` | `POST` | `/{version}/database/imports/upload-url` | `project` |
+| `analyze_import_file` | `POST` | `/{version}/database/imports/analyze` | `project` |
 | `get_allowed_flex_tiers` | `GET` | `/{version}/database/integrations/flex-tiers` | `project` |
 | `test_database_integration` | `POST` | `/{version}/database/integrations/test` | `project` |
 | `reveal_managed_flex_connection_string` | `GET` | `/{version}/database/integrations/{Id}/connection-string` | `project` |
