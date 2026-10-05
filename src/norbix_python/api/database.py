@@ -269,6 +269,32 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def find_merged_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{taxonomyName}/merged-tree"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/database/taxonomies/{taxonomyName}/merged-tree",
+            method="GET",
+            path_params={"taxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def find_own(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/own"""
+        return self._transport.send(
+            target="api",
+            path="/{version}/database/collections/{collectionName}/own",
+            method="GET",
+            path_params={"collectionName": collection_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncDatabaseModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -528,6 +554,32 @@ class AsyncDatabaseModule:
             path="/{version}/database/collections/{collectionName}/{id}",
             method="PUT",
             path_params={"collectionName": collection_name, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def find_merged_term_tree(self, taxonomy_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/taxonomies/{taxonomyName}/merged-tree"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/database/taxonomies/{taxonomyName}/merged-tree",
+            method="GET",
+            path_params={"taxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def find_own(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/own"""
+        return await self._transport.send(
+            target="api",
+            path="/{version}/database/collections/{collectionName}/own",
+            method="GET",
+            path_params={"collectionName": collection_name},
             request=request,
             scope="project",
             timeout=timeout,
