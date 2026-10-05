@@ -75,7 +75,7 @@ class AccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -88,7 +88,7 @@ class AccountModule:
             method="PUT",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -101,7 +101,7 @@ class AccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -114,7 +114,7 @@ class AccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -127,7 +127,7 @@ class AccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -140,7 +140,7 @@ class AccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -153,20 +153,25 @@ class AccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
     def verify_account(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/verify"""
+        """GET /{version}/account/verify
+
+        Needs no token and no ``account_id`` on the client: the route is
+        public on the gateway, which reads the account id and the token from
+        this request. Pass both here: ``verify_account(accountId=..., token=...)``.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/account/verify",
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -179,7 +184,7 @@ class AccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -192,7 +197,7 @@ class AccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -205,7 +210,7 @@ class AccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -218,7 +223,7 @@ class AccountModule:
             method="POST",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -231,7 +236,7 @@ class AccountModule:
             method="POST",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -252,7 +257,7 @@ class AccountModule:
                 "additionalRegions": additional_regions,
                 **request,
             },
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -265,7 +270,7 @@ class AccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -278,7 +283,7 @@ class AccountModule:
             method="GET",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -291,7 +296,7 @@ class AccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -304,7 +309,7 @@ class AccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -317,7 +322,7 @@ class AccountModule:
             method="GET",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -330,7 +335,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -343,7 +348,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -356,7 +361,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -369,7 +374,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -382,7 +387,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -395,7 +400,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -408,7 +413,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -421,7 +426,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -434,7 +439,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -454,7 +459,7 @@ class AccountModule:
             method="POST",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -467,7 +472,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -480,7 +485,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -493,7 +498,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -506,7 +511,7 @@ class AccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -519,7 +524,7 @@ class AccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -587,7 +592,7 @@ class AccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -600,7 +605,7 @@ class AccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1033,7 +1038,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1046,7 +1051,7 @@ class AsyncAccountModule:
             method="PUT",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1059,7 +1064,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1072,7 +1077,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1085,7 +1090,7 @@ class AsyncAccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1098,7 +1103,7 @@ class AsyncAccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1111,20 +1116,25 @@ class AsyncAccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
     async def verify_account(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/verify"""
+        """GET /{version}/account/verify
+
+        Needs no token and no ``account_id`` on the client: the route is
+        public on the gateway, which reads the account id and the token from
+        this request. Pass both here: ``verify_account(accountId=..., token=...)``.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/account/verify",
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1137,7 +1147,7 @@ class AsyncAccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1150,7 +1160,7 @@ class AsyncAccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1163,7 +1173,7 @@ class AsyncAccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1176,7 +1186,7 @@ class AsyncAccountModule:
             method="POST",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1189,7 +1199,7 @@ class AsyncAccountModule:
             method="POST",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1210,7 +1220,7 @@ class AsyncAccountModule:
                 "additionalRegions": additional_regions,
                 **request,
             },
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1223,7 +1233,7 @@ class AsyncAccountModule:
             method="DELETE",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1236,7 +1246,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1249,7 +1259,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1262,7 +1272,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1275,7 +1285,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1288,7 +1298,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1301,7 +1311,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1314,7 +1324,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1327,7 +1337,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1340,7 +1350,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1353,7 +1363,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1366,7 +1376,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1379,7 +1389,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1392,7 +1402,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1412,7 +1422,7 @@ class AsyncAccountModule:
             method="POST",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1425,7 +1435,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1438,7 +1448,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1451,7 +1461,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1464,7 +1474,7 @@ class AsyncAccountModule:
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1477,7 +1487,7 @@ class AsyncAccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1545,7 +1555,7 @@ class AsyncAccountModule:
             method="POST",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1558,7 +1568,7 @@ class AsyncAccountModule:
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
