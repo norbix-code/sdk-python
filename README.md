@@ -204,8 +204,16 @@ Two related calls:
   a dry run before `update_project_languages`: which templates miss a language;
   `{"templates": [...]}`. Account scope.
 
+SMS campaigns can also go to the **account owner and team members**
+(`deliveryType="AccountUsers"`, `accountUsers={"recipientsSourceType": "AccountUsers", "recipients": [...]}`);
+each member gets it on the phone saved with
+`norbix.hub.account.update_my_account_user_phone(phone="+370...")`
+(`get_my_account_user_profile()` reads it back). `get_sms_campaigns(campaignId=...)`
+returns one campaign. SMS templates have a body only (no `subject`).
+
 Details: [docs/hub/triggers.md](./docs/hub/triggers.md),
-[docs/hub/sms.md](./docs/hub/sms.md), [docs/hub/push.md](./docs/hub/push.md).
+[docs/hub/sms.md](./docs/hub/sms.md), [docs/hub/push.md](./docs/hub/push.md),
+[docs/hub/account.md](./docs/hub/account.md).
 
 ## Errors
 

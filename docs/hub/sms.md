@@ -19,6 +19,7 @@ and the settings object repeats the audience name in `recipientsSourceType`:
 |---|---|---|---|
 | everyone in the project subscribed to SMS | `AllUsers` | `allUsers` | `rolesNames`, `userTags` (both optional filters) |
 | a named list of project members | `SpecifiedUsers` | `specifiedUsers` | `recipients` (member ids) |
+| the account owner and team members | `AccountUsers` | `accountUsers` | `recipients` (account user ids) |
 | rows of a database collection | `Collection` | `collection` | `schemaName`, `fields` (the record fields that hold the recipient), `fieldType` (`User` or `Email`), optional `roleNames`, `languages` |
 | raw phone numbers | `PhoneNumbers` | `phoneNumbers` | `phoneNumbers` (international format, `+370…`) |
 
@@ -46,8 +47,35 @@ client.hub.notifications.create_sms_campaign(
 ```
 
 Send `deliveryType` as the name, not a number — the server reads it as a
-string. The generated enum also lists `AccountUsers`; the create request has no
-settings object for it, so the gateway refuses it.
+string.
+
+`AccountUsers` sends to the account owner and team members you name by id.
+Each one gets the SMS on the phone they saved for themselves with
+`norbix.hub.account.update_my_account_user_phone(phone="+37060000000")` (see
+[account.md](./account.md#your-account-user-and-the-team)); members without a
+phone are skipped:
+
+```python
+client.hub.notifications.create_sms_campaign(
+    templateId="tpl_123",
+    integrationId="int_sms",
+    deliveryType="AccountUsers",
+    accountUsers={"recipientsSourceType": "AccountUsers", "recipients": ["owner_1", "member_2"]},
+)
+```
+
+An SMS template has a body only — there is no `subject` (Email and Push keep
+theirs).
+
+## Listing campaigns
+
+`get_sms_campaigns` takes the optional filters `campaignId` (only that one
+campaign), `templateId`, `from` and `to` (Unix seconds, UTC), plus the usual
+paging (`pageSize`, `pageNumber`). They travel as query values:
+
+```python
+one = client.hub.notifications.get_sms_campaigns(campaignId="camp_1")
+```
 
 A scheduled campaign can be cancelled with `stop_sms_campaign(id=...)`; it posts
 to `…/campaigns/{id}/stop` with no body.
