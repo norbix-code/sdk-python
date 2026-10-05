@@ -2,47 +2,59 @@
 
 Access with `norbix.hub.account`.
 
+Every method here needs only a key or a bearer token (scope `project`): the
+gateway takes the account from the signed-in session, or from the project id
+in the path, and never reads the `X-CM-AccountId` header. Four routes are
+public on the gateway and need no token and no `account_id` at all (scope
+`unauthenticated`, no `Authorization` header is sent): sign-up
+(`create_account`), accepting an invitation
+(`create_team_member_from_invitation`), the region list (`get_account_regions`,
+also `norbix.hub.regions.list`) and `verify_account`, which takes the account
+id once, in the request: `verify_account(accountId="acc_456", token="...")`.
+Sync and async clients behave the same. Tests:
+`tests/hub/test_account_token_only.py`.
+
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `get_account_profile` | `GET` | `/{version}/account/profile` | `account` |
-| `update_account_profile` | `PUT` | `/{version}/account/profile` | `account` |
-| `resend_account_verification_token` | `GET` | `/{version}/account/verify/resend` | `account` |
-| `get_account_status` | `GET` | `/{version}/account/status` | `account` |
-| `create_stripe_checkout_session` | `POST` | `/{version}/account/stripe/create-checkout-session` | `account` |
-| `get_stripe_billing_portal_url` | `POST` | `/{version}/account/stripe/get-portal-url` | `account` |
-| `create_team_member_from_invitation` | `POST` | `/{version}/account/team/member` | `account` |
-| `verify_account` | `GET` | `/{version}/account/verify` | `account` |
-| `delete_notifications_group` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/group` | `account` |
-| `delete_notifications_tag` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/tag` | `account` |
-| `remove_tag_from_notifications_group` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/group/tag` | `account` |
-| `save_notifications_group` | `POST` | `/{version}/account/projects/{projectId}/notifications/settings/group` | `account` |
-| `save_notifications_tag` | `POST` | `/{version}/account/projects/{projectId}/notifications/settings/tag` | `account` |
-| `create_project` | `POST` | `/{version}/account/projects` | `account` |
-| `delete_project` | `DELETE` | `/{version}/account/projects/{projectId}` | `account` |
-| `get_project` | `GET` | `/{version}/account/projects/{projectId}` | `account` |
-| `get_projects` | `GET` | `/{version}/account/projects` | `account` |
-| `get_account_regions` | `GET` | `/{version}/account/regions` | `account` |
-| `get_project_tokens` | `GET` | `/{version}/account/projects/{projectId}/tokens` | `account` |
-| `update_project_accent_color` | `PATCH` | `/{version}/account/projects/{projectId}/settings/accent-color` | `account` |
-| `update_project_icon` | `PATCH` | `/{version}/account/projects/{projectId}/settings/icon` | `account` |
-| `update_project_logo` | `PATCH` | `/{version}/account/projects/{projectId}/settings/logo` | `account` |
-| `update_project_main_color` | `PATCH` | `/{version}/account/projects/{projectId}/settings/main-color` | `account` |
-| `update_project_allowed_origins` | `PATCH` | `/{version}/account/projects/{projectId}/settings/origins` | `account` |
-| `update_project_default_language` | `PATCH` | `/{version}/account/projects/{projectId}/settings/default-language` | `account` |
-| `update_project_description` | `PATCH` | `/{version}/account/projects/{projectId}/settings/description` | `account` |
-| `disable_project` | `PATCH` | `/{version}/account/projects/{projectId}/disable` | `account` |
-| `enable_project` | `PATCH` | `/{version}/account/projects/{projectId}/enable` | `account` |
-| `check_project_languages` | `POST` | `/{version}/account/projects/{projectId}/settings/languages/check` | `account` |
-| `update_project_languages` | `PATCH` | `/{version}/account/projects/{projectId}/settings/languages` | `account` |
-| `update_project_url` | `PATCH` | `/{version}/account/projects/{projectId}/settings/url` | `account` |
-| `update_project_name` | `PATCH` | `/{version}/account/projects/{projectId}/settings/name` | `account` |
-| `update_project_regions` | `PATCH` | `/{version}/account/projects/{projectId}/settings/regions` | `account` |
-| `create_account` | `POST` | `/{version}/account` | `account` |
+| `get_account_profile` | `GET` | `/{version}/account/profile` | `project` |
+| `update_account_profile` | `PUT` | `/{version}/account/profile` | `project` |
+| `resend_account_verification_token` | `GET` | `/{version}/account/verify/resend` | `project` |
+| `get_account_status` | `GET` | `/{version}/account/status` | `project` |
+| `create_stripe_checkout_session` | `POST` | `/{version}/account/stripe/create-checkout-session` | `project` |
+| `get_stripe_billing_portal_url` | `POST` | `/{version}/account/stripe/get-portal-url` | `project` |
+| `create_team_member_from_invitation` | `POST` | `/{version}/account/team/member` | `unauthenticated` |
+| `verify_account` | `GET` | `/{version}/account/verify` | `unauthenticated` |
+| `delete_notifications_group` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/group` | `project` |
+| `delete_notifications_tag` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/tag` | `project` |
+| `remove_tag_from_notifications_group` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/group/tag` | `project` |
+| `save_notifications_group` | `POST` | `/{version}/account/projects/{projectId}/notifications/settings/group` | `project` |
+| `save_notifications_tag` | `POST` | `/{version}/account/projects/{projectId}/notifications/settings/tag` | `project` |
+| `create_project` | `POST` | `/{version}/account/projects` | `project` |
+| `delete_project` | `DELETE` | `/{version}/account/projects/{projectId}` | `project` |
+| `get_project` | `GET` | `/{version}/account/projects/{projectId}` | `project` |
+| `get_projects` | `GET` | `/{version}/account/projects` | `project` |
+| `get_account_regions` | `GET` | `/{version}/account/regions` | `unauthenticated` |
+| `get_project_tokens` | `GET` | `/{version}/account/projects/{projectId}/tokens` | `project` |
+| `update_project_accent_color` | `PATCH` | `/{version}/account/projects/{projectId}/settings/accent-color` | `project` |
+| `update_project_icon` | `PATCH` | `/{version}/account/projects/{projectId}/settings/icon` | `project` |
+| `update_project_logo` | `PATCH` | `/{version}/account/projects/{projectId}/settings/logo` | `project` |
+| `update_project_main_color` | `PATCH` | `/{version}/account/projects/{projectId}/settings/main-color` | `project` |
+| `update_project_allowed_origins` | `PATCH` | `/{version}/account/projects/{projectId}/settings/origins` | `project` |
+| `update_project_default_language` | `PATCH` | `/{version}/account/projects/{projectId}/settings/default-language` | `project` |
+| `update_project_description` | `PATCH` | `/{version}/account/projects/{projectId}/settings/description` | `project` |
+| `disable_project` | `PATCH` | `/{version}/account/projects/{projectId}/disable` | `project` |
+| `enable_project` | `PATCH` | `/{version}/account/projects/{projectId}/enable` | `project` |
+| `check_project_languages` | `POST` | `/{version}/account/projects/{projectId}/settings/languages/check` | `project` |
+| `update_project_languages` | `PATCH` | `/{version}/account/projects/{projectId}/settings/languages` | `project` |
+| `update_project_url` | `PATCH` | `/{version}/account/projects/{projectId}/settings/url` | `project` |
+| `update_project_name` | `PATCH` | `/{version}/account/projects/{projectId}/settings/name` | `project` |
+| `update_project_regions` | `PATCH` | `/{version}/account/projects/{projectId}/settings/regions` | `project` |
+| `create_account` | `POST` | `/{version}/account` | `unauthenticated` |
 | `get_account_collaborators` | `GET` | `/{version}/account/collaborators` | `project` |
 | `get_my_account_user_profile` | `GET` | `/{version}/account/me` | `project` |
 | `update_my_account_user_phone` | `PUT` | `/{version}/account/me/phone` | `project` |
-| `send_invite_to_team_member` | `POST` | `/{version}/account/team/member/invite` | `account` |
-| `get_licenses` | `GET` | `/{version}/account/licenses` | `account` |
+| `send_invite_to_team_member` | `POST` | `/{version}/account/team/member/invite` | `project` |
+| `get_licenses` | `GET` | `/{version}/account/licenses` | `project` |
 | `get_project_ai_settings` | `GET` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
 | `update_project_ai_settings` | `PUT` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
 | `create_project_ai_assistant` | `POST` | `/{version}/account/projects/{projectId}/ai/assistants` | `project` |

@@ -83,7 +83,7 @@ users = norbix.membership.get_users()
 print("Users response:", users)
 ```
 
-### 3) Account-scoped Hub call (requires account_id)
+### 3) Account Hub call (token only)
 
 ```python
 from norbix_python import NorbixHub
@@ -91,8 +91,7 @@ from norbix_python import NorbixHub
 norbix = NorbixHub(
     api_key="sk_live_xxx",
     project_id="proj_123",
-    account_id="acc_456",  # required for account-scoped endpoints
-)
+)  # no account_id: the gateway takes the account from the signed-in session
 
 account = norbix.account.get_account_profile()
 print(account)
@@ -202,7 +201,7 @@ Two related calls:
   triggers that need a fix (for example, their provider is gone); `{"items": [...]}`.
 - `norbix.hub.account.check_project_languages(project_id, languages=["en", "de"])` —
   a dry run before `update_project_languages`: which templates miss a language;
-  `{"templates": [...]}`. Account scope.
+  `{"templates": [...]}`. Needs only a key or a token.
 
 SMS campaigns can also go to the **account owner and team members**
 (`deliveryType="AccountUsers"`, `accountUsers={"recipientsSourceType": "AccountUsers", "recipients": [...]}`);
@@ -340,15 +339,15 @@ Custom base URLs (`base_url_api=`, `base_url_hub=`, `NORBIX_API_URL`,
 deployments are unaffected; the `nb-region` header is still sent when a
 region is configured.
 
-### Managing regions (Hub, account scope)
+### Managing regions (Hub)
 
-These endpoints require `account_id` (see
-[Project vs account scope](#project-vs-account-scope)).
+`regions.list()` needs no token at all; `update_project_regions` needs a key
+or a bearer token (see [Project vs account scope](#project-vs-account-scope)).
 
 ```python
 from norbix_python import NorbixHub
 
-norbix = NorbixHub(api_key="sk_live_xxx", project_id="proj_123", account_id="acc_456")
+norbix = NorbixHub(api_key="sk_live_xxx", project_id="proj_123")
 
 # Regions available to the account.
 # Response shape: {"items": [{"id": ..., "continent": ..., "name": ...}, ...]}
@@ -382,7 +381,6 @@ async def main() -> None:
     async with AsyncNorbix(
         api_key="sk_live_xxx",
         project_id="proj_123",
-        account_id="acc_456",
         region="nb-eu-germany",
     ) as client:
         regions = await client.hub.regions.list()
@@ -397,8 +395,9 @@ async def main() -> None:
 ## Project vs account scope
 
 - `project_id` is required (set explicitly or via env).
-- `account_id` is optional
-- Account-scoped Hub methods raise `NORBIX_ACCOUNT_SCOPE_REQUIRED` if `account_id` is not configured
+- `account_id` is optional, and no Hub account method needs it: the gateway takes the account from the signed-in session or the project id in the path
+- Account routes (profile, projects, project settings, team, licenses, …) need only a key or a bearer token
+- Sign-up (`hub.account.create_account`), accepting an invitation (`hub.account.create_team_member_from_invitation`), the region list (`hub.account.get_account_regions`, `hub.regions.list`) and `hub.account.verify_account(accountId=..., token=...)` need no token at all — they are public on the gateway, and no `Authorization` header is sent
 - Optional-scope methods (the signed notification preview links) send auth when the client has a token and never require one
 
 ## SDK maintenance
