@@ -542,6 +542,84 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def create_collection_import(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/imports"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/imports",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_collection_imports(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/imports"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/imports",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_collection_import(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/imports/{Id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_collection_import(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/database/imports/{Id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def request_import_upload_url(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/imports/upload-url"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/upload-url",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def analyze_import_file(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/imports/analyze"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/analyze",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_allowed_flex_tiers(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/database/integrations/flex-tiers"""
         return self._transport.send(
@@ -1410,6 +1488,84 @@ class AsyncDatabaseModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/database/aggregates/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_collection_import(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/imports"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/imports",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_collection_imports(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/imports"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/imports",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_collection_import(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/imports/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_collection_import(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/database/imports/{Id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def request_import_upload_url(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/imports/upload-url"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/upload-url",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def analyze_import_file(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/imports/analyze"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/imports/analyze",
             method="POST",
             path_params={},
             request=request,
