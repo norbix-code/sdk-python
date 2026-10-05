@@ -10,11 +10,11 @@ class LogsModule:
         self._transport = transport
 
     def disable_logging(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/logs/disable"""
+        """PUT /{version}/logs/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/logs/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -23,11 +23,11 @@ class LogsModule:
         )
 
     def enable_logging(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/logs/enable"""
+        """PUT /{version}/logs/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/logs/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -145,11 +145,11 @@ class AsyncLogsModule:
         self._transport = transport
 
     async def disable_logging(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/logs/disable"""
+        """PUT /{version}/logs/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/logs/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -158,11 +158,11 @@ class AsyncLogsModule:
         )
 
     async def enable_logging(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/logs/enable"""
+        """PUT /{version}/logs/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/logs/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",

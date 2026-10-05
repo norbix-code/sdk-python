@@ -4,8 +4,8 @@ Access with `norbix.hub.payments`.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `disable_payments` | `GET` | `/{version}/payments/disable` | `project` |
-| `enable_payments` | `GET` | `/{version}/payments/enable` | `project` |
+| `disable_payments` | `PUT` | `/{version}/payments/disable` | `project` |
+| `enable_payments` | `PUT` | `/{version}/payments/enable` | `project` |
 | `delete_payments_trigger` | `DELETE` | `/{version}/payments/triggers/{triggerId}` | `project` |
 | `disable_payments_trigger` | `PATCH` | `/{version}/payments/triggers/{triggerId}/disable` | `project` |
 | `enable_payments_trigger` | `PATCH` | `/{version}/payments/triggers/{triggerId}/enable` | `project` |

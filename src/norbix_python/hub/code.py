@@ -10,11 +10,11 @@ class CodeModule:
         self._transport = transport
 
     def disable_code(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/disable"""
+        """PUT /{version}/code/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/code/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -23,11 +23,11 @@ class CodeModule:
         )
 
     def enable_code(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/enable"""
+        """PUT /{version}/code/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/code/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -379,11 +379,11 @@ class AsyncCodeModule:
         self._transport = transport
 
     async def disable_code(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/disable"""
+        """PUT /{version}/code/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/code/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -392,11 +392,11 @@ class AsyncCodeModule:
         )
 
     async def enable_code(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/enable"""
+        """PUT /{version}/code/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/code/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",

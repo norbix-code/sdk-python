@@ -4,8 +4,8 @@ Access with `norbix.hub.files`.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `disable_files` | `GET` | `/{version}/files/disable` | `project` |
-| `enable_files` | `GET` | `/{version}/files/enable` | `project` |
+| `disable_files` | `PUT` | `/{version}/files/disable` | `project` |
+| `enable_files` | `PUT` | `/{version}/files/enable` | `project` |
 | `get_folder_files` | `GET` | `/{version}/files/folder` | `project` |
 | `get_file` | `GET` | `/{version}/files/item` | `project` |
 | `delete_files_trigger` | `DELETE` | `/{version}/files/triggers/{triggerId}` | `project` |

@@ -35,8 +35,8 @@ PushCase = tuple[str, str, str, Callable[[Any], Any]]
 
 PUSH_CASES: list[PushCase] = [
     # module
-    ("enable_push", "GET", f"{BASE}/enable", lambda m: m.enable_push()),
-    ("disable_push", "GET", f"{BASE}/disable", lambda m: m.disable_push()),
+    ("enable_push", "PUT", f"{BASE}/enable", lambda m: m.enable_push()),
+    ("disable_push", "PUT", f"{BASE}/disable", lambda m: m.disable_push()),
     (
         "get_push_disable_dependencies",
         "GET",

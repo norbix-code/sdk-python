@@ -10,11 +10,11 @@ class MembershipModule:
         self._transport = transport
 
     def disable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/disable"""
+        """PUT /{version}/membership/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/membership/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -23,11 +23,11 @@ class MembershipModule:
         )
 
     def enable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/enable"""
+        """PUT /{version}/membership/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/membership/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -513,11 +513,11 @@ class AsyncMembershipModule:
         self._transport = transport
 
     async def disable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/disable"""
+        """PUT /{version}/membership/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/membership/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -526,11 +526,11 @@ class AsyncMembershipModule:
         )
 
     async def enable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/enable"""
+        """PUT /{version}/membership/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/membership/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",

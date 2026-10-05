@@ -10,11 +10,11 @@ class DatabaseModule:
         self._transport = transport
 
     def disable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/disable"""
+        """PUT /{version}/database/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/database/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -23,11 +23,11 @@ class DatabaseModule:
         )
 
     def enable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/enable"""
+        """PUT /{version}/database/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/database/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -886,11 +886,11 @@ class AsyncDatabaseModule:
         self._transport = transport
 
     async def disable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/disable"""
+        """PUT /{version}/database/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/database/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -899,11 +899,11 @@ class AsyncDatabaseModule:
         )
 
     async def enable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/enable"""
+        """PUT /{version}/database/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/database/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",

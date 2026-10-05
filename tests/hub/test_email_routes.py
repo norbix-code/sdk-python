@@ -101,7 +101,7 @@ EMAIL_CASES: list[EmailCase] = [
     ),
     (
         "disable_email",
-        "GET",
+        "PUT",
         "/v2/notifications/email/disable",
         lambda c: c.hub.notifications.disable_email(),
     ),
@@ -113,7 +113,7 @@ EMAIL_CASES: list[EmailCase] = [
     ),
     (
         "enable_email",
-        "GET",
+        "PUT",
         "/v2/notifications/email/enable",
         lambda c: c.hub.notifications.enable_email(),
     ),

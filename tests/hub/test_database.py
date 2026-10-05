@@ -63,14 +63,14 @@ def test_hub_database_module_surface() -> None:
 def test_hub_database_disable_database_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.database.disable_database()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_enable_database_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.database.enable_database()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 

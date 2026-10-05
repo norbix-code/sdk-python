@@ -40,8 +40,8 @@ SmsCase = tuple[str, str, str, Callable[[Any], Any]]
 
 SMS_CASES: list[SmsCase] = [
     # module
-    ("enable_sms", "GET", f"{BASE}/enable", lambda m: m.enable_sms()),
-    ("disable_sms", "GET", f"{BASE}/disable", lambda m: m.disable_sms()),
+    ("enable_sms", "PUT", f"{BASE}/enable", lambda m: m.enable_sms()),
+    ("disable_sms", "PUT", f"{BASE}/disable", lambda m: m.disable_sms()),
     (
         "get_sms_disable_dependencies",
         "GET",

@@ -45,14 +45,14 @@ def test_enable_files() -> None:
     client, transport = make_client()
     client.hub.files.enable_files()
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", "/v2/files/enable")
+    assert (method, path) == ("PUT", "/v2/files/enable")
 
 
 def test_disable_files() -> None:
     client, transport = make_client()
     client.hub.files.disable_files()
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", "/v2/files/disable")
+    assert (method, path) == ("PUT", "/v2/files/disable")
 
 
 # --- hub: browsing -----------------------------------------------------------

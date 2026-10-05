@@ -4,8 +4,8 @@ Access with `norbix.hub.membership`.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `disable_membership` | `GET` | `/{version}/membership/disable` | `project` |
-| `enable_membership` | `GET` | `/{version}/membership/enable` | `project` |
+| `disable_membership` | `PUT` | `/{version}/membership/disable` | `project` |
+| `enable_membership` | `PUT` | `/{version}/membership/enable` | `project` |
 | `delete_membership_trigger` | `DELETE` | `/{version}/membership/triggers/{triggerId}` | `project` |
 | `disable_membership_trigger` | `PATCH` | `/{version}/membership/triggers/{triggerId}/disable` | `project` |
 | `enable_membership_trigger` | `PATCH` | `/{version}/membership/triggers/{triggerId}/enable` | `project` |

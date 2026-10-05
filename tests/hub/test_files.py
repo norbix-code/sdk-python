@@ -37,14 +37,14 @@ def test_hub_files_test_files_integration_request_shape() -> None:
 def test_hub_files_disable_files_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.files.disable_files()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_files_enable_files_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.files.enable_files()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
