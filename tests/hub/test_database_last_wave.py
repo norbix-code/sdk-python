@@ -211,12 +211,12 @@ def test_async_hub_database_has_the_same_methods_as_sync() -> None:
 @pytest.mark.parametrize(
     ("call", "verb", "path"),
     [
-        (lambda db: db.create_collection_import(schemaId="sch_1", fileKey="k"), "POST", "/v2/database/imports"),
+        (lambda db: db.create_collection_import(schemaId="sch_1", file={"path": "imports/a.csv"}), "POST", "/v2/database/imports"),
         (lambda db: db.get_collection_imports(), "GET", "/v2/database/imports"),
         (lambda db: db.get_collection_import("imp_1"), "GET", "/v2/database/imports/imp_1"),
         (lambda db: db.delete_collection_import("imp_1"), "DELETE", "/v2/database/imports/imp_1"),
         (lambda db: db.request_import_upload_url(fileName="a.csv"), "POST", "/v2/database/imports/upload-url"),
-        (lambda db: db.analyze_import_file(fileKey="k"), "POST", "/v2/database/imports/analyze"),
+        (lambda db: db.analyze_import_file(file={"path": "imports/a.csv"}), "POST", "/v2/database/imports/analyze"),
     ],
 )
 def test_collection_import_methods(call: Any, verb: str, path: str) -> None:
