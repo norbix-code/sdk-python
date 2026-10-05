@@ -24,6 +24,8 @@ Access with `norbix.api.database`.
 | `replace_one` | `PUT` | `/{version}/database/collections/{collectionName}/{id}/replace` | `project` |
 | `update_many` | `PUT` | `/{version}/database/collections/{collectionName}/many` | `project` |
 | `update_one` | `PUT` | `/{version}/database/collections/{collectionName}/{id}` | `project` |
+| `find_merged_term_tree` | `GET` | `/{version}/database/taxonomies/{taxonomyName}/merged-tree` | `project` |
+| `find_own` | `GET` | `/{version}/database/collections/{collectionName}/own` | `project` |
 
 ## Working with terms
 
@@ -315,3 +317,23 @@ structure = norbix.api.database.find_taxonomy_tree(include_terms=True)
 Now each taxonomy node's `terms` holds that taxonomy's full term tree (same shape as `find_term_tree`) — *Countries* carries its countries, *Cities* carries its cities.
 
 > Every term-reading call also accepts an optional `database_integration_id` to target a non-default database.
+
+---
+
+### Records the caller owns
+
+**Goal:** list only the records of `products` that the signed-in user is
+responsible for.
+
+```python
+mine = norbix.api.database.find_own("products", pageSize=20)
+```
+
+### A taxonomy's merged term tree
+
+**Goal:** get one tree across taxonomies: the terms of `services` are the
+roots, and the terms of its child taxonomies nest under them.
+
+```python
+tree = norbix.api.database.find_merged_term_tree("services")
+```
