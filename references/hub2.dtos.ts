@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-09-28 20:36:28
+Date: 2026-10-05 08:08:30
 Version: 10.20
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: http://localhost:5001
@@ -255,6 +255,7 @@ export enum TriggerType
     Schema = 'Schema',
     Files = 'Files',
     Payments = 'Payments',
+    Ai = 'Ai',
 }
 
 export enum TriggerActionType
@@ -1157,6 +1158,14 @@ export enum LlmProvider
     NorbixHosted = 'NorbixHosted',
 }
 
+export class LlmModelOptionRequest
+{
+    public id: string;
+    public displayName?: string;
+
+    public constructor(init?: Partial<LlmModelOptionRequest>) { (Object as any).assign(this, init); }
+}
+
 export class LlmIntegrationRequest
 {
     public integrationId?: string;
@@ -1165,6 +1174,8 @@ export class LlmIntegrationRequest
     public isEnabled: boolean;
     public endpoint?: string;
     public defaultModel?: string;
+    public isDefault: boolean;
+    public models?: LlmModelOptionRequest[];
 
     public constructor(init?: Partial<LlmIntegrationRequest>) { (Object as any).assign(this, init); }
 }
@@ -1537,9 +1548,6 @@ export class PushTemplateDto extends TemplateDto implements IHasRazorTemplateCod
 export class SmsMessageContentDto implements IHasRazorTemplateCode
 {
     // @DataMember
-    public subject: string;
-
-    // @DataMember
     public body: string;
 
     public constructor(init?: Partial<SmsMessageContentDto>) { (Object as any).assign(this, init); }
@@ -1631,6 +1639,12 @@ export class TriggerActionEmailDto extends TriggerActionDto
     // @DataMember
     public deliverySettings: EmailCampaignDeliverySettingsDto;
 
+    // @DataMember
+    public language?: string;
+
+    // @DataMember
+    public initiatorId?: string;
+
     public constructor(init?: Partial<TriggerActionEmailDto>) { super(init); (Object as any).assign(this, init); }
 }
 
@@ -1669,6 +1683,12 @@ export class TriggerActionPushDto extends TriggerActionDto
 
     // @DataMember
     public deliverySettings: PushCampaignDeliverySettingsDto;
+
+    // @DataMember
+    public language?: string;
+
+    // @DataMember
+    public initiatorId?: string;
 
     public constructor(init?: Partial<TriggerActionPushDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -1759,6 +1779,12 @@ export class TriggerActionSmsDto extends TriggerActionDto
 
     // @DataMember
     public deliverySettings: SmsCampaignDeliverySettingsDto;
+
+    // @DataMember
+    public language?: string;
+
+    // @DataMember
+    public initiatorId?: string;
 
     public constructor(init?: Partial<TriggerActionSmsDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -1997,6 +2023,15 @@ export class EmailToCollectionRecordsDeliverySettingsDto extends EmailCampaignDe
     public constructor(init?: Partial<EmailToCollectionRecordsDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
 }
 
+export enum PushDeviceDeliveryFamily
+{
+    Ios = 'Ios',
+    Android = 'Android',
+    Chrome = 'Chrome',
+    Safari = 'Safari',
+    Expo = 'Expo',
+}
+
 // @DataContract
 export class PushToAllUsersDeliverySettingsDto extends PushCampaignDeliverySettingsDto
 {
@@ -2005,6 +2040,9 @@ export class PushToAllUsersDeliverySettingsDto extends PushCampaignDeliverySetti
 
     // @DataMember
     public userTags?: string[];
+
+    // @DataMember
+    public platforms?: PushDeviceDeliveryFamily[];
 
     public constructor(init?: Partial<PushToAllUsersDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -2023,6 +2061,9 @@ export class PushToAccountUsersDeliverySettingsDto extends PushCampaignDeliveryS
 {
     // @DataMember
     public recipients: string[] = [];
+
+    // @DataMember
+    public platforms?: PushDeviceDeliveryFamily[];
 
     public constructor(init?: Partial<PushToAccountUsersDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -2046,15 +2087,6 @@ export class PushToCollectionRecordsDeliverySettingsDto extends PushCampaignDeli
     public languages?: string[];
 
     public constructor(init?: Partial<PushToCollectionRecordsDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export enum PushDeviceDeliveryFamily
-{
-    Ios = 'Ios',
-    Android = 'Android',
-    Chrome = 'Chrome',
-    Safari = 'Safari',
-    Expo = 'Expo',
 }
 
 // @DataContract
@@ -2097,6 +2129,15 @@ export class SmsToUsersDeliverySettingsDto extends SmsCampaignDeliverySettingsDt
     public recipients: string[] = [];
 
     public constructor(init?: Partial<SmsToUsersDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class SmsToAccountUsersDeliverySettingsDto extends SmsCampaignDeliverySettingsDto
+{
+    // @DataMember
+    public recipients: string[] = [];
+
+    public constructor(init?: Partial<SmsToAccountUsersDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -2144,6 +2185,16 @@ export class IntegrationDto implements IHasViewId
     public constructor(init?: Partial<IntegrationDto>) { (Object as any).assign(this, init); }
 }
 
+export class LlmModelOptionDto
+{
+    public id: string;
+    public displayName: string;
+    public inputCreditRate: number;
+    public outputCreditRate: number;
+
+    public constructor(init?: Partial<LlmModelOptionDto>) { (Object as any).assign(this, init); }
+}
+
 export class LlmIntegrationDto extends IntegrationDto
 {
     public provider: LlmProvider;
@@ -2151,6 +2202,8 @@ export class LlmIntegrationDto extends IntegrationDto
     public defaultModel?: string;
     public isConfigured: boolean;
     public isSystemOwned: boolean;
+    public isDefault: boolean;
+    public models: LlmModelOptionDto[] = [];
 
     public constructor(init?: Partial<LlmIntegrationDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -3031,6 +3084,22 @@ export class SchedulerTaskDto
     public constructor(init?: Partial<SchedulerTaskDto>) { (Object as any).assign(this, init); }
 }
 
+export class SchedulerTaskRequest
+{
+    public type: SchedulerTaskType;
+
+    public constructor(init?: Partial<SchedulerTaskRequest>) { (Object as any).assign(this, init); }
+}
+
+export class EmailCampaignSchedulerTaskRequest extends SchedulerTaskRequest
+{
+    public type: SchedulerTaskType;
+    public campaign?: EmailCampaignRequest;
+    public databaseIntegrationId?: string;
+
+    public constructor(init?: Partial<EmailCampaignSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class MongoDbAggregateDto implements IHasViewId
 {
     // @DataMember
@@ -3435,6 +3504,11 @@ export class AiChatEntrySourceWireDto
     public artifactId?: string;
     public label?: string;
     public step?: number;
+    public number?: number;
+    public sourceKind?: string;
+    public sourceId?: string;
+    public score?: number;
+    public cited?: boolean;
 
     public constructor(init?: Partial<AiChatEntrySourceWireDto>) { (Object as any).assign(this, init); }
 }
@@ -3627,17 +3701,6 @@ export interface IHasCorrelationIdRequest
     correlationId?: string;
 }
 
-export enum SubscriptionType
-{
-    ManagedService = 'ManagedService',
-    License = 'License',
-}
-
-export interface IHasAccountId
-{
-    accountId: string;
-}
-
 // @DataContract(Namespace="http://codemash.io/types/")
 export class CodeMashRequestBase extends RequestBase implements IHasProjectId, IHasEnv
 {
@@ -3662,6 +3725,17 @@ export interface IHasProjectId
 export interface IHasEnv
 {
     env?: string;
+}
+
+export enum SubscriptionType
+{
+    ManagedService = 'ManagedService',
+    License = 'License',
+}
+
+export interface IHasAccountId
+{
+    accountId: string;
 }
 
 // @DataContract
@@ -3727,22 +3801,129 @@ export class TagDefinitionDto extends TagDefinitionBaseDto
     public constructor(init?: Partial<TagDefinitionDto>) { super(init); (Object as any).assign(this, init); }
 }
 
-export class CursorArgs implements ICursorArgs
+// @DataContract
+export class AiPlanModelDto
 {
-    public field: string;
-    public order: number;
+    // @DataMember
+    public llmIntegrationId: string;
 
-    public constructor(init?: Partial<CursorArgs>) { (Object as any).assign(this, init); }
+    // @DataMember
+    public model?: string;
+
+    public constructor(init?: Partial<AiPlanModelDto>) { (Object as any).assign(this, init); }
 }
 
-export class PagingArgs
+export enum AiPlanQuotaUnit
 {
-    public cursorArgs?: CursorArgs;
-    public pageSize?: number;
-    public startingAfter?: string;
-    public endingBefore?: string;
+    None = 'None',
+    Credits = 'Credits',
+    Tokens = 'Tokens',
+}
 
-    public constructor(init?: Partial<PagingArgs>) { (Object as any).assign(this, init); }
+// @DataContract
+export class AiPlanFeaturesDto
+{
+    // @DataMember
+    public attachments: boolean;
+
+    // @DataMember
+    public rag: boolean;
+
+    // @DataMember
+    public memory: boolean;
+
+    public constructor(init?: Partial<AiPlanFeaturesDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiPlanDto
+{
+    // @DataMember
+    public id?: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public allowedAssistantIds: string[] = [];
+
+    // @DataMember
+    public allowedModels: AiPlanModelDto[] = [];
+
+    // @DataMember
+    public quotaUnit: AiPlanQuotaUnit;
+
+    // @DataMember
+    public monthlyQuota: number;
+
+    // @DataMember
+    public features: AiPlanFeaturesDto;
+
+    // @DataMember
+    public quotaReachedMessage?: string;
+
+    public constructor(init?: Partial<AiPlanDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiPlanRoleAssignmentDto
+{
+    // @DataMember
+    public roleId: string;
+
+    // @DataMember
+    public planId: string;
+
+    public constructor(init?: Partial<AiPlanRoleAssignmentDto>) { (Object as any).assign(this, init); }
+}
+
+export class ProjectAiAssistantRequestBase extends CodeMashRequestBase
+{
+    /** @description Name shown to end users. Required, at most 100 characters, unique in the project. */
+    // @ApiMember(Description="Name shown to end users. Required, at most 100 characters, unique in the project.")
+    public name?: string;
+
+    /** @description First message end users see. Public. At most 2 000 characters. */
+    // @ApiMember(Description="First message end users see. Public. At most 2 000 characters.")
+    public welcomeMessage?: string;
+
+    /** @description Instructions for the model. Never shown to end users. At most 20 000 characters. */
+    // @ApiMember(Description="Instructions for the model. Never shown to end users. At most 20 000 characters.")
+    public systemPrompt?: string;
+
+    /** @description Own-scope toolsets the assistant may use: own:records (the user's own database records), own:profile (their profile), own:preferences (their marketing preferences), own:knowledge (search_knowledge — the user's own and the project-wide knowledge). Any other name is refused. */
+    // @ApiMember(Description="Own-scope toolsets the assistant may use: own:records (the user's own database records), own:profile (their profile), own:preferences (their marketing preferences), own:knowledge (search_knowledge — the user's own and the project-wide knowledge). Any other name is refused.")
+    public toolsets?: string[];
+
+    /** @description The assistant's own LLM integration id (int_…). Empty = the project's default LLM. */
+    // @ApiMember(Description="The assistant's own LLM integration id (int_…). Empty = the project's default LLM.")
+    public llmIntegrationId?: string;
+
+    /** @description Model name. Empty = the integration's default model. */
+    // @ApiMember(Description="Model name. Empty = the integration's default model.")
+    public model?: string;
+
+    /** @description True to let the assistant remember facts about the end user across chats. */
+    // @ApiMember(Description="True to let the assistant remember facts about the end user across chats.")
+    public memoryEnabled: boolean;
+
+    /** @description Knowledge the assistant retrieves from before each answer and cites as [n]: record (records of schemas with embed on), file (uploaded files, when the project embeds them), message (the user's earlier chats, assistants with memory). Empty = no automatic retrieval. */
+    // @ApiMember(Description="Knowledge the assistant retrieves from before each answer and cites as [n]: record (records of schemas with embed on), file (uploaded files, when the project embeds them), message (the user's earlier chats, assistants with memory). Empty = no automatic retrieval.")
+    public ragSourceIds?: string[];
+
+    /** @description Best relevance (0–1) below which the answer says the knowledge does not match strongly. Empty = 0.5; 0 = never. */
+    // @ApiMember(Description="Best relevance (0–1) below which the answer says the knowledge does not match strongly. Empty = 0.5; 0 = never.")
+    public weakMatchThreshold?: number;
+
+    /** @description AI plan (quota) id. Optional. */
+    // @ApiMember(Description="AI plan (quota) id. Optional.")
+    public planId?: string;
+
+    /** @description True to make this the project's default assistant; the previous default stops being default. */
+    // @ApiMember(Description="True to make this the project's default assistant; the previous default stops being default.")
+    public isDefault: boolean;
+
+    public constructor(init?: Partial<ProjectAiAssistantRequestBase>) { super(init); (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -3833,6 +4014,24 @@ export class CredentialsSettingsModeDto
     public constructor(init?: Partial<CredentialsSettingsModeDto>) { (Object as any).assign(this, init); }
 }
 
+export class CursorArgs implements ICursorArgs
+{
+    public field: string;
+    public order: number;
+
+    public constructor(init?: Partial<CursorArgs>) { (Object as any).assign(this, init); }
+}
+
+export class PagingArgs
+{
+    public cursorArgs?: CursorArgs;
+    public pageSize?: number;
+    public startingAfter?: string;
+    public endingBefore?: string;
+
+    public constructor(init?: Partial<PagingArgs>) { (Object as any).assign(this, init); }
+}
+
 export class SchemaSettingsDto
 {
     // @DataMember
@@ -3845,6 +4044,23 @@ export class SchemaSettingsDto
     public description?: string;
 
     public constructor(init?: Partial<SchemaSettingsDto>) { (Object as any).assign(this, init); }
+}
+
+export class SchemaEmbedSettingsDto
+{
+    // @DataMember
+    public enabled: boolean;
+
+    // @DataMember
+    public fields: string[] = [];
+
+    // @DataMember
+    public embeddingIntegrationId?: string;
+
+    // @DataMember
+    public perUser: boolean;
+
+    public constructor(init?: Partial<SchemaEmbedSettingsDto>) { (Object as any).assign(this, init); }
 }
 
 export class SchemaListColumnDto
@@ -3892,6 +4108,31 @@ export class ImportColumnMappingDto
     public dontImportOnError: boolean;
 
     public constructor(init?: Partial<ImportColumnMappingDto>) { (Object as any).assign(this, init); }
+}
+
+export class AggregateId
+{
+    public value: string;
+
+    public constructor(init?: Partial<AggregateId>) { (Object as any).assign(this, init); }
+}
+
+export class ProjectId extends AggregateId implements IHasDomainEntityId
+{
+
+    public constructor(init?: Partial<ProjectId>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class IntegrationId extends AggregateId implements IHasDomainEntityId
+{
+
+    public constructor(init?: Partial<IntegrationId>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class TaxonomyId extends AggregateId implements IHasDomainEntityId
+{
+
+    public constructor(init?: Partial<TaxonomyId>) { super(init); (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -4088,11 +4329,24 @@ export class ChatScreenContextDto
     public constructor(init?: Partial<ChatScreenContextDto>) { (Object as any).assign(this, init); }
 }
 
-export class SchedulerTaskRequest
+export enum EmbeddingProvider
 {
-    public type: SchedulerTaskType;
+    Voyage = 'Voyage',
+    OpenAI = 'OpenAI',
+}
 
-    public constructor(init?: Partial<SchedulerTaskRequest>) { (Object as any).assign(this, init); }
+export class EmbeddingIntegrationRequest
+{
+    public integrationId?: string;
+    public provider: EmbeddingProvider;
+    public integrationName: string;
+    public isEnabled: boolean;
+    public endpoint?: string;
+    public model: string;
+    public dimension: number;
+    public apiKey: string;
+
+    public constructor(init?: Partial<EmbeddingIntegrationRequest>) { (Object as any).assign(this, init); }
 }
 
 export enum ResourceKindDto
@@ -4246,6 +4500,41 @@ export class PublicAuthDto
     public passwordPolicy?: PublicPasswordPolicyDto;
 
     public constructor(init?: Partial<PublicAuthDto>) { (Object as any).assign(this, init); }
+}
+
+export class PublicAiAssistantDto
+{
+    public id: string;
+    public name: string;
+    public welcome?: string;
+
+    public constructor(init?: Partial<PublicAiAssistantDto>) { (Object as any).assign(this, init); }
+}
+
+export class PublicAiChatDto
+{
+    public enabled: boolean;
+    public assistants: PublicAiAssistantDto[] = [];
+
+    public constructor(init?: Partial<PublicAiChatDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class TriggerAttentionDto
+{
+    // @DataMember
+    public triggerId: string;
+
+    // @DataMember
+    public triggerType: TriggerType;
+
+    // @DataMember
+    public reason: string;
+
+    // @DataMember
+    public atUtc: string;
+
+    public constructor(init?: Partial<TriggerAttentionDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -4571,6 +4860,78 @@ export class AuthenticationFlowSummaryDto
 }
 
 // @DataContract
+export class AiAssistantDto
+{
+    // @DataMember
+    public id: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public welcomeMessage?: string;
+
+    // @DataMember
+    public systemPrompt?: string;
+
+    // @DataMember
+    public toolsets: string[] = [];
+
+    // @DataMember
+    public llmIntegrationId?: string;
+
+    // @DataMember
+    public model?: string;
+
+    // @DataMember
+    public memoryEnabled: boolean;
+
+    // @DataMember
+    public ragSourceIds: string[] = [];
+
+    // @DataMember
+    public weakMatchThreshold?: number;
+
+    // @DataMember
+    public planId?: string;
+
+    // @DataMember
+    public isDefault: boolean;
+
+    public constructor(init?: Partial<AiAssistantDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ProjectAiSettingsDto
+{
+    // @DataMember
+    public enabled: boolean;
+
+    // @DataMember
+    public defaultLlmIntegrationId?: string;
+
+    // @DataMember
+    public defaultModel?: string;
+
+    // @DataMember
+    public assistants: AiAssistantDto[] = [];
+
+    // @DataMember
+    public embedFiles: boolean;
+
+    // @DataMember
+    public plans: AiPlanDto[] = [];
+
+    // @DataMember
+    public planRoleAssignments: AiPlanRoleAssignmentDto[] = [];
+
+    // @DataMember
+    public defaultPlanId?: string;
+
+    public constructor(init?: Partial<ProjectAiSettingsDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
 export class TriggerDto implements IHasViewId
 {
     // @DataMember
@@ -4647,6 +5008,9 @@ export class AiDto
 {
     // @DataMember
     public isEnabled: boolean;
+
+    // @DataMember
+    public defaultIntegrationViewIds: { [index:string]: string; } = {};
 
     // @DataMember
     public defaultIntegrationViewId?: string;
@@ -4949,6 +5313,9 @@ export class ProjectDto implements IHasViewId, IBindableContract
     public exposeLegalToAdminPortal: boolean;
 
     // @DataMember
+    public aiChat?: ProjectAiSettingsDto;
+
+    // @DataMember
     public legalTermsMarkdown?: string;
 
     // @DataMember
@@ -5063,6 +5430,217 @@ export class ProjectListItemDto
     public additionalRegions?: ProjectRegionDto[];
 
     public constructor(init?: Partial<ProjectListItemDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiCreditPackCheckoutDto
+{
+    // @DataMember
+    public url: string;
+
+    // @DataMember
+    public sessionId: string;
+
+    // @DataMember
+    public pack: string;
+
+    // @DataMember
+    public credits: number;
+
+    // @DataMember
+    public priceEuroCents: number;
+
+    // @DataMember
+    public purchaseId: string;
+
+    public constructor(init?: Partial<AiCreditPackCheckoutDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ProjectAiPlansDto
+{
+    // @DataMember
+    public plans: AiPlanDto[] = [];
+
+    // @DataMember
+    public roles: AiPlanRoleAssignmentDto[] = [];
+
+    // @DataMember
+    public defaultPlanId?: string;
+
+    public constructor(init?: Partial<ProjectAiPlansDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiUserPlanAssignmentDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public planId: string;
+
+    public constructor(init?: Partial<AiUserPlanAssignmentDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiUserPlansDto
+{
+    // @DataMember
+    public users: AiUserPlanAssignmentDto[] = [];
+
+    public constructor(init?: Partial<AiUserPlansDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiUsageGroupDto
+{
+    // @DataMember
+    public id: string;
+
+    // @DataMember
+    public llmInputTokens: number;
+
+    // @DataMember
+    public llmOutputTokens: number;
+
+    // @DataMember
+    public embeddingTokens: number;
+
+    // @DataMember
+    public rerankCalls: number;
+
+    // @DataMember
+    public totalTokens: number;
+
+    // @DataMember
+    public chargeableTokens: number;
+
+    // @DataMember
+    public chargeableRerankCalls: number;
+
+    // @DataMember
+    public credits: number;
+
+    public constructor(init?: Partial<AiUsageGroupDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiWalletLineDto
+{
+    // @DataMember
+    public kind: string;
+
+    // @DataMember
+    public credits: number;
+
+    // @DataMember
+    public reference?: string;
+
+    // @DataMember
+    public purchasedBalance: number;
+
+    // @DataMember
+    public includedUsed?: number;
+
+    // @DataMember
+    public purchasedUsed?: number;
+
+    // @DataMember
+    public atUtc: string;
+
+    public constructor(init?: Partial<AiWalletLineDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ProjectAiWalletDto
+{
+    // @DataMember
+    public period: string;
+
+    // @DataMember
+    public includedCredits: number;
+
+    // @DataMember
+    public purchasedCredits: number;
+
+    // @DataMember
+    public consumedCredits: number;
+
+    // @DataMember
+    public remainingCredits: number;
+
+    // @DataMember
+    public status: string;
+
+    // @DataMember
+    public lines: AiWalletLineDto[] = [];
+
+    public constructor(init?: Partial<ProjectAiWalletDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ProjectAiUsageDto
+{
+    // @DataMember
+    public period: string;
+
+    // @DataMember
+    public totals: AiUsageGroupDto;
+
+    // @DataMember
+    public assistants: AiUsageGroupDto[] = [];
+
+    // @DataMember
+    public topUsers: AiUsageGroupDto[] = [];
+
+    // @DataMember
+    public models: AiUsageGroupDto[] = [];
+
+    // @DataMember
+    public wallet: ProjectAiWalletDto;
+
+    public constructor(init?: Partial<ProjectAiUsageDto>) { (Object as any).assign(this, init); }
+}
+
+// @Flags()
+export enum ApplicationModule
+{
+    Account = 0,
+    Membership = 1,
+    Database = 2,
+    Files = 4,
+    Code = 8,
+    Email = 16,
+    Push = 32,
+    Payment = 64,
+    Scheduler = 128,
+    Logging = 256,
+    ServerEvents = 512,
+    Ai = 1024,
+    Sms = 2048,
+    Project = 4096,
+    Compliance = 8192,
+    Contacts = 16384,
+    Marketplace = 32768,
+}
+
+// @DataContract
+export class TemplateLanguageGapDto
+{
+    // @DataMember
+    public module: ApplicationModule;
+
+    // @DataMember
+    public templateId: string;
+
+    // @DataMember
+    public templateName: string;
+
+    // @DataMember
+    public missingLanguages: string[] = [];
+
+    public constructor(init?: Partial<TemplateLanguageGapDto>) { (Object as any).assign(this, init); }
 }
 
 export class PaginatedResponse<TViewModelProjection>
@@ -5996,6 +6574,9 @@ export class SchemaDto implements IHasViewId
     public settings?: SchemaSettingsDto;
 
     // @DataMember
+    public embed?: SchemaEmbedSettingsDto;
+
+    // @DataMember
     public triggers?: TriggerDto[];
 
     public constructor(init?: Partial<SchemaDto>) { (Object as any).assign(this, init); }
@@ -6532,6 +7113,15 @@ export class EmailIntegrationListProjection extends IntegrationListProjection
     public constructor(init?: Partial<EmailIntegrationListProjection>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class EmailLinkPreferencesDto
+{
+    public emailAddress?: string;
+    public unsubscribedFromMarketing: boolean;
+    public blockReasons: string[] = [];
+
+    public constructor(init?: Partial<EmailLinkPreferencesDto>) { (Object as any).assign(this, init); }
+}
+
 export enum CampaignStatus
 {
     Pending = 'Pending',
@@ -6764,9 +7354,6 @@ export class CampaignBatchNotificationDto implements IHasDatabaseId
     public refNotificationId?: string;
 
     // @DataMember
-    public subject?: string;
-
-    // @DataMember
     public body?: string;
 
     // @DataMember
@@ -6784,6 +7371,9 @@ export class CampaignBatchNotificationDto implements IHasDatabaseId
 // @DataContract
 export class EmailCampaignBatchNotificationDto extends CampaignBatchNotificationDto
 {
+    // @DataMember
+    public subject?: string;
+
     // @DataMember
     public recipients: EmailRecipientsDto;
 
@@ -6814,6 +7404,8 @@ export class CampaignStatsDto
 // @DataContract
 export class SmsTemplateListProjection extends TemplateListProjection
 {
+    // @DataMember
+    public languages: string[] = [];
 
     public constructor(init?: Partial<SmsTemplateListProjection>) { super(init); (Object as any).assign(this, init); }
 }
@@ -6840,6 +7432,9 @@ export class SmsCampaignDto extends CampaignDto
 
     // @DataMember
     public template: SmsTemplateDto;
+
+    // @DataMember
+    public createdById?: string;
 
     public constructor(init?: Partial<SmsCampaignDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -7017,6 +7612,8 @@ export class CodeIntegrationListProjection extends IntegrationListProjection
 // @DataContract
 export class PushTemplateListProjection extends TemplateListProjection
 {
+    // @DataMember
+    public languages: string[] = [];
 
     public constructor(init?: Partial<PushTemplateListProjection>) { super(init); (Object as any).assign(this, init); }
 }
@@ -7077,6 +7674,24 @@ export class PushDeviceListProjection
     public platformApiLevel?: number;
 
     public constructor(init?: Partial<PushDeviceListProjection>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class PushAudienceCountDto
+{
+    // @DataMember
+    public devices: number;
+
+    // @DataMember
+    public recipients: number;
+
+    // @DataMember
+    public skippedUserIds: number;
+
+    // @DataMember
+    public isCapped: boolean;
+
+    public constructor(init?: Partial<PushAudienceCountDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -7142,6 +7757,9 @@ export class PushCampaignBatchDto extends CampaignBatchDto
 // @DataContract
 export class PushCampaignBatchNotificationDto extends CampaignBatchNotificationDto
 {
+    // @DataMember
+    public subject?: string;
+
     // @DataMember
     public recipients: PushRecipientsDto;
 
@@ -7238,6 +7856,7 @@ export class AgentOnboardingSnippet
 {
     public client: string;
     public config: string;
+    public auth: string;
 
     public constructor(init?: Partial<AgentOnboardingSnippet>) { (Object as any).assign(this, init); }
 }
@@ -7300,6 +7919,72 @@ export class ChatSessionListItem
     public isPinned: boolean;
 
     public constructor(init?: Partial<ChatSessionListItem>) { (Object as any).assign(this, init); }
+}
+
+export class ScaffoldStep
+{
+    public order: number;
+    public kind: string;
+    public title: string;
+    public tool: string;
+    public arguments: JsonObject;
+    public checkTool?: string;
+    public templateRef?: string;
+
+    public constructor(init?: Partial<ScaffoldStep>) { (Object as any).assign(this, init); }
+}
+
+export class ScaffoldIssue
+{
+    public where: string;
+    public code: string;
+    public message: string;
+
+    public constructor(init?: Partial<ScaffoldIssue>) { (Object as any).assign(this, init); }
+}
+
+export class ScaffoldStepReportWithLink
+{
+    public order: number;
+    public title: string;
+    public tool: string;
+    public status: string;
+    public id?: string;
+    public dashboardUrl?: string;
+    public note?: string;
+    public errors?: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<ScaffoldStepReportWithLink>) { (Object as any).assign(this, init); }
+}
+
+export class ScaffoldApplyReport
+{
+    public completed: boolean;
+    public projectId?: string;
+    public projectUrl?: string;
+    public summary?: string;
+    public steps: ScaffoldStepReportWithLink[] = [];
+
+    public constructor(init?: Partial<ScaffoldApplyReport>) { (Object as any).assign(this, init); }
+}
+
+export class TemplatePreviewPartResult
+{
+    public name: string;
+    public rendered?: string;
+    public errors: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<TemplatePreviewPartResult>) { (Object as any).assign(this, init); }
+}
+
+export class TemplatePreview
+{
+    public channel: string;
+    public ok: boolean;
+    public parts: IReadOnlyList<TemplatePreviewPartResult>;
+    public errors: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<TemplatePreview>) { (Object as any).assign(this, init); }
 }
 
 export class ProjectBriefSourceWireDto
@@ -7495,11 +8180,60 @@ export class WorkItemWireDto
     public constructor(init?: Partial<WorkItemWireDto>) { (Object as any).assign(this, init); }
 }
 
+export enum AiTriggerType
+{
+    OnCreditsWarning = 'OnCreditsWarning',
+    OnCreditsExhausted = 'OnCreditsExhausted',
+    OnQuotaWarning = 'OnQuotaWarning',
+    OnQuotaExhausted = 'OnQuotaExhausted',
+}
+
+// @DataContract
+export class AiTriggerProjectionList extends TriggerProjectionList
+{
+    // @DataMember
+    public type: AiTriggerType;
+
+    public constructor(init?: Partial<AiTriggerProjectionList>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiTriggerDto extends TriggerDto
+{
+    // @DataMember
+    public when: AiTriggerType;
+
+    public constructor(init?: Partial<AiTriggerDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class EmbeddingIntegrationDto extends IntegrationDto
+{
+    public provider: EmbeddingProvider;
+    public model: string;
+    public dimension: number;
+    public baseUrl?: string;
+    public isConfigured: boolean;
+
+    public constructor(init?: Partial<EmbeddingIntegrationDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class EmbeddingIntegrationListProjection extends IntegrationListProjection
+{
+    public embeddingProvider: EmbeddingProvider;
+    public model: string;
+    public dimension: number;
+    public isConfigured: boolean;
+
+    public constructor(init?: Partial<EmbeddingIntegrationListProjection>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class LlmIntegrationListProjection extends IntegrationListProjection
 {
     public llmProvider: LlmProvider;
     public baseUrl?: string;
     public defaultModel?: string;
+    public isDefault: boolean;
+    public models: LlmModelOptionDto[] = [];
 
     public constructor(init?: Partial<LlmIntegrationListProjection>) { super(init); (Object as any).assign(this, init); }
 }
@@ -8376,6 +9110,11 @@ export interface IHasRazorTemplateCode
 {
 }
 
+export interface IHasDomainEntityId
+{
+    viewId: string;
+}
+
 export interface IHasResponsibleUserId
 {
     userId: string;
@@ -8566,6 +9305,7 @@ export class PublicProjectConfigDto
     public adminPortalEnabled: boolean;
     public branding?: PublicBrandDto;
     public auth: PublicAuthDto;
+    public aiChat: PublicAiChatDto;
 
     public constructor(init?: Partial<PublicProjectConfigDto>) { (Object as any).assign(this, init); }
 }
@@ -8578,6 +9318,15 @@ export class PublicLegalDocumentDto
     public available: boolean;
 
     public constructor(init?: Partial<PublicLegalDocumentDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class GetTriggersNeedingAttentionResponse extends ResponseBase
+{
+    // @DataMember
+    public items: TriggerAttentionDto[] = [];
+
+    public constructor(init?: Partial<GetTriggersNeedingAttentionResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetAccountProfileResponse extends ResponseBase
@@ -8704,6 +9453,57 @@ export class AdminPortalStructureDto
     public constructor(init?: Partial<AdminPortalStructureDto>) { (Object as any).assign(this, init); }
 }
 
+export class CreateAiCreditPackCheckoutResponse extends ResponseBase
+{
+    public result?: AiCreditPackCheckoutDto;
+
+    public constructor(init?: Partial<CreateAiCreditPackCheckoutResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetProjectAiPlansResponse extends ResponseBase
+{
+    public result?: ProjectAiPlansDto;
+
+    public constructor(init?: Partial<GetProjectAiPlansResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class UpdateProjectAiPlansResponse extends ResponseBase
+{
+    public planIds: string[] = [];
+
+    public constructor(init?: Partial<UpdateProjectAiPlansResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetProjectAiUserPlansResponse extends ResponseBase
+{
+    public result?: AiUserPlansDto;
+
+    public constructor(init?: Partial<GetProjectAiUserPlansResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetProjectAiSettingsResponse extends ResponseBase
+{
+    public result?: ProjectAiSettingsDto;
+
+    public constructor(init?: Partial<GetProjectAiSettingsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetProjectAiUsageResponse extends ResponseBase
+{
+    public result?: ProjectAiUsageDto;
+
+    public constructor(init?: Partial<GetProjectAiUsageResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CheckProjectLanguagesResponse extends ResponseBase
+{
+    // @DataMember
+    public templates: TemplateLanguageGapDto[] = [];
+
+    public constructor(init?: Partial<CheckProjectLanguagesResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 // @DataContract
 export class CreateAccountResponse extends IdResponse
 {
@@ -8784,6 +9584,13 @@ export class AccountPasskeyEnrollmentResponse extends ResponseBase
     public recoveryCodes?: string[];
 
     public constructor(init?: Partial<AccountPasskeyEnrollmentResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetMyAccountUserProfileResponse extends ResponseBase
+{
+    public item?: AuthDto;
+
+    public constructor(init?: Partial<GetMyAccountUserProfileResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetLicenseDomainDnsStatusResponse extends ResponseBase
@@ -9418,6 +10225,13 @@ export class GetEmailFootersResponse extends ResponseBase
     public constructor(init?: Partial<GetEmailFootersResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class GetEmailPreferencesByLinkResponse extends ResponseBase
+{
+    public item?: EmailLinkPreferencesDto;
+
+    public constructor(init?: Partial<GetEmailPreferencesByLinkResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class GetEmailCampaignResponse extends ResponseBase
 {
     public item?: EmailCampaignDto;
@@ -9467,13 +10281,6 @@ export class PreviewEmailNotificationResponse extends ResponseBase
     public body?: string;
 
     public constructor(init?: Partial<PreviewEmailNotificationResponse>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class GetEmailCampaignMessageResponse extends ResponseBase
-{
-    public emailMessageEntity?: EmailCampaignBatchNotificationDto;
-
-    public constructor(init?: Partial<GetEmailCampaignMessageResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetEmailCampaignMessagesResponse extends ResponseBase
@@ -9591,13 +10398,6 @@ export class PreviewSmsNotificationResponse extends ResponseBase
     public body?: string;
 
     public constructor(init?: Partial<PreviewSmsNotificationResponse>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class GetSmsCampaignMessageResponse extends ResponseBase
-{
-    public smsMessageEntity?: SmsCampaignBatchNotificationDto;
-
-    public constructor(init?: Partial<GetSmsCampaignMessageResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetSmsCampaignMessagesResponse extends ResponseBase
@@ -9791,6 +10591,13 @@ export class GetPushDevicesResponse extends ResponseBase
     public constructor(init?: Partial<GetPushDevicesResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class GetPushCampaignAudienceCountResponse extends ResponseBase
+{
+    public result?: PushAudienceCountDto;
+
+    public constructor(init?: Partial<GetPushCampaignAudienceCountResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class GetPushCampaignResponse extends ResponseBase
 {
     public item?: PushCampaignDto;
@@ -9841,13 +10648,6 @@ export class PreviewPushNotificationResponse extends ResponseBase
     public subtitle?: string;
 
     public constructor(init?: Partial<PreviewPushNotificationResponse>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class GetPushCampaignMessageResponse extends ResponseBase
-{
-    public pushMessageEntity?: PushCampaignBatchNotificationDto;
-
-    public constructor(init?: Partial<GetPushCampaignMessageResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetPushCampaignMessagesResponse extends ResponseBase
@@ -10042,6 +10842,35 @@ export class ChatTurnResponse extends ResponseBase
     public constructor(init?: Partial<ChatTurnResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class ScaffoldProjectResponse extends ResponseBase
+{
+    public mode?: string;
+    public env?: string;
+    public valid: boolean;
+    public plan?: ScaffoldStep[];
+    public defaults?: string[];
+    public issues?: ScaffoldIssue[];
+    public report?: ScaffoldApplyReport;
+
+    public constructor(init?: Partial<ScaffoldProjectResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class ValidateSchemaResponse extends ResponseBase
+{
+    public valid: boolean;
+    public issues?: ScaffoldIssue[];
+    public collections?: string[];
+
+    public constructor(init?: Partial<ValidateSchemaResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class RenderTemplatePreviewResponse extends ResponseBase
+{
+    public preview?: TemplatePreview;
+
+    public constructor(init?: Partial<RenderTemplatePreviewResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class GetProjectBriefResponse extends ResponseBase
 {
     public projectId?: string;
@@ -10075,6 +10904,49 @@ export class ExportWorkItemResponse extends ResponseBase
     public markdown?: string;
 
     public constructor(init?: Partial<ExportWorkItemResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetAiTriggersResponse extends GetTriggersResponse
+{
+    public list?: PaginatedResponse<AiTriggerProjectionList>;
+
+    public constructor(init?: Partial<GetAiTriggersResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetAiTriggerResponse extends GetTriggerResponse
+{
+    public trigger?: AiTriggerDto;
+
+    public constructor(init?: Partial<GetAiTriggerResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetEmbeddingIntegrationResponse extends ResponseBase
+{
+    public item?: EmbeddingIntegrationDto;
+
+    public constructor(init?: Partial<GetEmbeddingIntegrationResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetEmbeddingIntegrationsResponse extends ResponseBase
+{
+    public list?: PaginatedResponse<EmbeddingIntegrationListProjection>;
+
+    public constructor(init?: Partial<GetEmbeddingIntegrationsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class TestEmbeddingIntegrationResponse extends ResponseBase
+{
+    // @DataMember
+    public dimension?: number;
+
+    // @DataMember
+    public latencyMs?: number;
+
+    // @DataMember
+    public totalTokens?: number;
+
+    public constructor(init?: Partial<TestEmbeddingIntegrationResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetLlmIntegrationResponse extends ResponseBase
@@ -10902,6 +11774,7 @@ export class InternalsTypeGen
     public typegen_98_PushToDevicesDeliverySettingsDto?: PushToDevicesDeliverySettingsDto;
     public typegen_99_SmsToAllUsersDeliverySettingsDto?: SmsToAllUsersDeliverySettingsDto;
     public typegen_100_SmsToUsersDeliverySettingsDto?: SmsToUsersDeliverySettingsDto;
+    public typegen_249_SmsToAccountUsersDeliverySettingsDto?: SmsToAccountUsersDeliverySettingsDto;
     public typegen_101_SmsToCollectionRecordsDeliverySettingsDto?: SmsToCollectionRecordsDeliverySettingsDto;
     public typegen_102_SmsToPhoneNumbersDeliverySettingsDto?: SmsToPhoneNumbersDeliverySettingsDto;
     public typegen_103_OpenAiLlmIntegrationDto?: OpenAiLlmIntegrationDto;
@@ -10992,6 +11865,7 @@ export class InternalsTypeGen
     public typegen_192_WebhookIntegrationDto?: WebhookIntegrationDto;
     public typegen_193_WebhookDestinationDto?: WebhookDestinationDto;
     public typegen_194_SchedulerTaskDto?: SchedulerTaskDto;
+    public typegen_249_EmailCampaignSchedulerTaskRequest?: EmailCampaignSchedulerTaskRequest;
     public typegen_195_MongoDbAggregateDto?: MongoDbAggregateDto;
     public typegen_196_MarketplaceIntegrationDto?: MarketplaceIntegrationDto;
     public typegen_197_MarketplaceFunctionDto?: MarketplaceFunctionDto;
@@ -11058,6 +11932,19 @@ export class Echo extends RequestBase implements IReturn<EchoResponse>
     public createResponse() { return new EchoResponse(); }
 }
 
+// @Route("/{version}/public/projects/{ProjectId}/brand/{Kind}", "GET")
+export class GetPublicProjectBrandAsset extends RequestBase implements IReturn<Blob>
+{
+    public projectId?: string;
+    public kind?: string;
+    public v?: string;
+
+    public constructor(init?: Partial<GetPublicProjectBrandAsset>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetPublicProjectBrandAsset'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new Blob(); }
+}
+
 // @Route("/{version}/public/projects/{ProjectId}/config", "GET")
 export class GetPublicProjectConfig extends RequestBase implements IReturn<PublicProjectConfigDto>
 {
@@ -11079,6 +11966,23 @@ export class GetPublicProjectLegal extends RequestBase implements IReturn<Public
     public getTypeName() { return 'GetPublicProjectLegal'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new PublicLegalDocumentDto(); }
+}
+
+/** @description Get triggers that need attention */
+// @Route("/{version}/triggers/attention", "GET")
+// @Api(Description="Get triggers that need attention")
+// @DataContract
+export class GetTriggersNeedingAttention extends CodeMashRequestBase implements IReturn<GetTriggersNeedingAttentionResponse>
+{
+    /** @description Which triggers: Membership, Schema, Files, Payments or Ai. */
+    // @DataMember
+    // @ApiMember(Description="Which triggers: Membership, Schema, Files, Payments or Ai.", IsRequired=true)
+    public triggerType: TriggerType;
+
+    public constructor(init?: Partial<GetTriggersNeedingAttention>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetTriggersNeedingAttention'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetTriggersNeedingAttentionResponse(); }
 }
 
 // @Route("/{version}/account/profile", "GET")
@@ -11538,6 +12442,51 @@ export class GetProjectTokens extends CodeMashRequestBase implements IReturn<Get
     public createResponse() { return new GetProjectTokensResponse(); }
 }
 
+/** @description Turns the project's managed Admin Portal on or off */
+// @Route("/{version}/account/projects/{projectId}/admin-portal/enabled", "PUT")
+// @Api(Description="Turns the project's managed Admin Portal on or off")
+export class SetAdminPortalEnabledRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description true turns the managed Admin Portal on; false turns it off. */
+    // @ApiMember(Description="true turns the managed Admin Portal on; false turns it off.", IsRequired=true)
+    public enabled: boolean;
+
+    public constructor(init?: Partial<SetAdminPortalEnabledRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SetAdminPortalEnabledRequest'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Sets whether the project's brand is returned by the public Admin Portal config */
+// @Route("/{version}/account/projects/{projectId}/settings/brand/expose", "PATCH")
+// @Api(Description="Sets whether the project's brand is returned by the public Admin Portal config")
+export class UpdateProjectExposeBrand extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description True to return the brand in the public Admin Portal config, false to hide it. */
+    // @ApiMember(Description="True to return the brand in the public Admin Portal config, false to hide it.")
+    public exposed: boolean;
+
+    public constructor(init?: Partial<UpdateProjectExposeBrand>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateProjectExposeBrand'; }
+    public getMethod() { return 'PATCH'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Sets whether the project's sign-in methods and password policy are returned by the public Admin Portal config */
+// @Route("/{version}/account/projects/{projectId}/settings/auth/expose", "PATCH")
+// @Api(Description="Sets whether the project's sign-in methods and password policy are returned by the public Admin Portal config")
+export class UpdateProjectExposeAuth extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description True to return sign-in methods and password policy in the public Admin Portal config, false to hide them. */
+    // @ApiMember(Description="True to return sign-in methods and password policy in the public Admin Portal config, false to hide them.")
+    public exposed: boolean;
+
+    public constructor(init?: Partial<UpdateProjectExposeAuth>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateProjectExposeAuth'; }
+    public getMethod() { return 'PATCH'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
 /** @description Assigns the project's Admin Portal service user */
 // @Route("/{version}/account/projects/{projectId}/settings/admin-portal/service-user", "PUT")
 // @Api(Description="Assigns the project's Admin Portal service user")
@@ -11578,6 +12527,190 @@ export class UpdateProjectAdminUrl extends CodeMashRequestBase implements IRetur
     public getTypeName() { return 'UpdateProjectAdminUrl'; }
     public getMethod() { return 'PATCH'; }
     public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Creates a Stripe Checkout session for one AI credit pack of the project and returns its URL */
+// @Route("/{version}/account/projects/{projectId}/ai/credits/checkout", "POST")
+// @Api(Description="Creates a Stripe Checkout session for one AI credit pack of the project and returns its URL")
+export class CreateAiCreditPackCheckoutRequest extends CodeMashRequestBase implements IReturn<CreateAiCreditPackCheckoutResponse>
+{
+    /** @description The pack to buy: pack-10 (€10 = 1 000 credits), pack-50 (€50 = 5 000), pack-200 (€200 = 20 000). Net prices; 1 credit = €0.01. */
+    // @ApiMember(Description="The pack to buy: pack-10 (€10 = 1 000 credits), pack-50 (€50 = 5 000), pack-200 (€200 = 20 000). Net prices; 1 credit = €0.01.", IsRequired=true)
+    public pack: string;
+
+    /** @description Dashboard path the browser returns to after Stripe (aiCredits=paid or aiCredits=cancelled is added). Default: the dashboard root. */
+    // @ApiMember(Description="Dashboard path the browser returns to after Stripe (aiCredits=paid or aiCredits=cancelled is added). Default: the dashboard root.")
+    public returnUrl?: string;
+
+    public constructor(init?: Partial<CreateAiCreditPackCheckoutRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'CreateAiCreditPackCheckoutRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new CreateAiCreditPackCheckoutResponse(); }
+}
+
+/** @description Reads the project's end-user AI plans, the role → plan map and the default plan */
+// @Route("/{version}/account/projects/{projectId}/ai/plans", "GET")
+// @Api(Description="Reads the project's end-user AI plans, the role → plan map and the default plan")
+export class GetProjectAiPlans extends CodeMashRequestBase implements IReturn<GetProjectAiPlansResponse>
+{
+
+    public constructor(init?: Partial<GetProjectAiPlans>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetProjectAiPlans'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetProjectAiPlansResponse(); }
+}
+
+/** @description Saves the project's end-user AI plans (the whole list) */
+// @Route("/{version}/account/projects/{projectId}/ai/plans", "PUT")
+// @Api(Description="Saves the project's end-user AI plans (the whole list)")
+export class UpdateProjectAiPlans extends CodeMashRequestBase implements IReturn<UpdateProjectAiPlansResponse>
+{
+    /** @description The complete list of plans (full replace). */
+    // @ApiMember(Description="The complete list of plans (full replace).")
+    public plans?: AiPlanDto[];
+
+    public constructor(init?: Partial<UpdateProjectAiPlans>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateProjectAiPlans'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new UpdateProjectAiPlansResponse(); }
+}
+
+/** @description Saves which end-user AI plan each project role gets, and the default plan */
+// @Route("/{version}/account/projects/{projectId}/ai/plans/assignments", "PUT")
+// @Api(Description="Saves which end-user AI plan each project role gets, and the default plan")
+export class UpdateProjectAiPlanAssignments extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description Role → plan rows, in order; the first row whose role the user has wins. */
+    // @ApiMember(Description="Role → plan rows, in order; the first row whose role the user has wins.")
+    public roles?: AiPlanRoleAssignmentDto[];
+
+    /** @description Plan id (aip_…) of users with no per-user plan and no mapped role. Empty = no default. */
+    // @ApiMember(Description="Plan id (aip_…) of users with no per-user plan and no mapped role. Empty = no default.")
+    public defaultPlanId?: string;
+
+    public constructor(init?: Partial<UpdateProjectAiPlanAssignments>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateProjectAiPlanAssignments'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Lists the users that have their own end-user AI plan */
+// @Route("/{version}/account/projects/{projectId}/ai/plans/users", "GET")
+// @Api(Description="Lists the users that have their own end-user AI plan")
+export class GetProjectAiUserPlans extends CodeMashRequestBase implements IReturn<GetProjectAiUserPlansResponse>
+{
+
+    public constructor(init?: Partial<GetProjectAiUserPlans>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetProjectAiUserPlans'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetProjectAiUserPlansResponse(); }
+}
+
+/** @description Reads the project's AI chat settings for end users: on/off, default LLM and assistants */
+// @Route("/{version}/account/projects/{projectId}/ai/settings", "GET")
+// @Api(Description="Reads the project's AI chat settings for end users: on/off, default LLM and assistants")
+export class GetProjectAiSettings extends CodeMashRequestBase implements IReturn<GetProjectAiSettingsResponse>
+{
+
+    public constructor(init?: Partial<GetProjectAiSettings>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetProjectAiSettings'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetProjectAiSettingsResponse(); }
+}
+
+/** @description Saves the project's AI chat settings: on/off and the default LLM */
+// @Route("/{version}/account/projects/{projectId}/ai/settings", "PUT")
+// @Api(Description="Saves the project's AI chat settings: on/off and the default LLM")
+export class UpdateProjectAiSettings extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description True to show end-user AI chat in the Admin Portal, false to hide it. */
+    // @ApiMember(Description="True to show end-user AI chat in the Admin Portal, false to hide it.")
+    public enabled: boolean;
+
+    /** @description Default LLM integration id (int_…) for assistants without their own. Empty clears it. */
+    // @ApiMember(Description="Default LLM integration id (int_…) for assistants without their own. Empty clears it.")
+    public defaultLlmIntegrationId?: string;
+
+    /** @description Model of the default LLM. Empty = the integration's default model. */
+    // @ApiMember(Description="Model of the default LLM. Empty = the integration's default model.")
+    public defaultModel?: string;
+
+    public constructor(init?: Partial<UpdateProjectAiSettings>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateProjectAiSettings'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Saves the project's AI knowledge switches: embed uploaded files */
+// @Route("/{version}/account/projects/{projectId}/ai/knowledge", "PUT")
+// @Api(Description="Saves the project's AI knowledge switches: embed uploaded files")
+export class UpdateProjectAiKnowledge extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description True to put uploaded text files into the project's AI knowledge, false to stop. */
+    // @ApiMember(Description="True to put uploaded text files into the project's AI knowledge, false to stop.")
+    public embedFiles: boolean;
+
+    public constructor(init?: Partial<UpdateProjectAiKnowledge>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateProjectAiKnowledge'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Adds an end-user AI assistant to the project */
+// @Route("/{version}/account/projects/{projectId}/ai/assistants", "POST")
+// @Api(Description="Adds an end-user AI assistant to the project")
+export class CreateProjectAiAssistant extends ProjectAiAssistantRequestBase implements IReturn<IdResponse>
+{
+
+    public constructor(init?: Partial<CreateProjectAiAssistant>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'CreateProjectAiAssistant'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new IdResponse(); }
+}
+
+/** @description Updates an end-user AI assistant of the project (full replace) */
+// @Route("/{version}/account/projects/{projectId}/ai/assistants/{assistantId}", "PUT")
+// @Api(Description="Updates an end-user AI assistant of the project (full replace)")
+export class UpdateProjectAiAssistant extends ProjectAiAssistantRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description Id of the assistant (ast_…). */
+    // @ApiMember(Description="Id of the assistant (ast_…).", IsRequired=true)
+    public assistantId: string;
+
+    public constructor(init?: Partial<UpdateProjectAiAssistant>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateProjectAiAssistant'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Removes an end-user AI assistant from the project */
+// @Route("/{version}/account/projects/{projectId}/ai/assistants/{assistantId}", "DELETE")
+// @Api(Description="Removes an end-user AI assistant from the project")
+export class DeleteProjectAiAssistant extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description Id of the assistant (ast_…). */
+    // @ApiMember(Description="Id of the assistant (ast_…).", IsRequired=true)
+    public assistantId: string;
+
+    public constructor(init?: Partial<DeleteProjectAiAssistant>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'DeleteProjectAiAssistant'; }
+    public getMethod() { return 'DELETE'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Reads the project's AI usage this month: totals, per assistant, top users, per model, and the credit wallet */
+// @Route("/{version}/account/projects/{projectId}/ai/usage", "GET")
+// @Api(Description="Reads the project's AI usage this month: totals, per assistant, top users, per model, and the credit wallet")
+export class GetProjectAiUsage extends CodeMashRequestBase implements IReturn<GetProjectAiUsageResponse>
+{
+    /** @description How many users to list, biggest first. 1–100, default 10. */
+    // @ApiMember(Description="How many users to list, biggest first. 1–100, default 10.")
+    public top?: number;
+
+    public constructor(init?: Partial<GetProjectAiUsage>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetProjectAiUsage'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetProjectAiUsageResponse(); }
 }
 
 /** @description Updates project accent color */
@@ -11722,6 +12855,28 @@ export class UpdateProjectLanguages extends CodeMashRequestBase implements IRetu
     public getTypeName() { return 'UpdateProjectLanguages'; }
     public getMethod() { return 'PATCH'; }
     public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Checks which templates miss a (proposed) project language */
+// @Route("/{version}/account/projects/{projectId}/settings/languages/check", "POST")
+// @Api(Description="Checks which templates miss a (proposed) project language")
+// @DataContract
+export class CheckProjectLanguages extends CodeMashRequestBase implements IReturn<CheckProjectLanguagesResponse>
+{
+    /** @description Proposed default language code. Omit to use the current one. */
+    // @DataMember
+    // @ApiMember(Description="Proposed default language code. Omit to use the current one.")
+    public defaultLanguage?: string;
+
+    /** @description Proposed complete language list. Omit to use the current one. */
+    // @DataMember
+    // @ApiMember(Description="Proposed complete language list. Omit to use the current one.")
+    public languages?: string[];
+
+    public constructor(init?: Partial<CheckProjectLanguages>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'CheckProjectLanguages'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new CheckProjectLanguagesResponse(); }
 }
 
 /** @description Updates the project's public legal documents (Terms & Conditions, Privacy Policy) */
@@ -11951,7 +13106,17 @@ export class GetAccountCollaborators extends RequestBase implements IReturn<GetA
     // @ApiMember(Description="Optional filter: only members having one of these role names.")
     public roleNames?: string[];
 
-    public pagingArgs?: PagingArgs;
+    /** @description Cursor token — fetch the page AFTER this member (the list's startingAfter). */
+    // @ApiMember(DataType="string", Description="Cursor token — fetch the page AFTER this member (the list's startingAfter).", Name="startingAfter", ParameterType="query")
+    public startingAfter?: string;
+
+    /** @description Cursor token — fetch the page BEFORE this member. */
+    // @ApiMember(DataType="string", Description="Cursor token — fetch the page BEFORE this member.", Name="endingBefore", ParameterType="query")
+    public endingBefore?: string;
+
+    /** @description Members per page (default 20). */
+    // @ApiMember(DataType="integer", Description="Members per page (default 20).", Format="int32", Name="pageSize", ParameterType="query")
+    public pageSize?: number;
 
     public constructor(init?: Partial<GetAccountCollaborators>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'GetAccountCollaborators'; }
@@ -12232,6 +13397,31 @@ export class AccountVerifyPasskeyEnrollmentRequest extends RequestBase implement
     public getTypeName() { return 'AccountVerifyPasskeyEnrollmentRequest'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new AccountPasskeyEnrollmentResponse(); }
+}
+
+// @Route("/{version}/account/me", "GET")
+export class GetMyAccountUserProfile extends RequestBase implements IReturn<GetMyAccountUserProfileResponse>
+{
+
+    public constructor(init?: Partial<GetMyAccountUserProfile>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetMyAccountUserProfile'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetMyAccountUserProfileResponse(); }
+}
+
+// @Route("/{version}/account/me/phone", "PUT")
+// @DataContract
+export class UpdateMyAccountUserPhone extends RequestBase implements IReturn<EmptyResponse>
+{
+    /** @description Your phone number in E.164 format (+ and the country code, then digits, e.g. +37060000000). Empty clears it. Used by "Account users" SMS campaigns. */
+    // @DataMember
+    // @ApiMember(Description="Your phone number in E.164 format (+ and the country code, then digits, e.g. +37060000000). Empty clears it. Used by \"Account users\" SMS campaigns.")
+    public phone?: string;
+
+    public constructor(init?: Partial<UpdateMyAccountUserPhone>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateMyAccountUserPhone'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
 }
 
 // @Route("/{version}/account/licensing/dns-status", "GET")
@@ -13692,6 +14882,28 @@ export class UpdateDatabaseSchemaDraftRequest extends CodeMashRequestBase implem
     public createResponse() { return new EmptyResponse(); }
 }
 
+/** @description Saves a database schema's embed setting: which records go into the project's AI knowledge */
+// @Route("/{version}/database/schemas/{Id}/embed", "PUT")
+// @Api(Description="Saves a database schema's embed setting: which records go into the project's AI knowledge")
+// @DataContract
+export class UpdateDatabaseSchemaEmbedRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description Schema id whose embed setting to save, from get_database_schemas. */
+    // @DataMember
+    // @ApiMember(Description="Schema id whose embed setting to save, from get_database_schemas.", IsRequired=true)
+    public id: string;
+
+    /** @description The complete embed setting (full replace): enabled, fields, embeddingIntegrationId (empty = the project's default), perUser. */
+    // @DataMember
+    // @ApiMember(Description="The complete embed setting (full replace): enabled, fields, embeddingIntegrationId (empty = the project's default), perUser.", IsRequired=true)
+    public embed: SchemaEmbedSettingsDto;
+
+    public constructor(init?: Partial<UpdateDatabaseSchemaEmbedRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateDatabaseSchemaEmbedRequest'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
 /** @description Updates database schema records-list display settings */
 // @Route("/{version}/database/schemas/{Id}/list-settings", "PUT")
 // @Api(Description="Updates database schema records-list display settings")
@@ -14492,6 +15704,63 @@ export class ProcessCollectionImport
 
     public constructor(init?: Partial<ProcessCollectionImport>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'ProcessCollectionImport'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() {}
+}
+
+export class TermInserted
+{
+    public projectId: ProjectId;
+    public databaseIntegrationId: IntegrationId;
+    public taxonomyId: TaxonomyId;
+    public id: string;
+    public document: Object;
+
+    public constructor(init?: Partial<TermInserted>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'TermInserted'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() {}
+}
+
+export class TermUpdated
+{
+    public projectId: ProjectId;
+    public databaseIntegrationId: IntegrationId;
+    public taxonomyId: TaxonomyId;
+    public id: string;
+    public from: Object;
+    public to: Object;
+
+    public constructor(init?: Partial<TermUpdated>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'TermUpdated'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() {}
+}
+
+export class TermDeleted
+{
+    public projectId: ProjectId;
+    public databaseIntegrationId: IntegrationId;
+    public taxonomyId: TaxonomyId;
+    public id: string;
+    public document: Object;
+
+    public constructor(init?: Partial<TermDeleted>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'TermDeleted'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() {}
+}
+
+export class TermsDeleted
+{
+    public projectId: ProjectId;
+    public databaseIntegrationId: IntegrationId;
+    public taxonomyId: TaxonomyId;
+    public deletedCount: number;
+    public filter: Object;
+
+    public constructor(init?: Partial<TermsDeleted>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'TermsDeleted'; }
     public getMethod() { return 'POST'; }
     public createResponse() {}
 }
@@ -15390,6 +16659,23 @@ export class OneClickUnsubscribeRequest extends RequestBase implements IReturn<E
     public createResponse() { return new EmptyResponse(); }
 }
 
+/** @description Read the marketing e-mail preferences of the person a signed unsubscribe link belongs to. No sign-in: the link is the key. */
+// @Route("/{version}/email/preferences", "GET")
+// @Api(Description="Read the marketing e-mail preferences of the person a signed unsubscribe link belongs to. No sign-in: the link is the key.")
+// @DataContract
+export class GetEmailPreferencesByLinkRequest extends RequestBase implements IReturn<GetEmailPreferencesByLinkResponse>
+{
+    /** @description The signed unsubscribe link token from the e-mail's Preferences or Unsubscribe link. */
+    // @DataMember
+    // @ApiMember(Description="The signed unsubscribe link token from the e-mail's Preferences or Unsubscribe link.", IsRequired=true, Name="token", ParameterType="query")
+    public token: string;
+
+    public constructor(init?: Partial<GetEmailPreferencesByLinkRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetEmailPreferencesByLinkRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetEmailPreferencesByLinkResponse(); }
+}
+
 /** @description Create email campaign */
 // @Route("/{version}/notifications/email/campaigns", "POST")
 // @Api(Description="Create email campaign")
@@ -15402,9 +16688,9 @@ export class CreateEmailCampaignRequest extends CodeMashRequestBase implements I
     // @DataMember
     public databaseIntegrationId?: string;
 
-    /** @description Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now. */
+    /** @description Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now. */
     // @DataMember
-    // @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.")
+    // @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
     public sendNow?: boolean;
 
     public constructor(init?: Partial<CreateEmailCampaignRequest>) { super(init); (Object as any).assign(this, init); }
@@ -15624,33 +16910,6 @@ export class StopEmailCampaignRequest extends CodeMashRequestBase implements IRe
     public getTypeName() { return 'StopEmailCampaignRequest'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new EmptyResponse(); }
-}
-
-/** @description Get an email campaign message */
-// @Route("/{version}/notifications/emails/campaigns/{campaignId}/messages/{notificationId}", "GET")
-// @Api(Description="Get an email campaign message")
-export class GetEmailCampaignMessage extends CodeMashRequestBase implements IReturn<GetEmailCampaignMessageResponse>
-{
-    /** @description The email campaign id. Get it from get_all_email_campaigns. */
-    // @ApiMember(Description="The email campaign id. Get it from get_all_email_campaigns.", IsRequired=true)
-    public campaignId: string;
-
-    /** @description The campaign batch id. Get it from get_email_campaign_batches. */
-    // @ApiMember(Description="The campaign batch id. Get it from get_email_campaign_batches.", IsRequired=true)
-    public campaignBatchId: string;
-
-    /** @description The notification (message) id to fetch. Get it from get_email_campaign_messages. */
-    // @ApiMember(Description="The notification (message) id to fetch. Get it from get_email_campaign_messages.", IsRequired=true)
-    public notificationId: string;
-
-    /** @description Optional. Omit to use the project default database integration (resolved per environment). */
-    // @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
-    public databaseIntegrationId?: string;
-
-    public constructor(init?: Partial<GetEmailCampaignMessage>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'GetEmailCampaignMessage'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new GetEmailCampaignMessageResponse(); }
 }
 
 /** @description Get email campaign messages */
@@ -16038,6 +17297,11 @@ export class CreateSmsCampaignRequest extends CodeMashRequestBase implements IRe
     // @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
     public databaseIntegrationId?: string;
 
+    /** @description SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it. */
+    // @DataMember
+    // @ApiMember(Description="SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it.", IsRequired=true)
+    public integrationId: string;
+
     /** @description Optional language code forcing one template translation for every recipient. */
     // @DataMember
     // @ApiMember(Description="Optional language code forcing one template translation for every recipient.")
@@ -16061,6 +17325,11 @@ export class CreateSmsCampaignRequest extends CodeMashRequestBase implements IRe
     // @ApiMember(Description="For deliveryType 'SpecifiedUsers'. JSON object: {\"recipientsSourceType\":\"SpecifiedUsers\",\"recipients\":[<member ids>],\"campaignTime\":<unix seconds UTC>}.")
     public specifiedUsers?: SmsToUsersDeliverySettingsDto;
 
+    /** @description For deliveryType 'AccountUsers'. JSON object: {"recipientsSourceType":"AccountUsers","recipients":[<account owner / team member ids>],"campaignTime":<unix seconds UTC>}. Members without a phone number are skipped. */
+    // @DataMember
+    // @ApiMember(Description="For deliveryType 'AccountUsers'. JSON object: {\"recipientsSourceType\":\"AccountUsers\",\"recipients\":[<account owner / team member ids>],\"campaignTime\":<unix seconds UTC>}. Members without a phone number are skipped.")
+    public accountUsers?: SmsToAccountUsersDeliverySettingsDto;
+
     // @DataMember
     public collection?: SmsToCollectionRecordsDeliverySettingsDto;
 
@@ -16069,9 +17338,9 @@ export class CreateSmsCampaignRequest extends CodeMashRequestBase implements IRe
     // @ApiMember(Description="For deliveryType 'PhoneNumbers'. JSON object: {\"recipientsSourceType\":\"PhoneNumbers\",\"phoneNumbers\":[\"+37060000000\"],\"campaignTime\":<unix seconds UTC>}. Numbers in international format.")
     public phoneNumbers?: SmsToPhoneNumbersDeliverySettingsDto;
 
-    /** @description Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now. */
+    /** @description Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now. */
     // @DataMember
-    // @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.")
+    // @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
     public sendNow?: boolean;
 
     public constructor(init?: Partial<CreateSmsCampaignRequest>) { super(init); (Object as any).assign(this, init); }
@@ -16126,6 +17395,10 @@ export class GetSmsCampaigns extends CodeMashListPaginationRequestBase implement
     /** @description Optional. Omit to use the project default database integration (resolved per environment). */
     // @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
     public databaseIntegrationId?: string;
+
+    /** @description Optional: return only the campaign with this id. */
+    // @ApiMember(Description="Optional: return only the campaign with this id.")
+    public campaignId?: string;
 
     /** @description Optional: only campaigns built on this SMS template id. */
     // @ApiMember(Description="Optional: only campaigns built on this SMS template id.")
@@ -16273,33 +17546,6 @@ export class StopSmsCampaignRequest extends CodeMashRequestBase implements IRetu
     public getTypeName() { return 'StopSmsCampaignRequest'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new EmptyResponse(); }
-}
-
-/** @description Gets campaign sms message details */
-// @Route("/{version}/notifications/sms/campaigns/{campaignId}/messages/{notificationId}", "GET")
-// @Api(Description="Gets campaign sms message details")
-export class GetSmsCampaignMessage extends CodeMashRequestBase implements IReturn<GetSmsCampaignMessageResponse>
-{
-    /** @description The campaign id. Get it from get_sms_campaigns. */
-    // @ApiMember(Description="The campaign id. Get it from get_sms_campaigns.", IsRequired=true)
-    public campaignId: string;
-
-    /** @description The campaign batch id. Get it from get_sms_campaign_batches. */
-    // @ApiMember(Description="The campaign batch id. Get it from get_sms_campaign_batches.", IsRequired=true)
-    public campaignBatchId: string;
-
-    /** @description The notification (message) id. Get it from get_sms_campaign_messages. */
-    // @ApiMember(Description="The notification (message) id. Get it from get_sms_campaign_messages.", IsRequired=true)
-    public notificationId: string;
-
-    /** @description Optional. Omit to use the project default database integration (resolved per environment). */
-    // @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
-    public databaseIntegrationId?: string;
-
-    public constructor(init?: Partial<GetSmsCampaignMessage>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'GetSmsCampaignMessage'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new GetSmsCampaignMessageResponse(); }
 }
 
 /** @description Gets the sms notifications */
@@ -16731,9 +17977,9 @@ export class TestPushIntegration extends CodeMashRequestBase implements IReturn<
     // @ApiMember(Description="Optional device token to send the test notification to. Requires DeliveryFamily when set.")
     public testToken?: string;
 
-    /** @description Optional delivery family for the test token (e.g. Ios, Android, Chrome, Safari, Expo). Requires TestToken when set. */
+    /** @description Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set. */
     // @DataMember
-    // @ApiMember(Description="Optional delivery family for the test token (e.g. Ios, Android, Chrome, Safari, Expo). Requires TestToken when set.")
+    // @ApiMember(Description="Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set.")
     public deliveryFamily?: string;
 
     public constructor(init?: Partial<TestPushIntegration>) { super(init); (Object as any).assign(this, init); }
@@ -16809,8 +18055,8 @@ export class GetPushDevices extends CodeMashListPaginationRequestBase implements
     // @ApiMember(Description="Optional: only the device registered with this provider token.")
     public deviceKey?: string;
 
-    /** @description Optional: only devices of this platform — ios, android, chrome, safari or expo. */
-    // @ApiMember(Description="Optional: only devices of this platform — ios, android, chrome, safari or expo.")
+    /** @description Optional: only devices of this platform — ios, android, chrome or safari. */
+    // @ApiMember(Description="Optional: only devices of this platform — ios, android, chrome or safari.")
     public platform?: string;
 
     /** @description Optional database integration id; omit to use the project's default. */
@@ -16821,6 +18067,28 @@ export class GetPushDevices extends CodeMashListPaginationRequestBase implements
     public getTypeName() { return 'GetPushDevices'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetPushDevicesResponse(); }
+}
+
+/** @description Count the devices a push campaign audience would reach */
+// @Route("/{version}/notifications/push/campaigns/audience-count", "POST")
+// @Api(Description="Count the devices a push campaign audience would reach")
+// @DataContract
+export class GetPushCampaignAudienceCountRequest extends CodeMashRequestBase implements IReturn<GetPushCampaignAudienceCountResponse>
+{
+    /** @description The audience, in the same shape as CreatePushCampaignRequest.campaign. Template and send options are ignored. */
+    // @DataMember
+    // @ApiMember(Description="The audience, in the same shape as CreatePushCampaignRequest.campaign. Template and send options are ignored.")
+    public campaign: PushCampaignRequest;
+
+    /** @description Optional. When omitted, the default database integration for the request's environment is used. */
+    // @DataMember
+    // @ApiMember(Description="Optional. When omitted, the default database integration for the request's environment is used.")
+    public databaseIntegrationId?: string;
+
+    public constructor(init?: Partial<GetPushCampaignAudienceCountRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetPushCampaignAudienceCountRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new GetPushCampaignAudienceCountResponse(); }
 }
 
 /** @description Create push campaign */
@@ -16835,9 +18103,9 @@ export class CreatePushCampaignRequest extends CodeMashRequestBase implements IR
     // @DataMember
     public databaseIntegrationId?: string;
 
-    /** @description Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now. */
+    /** @description Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now. */
     // @DataMember
-    // @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-016. Set it only when the user explicitly asked to send now.")
+    // @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
     public sendNow?: boolean;
 
     public constructor(init?: Partial<CreatePushCampaignRequest>) { super(init); (Object as any).assign(this, init); }
@@ -17049,33 +18317,6 @@ export class StopPushCampaignRequest extends CodeMashRequestBase implements IRet
     public getTypeName() { return 'StopPushCampaignRequest'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new EmptyResponse(); }
-}
-
-/** @description Gets campaign push notification details */
-// @Route("/{version}/notifications/push/campaigns/{campaignId}/messages/{notificationId}", "GET")
-// @Api(Description="Gets campaign push notification details")
-export class GetPushCampaignMessage extends CodeMashRequestBase implements IReturn<GetPushCampaignMessageResponse>
-{
-    /** @description The push campaign id. Get it from get_push_campaigns. */
-    // @ApiMember(Description="The push campaign id. Get it from get_push_campaigns.")
-    public campaignId: string;
-
-    /** @description The batch id. Get it from get_push_campaign_batches. */
-    // @ApiMember(Description="The batch id. Get it from get_push_campaign_batches.")
-    public campaignBatchId: string;
-
-    /** @description The notification id within the batch. */
-    // @ApiMember(Description="The notification id within the batch.")
-    public notificationId: string;
-
-    /** @description Optional database integration id; omit to use the project's default. */
-    // @ApiMember(Description="Optional database integration id; omit to use the project's default.")
-    public databaseIntegrationId?: string;
-
-    public constructor(init?: Partial<GetPushCampaignMessage>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'GetPushCampaignMessage'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() { return new GetPushCampaignMessageResponse(); }
 }
 
 /** @description Gets push campaign messages */
@@ -17832,12 +19073,87 @@ export class ChatTurnRequest extends RequestBase implements IReturn<ChatTurnResp
     public createResponse() { return new ChatTurnResponse(); }
 }
 
-/** @description MCP server endpoint — JSON-RPC 2.0 over HTTP POST exposing the AI tool catalog. */
+/** @description Plans (preview) or builds (apply) a whole project from one spec. */
+// @Route("/{version}/account/ai/scaffold", "POST")
+// @Api(Description="Plans (preview) or builds (apply) a whole project from one spec.")
+export class ScaffoldProjectRequest extends RequestBase implements IReturn<ScaffoldProjectResponse>
+{
+    /** @description The project spec (a JSON object) — see the tool description. */
+    // @ApiMember(Description="The project spec (a JSON object) — see the tool description.", IsRequired=true)
+    public spec: string;
+
+    /** @description 'preview' (writes nothing) or 'apply' (builds the project). */
+    // @ApiMember(Description="'preview' (writes nothing) or 'apply' (builds the project).", IsRequired=true)
+    public mode: string;
+
+    public env?: string;
+
+    public constructor(init?: Partial<ScaffoldProjectRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'ScaffoldProjectRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new ScaffoldProjectResponse(); }
+}
+
+/** @description Validates a collection schema without saving it. */
+// @Route("/{version}/account/ai/schemas/validate", "POST")
+// @Api(Description="Validates a collection schema without saving it.")
+export class ValidateSchemaRequest extends RequestBase implements IReturn<ValidateSchemaResponse>
+{
+    /** @description The schema as JSON — see the tool description. */
+    // @ApiMember(Description="The schema as JSON — see the tool description.", IsRequired=true)
+    public schemaJson: string;
+
+    public constructor(init?: Partial<ValidateSchemaRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'ValidateSchemaRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new ValidateSchemaResponse(); }
+}
+
+/** @description Renders an email, push or SMS template with sample data. */
+// @Route("/{version}/account/ai/templates/render-preview", "POST")
+// @Api(Description="Renders an email, push or SMS template with sample data.")
+export class RenderTemplatePreviewRequest extends RequestBase implements IReturn<RenderTemplatePreviewResponse>, IHasEnv
+{
+    /** @description The project of templateId. Not needed to render a body. */
+    // @ApiMember(Description="The project of templateId. Not needed to render a body.")
+    public projectId: string;
+
+    public env?: string;
+    /** @description email | push | sms */
+    // @ApiMember(Description="email | push | sms", IsRequired=true)
+    public channel: string;
+
+    /** @description An existing template id (tmpl_…). Needs projectId. Leave empty to render body instead. */
+    // @ApiMember(Description="An existing template id (tmpl_…). Needs projectId. Leave empty to render body instead.")
+    public templateId?: string;
+
+    /** @description Razor template text to render when there is no templateId. */
+    // @ApiMember(Description="Razor template text to render when there is no templateId.")
+    public body?: string;
+
+    /** @description Email subject / push title / SMS subject to render with body. Optional. */
+    // @ApiMember(Description="Email subject / push title / SMS subject to render with body. Optional.")
+    public subject?: string;
+
+    /** @description Sample data as a JSON object, read by the template as @Model. */
+    // @ApiMember(Description="Sample data as a JSON object, read by the template as @Model.")
+    public sampleData?: string;
+
+    public constructor(init?: Partial<RenderTemplatePreviewRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'RenderTemplatePreviewRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new RenderTemplatePreviewResponse(); }
+}
+
+/** @description MCP server endpoint (Streamable HTTP): JSON-RPC 2.0 over POST, server stream over GET, session end over DELETE. */
 // @Route("/{version}/account/mcp", "POST")
-// @Api(Description="MCP server endpoint — JSON-RPC 2.0 over HTTP POST exposing the AI tool catalog.")
+// @Route("/{version}/account/mcp", "GET")
+// @Route("/{version}/account/mcp", "DELETE")
+// @Api(Description="MCP server endpoint (Streamable HTTP): JSON-RPC 2.0 over POST, server stream over GET, session end over DELETE.")
 export class McpRequest implements IReturn<string>
 {
     public version?: string;
+    public toolsets?: string;
     public requestStream: string;
 
     public constructor(init?: Partial<McpRequest>) { (Object as any).assign(this, init); }
@@ -17919,6 +19235,238 @@ export class MarkNeedsYouDoneRequest extends CodeMashRequestBase implements IRet
     public createResponse() { return new IdResponse(); }
 }
 
+/** @description Save a trigger on an AI project event */
+// @Route("/{version}/ai/triggers", "POST")
+// @Api(Description="Save a trigger on an AI project event")
+// @DataContract
+export class SaveAiProjectTrigger extends SaveTrigger implements IReturn<IdResponse>
+{
+
+    public constructor(init?: Partial<SaveAiProjectTrigger>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SaveAiProjectTrigger'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new IdResponse(); }
+}
+
+/** @description Gets the triggers on AI project events */
+// @Route("/{version}/ai/triggers", "GET")
+// @Api(Description="Gets the triggers on AI project events")
+export class GetAiProjectTriggers extends GetTriggers implements IReturn<GetAiTriggersResponse>
+{
+
+    public constructor(init?: Partial<GetAiProjectTriggers>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetAiProjectTriggers'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetAiTriggersResponse(); }
+}
+
+/** @description Gets one trigger on an AI project event */
+// @Route("/{version}/ai/triggers/{id}", "GET")
+// @Api(Description="Gets one trigger on an AI project event")
+export class GetAiProjectTrigger extends GetTrigger implements IReturn<GetAiTriggerResponse>
+{
+
+    public constructor(init?: Partial<GetAiProjectTrigger>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetAiProjectTrigger'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetAiTriggerResponse(); }
+}
+
+/** @description Enable a trigger on an AI project event */
+// @Route("/{version}/ai/triggers/{triggerId}/enable", "PATCH")
+// @Api(Description="Enable a trigger on an AI project event")
+// @DataContract
+export class EnableAiProjectTrigger extends EnableTrigger implements IReturn<EmptyResponse>
+{
+
+    public constructor(init?: Partial<EnableAiProjectTrigger>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'EnableAiProjectTrigger'; }
+    public getMethod() { return 'PATCH'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Disable a trigger on an AI project event */
+// @Route("/{version}/ai/triggers/{triggerId}/disable", "PATCH")
+// @Api(Description="Disable a trigger on an AI project event")
+// @DataContract
+export class DisableAiProjectTrigger extends DisableTrigger implements IReturn<EmptyResponse>
+{
+
+    public constructor(init?: Partial<DisableAiProjectTrigger>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'DisableAiProjectTrigger'; }
+    public getMethod() { return 'PATCH'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Delete a trigger on an AI project event */
+// @Route("/{version}/ai/triggers/{triggerId}", "DELETE")
+// @Api(Description="Delete a trigger on an AI project event")
+// @DataContract
+export class DeleteAiProjectTrigger extends DeleteTrigger implements IReturn<EmptyResponse>
+{
+
+    public constructor(init?: Partial<DeleteAiProjectTrigger>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'DeleteAiProjectTrigger'; }
+    public getMethod() { return 'DELETE'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description OAuth protected-resource metadata (RFC 9728) for the Hub MCP endpoint. */
+// @Route("/.well-known/oauth-protected-resource", "GET")
+// @Route("/.well-known/oauth-protected-resource/{Path*}", "GET")
+// @Api(Description="OAuth protected-resource metadata (RFC 9728) for the Hub MCP endpoint.")
+export class OAuthProtectedResourceMetadataRequest implements IReturn<string>
+{
+    public path?: string;
+
+    public constructor(init?: Partial<OAuthProtectedResourceMetadataRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthProtectedResourceMetadataRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return ''; }
+}
+
+/** @description OAuth authorization-server metadata (RFC 8414). */
+// @Route("/.well-known/oauth-authorization-server", "GET")
+// @Route("/.well-known/oauth-authorization-server/{Path*}", "GET")
+// @Api(Description="OAuth authorization-server metadata (RFC 8414).")
+export class OAuthAuthorizationServerMetadataRequest implements IReturn<string>
+{
+    public path?: string;
+
+    public constructor(init?: Partial<OAuthAuthorizationServerMetadataRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthAuthorizationServerMetadataRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return ''; }
+}
+
+/** @description Registers an MCP client for OAuth (RFC 7591). Public clients only: PKCE, no secret. */
+// @Route("/{version}/oauth/register", "POST")
+// @Api(Description="Registers an MCP client for OAuth (RFC 7591). Public clients only: PKCE, no secret.")
+export class OAuthRegisterRequest implements IReturn<string>
+{
+    public version?: string;
+    public requestStream: string;
+
+    public constructor(init?: Partial<OAuthRegisterRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthRegisterRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return ''; }
+}
+
+/** @description OAuth authorization endpoint: sign-in hint or the consent page (HTML). */
+// @Route("/{version}/oauth/authorize", "GET")
+// @Api(Description="OAuth authorization endpoint: sign-in hint or the consent page (HTML).")
+export class OAuthAuthorizeRequest implements IReturn<string>
+{
+    public version?: string;
+
+    public constructor(init?: Partial<OAuthAuthorizeRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthAuthorizeRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return ''; }
+}
+
+/** @description OAuth authorization endpoint: the person's decision from the consent page. */
+// @Route("/{version}/oauth/authorize", "POST")
+// @Api(Description="OAuth authorization endpoint: the person's decision from the consent page.")
+export class OAuthAuthorizeDecisionRequest implements IReturn<string>
+{
+    public version?: string;
+
+    public constructor(init?: Partial<OAuthAuthorizeDecisionRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthAuthorizeDecisionRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return ''; }
+}
+
+/** @description OAuth token endpoint: authorization code (PKCE S256) or refresh token → access token. */
+// @Route("/{version}/oauth/token", "POST")
+// @Api(Description="OAuth token endpoint: authorization code (PKCE S256) or refresh token → access token.")
+export class OAuthTokenRequest implements IReturn<string>
+{
+    public version?: string;
+
+    public constructor(init?: Partial<OAuthTokenRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthTokenRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return ''; }
+}
+
+/** @description OAuth token revocation (RFC 7009): revokes the grant behind a refresh or access token. */
+// @Route("/{version}/oauth/revoke", "POST")
+// @Api(Description="OAuth token revocation (RFC 7009): revokes the grant behind a refresh or access token.")
+export class OAuthRevokeRequest implements IReturn<string>
+{
+    public version?: string;
+
+    public constructor(init?: Partial<OAuthRevokeRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthRevokeRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return ''; }
+}
+
+// @Route("/{version}/ai/integrations/embeddings/{Id}", "DELETE")
+export class DeleteEmbeddingIntegrationRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description Id of the embedding integration to delete. */
+    // @ApiMember(Description="Id of the embedding integration to delete.")
+    public id: string;
+
+    public constructor(init?: Partial<DeleteEmbeddingIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'DeleteEmbeddingIntegrationRequest'; }
+    public getMethod() { return 'DELETE'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
+// @Route("/{version}/ai/integrations/embeddings/{Id}", "GET")
+export class GetEmbeddingIntegration extends CodeMashRequestBase implements IReturn<GetEmbeddingIntegrationResponse>
+{
+    /** @description Id of the embedding integration to fetch. */
+    // @ApiMember(Description="Id of the embedding integration to fetch.")
+    public id: string;
+
+    public constructor(init?: Partial<GetEmbeddingIntegration>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetEmbeddingIntegration'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetEmbeddingIntegrationResponse(); }
+}
+
+// @Route("/{version}/ai/integrations/embeddings", "GET")
+export class GetEmbeddingIntegrations extends CodeMashListPaginationRequestBase implements IReturn<GetEmbeddingIntegrationsResponse>
+{
+
+    public constructor(init?: Partial<GetEmbeddingIntegrations>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetEmbeddingIntegrations'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetEmbeddingIntegrationsResponse(); }
+}
+
+// @Route("/{version}/ai/integrations/embeddings", "POST")
+// @DataContract
+export class SaveEmbeddingIntegration extends CodeMashRequestBase implements IReturn<IdResponse>
+{
+    // @DataMember(Name="integration")
+    public integration: EmbeddingIntegrationRequest;
+
+    public constructor(init?: Partial<SaveEmbeddingIntegration>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SaveEmbeddingIntegration'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new IdResponse(); }
+}
+
+// @Route("/{version}/ai/integrations/embeddings/{Id}/test", "POST")
+export class TestEmbeddingIntegration extends CodeMashRequestBase implements IReturn<TestEmbeddingIntegrationResponse>
+{
+    /** @description Id of the embedding integration to test. */
+    // @ApiMember(Description="Id of the embedding integration to test.")
+    public id: string;
+
+    public constructor(init?: Partial<TestEmbeddingIntegration>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'TestEmbeddingIntegration'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new TestEmbeddingIntegrationResponse(); }
+}
+
 // @Route("/{version}/ai/integrations/llms/{Id}", "DELETE")
 export class DeleteLlmIntegrationRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
@@ -17992,6 +19540,19 @@ export class SaveLlmIntegration extends CodeMashRequestBase implements IReturn<I
     public getTypeName() { return 'SaveLlmIntegration'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new IdResponse(); }
+}
+
+// @Route("/{version}/ai/integrations/llms/{Id}/default", "PUT")
+export class SetLlmIntegrationAsDefaultRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description Id of the LLM integration to make the default. */
+    // @ApiMember(Description="Id of the LLM integration to make the default.")
+    public id: string;
+
+    public constructor(init?: Partial<SetLlmIntegrationAsDefaultRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SetLlmIntegrationAsDefaultRequest'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
 }
 
 // @Route("/{version}/ai/integrations/llms/test", "POST")
@@ -18093,6 +19654,27 @@ export class TestMcpIntegration extends CodeMashRequestBase implements IReturn<T
     public getTypeName() { return 'TestMcpIntegration'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new TestLlmIntegrationResponse(); }
+}
+
+export class IngestSourceMessage
+{
+    public projectId: string;
+    public env?: string;
+    public ownerAuthId?: string;
+    public sourceKind: string;
+    public sourceId: string;
+    public title?: string;
+    public contentType?: string;
+    public content?: string;
+    public embeddingIntegrationId?: string;
+    public removed: boolean;
+    public metadata?: { [index:string]: string; };
+    public ownerRequired: boolean;
+
+    public constructor(init?: Partial<IngestSourceMessage>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'IngestSourceMessage'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() {}
 }
 
 /** @description Gets the project's webhook integration */
@@ -18225,23 +19807,23 @@ export class SaveWebhookDestinationRequest extends CodeMashRequestBase implement
     public createResponse() { return new SaveWebhookDestinationResponse(); }
 }
 
-// @Route("/{version}/scheduler/disable", "GET")
+// @Route("/{version}/scheduler/disable", "PUT")
 export class DisableScheduler extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
 
     public constructor(init?: Partial<DisableScheduler>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'DisableScheduler'; }
-    public getMethod() { return 'GET'; }
+    public getMethod() { return 'PUT'; }
     public createResponse() { return new EmptyResponse(); }
 }
 
-// @Route("/{version}/scheduler/enable", "GET")
+// @Route("/{version}/scheduler/enable", "PUT")
 export class EnableScheduler extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
 
     public constructor(init?: Partial<EnableScheduler>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'EnableScheduler'; }
-    public getMethod() { return 'GET'; }
+    public getMethod() { return 'PUT'; }
     public createResponse() { return new EmptyResponse(); }
 }
 
@@ -18355,6 +19937,29 @@ export class ResolveResources extends CodeMashRequestBase implements IReturn<Res
     public getTypeName() { return 'ResolveResources'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new ResolveResourcesResponse(); }
+}
+
+/** @description Sets or removes one user's own end-user AI plan */
+// @Route("/{version}/membership/users/{userId}/ai-plan", "PUT")
+// @Api(Description="Sets or removes one user's own end-user AI plan")
+export class SetUserAiPlan extends CodeMashRequestBase implements IReturn<EmptyResponse>
+{
+    /** @description The human user id (ct_…). */
+    // @ApiMember(Description="The human user id (ct_…).", IsRequired=true)
+    public userId: string;
+
+    /** @description The plan id (aip_…). Empty removes the user's own plan. */
+    // @ApiMember(Description="The plan id (aip_…). Empty removes the user's own plan.")
+    public planId?: string;
+
+    /** @description Database integration id. Optional — defaults to the request environment's default integration. */
+    // @ApiMember(Description="Database integration id. Optional — defaults to the request environment's default integration.")
+    public databaseIntegrationId?: string;
+
+    public constructor(init?: Partial<SetUserAiPlan>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SetUserAiPlan'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
 }
 
 /** @description Create a contact */

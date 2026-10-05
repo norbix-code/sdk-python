@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-04 14:16:09
+Date: 2026-10-05 08:08:29
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -1308,7 +1308,6 @@ class PushTemplateDto(TemplateDto, IHasRazorTemplateCode, IBindableContract):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SmsMessageContentDto(IHasRazorTemplateCode):
-    subject: Optional[str] = None
     body: Optional[str] = None
 
 
@@ -1682,6 +1681,12 @@ class SmsToAllUsersDeliverySettingsDto(SmsCampaignDeliverySettingsDto):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SmsToUsersDeliverySettingsDto(SmsCampaignDeliverySettingsDto):
+    recipients: List[str] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SmsToAccountUsersDeliverySettingsDto(SmsCampaignDeliverySettingsDto):
     recipients: List[str] = field(default_factory=list)
 
 
@@ -3111,22 +3116,6 @@ class ProjectAiAssistantRequestBase(CodeMashRequestBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class CursorArgs(ICursorArgs):
-    field: Optional[str] = None
-    order: int = 0
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PagingArgs:
-    cursor_args: Optional[CursorArgs] = None
-    page_size: Optional[int] = None
-    starting_after: Optional[str] = None
-    ending_before: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
 class AiScopeDto:
     reach: Optional[str] = None
     project_id: Optional[str] = None
@@ -3176,6 +3165,22 @@ class SaveTrigger(CodeMashRequestBase):
 class CredentialsSettingsModeDto:
     name: Optional[str] = None
     logout_url: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CursorArgs(ICursorArgs):
+    field: Optional[str] = None
+    order: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PagingArgs:
+    cursor_args: Optional[CursorArgs] = None
+    page_size: Optional[int] = None
+    starting_after: Optional[str] = None
+    ending_before: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5165,7 +5170,6 @@ class CampaignBatchNotificationDto(IHasDatabaseId):
     batch_id: Optional[str] = None
     notification_id: Optional[str] = None
     ref_notification_id: Optional[str] = None
-    subject: Optional[str] = None
     body: Optional[str] = None
     model: Optional[Dict[str, str]] = None
     status_history: List[NotificationStatusChangeEntryDto] = field(default_factory=list)
@@ -5175,6 +5179,7 @@ class CampaignBatchNotificationDto(IHasDatabaseId):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EmailCampaignBatchNotificationDto(CampaignBatchNotificationDto):
+    subject: Optional[str] = None
     recipients: Optional[EmailRecipientsDto] = None
     content: Optional[EmailMessageContentDto] = None
 
@@ -5211,6 +5216,7 @@ class SmsIntegrationListProjection(IntegrationListProjection):
 class SmsCampaignDto(CampaignDto):
     recipients: Optional[SmsCampaignDeliverySettingsDto] = None
     template: Optional[SmsTemplateDto] = None
+    created_by_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5374,6 +5380,7 @@ class PushCampaignBatchDto(CampaignBatchDto):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class PushCampaignBatchNotificationDto(CampaignBatchNotificationDto):
+    subject: Optional[str] = None
     recipients: Optional[PushRecipientsDto] = None
     content: Optional[PushMessageContentDto] = None
 
@@ -6670,6 +6677,12 @@ class AccountPasskeyListResponse(ResponseBase):
 @dataclass
 class AccountPasskeyEnrollmentResponse(ResponseBase):
     recovery_codes: Optional[List[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetMyAccountUserProfileResponse(ResponseBase):
+    item: Optional[AuthDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8484,6 +8497,7 @@ class InternalsTypeGen:
     typegen_98__push_to_devices_delivery_settings_dto: Optional[PushToDevicesDeliverySettingsDto] = None
     typegen_99__sms_to_all_users_delivery_settings_dto: Optional[SmsToAllUsersDeliverySettingsDto] = None
     typegen_100__sms_to_users_delivery_settings_dto: Optional[SmsToUsersDeliverySettingsDto] = None
+    typegen_249__sms_to_account_users_delivery_settings_dto: Optional[SmsToAccountUsersDeliverySettingsDto] = None
     typegen_101__sms_to_collection_records_delivery_settings_dto: Optional[SmsToCollectionRecordsDeliverySettingsDto] = None
     typegen_102__sms_to_phone_numbers_delivery_settings_dto: Optional[SmsToPhoneNumbersDeliverySettingsDto] = None
     typegen_103__open_ai_llm_integration_dto: Optional[OpenAiLlmIntegrationDto] = None
@@ -9826,7 +9840,25 @@ class GetAccountCollaborators(RequestBase, IReturn[GetAccountCollaboratorsRespon
     """
 
 
-    paging_args: Optional[PagingArgs] = None
+    # @ApiMember(DataType="string", Description="Cursor token — fetch the page AFTER this member (the list's startingAfter).", Name="startingAfter", ParameterType="query")
+    starting_after: Optional[str] = None
+    """
+    Cursor token — fetch the page AFTER this member (the list's startingAfter).
+    """
+
+
+    # @ApiMember(DataType="string", Description="Cursor token — fetch the page BEFORE this member.", Name="endingBefore", ParameterType="query")
+    ending_before: Optional[str] = None
+    """
+    Cursor token — fetch the page BEFORE this member.
+    """
+
+
+    # @ApiMember(DataType="integer", Description="Members per page (default 20).", Format="int32", Name="pageSize", ParameterType="query")
+    page_size: Optional[int] = None
+    """
+    Members per page (default 20).
+    """
 
 
 # @Route("/{version}/account/team/password-policy", "GET")
@@ -10027,6 +10059,24 @@ class AccountVerifyPasskeyEnrollmentRequest(RequestBase, IReturn[AccountPasskeyE
     ceremony_id: Optional[str] = None
     attestation_response: Optional[str] = None
     friendly_name: Optional[str] = None
+
+
+# @Route("/{version}/account/me", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetMyAccountUserProfile(RequestBase, IReturn[GetMyAccountUserProfileResponse]):
+    pass
+
+
+# @Route("/{version}/account/me/phone", "PUT")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UpdateMyAccountUserPhone(RequestBase, IReturn[EmptyResponse]):
+    # @ApiMember(Description="Your phone number in E.164 format (+ and the country code, then digits, e.g. +37060000000). Empty clears it. Used by \"Account users\" SMS campaigns.")
+    phone: Optional[str] = None
+    """
+    Your phone number in E.164 format (+ and the country code, then digits, e.g. +37060000000). Empty clears it. Used by "Account users" SMS campaigns.
+    """
 
 
 # @Route("/{version}/account/licensing/dns-status", "GET")
@@ -14177,6 +14227,13 @@ class CreateSmsCampaignRequest(CodeMashRequestBase, IReturn[IdResponse]):
     """
 
 
+    # @ApiMember(Description="For deliveryType 'AccountUsers'. JSON object: {\"recipientsSourceType\":\"AccountUsers\",\"recipients\":[<account owner / team member ids>],\"campaignTime\":<unix seconds UTC>}. Members without a phone number are skipped.")
+    account_users: Optional[SmsToAccountUsersDeliverySettingsDto] = None
+    """
+    For deliveryType 'AccountUsers'. JSON object: {"recipientsSourceType":"AccountUsers","recipients":[<account owner / team member ids>],"campaignTime":<unix seconds UTC>}. Members without a phone number are skipped.
+    """
+
+
     collection: Optional[SmsToCollectionRecordsDeliverySettingsDto] = None
     # @ApiMember(Description="For deliveryType 'PhoneNumbers'. JSON object: {\"recipientsSourceType\":\"PhoneNumbers\",\"phoneNumbers\":[\"+37060000000\"],\"campaignTime\":<unix seconds UTC>}. Numbers in international format.")
     phone_numbers: Optional[SmsToPhoneNumbersDeliverySettingsDto] = None
@@ -14251,6 +14308,13 @@ class GetSmsCampaigns(CodeMashListPaginationRequestBase, IReturn[GetSmsCampaigns
     database_integration_id: Optional[str] = None
     """
     Optional. Omit to use the project default database integration (resolved per environment).
+    """
+
+
+    # @ApiMember(Description="Optional: return only the campaign with this id.")
+    campaign_id: Optional[str] = None
+    """
+    Optional: return only the campaign with this id.
     """
 
 
