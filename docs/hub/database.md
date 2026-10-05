@@ -91,7 +91,7 @@ extended-JSON **strings**.
 products = norbix.hub.database.find_records("products", filter='{"status": "active"}', pageSize=20)
 one = norbix.hub.database.find_one_record("products", "rec_1")
 created = norbix.hub.database.insert_record("products", document='{"title": "Lamp", "price": 12}')
-norbix.hub.database.update_one_record("products", "rec_1", update='{"$set": {"price": 10}}')
+norbix.hub.database.update_one_record("products", "rec_1", update='{"price": 10}')
 norbix.hub.database.delete_record("products", "rec_1")
 total = norbix.hub.database.count_records("products", filter='{"status": "active"}')
 indexes = norbix.hub.database.get_collection_indexes("products")
@@ -110,6 +110,158 @@ update no longer matches.
 ```python
 test_schemas = Norbix(project_id="...", api_key="...", env="TEST").hub.database.get_database_schemas()
 ```
+
+## Changing many records
+
+`update_many_records` and `delete_many_records` change every record that
+matches `filter`. An empty filter (`'{}'`) matches **every** record of the
+collection, so the gateway refuses it with `CM-ERRORS-DATABASE-037` unless
+you also send `allRecords=True`. For `update_many_records` a missing filter
+counts as `'{}'`.
+
+```python
+# Only the matching records:
+norbix.hub.database.update_many_records("products", filter='{"status": "draft"}', update='{"status": "live"}')
+# Every record — the flag says you mean it:
+norbix.hub.database.delete_many_records("products", filter="{}", allRecords=True)
+```
+
+Pass the flag with its wire name, `allRecords` (the SDK sends keyword
+arguments as given; on `update_many_records` it goes in the JSON body, on
+`delete_many_records` in the query). The marketplace built-ins `db.update` and
+`db.delete` take the same flag as the `allRecords` argument.
+
+Other rules for record writes:
+
+- **Who may call the bulk methods.** A caller with only own-record rights
+  (`createAsUser`, `updateOwn`, `deleteOwn`) may now call `insert_many_records`,
+  `update_many_records` and `delete_many_records`. The call changes only the
+  caller's own records (before, it was refused with 403).
+- **No `$` operators in an update.** `update_one_record` / `update_many_records`
+  take the new values as a plain document. An update with `$inc`, `$set` and
+  the like is refused with `CM-ERRORS-DATABASE-035` (before, MongoDB failed
+  at run time).
+- **A broken record document** on insert one, insert many or replace is
+  refused with `CM-ERRORS-DATABASE-036` "Invalid record document" (before,
+  `005` "Invalid filter document"). For insert many,
+  `err.errors[0].context["Index"]` is the position of the bad document.
+- **Soft-deleted records are not found.** Update, replace and change owner
+  no longer match a soft-deleted record: it answers "not found", and a bulk
+  update skips it.
+- **Change owner** (`change_record_responsibility`) refuses a new owner who is
+  not a user of the project in the request environment, with
+  `CM-ERRORS-MEMBERSHIP-USERS-012`.
+
+## Aggregates
+
+- `get_database_aggregate(id)` returns `joinedCollections`: the schemas the
+  pipeline joins (`$lookup` / `$graphLookup` / `$unionWith`), next to the
+  start `schemaId`. The aggregate list rows do not carry it.
+- `save_database_aggregate(...)` refuses `$out`, `$merge`, `$where`,
+  `$function` and `$accumulator` (`CM-ERRORS-DATABASE-031`) and a join it
+  cannot follow (`034`); a pipeline that does not parse is refused with
+  `CM-ERRORS-AGGREGATES-002`.
+- A pipeline (run, test or saved-and-executed) that joins a collection the
+  caller cannot read is refused with `033`; a join to a name that is not a
+  schema in the request environment with `032`.
+- `test_database_aggregate(...)` needs `database:create` **or**
+  `database:update` on `database:aggregate:{schemaId}`, plus read. A caller
+  with read rights only gets 403.
+
+## Schemas: rename and delete
+
+- `rename_database_schema(id, title="...")` sends only the new title. The old
+  `renameUniqueName` switch is gone: a name that another schema in the same
+  environment already uses is always refused with `CM-ERRORS-SCHEMA-002`
+  ("Two schemas cannot share one collection"); the error context carries
+  `SchemaName`. The schema name is the MongoDB collection name, so two schemas
+  can never share it.
+- `delete_database_schema(id)` is also refused while a saved aggregate starts
+  from the schema or joins it: `CM-ERRORS-SCHEMA-018`. The message names the
+  aggregates; `err.errors[0].context` has `BlockerAggregateIds` and
+  `BlockerAggregateNames`. (A schema that a trigger uses is refused with
+  `CM-ERRORS-SCHEMA-017`, `BlockerTriggerIds`.)
+- `save_database_schema(viewId=...)` with an id that is not a schema of the
+  request environment answers "schema not found".
+- `update_database_schema_list_settings(...)` refusals all use
+  `CM-ERRORS-SCHEMA-034`; the context's `Rule` says which rule failed.
+- `apply_database_schema_bundle(...)`: a refused step keeps its own error code
+  and context.
+
+## Database integrations per environment
+
+`get_database_integrations()` lists only the integrations of the client's
+environment (`PROD` when no `env` is set); each row has `env`. A saved
+integration has `isSystemOwned` (read only). Saving into an environment the
+project does not have is refused. An integration whose secret is empty in the
+request environment answers `CM-ERRORS-DATABASE-038`.
+
+## Schema triggers per environment
+
+Schema triggers are kept per environment. Every schema-trigger call works on
+the client's environment (the `norbix-env` header; `PROD` when none is set):
+
+- `get_schema_triggers()` lists only that environment's triggers; each row
+  has `env`.
+- `get_schema_trigger(id)` returns `env`, and `schemaId` is now the owning
+  schema's id (`sch_…`). Before, it wrongly held the trigger's own id
+  (`trg_…`).
+- `enable_schema_trigger`, `disable_schema_trigger` and `delete_schema_trigger`
+  act on the copy in that environment. No copy there answers
+  `CM-ERRORS-TRIGGERS-002` (not found).
+- `save_schema_trigger(id=..., schemaId=...)` with the id of a trigger that
+  belongs to another schema answers `CM-ERRORS-TRIGGERS-002`.
+
+```python
+test = Norbix(project_id="...", api_key="...", env="TEST")
+test.hub.database.disable_schema_trigger("trg_1")  # the TEST copy only
+```
+
+## Taxonomies
+
+- `get_database_taxonomies()` rows have `dependencyRefs` in place of the old
+  `dependencyNames`: one `{"id": ..., "name": ...}` pair per entry of
+  `dependencies`, in the same order. A dependency that no longer exists keeps
+  its place with `"name": None`.
+
+  ```python
+  for row in norbix.hub.database.get_database_taxonomies()["list"]["items"]:
+      names = [ref["name"] or f"(deleted {ref['id']})" for ref in row.get("dependencyRefs") or []]
+  ```
+
+- `save_database_taxonomy(viewId=...)` with the id of an existing taxonomy is
+  an update and needs `database:update` on `database:taxonomy:{viewId}`.
+  Without `viewId` (or with an unknown one) it is a create and needs
+  `database:create`. An update replaces the whole taxonomy: send every field
+  you want to keep.
+- Term reads by taxonomy name (term tree, merged tree) check
+  `database:read` on `database:term:{taxonomy id}`; the merged tree checks it
+  on every nested taxonomy too.
+- `get_database_taxonomy_tree(includeTerms=True)` now fails when reading the
+  terms fails. Before, it returned the taxonomies without terms.
+- Errors on term reads: `CM-ERRORS-TAXONOMIES-010` the taxonomy name is
+  unknown (the merged tree used to answer `-003`); `-011` the term tree has
+  more than 5000 terms (whole taxonomy, merged tree, `includeTerms`); `-005`
+  a taxonomy name longer than 40 characters.
+
+## Collection imports
+
+Import CSV rows into a collection: ask for an upload URL, upload the file,
+analyze it, then create the import and follow it.
+
+```python
+target = norbix.hub.database.request_import_upload_url(fileName="products.csv")["result"]
+httpx.put(target["url"], content=csv_bytes, headers={"Content-Type": target["contentType"]})
+preview = norbix.hub.database.analyze_import_file(file=target["file"], hasHeader=True)
+created = norbix.hub.database.create_collection_import(file=target["file"], schemaId="sch_1", hasHeader=True)
+status = norbix.hub.database.get_collection_import(created["id"])
+imports = norbix.hub.database.get_collection_imports()
+norbix.hub.database.delete_collection_import(created["id"])
+```
+
+The request fields are listed under `RequestImportUploadUrlRequest`,
+`AnalyzeImportFileRequest` and `CreateCollectionImport` in
+`references/hub_dtos.py`.
 
 ## Trees, list settings, embed and bundles
 

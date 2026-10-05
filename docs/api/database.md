@@ -280,7 +280,7 @@ This is the **taxonomy** tree, not the term tree: nodes are taxonomies. Every `t
 **Goal:** same structure, but also pull each taxonomy's terms in the same call.
 
 ```python
-structure = norbix.api.database.find_taxonomy_tree(include_terms=True)
+structure = norbix.api.database.find_taxonomy_tree(includeTerms=True)
 ```
 
 ```json
@@ -316,7 +316,7 @@ structure = norbix.api.database.find_taxonomy_tree(include_terms=True)
 
 Now each taxonomy node's `terms` holds that taxonomy's full term tree (same shape as `find_term_tree`) — *Countries* carries its countries, *Cities* carries its cities.
 
-> Every term-reading call also accepts an optional `database_integration_id` to target a non-default database.
+> Every term-reading call also accepts an optional `databaseIntegrationId` to target a non-default database.
 
 ---
 
@@ -337,3 +337,70 @@ roots, and the terms of its child taxonomies nest under them.
 ```python
 tree = norbix.api.database.find_merged_term_tree("services")
 ```
+
+---
+
+## Changing many records
+
+`update_many` and `delete_many` change every record that matches `filter`. An
+empty filter (`'{}'`) matches **every** record of the collection, so the
+gateway refuses it with `CM-ERRORS-DATABASE-037` unless you also send
+`allRecords=True`. For `update_many` a missing filter counts as `'{}'`.
+
+```python
+norbix.api.database.update_many("products", filter='{"status": "draft"}', update='{"status": "live"}')
+norbix.api.database.delete_many("products", filter="{}", allRecords=True)  # every record
+```
+
+Pass the flag with its wire name, `allRecords` (the SDK sends keyword
+arguments as given).
+
+- **Own-record rights are enough.** A caller with only `createAsUser`,
+  `updateOwn` or `deleteOwn` may call `insert_many`, `update_many` and
+  `delete_many`; the call changes only the caller's own records (before, it
+  was refused with 403).
+- **No `$` operators in an update.** `update_one` / `update_many` take the new
+  values as a plain document (`'{"price": 10}'`). `$inc`, `$set` and the like
+  are refused with `CM-ERRORS-DATABASE-035`.
+- **A broken record document** on `insert_one`, `insert_many` or `replace_one`
+  is refused with `CM-ERRORS-DATABASE-036` "Invalid record document" (before,
+  `005`). For `insert_many`, `err.errors[0].context["Index"]` is the position
+  of the bad document.
+- **Soft-deleted records are not found** by update, replace and change owner;
+  a bulk update skips them.
+- **Change owner** (`change_responsibility`) refuses a new owner who is not a
+  user of the project in the request environment, with
+  `CM-ERRORS-MEMBERSHIP-USERS-012`.
+
+```python
+from norbix_python import NorbixError
+
+try:
+    norbix.api.database.delete_many("products", filter="{}")
+except NorbixError as err:
+    assert err.error_code == "CM-ERRORS-DATABASE-037"
+```
+
+## Term reads: rights and errors
+
+- Term reads by taxonomy name (`find_terms`, `find_terms_children`,
+  `find_term_tree`, `find_merged_term_tree`) check `database:read` on
+  `database:term:{taxonomy id}`. The merged tree checks it on every nested
+  taxonomy too.
+- `find_terms` and `find_terms_children` refuse `$where`, `$function` and
+  `$accumulator` in `filter` with `CM-ERRORS-DATABASE-031`.
+- `CM-ERRORS-TAXONOMIES-010`: the taxonomy name is unknown (the merged tree
+  used to answer `-003`).
+- `CM-ERRORS-TAXONOMIES-011`: the term tree has more than 5000 terms (whole
+  taxonomy, merged tree, `find_taxonomy_tree(includeTerms=True)`).
+- `CM-ERRORS-TAXONOMIES-005`: a taxonomy name longer than 40 characters.
+- `find_taxonomy_tree(includeTerms=True)` fails when reading the terms fails.
+  Before, it returned the taxonomies without terms.
+
+## Aggregates
+
+`aggregate` and `execute_aggregate` refuse a pipeline that joins a collection
+the caller cannot read (`CM-ERRORS-DATABASE-033`), a name that is not a schema
+in the request environment (`032`), or a join into another database (`034`).
+`execute_aggregate` also needs `database:read` on the collection, and refuses
+a saved `$out` / `$merge` / JavaScript stage (`031`).

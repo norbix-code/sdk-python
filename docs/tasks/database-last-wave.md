@@ -32,7 +32,8 @@ given); other modules than Database.
    schema delete blockers, `joinedCollections`, rename, schema triggers per
    env, taxonomy `dependencyRefs`, term-read rights and new error codes — done
 5. Full suite (`uv run pytest`, `make typecheck`, `make lint`) green; ship
-   with `nbx-ship --wait-release --cleanup` — doing
+   with `nbx-ship --wait-release --cleanup` — done (993 passed, mypy and ruff
+   clean)
 
 ## Changes
 
@@ -57,6 +58,12 @@ given); other modules than Database.
   would go out as `all_records`, which the gateway does not read. The docs
   and tests use the wire name `allRecords=True`, the same way the rest of the
   SDK uses `pageSize`. Left as is (this is the SDK's documented rule).
+- `docs/api/database.md` showed `find_taxonomy_tree(include_terms=True)` and
+  "an optional `database_integration_id`": by the rule above those go out
+  under the snake_case name, which the gateway's request names
+  (`includeTerms`, `databaseIntegrationId`) do not match. Fixed here (step 4).
+- `docs/hub/database.md` showed `update_one_record(..., update='{"$set": ...}')`,
+  which the gateway now refuses (`CM-ERRORS-DATABASE-035`). Fixed here (step 4).
 
 ## Rejected / moved out
 
