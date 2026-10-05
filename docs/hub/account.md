@@ -38,7 +38,9 @@ Access with `norbix.hub.account`.
 | `update_project_name` | `PATCH` | `/{version}/account/projects/{projectId}/settings/name` | `account` |
 | `update_project_regions` | `PATCH` | `/{version}/account/projects/{projectId}/settings/regions` | `account` |
 | `create_account` | `POST` | `/{version}/account` | `account` |
-| `get_account_collaborators` | `GET` | `/{version}/account/collaborators` | `account` |
+| `get_account_collaborators` | `GET` | `/{version}/account/collaborators` | `project` |
+| `get_my_account_user_profile` | `GET` | `/{version}/account/me` | `project` |
+| `update_my_account_user_phone` | `PUT` | `/{version}/account/me/phone` | `project` |
 | `send_invite_to_team_member` | `POST` | `/{version}/account/team/member/invite` | `account` |
 | `get_licenses` | `GET` | `/{version}/account/licenses` | `account` |
 | `get_project_ai_settings` | `GET` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
@@ -63,6 +65,32 @@ Access with `norbix.hub.account`.
 | `mcp` | `POST` | `/{version}/account/mcp` | `project` |
 | `mcp_stream` | `GET` | `/{version}/account/mcp` | `project` |
 | `mcp_end_session` | `DELETE` | `/{version}/account/mcp` | `project` |
+
+## Your account user and the team
+
+`get_my_account_user_profile`, `update_my_account_user_phone` and
+`get_account_collaborators` act on the signed-in account user and their
+account. The gateway takes the account from the session, so they need only a
+key or a bearer token — no `account_id`. Sync and async clients have the same
+methods. Tests: `tests/hub/test_account_me.py`.
+
+The phone (E.164 format, `+` and the country code; an empty value clears it)
+is the number "Account users" SMS campaigns send to (see
+[sms.md](./sms.md#choosing-who-a-campaign-goes-to)):
+
+```python
+norbix.hub.account.update_my_account_user_phone(phone="+37060000000")
+me = norbix.hub.account.get_my_account_user_profile()
+print(me["item"]["generalInfo"]["phone"])
+```
+
+The team list pages with flat fields — `pageSize` (default 20),
+`startingAfter`, `endingBefore` — and `projectId` (without
+`includeAccountOwner`) narrows it to one project's collaborators:
+
+```python
+team = norbix.hub.account.get_account_collaborators(projectId="proj_123", pageSize=50)
+```
 
 ## The developer MCP endpoint
 
