@@ -6,9 +6,9 @@ Access with `norbix.hub.notifications`.
 | --- | --- | --- | --- |
 | `get_user_notification_preferences` | `GET` | `/{version}/notifications/user/preferences` | `project` |
 | `update_user_notifications_preferences` | `PUT` | `/{version}/notifications/user/preferences` | `project` |
-| `disable_email` | `GET` | `/{version}/notifications/email/disable` | `project` |
+| `disable_email` | `PUT` | `/{version}/notifications/email/disable` | `project` |
 | `get_email_disable_dependencies` | `GET` | `/{version}/notifications/email/disable-dependencies` | `project` |
-| `enable_email` | `GET` | `/{version}/notifications/email/enable` | `project` |
+| `enable_email` | `PUT` | `/{version}/notifications/email/enable` | `project` |
 | `attach_file_to_template` | `POST` | `/{version}/notifications/email/templates/attachments` | `project` |
 | `create_email_template` | `POST` | `/{version}/notifications/email/templates` | `project` |
 | `delete_email_template` | `DELETE` | `/{version}/notifications/email/templates/{Id}` | `project` |
@@ -52,8 +52,8 @@ Access with `norbix.hub.notifications`.
 | `get_email_campaign_statistics` | `GET` | `/{version}/notifications/email/campaigns/{id}/stats` | `project` |
 | `preview_email_notification` | `GET` | `/{version}/notifications/email/preview` | `optional` |
 | `get_email_campaign_messages` | `GET` | `/{version}/notifications/emails/campaigns/{campaignId}/messages` | `project` |
-| `disable_sms` | `GET` | `/{version}/notifications/sms/disable` | `project` |
-| `enable_sms` | `GET` | `/{version}/notifications/sms/enable` | `project` |
+| `disable_sms` | `PUT` | `/{version}/notifications/sms/disable` | `project` |
+| `enable_sms` | `PUT` | `/{version}/notifications/sms/enable` | `project` |
 | `get_sms_disable_dependencies` | `GET` | `/{version}/notifications/sms/disable-dependencies` | `project` |
 | `get_sms_settings` | `GET` | `/{version}/notifications/sms/settings` | `project` |
 | `get_sms_integrations` | `GET` | `/{version}/notifications/sms/integrations` | `project` |
@@ -86,8 +86,8 @@ Access with `norbix.hub.notifications`.
 | `get_sms_campaign_statistics` | `GET` | `/{version}/notifications/sms/campaigns/{id}/stats` | `project` |
 | `get_sms_campaign_messages` | `GET` | `/{version}/notifications/sms/campaigns/{campaignId}/messages` | `project` |
 | `preview_sms_notification` | `GET` | `/{version}/notifications/sms/preview` | `optional` |
-| `disable_push` | `GET` | `/{version}/notifications/push/disable` | `project` |
-| `enable_push` | `GET` | `/{version}/notifications/push/enable` | `project` |
+| `disable_push` | `PUT` | `/{version}/notifications/push/disable` | `project` |
+| `enable_push` | `PUT` | `/{version}/notifications/push/enable` | `project` |
 | `archive_push_template` | `PUT` | `/{version}/notifications/push/templates/{Id}/archive` | `project` |
 | `clone_push_template` | `POST` | `/{version}/notifications/push/templates/{Id}/clone` | `project` |
 | `create_push_template` | `POST` | `/{version}/notifications/push/templates` | `project` |

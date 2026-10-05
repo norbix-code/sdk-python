@@ -21,14 +21,14 @@ def test_hub_logs_module_surface() -> None:
 def test_hub_logs_disable_logging_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.logs.disable_logging()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_logs_enable_logging_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.logs.enable_logging()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 

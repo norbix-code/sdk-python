@@ -28,14 +28,14 @@ def test_hub_payments_module_surface() -> None:
 def test_hub_payments_disable_payments_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.disable_payments()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_payments_enable_payments_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.enable_payments()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 

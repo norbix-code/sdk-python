@@ -37,14 +37,14 @@ def test_hub_membership_module_surface() -> None:
 def test_hub_membership_disable_membership_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.disable_membership()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_enable_membership_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.enable_membership()
-    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 

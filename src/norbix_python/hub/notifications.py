@@ -36,11 +36,11 @@ class NotificationsModule:
         )
 
     def disable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/email/disable"""
+        """PUT /{version}/notifications/email/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/email/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -65,11 +65,11 @@ class NotificationsModule:
         )
 
     def enable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/email/enable"""
+        """PUT /{version}/notifications/email/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/email/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -648,11 +648,11 @@ class NotificationsModule:
         )
 
     def disable_push(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/disable"""
+        """PUT /{version}/notifications/push/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/push/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -661,11 +661,11 @@ class NotificationsModule:
         )
 
     def enable_push(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/enable"""
+        """PUT /{version}/notifications/push/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/push/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -1436,11 +1436,11 @@ class NotificationsModule:
         )
 
     def disable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/disable"""
+        """PUT /{version}/notifications/sms/disable"""
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -1462,11 +1462,11 @@ class NotificationsModule:
         )
 
     def enable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/enable"""
+        """PUT /{version}/notifications/sms/enable"""
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -1783,11 +1783,11 @@ class AsyncNotificationsModule:
         )
 
     async def disable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/email/disable"""
+        """PUT /{version}/notifications/email/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/email/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -1812,11 +1812,11 @@ class AsyncNotificationsModule:
         )
 
     async def enable_email(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/email/enable"""
+        """PUT /{version}/notifications/email/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/email/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -2395,11 +2395,11 @@ class AsyncNotificationsModule:
         )
 
     async def disable_push(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/disable"""
+        """PUT /{version}/notifications/push/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/push/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -2408,11 +2408,11 @@ class AsyncNotificationsModule:
         )
 
     async def enable_push(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/push/enable"""
+        """PUT /{version}/notifications/push/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/push/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -3183,11 +3183,11 @@ class AsyncNotificationsModule:
         )
 
     async def disable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/disable"""
+        """PUT /{version}/notifications/sms/disable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/disable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
@@ -3209,11 +3209,11 @@ class AsyncNotificationsModule:
         )
 
     async def enable_sms(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/sms/enable"""
+        """PUT /{version}/notifications/sms/enable"""
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/enable",
-            method="GET",
+            method="PUT",
             path_params={},
             request=request,
             scope="project",
