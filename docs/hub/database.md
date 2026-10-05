@@ -91,6 +91,20 @@ total = norbix.hub.database.count_records("products", filter='{"status": "active
 indexes = norbix.hub.database.get_collection_indexes("products")
 ```
 
+## Schemas per environment
+
+`get_database_schemas()` returns only the schemas of one environment: the one
+the client was created with (`Norbix(..., env="TEST")`, sent as the
+`norbix-env` header), or `PROD` when no environment is set. Each row carries
+`env` (for example `"PROD"` or `"TEST"`). To see another environment's schemas,
+use a client with that `env`. The paging cursors (`startingAfter` /
+`endingBefore`) are schema ids (`sch_…`); a cursor saved before the gateway
+update no longer matches.
+
+```python
+test_schemas = Norbix(project_id="...", api_key="...", env="TEST").hub.database.get_database_schemas()
+```
+
 ## Trees, list settings, embed and bundles
 
 - `get_database_taxonomy_tree()` — the taxonomy structure as a tree.
@@ -100,6 +114,8 @@ indexes = norbix.hub.database.get_collection_indexes("products")
   under them.
 - `get_database_schema_list_settings(id)` / `update_database_schema_list_settings(id, settings={...})`
   — how the record list shows a schema (the update replaces the whole settings object).
+  Each environment keeps its own list layout: the client's `env` (the
+  `norbix-env` header) picks which one you read and write.
 - `update_database_schema_embed(id, ...)` — the schema's embed settings.
 - `apply_database_schema_bundle(...)` — apply a bundle of schemas in one call.
 
