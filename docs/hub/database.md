@@ -45,3 +45,62 @@ Access with `norbix.hub.database`.
 | `get_database_aggregates` | `GET` | `/{version}/database/aggregates` | `project` |
 | `save_database_aggregate` | `POST` | `/{version}/database/aggregates` | `project` |
 | `test_database_aggregate` | `POST` | `/{version}/database/aggregates/test` | `project` |
+| `get_allowed_flex_tiers` | `GET` | `/{version}/database/integrations/flex-tiers` | `project` |
+| `test_database_integration` | `POST` | `/{version}/database/integrations/test` | `project` |
+| `reveal_managed_flex_connection_string` | `GET` | `/{version}/database/integrations/{Id}/connection-string` | `project` |
+| `get_database_taxonomy_tree` | `GET` | `/{version}/database/taxonomies/tree` | `project` |
+| `get_database_merged_term_tree` | `GET` | `/{version}/database/taxonomies/{TaxonomyName}/merged-tree` | `project` |
+| `get_database_taxonomy_term_tree` | `GET` | `/{version}/database/taxonomies/{TaxonomyName}/terms/tree` | `project` |
+| `apply_database_schema_bundle` | `POST` | `/{version}/database/schemas/apply-bundle` | `project` |
+| `get_database_schema_list_settings` | `GET` | `/{version}/database/schemas/{Id}/list-settings` | `project` |
+| `update_database_schema_list_settings` | `PUT` | `/{version}/database/schemas/{Id}/list-settings` | `project` |
+| `update_database_schema_embed` | `PUT` | `/{version}/database/schemas/{Id}/embed` | `project` |
+| `aggregate_records` | `POST` | `/{version}/database/collections/{collectionName}/aggregate` | `project` |
+| `change_record_responsibility` | `PUT` | `/{version}/database/collections/{collectionName}/{id}/responsibility` | `project` |
+| `count_records` | `GET` | `/{version}/database/collections/{collectionName}/count` | `project` |
+| `delete_many_records` | `DELETE` | `/{version}/database/collections/{collectionName}/many` | `project` |
+| `delete_record` | `DELETE` | `/{version}/database/collections/{collectionName}/{id}` | `project` |
+| `distinct_record_values` | `GET` | `/{version}/database/collections/{collectionName}/distinct` | `project` |
+| `execute_records_aggregate` | `POST` | `/{version}/database/collections/{collectionName}/aggregates/{aggregateId}/execute` | `project` |
+| `find_records` | `GET` | `/{version}/database/collections/{collectionName}` | `project` |
+| `find_one_record` | `GET` | `/{version}/database/collections/{collectionName}/{id}` | `project` |
+| `get_collection_indexes` | `GET` | `/{version}/database/collections/{collectionName}/indexes` | `project` |
+| `insert_many_records` | `POST` | `/{version}/database/collections/{collectionName}/many` | `project` |
+| `insert_record` | `POST` | `/{version}/database/collections/{collectionName}` | `project` |
+| `replace_record` | `PUT` | `/{version}/database/collections/{collectionName}/{id}/replace` | `project` |
+| `seed_collection_records` | `POST` | `/{version}/database/collections/seed` | `project` |
+| `update_many_records` | `PUT` | `/{version}/database/collections/{collectionName}/many` | `project` |
+| `update_one_record` | `PUT` | `/{version}/database/collections/{collectionName}/{id}` | `project` |
+
+## Working with records (Hub)
+
+The Hub record methods are the admin side of collections: they act on every
+record in the project, not only the records the caller owns (for that, use
+`norbix.api.database.find_own`). Values go in as keyword arguments, the same
+way as every other method in this SDK: on a `GET` they become query values, on
+a write they become the JSON body. Filters, documents and updates are MongoDB
+extended-JSON **strings**.
+
+```python
+products = norbix.hub.database.find_records("products", filter='{"status": "active"}', pageSize=20)
+one = norbix.hub.database.find_one_record("products", "rec_1")
+created = norbix.hub.database.insert_record("products", document='{"title": "Lamp", "price": 12}')
+norbix.hub.database.update_one_record("products", "rec_1", update='{"$set": {"price": 10}}')
+norbix.hub.database.delete_record("products", "rec_1")
+total = norbix.hub.database.count_records("products", filter='{"status": "active"}')
+indexes = norbix.hub.database.get_collection_indexes("products")
+```
+
+## Trees, list settings, embed and bundles
+
+- `get_database_taxonomy_tree()` — the taxonomy structure as a tree.
+- `get_database_taxonomy_term_tree("services")` — one taxonomy's terms as a tree.
+- `get_database_merged_term_tree("services")` — one tree across taxonomies: the
+  terms of `services` are the roots, and the terms of its child taxonomies nest
+  under them.
+- `get_database_schema_list_settings(id)` / `update_database_schema_list_settings(id, settings={...})`
+  — how the record list shows a schema (the update replaces the whole settings object).
+- `update_database_schema_embed(id, ...)` — the schema's embed settings.
+- `apply_database_schema_bundle(...)` — apply a bundle of schemas in one call.
+
+The async client (`AsyncNorbix`) has the same methods; `await` them.
