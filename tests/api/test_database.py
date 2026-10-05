@@ -1,6 +1,11 @@
 from __future__ import annotations
 
-from norbix_python import Norbix, NorbixError
+import asyncio
+from urllib.parse import parse_qs, urlparse
+
+import httpx
+
+from norbix_python import AsyncNorbix, Norbix, NorbixError
 from ..helpers import make_client
 
 
@@ -152,3 +157,56 @@ def test_api_database_update_one_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+
+# --- Database audit (2026-10): find_own and find_merged_term_tree ---
+
+
+def test_api_database_find_own_hits_the_own_route_with_query_values() -> None:
+    client, transport = make_client()
+    client.api.database.find_own("products", pageSize=10)
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+    url = urlparse(transport.last_request["url"])
+    assert url.netloc == "api.norbix.ai"
+    assert url.path == "/v2/database/collections/products/own"
+    assert parse_qs(url.query) == {"pageSize": ["10"]}
+
+
+def test_api_database_find_merged_term_tree_hits_the_merged_tree_route() -> None:
+    client, transport = make_client()
+    client.api.database.find_merged_term_tree("services")
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+    url = urlparse(transport.last_request["url"])
+    assert url.netloc == "api.norbix.ai"
+    assert url.path == "/v2/database/taxonomies/services/merged-tree"
+
+
+def test_api_database_audit_methods_exist_on_the_async_module() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        try:
+            await client.api.database.find_own("products")
+            await client.api.database.find_merged_term_tree("services")
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
+        ("GET", "/v2/database/collections/products/own"),
+        ("GET", "/v2/database/taxonomies/services/merged-tree"),
+    ]
