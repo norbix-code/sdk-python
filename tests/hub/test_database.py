@@ -467,22 +467,22 @@ def test_hub_database_find_records_sends_query_values() -> None:
     assert transport.last_request["body"] == ""
 
 
-def test_hub_database_insert_record_sends_the_document_as_json() -> None:
+def test_hub_database_insert_record_sends_the_document_in_the_json_body() -> None:
     client, transport = make_client()
-    client.hub.database.insert_record(COLL, document={"title": "Lamp", "price": 12})
+    client.hub.database.insert_record(COLL, document='{"title":"Lamp","price":12}')
 
     assert transport.last_request is not None
     assert urlparse(transport.last_request["url"]).query == ""
-    assert json.loads(transport.last_request["body"]) == {"document": {"title": "Lamp", "price": 12}}
+    assert json.loads(transport.last_request["body"]) == {"document": '{"title":"Lamp","price":12}'}
 
 
 def test_hub_database_update_schema_list_settings_keeps_the_id_in_the_path_only() -> None:
     client, transport = make_client()
-    client.hub.database.update_database_schema_list_settings(SCHEMA, columns=["title", "price"])
+    client.hub.database.update_database_schema_list_settings(SCHEMA, settings={"columns": ["title", "price"]})
 
     assert transport.last_request is not None
     assert urlparse(transport.last_request["url"]).path == f"{DB}/schemas/{SCHEMA}/list-settings"
-    assert json.loads(transport.last_request["body"]) == {"columns": ["title", "price"]}
+    assert json.loads(transport.last_request["body"]) == {"settings": {"columns": ["title", "price"]}}
 
 
 def test_hub_database_record_call_sends_auth_and_project_headers() -> None:
