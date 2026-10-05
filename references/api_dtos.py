@@ -312,6 +312,21 @@ class PublicAuthDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class PublicAiAssistantDto:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    welcome: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PublicAiChatDto:
+    enabled: bool = False
+    assistants: List[PublicAiAssistantDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class ErrorDto:
     message: Optional[str] = None
     error_code: Optional[str] = None
@@ -330,6 +345,99 @@ class CodeMashResponseStatus:
 @dataclass
 class ResponseBase:
     response_status: Optional[CodeMashResponseStatus] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EndUserChatAttachment:
+    id: Optional[str] = None
+    session_id: Optional[str] = None
+    file_name: Optional[str] = None
+    content_type: Optional[str] = None
+    kind: Optional[str] = None
+    size: int = 0
+    summary: Optional[str] = None
+    created_at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EndUserChatMemoryNote:
+    id: Optional[str] = None
+    session_id: Optional[str] = None
+    kind: Optional[str] = None
+    text: Optional[str] = None
+    created_at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EndUserChatAssistant:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    welcome_message: Optional[str] = None
+    is_default: bool = False
+    memory_enabled: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EndUserChatPlan:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    quota_unit: Optional[str] = None
+    monthly_quota: int = 0
+    used: int = 0
+    remaining: int = 0
+    attachments: bool = False
+    rag: bool = False
+    memory: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EndUserChatSession:
+    id: Optional[str] = None
+    assistant_id: Optional[str] = None
+    title: Optional[str] = None
+    is_pinned: bool = False
+    is_archived: bool = False
+    last_seq: int = 0
+    created_at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+    updated_at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiChatEntryWireDto:
+    kind: Optional[str] = None
+    id: Optional[str] = None
+    seq: int = 0
+    at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+    ref_entry_id: Optional[str] = None
+    work_item_id: Optional[str] = None
+    feedback: Optional[str] = None
+    feedback_at_utc: Optional[datetime.datetime] = None
+    feedback_by_user_auth_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EndUserAiToolParameter:
+    name: Optional[str] = None
+    type: Optional[str] = None
+    required: bool = False
+    description: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EndUserAiTool:
+    name: Optional[str] = None
+    description: Optional[str] = None
+    toolsets: List[str] = field(default_factory=list)
+    requires_confirmation: bool = False
+    parameters: List[EndUserAiToolParameter] = field(default_factory=list)
 
 
 class AuthType(str, Enum):
@@ -501,11 +609,21 @@ class SchemaSettingsDto:
     description: Optional[str] = None
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SchemaEmbedSettingsDto:
+    enabled: bool = False
+    fields: List[str] = field(default_factory=list)
+    embedding_integration_id: Optional[str] = None
+    per_user: bool = False
+
+
 class TriggerType(str, Enum):
     MEMBERSHIP = 'Membership'
     SCHEMA = 'Schema'
     FILES = 'Files'
     PAYMENTS = 'Payments'
+    AI = 'Ai'
 
 
 class TriggerActionType(str, Enum):
@@ -550,6 +668,7 @@ class SchemaDto(IHasViewId):
     visual_schema: Optional[VisualSchemaDto] = None
     published_at: datetime.datetime = datetime.datetime(1, 1, 1)
     settings: Optional[SchemaSettingsDto] = None
+    embed: Optional[SchemaEmbedSettingsDto] = None
     triggers: Optional[List[TriggerDto]] = None
 
 
@@ -563,6 +682,7 @@ class SchemaListProjection(IHasViewId):
     has_draft: bool = False
     meta_schema_version: int = 0
     description: Optional[str] = None
+    env: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -766,6 +886,7 @@ class PublicProjectConfigDto:
     admin_portal_enabled: bool = False
     branding: Optional[PublicBrandDto] = None
     auth: Optional[PublicAuthDto] = None
+    ai_chat: Optional[PublicAiChatDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -775,6 +896,70 @@ class PublicLegalDocumentDto:
     title: Optional[str] = None
     body: Optional[str] = None
     available: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ListEndUserChatAttachmentsResponse(ResponseBase):
+    attachments: List[EndUserChatAttachment] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ListEndUserChatMemoryResponse(ResponseBase):
+    notes: List[EndUserChatMemoryNote] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserChatAvailabilityResponse(ResponseBase):
+    enabled: bool = False
+    available: bool = False
+    reason: Optional[str] = None
+    default_assistant_id: Optional[str] = None
+    assistants: List[EndUserChatAssistant] = field(default_factory=list)
+    plan: Optional[EndUserChatPlan] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ListEndUserChatSessionsResponse(ResponseBase):
+    sessions: List[EndUserChatSession] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserChatSessionResponse(ResponseBase):
+    session: Optional[EndUserChatSession] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserChatEntriesResponse(ResponseBase):
+    session_id: Optional[str] = None
+    entries: List[AiChatEntryWireDto] = field(default_factory=list)
+    last_seq: int = 0
+    has_more: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class StartEndUserChatTurnResponse(ResponseBase):
+    turn_id: Optional[str] = None
+    session_id: Optional[str] = None
+    channel: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserAiToolsResponse(ResponseBase):
+    tools: Optional[List[EndUserAiTool]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class InvokeEndUserAiToolResponse(ResponseBase):
+    result: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -957,6 +1142,15 @@ class Echo(RequestBase, IReturn[EchoResponse]):
     pass
 
 
+# @Route("/{version}/public/projects/{ProjectId}/brand/{Kind}", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetPublicProjectBrandAsset(RequestBase, IReturn[bytes]):
+    project_id: Optional[str] = None
+    kind: Optional[str] = None
+    v: Optional[str] = None
+
+
 # @Route("/{version}/public/projects/{ProjectId}/config", "GET")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -970,6 +1164,237 @@ class GetPublicProjectConfig(RequestBase, IReturn[PublicProjectConfigDto]):
 class GetPublicProjectLegal(RequestBase, IReturn[PublicLegalDocumentDto]):
     project_id: Optional[str] = None
     kind: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}/attachments", "POST")
+# @Api(Description="Adds a file to one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UploadEndUserChatAttachmentRequest(CodeMashRequestBase, IReturn[IdResponse]):
+    """
+    Adds a file to one of the caller's own AI chats.
+    """
+
+    session_id: Optional[str] = None
+    file_name: Optional[str] = None
+    content_type: Optional[str] = None
+    base64_content: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}/attachments", "GET")
+# @Api(Description="Lists the files in one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ListEndUserChatAttachmentsRequest(CodeMashRequestBase, IReturn[ListEndUserChatAttachmentsResponse]):
+    """
+    Lists the files in one of the caller's own AI chats.
+    """
+
+    session_id: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/attachments/{AttachmentId}", "DELETE")
+# @Api(Description="Removes a file from one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DeleteEndUserChatAttachmentRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Removes a file from one of the caller's own AI chats.
+    """
+
+    attachment_id: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}/entries/{EntryId}/feedback", "PUT")
+# @Api(Description="Likes, dislikes or clears one message of the caller's own AI chat.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SetEndUserChatEntryFeedbackRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Likes, dislikes or clears one message of the caller's own AI chat.
+    """
+
+    session_id: Optional[str] = None
+    entry_id: Optional[str] = None
+    feedback: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/memory", "GET")
+# @Api(Description="Lists what the AI chat remembers about the caller.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ListEndUserChatMemoryRequest(CodeMashRequestBase, IReturn[ListEndUserChatMemoryResponse]):
+    """
+    Lists what the AI chat remembers about the caller.
+    """
+
+    take: Optional[int] = None
+
+
+# @Route("/{version}/ai/chat/memory/{NoteId}", "DELETE")
+# @Api(Description="Forgets one thing the AI chat remembers about the caller.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ForgetEndUserChatMemoryRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Forgets one thing the AI chat remembers about the caller.
+    """
+
+    note_id: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/availability", "GET")
+# @Api(Description="Whether the AI chat can run for the caller, and which assistants it offers.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserChatAvailabilityRequest(CodeMashRequestBase, IReturn[GetEndUserChatAvailabilityResponse]):
+    """
+    Whether the AI chat can run for the caller, and which assistants it offers.
+    """
+
+    pass
+
+
+# @Route("/{version}/ai/chat/sessions", "GET")
+# @Api(Description="Lists the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ListEndUserChatSessionsRequest(CodeMashRequestBase, IReturn[ListEndUserChatSessionsResponse]):
+    """
+    Lists the caller's own AI chats.
+    """
+
+    take: Optional[int] = None
+    include_archived: bool = False
+
+
+# @Route("/{version}/ai/chat/sessions", "POST")
+# @Api(Description="Opens a new AI chat for the caller.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CreateEndUserChatSessionRequest(CodeMashRequestBase, IReturn[IdResponse]):
+    """
+    Opens a new AI chat for the caller.
+    """
+
+    assistant_id: Optional[str] = None
+    title: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}", "GET")
+# @Api(Description="Returns one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserChatSessionRequest(CodeMashRequestBase, IReturn[GetEndUserChatSessionResponse]):
+    """
+    Returns one of the caller's own AI chats.
+    """
+
+    session_id: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}", "PATCH")
+# @Api(Description="Renames one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RenameEndUserChatSessionRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Renames one of the caller's own AI chats.
+    """
+
+    session_id: Optional[str] = None
+    title: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}/pin", "PUT")
+# @Api(Description="Pins or unpins one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PinEndUserChatSessionRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Pins or unpins one of the caller's own AI chats.
+    """
+
+    session_id: Optional[str] = None
+    pinned: bool = False
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}/archive", "PUT")
+# @Api(Description="Archives or unarchives one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ArchiveEndUserChatSessionRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Archives or unarchives one of the caller's own AI chats.
+    """
+
+    session_id: Optional[str] = None
+    archived: bool = False
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}", "DELETE")
+# @Api(Description="Deletes one of the caller's own AI chats.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DeleteEndUserChatSessionRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Deletes one of the caller's own AI chats.
+    """
+
+    session_id: Optional[str] = None
+
+
+# @Route("/{version}/ai/chat/sessions/{SessionId}/entries", "GET")
+# @Api(Description="Returns a page of one of the caller's own AI chat transcripts.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserChatEntriesRequest(CodeMashRequestBase, IReturn[GetEndUserChatEntriesResponse]):
+    """
+    Returns a page of one of the caller's own AI chat transcripts.
+    """
+
+    session_id: Optional[str] = None
+    after_seq: Optional[int] = None
+    take: Optional[int] = None
+
+
+# @Route("/{version}/ai/chat/turn", "POST")
+# @Api(Description="Sends a message to the AI chat; the answer streams on the caller's channel.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class StartEndUserChatTurnRequest(CodeMashRequestBase, IReturn[StartEndUserChatTurnResponse]):
+    """
+    Sends a message to the AI chat; the answer streams on the caller's channel.
+    """
+
+    session_id: Optional[str] = None
+    assistant_id: Optional[str] = None
+    message: Optional[str] = None
+
+
+# @Route("/{version}/ai/tools", "GET")
+# @Api(Description="Lists the AI tools a project user may use: only their own data (own:* toolsets).")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetEndUserAiToolsRequest(RequestBase, IReturn[GetEndUserAiToolsResponse]):
+    """
+    Lists the AI tools a project user may use: only their own data (own:* toolsets).
+    """
+
+    pass
+
+
+# @Route("/{version}/ai/tools/{ToolName}", "POST")
+# @Api(Description="Invokes one own-scope AI tool as the calling project user.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class InvokeEndUserAiToolRequest(RequestBase, IReturn[InvokeEndUserAiToolResponse]):
+    """
+    Invokes one own-scope AI tool as the calling project user.
+    """
+
+    tool_name: Optional[str] = None
+    arguments_json: Optional[str] = None
 
 
 # @Route("/{version}/membership/auth/block", "PATCH")
@@ -1948,6 +2373,7 @@ class DeleteManyRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     collection_name: Optional[str] = None
     database_integration_id: Optional[str] = None
     filter: Optional[str] = None
+    all_records: Optional[bool] = None
 
 
 # @Route("/{version}/database/collections/{collectionName}/{id}", "DELETE")
@@ -2098,6 +2524,7 @@ class UpdateManyRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     collection_name: Optional[str] = None
     database_integration_id: Optional[str] = None
     filter: Optional[str] = None
+    all_records: Optional[bool] = None
     update: Optional[str] = None
 
 

@@ -1214,6 +1214,7 @@ class TemplateDto(IHasViewId, IHasDatabaseId):
     medium: Optional[NotificationMedium] = None
     is_active: bool = False
     tags: Optional[List[str]] = None
+    env: Optional[str] = None
 
 
 class EmailTemplateEngine(str, Enum):
@@ -2232,6 +2233,7 @@ class LocalFilesIntegrationDto(FilesIntegrationDto):
 @dataclass
 class DatabaseIntegrationDto(IntegrationDto):
     provider: Optional[DatabaseProvider] = None
+    is_system_owned: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2489,6 +2491,7 @@ class SchedulerTaskDto:
     initiator_id: Optional[str] = None
     is_enabled: bool = False
     stop_on_error: bool = False
+    env: Optional[str] = None
     created_at_unix: Optional[int] = None
     updated_at_unix: Optional[int] = None
 
@@ -2642,6 +2645,7 @@ class MongoDbAggregateDto(IHasViewId):
     description: Optional[str] = None
     schema_view_id: Optional[str] = None
     pipeline: Optional[str] = None
+    joined_collections: Optional[List[str]] = None
 
 
 class MarketplaceTransport(str, Enum):
@@ -3339,30 +3343,6 @@ class ImportColumnMappingDto:
     dont_import_on_error: bool = False
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class AggregateId:
-    value: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProjectId(AggregateId, IHasDomainEntityId):
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class IntegrationId(AggregateId, IHasDomainEntityId):
-    pass
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TaxonomyId(AggregateId, IHasDomainEntityId):
-    pass
-
-
 class EmailValidationProvider(IntEnum):
     ZERO_BOUNCE = 1
     NEVER_BOUNCE = 2
@@ -3796,6 +3776,7 @@ class PromotionResultDto:
     content_mirrored: List[PromotionItemDto] = field(default_factory=list)
     content_deleted: List[PromotionItemDto] = field(default_factory=list)
     integrations_seeded: List[PromotionItemDto] = field(default_factory=list)
+    integrations_to_provision: List[PromotionItemDto] = field(default_factory=list)
     integrations_skipped: List[PromotionItemDto] = field(default_factory=list)
     blockers: List[PromotionBlockerDto] = field(default_factory=list)
     from_version: Optional[int] = None
@@ -3936,6 +3917,7 @@ class SchemaTriggerDto(TriggerDto):
     schema_id: Optional[str] = None
     when: Optional[SchemaTriggerType] = None
     configuration_code: Optional[str] = None
+    env: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4698,6 +4680,7 @@ class MembershipAuthenticationViewDto:
 @dataclass
 class SchemaTriggerProjectionList(TriggerProjectionList):
     type: Optional[SchemaTriggerType] = None
+    env: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4734,6 +4717,13 @@ class TaxonomyDto(IHasViewId):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class TaxonomyRef:
+    id: Optional[str] = None
+    name: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class TaxonomyListProjection(IHasViewId):
     view_id: Optional[str] = None
     taxonomy_name: Optional[str] = None
@@ -4742,7 +4732,7 @@ class TaxonomyListProjection(IHasViewId):
     description: Optional[str] = None
     dependencies: Optional[List[str]] = None
     parent_name: Optional[str] = None
-    dependency_names: Optional[List[str]] = None
+    dependency_refs: Optional[List[TaxonomyRef]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4912,6 +4902,7 @@ class SeedCollectionRecordsResultDto:
 @dataclass
 class DatabaseIntegrationListProjection(IntegrationListProjection):
     provider: Optional[DatabaseProvider] = None
+    env: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5048,6 +5039,7 @@ class TemplateListProjection(IHasViewId, IHasDatabaseId):
     is_active: bool = False
     type: Optional[CommunicationChannel] = None
     tags: Optional[List[str]] = None
+    env: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6416,10 +6408,6 @@ class IBindableContract:
 
 class IHasRazorTemplateCode:
     pass
-
-
-class IHasDomainEntityId:
-    view_id: Optional[str] = None
 
 
 class IHasResponsibleUserId:
@@ -11131,10 +11119,10 @@ class SaveDatabaseTaxonomyRequest(CodeMashRequestBase, IReturn[IdResponse]):
     Creates or updates a database taxonomy
     """
 
-    # @ApiMember(Description="Empty to create a new taxonomy; set to an existing taxonomy id (from get_database_taxonomies) to update it.")
+    # @ApiMember(Description="Empty to create a new taxonomy; set to an existing taxonomy id (from get_database_taxonomies) to update it. An update replaces the whole taxonomy: send every field you want to keep (parentId, dependencies, description, schemas).")
     view_id: Optional[str] = None
     """
-    Empty to create a new taxonomy; set to an existing taxonomy id (from get_database_taxonomies) to update it.
+    Empty to create a new taxonomy; set to an existing taxonomy id (from get_database_taxonomies) to update it. An update replaces the whole taxonomy: send every field you want to keep (parentId, dependencies, description, schemas).
     """
 
 
@@ -11617,13 +11605,6 @@ class RenameDatabaseSchemaRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     """
 
 
-    # @ApiMember(Description="When true (default), rejects the rename if another schema already owns the derived slug. Leave true unless explicitly asked to bypass the uniqueness check.")
-    rename_unique_name: bool = False
-    """
-    When true (default), rejects the rename if another schema already owns the derived slug. Leave true unless explicitly asked to bypass the uniqueness check.
-    """
-
-
 # @Route("/{version}/database/schemas", "POST")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -11686,10 +11667,10 @@ class UpdateDatabaseSchemaDraftRequest(CodeMashRequestBase, IReturn[EmptyRespons
     """
 
 
-    # @ApiMember(Description="Raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form.")
+    # @ApiMember(Description="OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or invalid, the backend auto-generates a flat-list form from the data schema.")
     visual_schema: Optional[str] = None
     """
-    Raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form.
+    OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or invalid, the backend auto-generates a flat-list form from the data schema.
     """
 
 
@@ -11861,10 +11842,17 @@ class DeleteManyRecords(CodeMashRequestBase, IReturn[EmptyResponse]):
 
 
     database_integration_id: Optional[str] = None
-    # @ApiMember(Description="The match filter as a MongoDB extended-JSON document. Required.", IsRequired=true)
+    # @ApiMember(Description="The match filter as a MongoDB extended-JSON document. Required. An empty object ({}) matches every record and is refused unless AllRecords is true.", IsRequired=true)
     filter: Optional[str] = None
     """
-    The match filter as a MongoDB extended-JSON document. Required.
+    The match filter as a MongoDB extended-JSON document. Required. An empty object ({}) matches every record and is refused unless AllRecords is true.
+    """
+
+
+    # @ApiMember(Description="Set to true to delete EVERY record of the collection with an empty filter ({}). Without it an empty filter is refused (CM-ERRORS-DATABASE-037).")
+    all_records: Optional[bool] = None
+    """
+    Set to true to delete EVERY record of the collection with an empty filter ({}). Without it an empty filter is refused (CM-ERRORS-DATABASE-037).
     """
 
 
@@ -12161,10 +12149,17 @@ class UpdateManyRecords(CodeMashRequestBase, IReturn[EmptyResponse]):
 
 
     database_integration_id: Optional[str] = None
-    # @ApiMember(Description="The match filter as a MongoDB extended-JSON document. Empty object means match all.", IsRequired=true)
+    # @ApiMember(Description="The match filter as a MongoDB extended-JSON document. An empty object ({}) matches every record and is refused unless AllRecords is true.", IsRequired=true)
     filter: Optional[str] = None
     """
-    The match filter as a MongoDB extended-JSON document. Empty object means match all.
+    The match filter as a MongoDB extended-JSON document. An empty object ({}) matches every record and is refused unless AllRecords is true.
+    """
+
+
+    # @ApiMember(Description="Set to true to update EVERY record of the collection with an empty filter ({}). Without it an empty filter is refused (CM-ERRORS-DATABASE-037).")
+    all_records: Optional[bool] = None
+    """
+    Set to true to update EVERY record of the collection with an empty filter ({}). Without it an empty filter is refused (CM-ERRORS-DATABASE-037).
     """
 
 
@@ -12632,57 +12627,6 @@ class TestDatabaseAggregateRequest(CodeMashRequestBase, IReturn[TestDatabaseAggr
     """
     Optional key/value substitutions for {TokenKey} placeholders in the pipeline.
     """
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ProcessCollectionImport:
-    import_id: Optional[str] = None
-    project_id: Optional[str] = None
-    account_id: Optional[str] = None
-    database_integration_id: Optional[str] = None
-    env: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TermInserted:
-    project_id: Optional[ProjectId] = None
-    database_integration_id: Optional[IntegrationId] = None
-    taxonomy_id: Optional[TaxonomyId] = None
-    id: Optional[str] = None
-    document: Optional[Object] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TermUpdated:
-    project_id: Optional[ProjectId] = None
-    database_integration_id: Optional[IntegrationId] = None
-    taxonomy_id: Optional[TaxonomyId] = None
-    id: Optional[str] = None
-    from_: Optional[Object] = field(metadata=config(field_name='from'), default=None)
-    to: Optional[Object] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TermDeleted:
-    project_id: Optional[ProjectId] = None
-    database_integration_id: Optional[IntegrationId] = None
-    taxonomy_id: Optional[TaxonomyId] = None
-    id: Optional[str] = None
-    document: Optional[Object] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TermsDeleted:
-    project_id: Optional[ProjectId] = None
-    database_integration_id: Optional[IntegrationId] = None
-    taxonomy_id: Optional[TaxonomyId] = None
-    deleted_count: int = 0
-    filter: Optional[Object] = None
 
 
 # @Route("/{version}/files/disable", "PUT")
@@ -13705,10 +13649,10 @@ class GetEmailCampaignBatches(CodeMashListPaginationRequestBase, IReturn[GetEmai
     Get email campaign batches
     """
 
-    # @ApiMember(Description="The email campaign id to list batches for. Get it from get_all_email_campaigns.", IsRequired=true)
+    # @ApiMember(Description="The email campaign id to list batches for. Get it from get_email_campaigns.", IsRequired=true)
     id: Optional[str] = None
     """
-    The email campaign id to list batches for. Get it from get_all_email_campaigns.
+    The email campaign id to list batches for. Get it from get_email_campaigns.
     """
 
 
@@ -13742,10 +13686,10 @@ class GetEmailCampaignBatchNotification(CodeMashListPaginationRequestBase, IRetu
     Get an email campaign batch notification
     """
 
-    # @ApiMember(Description="The email campaign id. Get it from get_all_email_campaigns.", IsRequired=true)
+    # @ApiMember(Description="The email campaign id. Get it from get_email_campaigns.", IsRequired=true)
     id: Optional[str] = None
     """
-    The email campaign id. Get it from get_all_email_campaigns.
+    The email campaign id. Get it from get_email_campaigns.
     """
 
 
@@ -13779,10 +13723,10 @@ class GetEmailCampaignBatchNotifications(CodeMashListPaginationRequestBase, IRet
     Get email campaign batch notifications
     """
 
-    # @ApiMember(Description="The email campaign id. Get it from get_all_email_campaigns.", IsRequired=true)
+    # @ApiMember(Description="The email campaign id. Get it from get_email_campaigns.", IsRequired=true)
     id: Optional[str] = None
     """
-    The email campaign id. Get it from get_all_email_campaigns.
+    The email campaign id. Get it from get_email_campaigns.
     """
 
 
@@ -13809,10 +13753,10 @@ class GetEmailCampaignStatistics(CodeMashRequestBase, IReturn[GetEmailCampaignSt
     Get email campaign statistics
     """
 
-    # @ApiMember(Description="The email campaign id to get statistics for. Get it from get_all_email_campaigns.", IsRequired=true)
+    # @ApiMember(Description="The email campaign id to get statistics for. Get it from get_email_campaigns.", IsRequired=true)
     id: Optional[str] = None
     """
-    The email campaign id to get statistics for. Get it from get_all_email_campaigns.
+    The email campaign id to get statistics for. Get it from get_email_campaigns.
     """
 
 
@@ -13885,10 +13829,10 @@ class GetEmailCampaignMessagesRequest(CodeMashListPaginationRequestBase, IReturn
     Get email campaign messages
     """
 
-    # @ApiMember(Description="The email campaign id. Get it from get_all_email_campaigns.", IsRequired=true)
+    # @ApiMember(Description="The email campaign id. Get it from get_email_campaigns.", IsRequired=true)
     campaign_id: Optional[str] = None
     """
-    The email campaign id. Get it from get_all_email_campaigns.
+    The email campaign id. Get it from get_email_campaigns.
     """
 
 
@@ -16687,23 +16631,6 @@ class TestMcpIntegration(CodeMashRequestBase, IReturn[TestLlmIntegrationResponse
     """
     Id of the MCP integration to test.
     """
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class IngestSourceMessage:
-    project_id: Optional[str] = None
-    env: Optional[str] = None
-    owner_auth_id: Optional[str] = None
-    source_kind: Optional[str] = None
-    source_id: Optional[str] = None
-    title: Optional[str] = None
-    content_type: Optional[str] = None
-    content: Optional[str] = None
-    embedding_integration_id: Optional[str] = None
-    removed: bool = False
-    metadata: Optional[Dict[str, str]] = None
-    owner_required: bool = False
 
 
 # @Route("/{version}/webhooks/integration", "GET")
