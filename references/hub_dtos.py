@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-05 08:08:29
+Date: 2026-10-05 16:14:43
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -2509,6 +2509,133 @@ class EmailCampaignSchedulerTaskRequest(SchedulerTaskRequest):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class CodeMashRequestBase(RequestBase, IHasProjectId, IHasEnv):
+    # @ApiMember(DataType="string", Description="ID of your project. Can be passed in a header as norbix-project-id.", IsRequired=true, Name="norbix-project-id", ParameterType="header")
+    project_id: Optional[str] = None
+    """
+    ID of your project. Can be passed in a header as norbix-project-id.
+    """
+
+
+    # @ApiMember(DataType="string", Description="Target environment for this request (e.g. TEST, STAGING). Optional — when omitted the request runs against PROD. Can be passed in a header as norbix-env.", Name="norbix-env", ParameterType="header")
+    env: Optional[str] = None
+    """
+    Target environment for this request (e.g. TEST, STAGING). Optional — when omitted the request runs against PROD. Can be passed in a header as norbix-env.
+    """
+
+
+# @Route("/{version}/notifications/sms/campaigns", "POST")
+# @Api(Description="Create SMS campaign")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CreateSmsCampaignRequest(CodeMashRequestBase, IReturn[IdResponse]):
+    """
+    Create SMS campaign
+    """
+
+    # @ApiMember(Description="SMS template id to send — pick one with get_sms_templates. Never invent it.")
+    template_id: Optional[str] = None
+    """
+    SMS template id to send — pick one with get_sms_templates. Never invent it.
+    """
+
+
+    # @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
+    database_integration_id: Optional[str] = None
+    """
+    Optional. Omit to use the project default database integration (resolved per environment).
+    """
+
+
+    # @ApiMember(Description="SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it.", IsRequired=true)
+    integration_id: Optional[str] = None
+    """
+    SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it.
+    """
+
+
+    # @ApiMember(Description="Optional language code forcing one template translation for every recipient.")
+    language: Optional[str] = None
+    """
+    Optional language code forcing one template translation for every recipient.
+    """
+
+
+    initiator_id: Optional[str] = None
+    # @ApiMember(Description="Audience type: 'AllUsers' (every project member subscribed to the SMS channel — role-based delivery can address MILLIONS of contacts), 'SpecifiedUsers' (exact member ids), or 'PhoneNumbers' (raw phone numbers). Fill EXACTLY the settings object matching this value. 'Collection' delivery is not available from chat.")
+    delivery_type: Optional[SmsCampaignRecipientsSourceTypes] = None
+    """
+    Audience type: 'AllUsers' (every project member subscribed to the SMS channel — role-based delivery can address MILLIONS of contacts), 'SpecifiedUsers' (exact member ids), or 'PhoneNumbers' (raw phone numbers). Fill EXACTLY the settings object matching this value. 'Collection' delivery is not available from chat.
+    """
+
+
+    # @ApiMember(Description="For deliveryType 'AllUsers'. JSON object: {\"recipientsSourceType\":\"AllUsers\",\"rolesNames\":[\"authenticated\"],\"userTags\":[],\"campaignTime\":<unix seconds UTC>}. rolesNames/userTags are optional narrowing filters — verify exact role names with get_roles.")
+    all_users: Optional[SmsToAllUsersDeliverySettingsDto] = None
+    """
+    For deliveryType 'AllUsers'. JSON object: {"recipientsSourceType":"AllUsers","rolesNames":["authenticated"],"userTags":[],"campaignTime":<unix seconds UTC>}. rolesNames/userTags are optional narrowing filters — verify exact role names with get_roles.
+    """
+
+
+    # @ApiMember(Description="For deliveryType 'SpecifiedUsers'. JSON object: {\"recipientsSourceType\":\"SpecifiedUsers\",\"recipients\":[<member ids>],\"campaignTime\":<unix seconds UTC>}.")
+    specified_users: Optional[SmsToUsersDeliverySettingsDto] = None
+    """
+    For deliveryType 'SpecifiedUsers'. JSON object: {"recipientsSourceType":"SpecifiedUsers","recipients":[<member ids>],"campaignTime":<unix seconds UTC>}.
+    """
+
+
+    # @ApiMember(Description="For deliveryType 'AccountUsers'. JSON object: {\"recipientsSourceType\":\"AccountUsers\",\"recipients\":[<account owner / team member ids>],\"campaignTime\":<unix seconds UTC>}. Members without a phone number are skipped.")
+    account_users: Optional[SmsToAccountUsersDeliverySettingsDto] = None
+    """
+    For deliveryType 'AccountUsers'. JSON object: {"recipientsSourceType":"AccountUsers","recipients":[<account owner / team member ids>],"campaignTime":<unix seconds UTC>}. Members without a phone number are skipped.
+    """
+
+
+    collection: Optional[SmsToCollectionRecordsDeliverySettingsDto] = None
+    # @ApiMember(Description="For deliveryType 'PhoneNumbers'. JSON object: {\"recipientsSourceType\":\"PhoneNumbers\",\"phoneNumbers\":[\"+37060000000\"],\"campaignTime\":<unix seconds UTC>}. Numbers in international format.")
+    phone_numbers: Optional[SmsToPhoneNumbersDeliverySettingsDto] = None
+    """
+    For deliveryType 'PhoneNumbers'. JSON object: {"recipientsSourceType":"PhoneNumbers","phoneNumbers":["+37060000000"],"campaignTime":<unix seconds UTC>}. Numbers in international format.
+    """
+
+
+    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
+    send_now: Optional[bool] = None
+    """
+    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.
+    """
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SmsCampaignSchedulerTaskRequest(SchedulerTaskRequest):
+    type: Optional[SchedulerTaskType] = None
+    campaign: Optional[CreateSmsCampaignRequest] = None
+    database_integration_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PushCampaignRequest:
+    source: Optional[PushCampaignRecipientsSourceTypes] = None
+    template_id: Optional[str] = None
+    integration_id: Optional[str] = None
+    language: Optional[str] = None
+    initiator_id: Optional[str] = None
+    notes: Optional[str] = None
+    mapped_tokens: Optional[List[TokenMappingDto]] = None
+    campaign_time: Optional[int] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PushCampaignSchedulerTaskRequest(SchedulerTaskRequest):
+    type: Optional[SchedulerTaskType] = None
+    campaign: Optional[PushCampaignRequest] = None
+    database_integration_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MongoDbAggregateDto(IHasViewId):
     view_id: Optional[str] = None
     display_name: Optional[str] = None
@@ -2914,23 +3041,6 @@ class IVersionBasedRequest:
 
 class IHasCorrelationIdRequest:
     correlation_id: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CodeMashRequestBase(RequestBase, IHasProjectId, IHasEnv):
-    # @ApiMember(DataType="string", Description="ID of your project. Can be passed in a header as norbix-project-id.", IsRequired=true, Name="norbix-project-id", ParameterType="header")
-    project_id: Optional[str] = None
-    """
-    ID of your project. Can be passed in a header as norbix-project-id.
-    """
-
-
-    # @ApiMember(DataType="string", Description="Target environment for this request (e.g. TEST, STAGING). Optional — when omitted the request runs against PROD. Can be passed in a header as norbix-env.", Name="norbix-env", ParameterType="header")
-    env: Optional[str] = None
-    """
-    Target environment for this request (e.g. TEST, STAGING). Optional — when omitted the request runs against PROD. Can be passed in a header as norbix-env.
-    """
 
 
 class IHasProjectId:
@@ -3428,19 +3538,6 @@ class PushDeviceDto:
     os_name: Optional[str] = None
     os_version: Optional[str] = None
     platform_api_level: Optional[int] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class PushCampaignRequest:
-    source: Optional[PushCampaignRecipientsSourceTypes] = None
-    template_id: Optional[str] = None
-    integration_id: Optional[str] = None
-    language: Optional[str] = None
-    initiator_id: Optional[str] = None
-    notes: Optional[str] = None
-    mapped_tokens: Optional[List[TokenMappingDto]] = None
-    campaign_time: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4642,6 +4739,10 @@ class TaxonomyListProjection(IHasViewId):
     taxonomy_name: Optional[str] = None
     taxonomy_slug: Optional[str] = None
     parent_id: Optional[str] = None
+    description: Optional[str] = None
+    dependencies: Optional[List[str]] = None
+    parent_name: Optional[str] = None
+    dependency_names: Optional[List[str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4746,6 +4847,7 @@ class SchemaListProjection(IHasViewId):
     has_draft: bool = False
     meta_schema_version: int = 0
     description: Optional[str] = None
+    env: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5067,6 +5169,8 @@ class CampaignDto(IHasResponsibleUserId, IHasDatabaseId):
     status: Optional[CampaignStatusChangeEntryDto] = None
     token_mapping_values: Optional[List[TokenMappingDto]] = None
     notes: Optional[str] = None
+    created_by_id: Optional[str] = None
+    time_zone_id: Optional[str] = None
     user_id: Optional[str] = None
     id: Optional[str] = None
 
@@ -5216,7 +5320,6 @@ class SmsIntegrationListProjection(IntegrationListProjection):
 class SmsCampaignDto(CampaignDto):
     recipients: Optional[SmsCampaignDeliverySettingsDto] = None
     template: Optional[SmsTemplateDto] = None
-    created_by_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8009,14 +8112,14 @@ class RunDiagnosticHealthCheckResponse(ResponseBase):
     result: Optional[DiagnosticHealthCheckDto] = None
 
 
-# @Route("/{version}/code/enable", "GET")
+# @Route("/{version}/code/enable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EnableCode(CodeMashRequestBase, IReturn[EmptyResponse]):
     pass
 
 
-# @Route("/{version}/code/disable", "GET")
+# @Route("/{version}/code/disable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class DisableCode(CodeMashRequestBase, IReturn[EmptyResponse]):
@@ -8589,6 +8692,8 @@ class InternalsTypeGen:
     typegen_193__webhook_destination_dto: Optional[WebhookDestinationDto] = None
     typegen_194__scheduler_task_dto: Optional[SchedulerTaskDto] = None
     typegen_249__email_campaign_scheduler_task_request: Optional[EmailCampaignSchedulerTaskRequest] = None
+    typegen_250__sms_campaign_scheduler_task_request: Optional[SmsCampaignSchedulerTaskRequest] = None
+    typegen_251__push_campaign_scheduler_task_request: Optional[PushCampaignSchedulerTaskRequest] = None
     typegen_195__mongo_db_aggregate_dto: Optional[MongoDbAggregateDto] = None
     typegen_196__marketplace_integration_dto: Optional[MarketplaceIntegrationDto] = None
     typegen_197__marketplace_function_dto: Optional[MarketplaceFunctionDto] = None
@@ -10199,14 +10304,14 @@ class DeleteAiServiceUserRequest(RequestBase, IReturn[EmptyResponse]):
     """
 
 
-# @Route("/{version}/membership/disable", "GET")
+# @Route("/{version}/membership/disable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class DisableMembership(CodeMashRequestBase, IReturn[EmptyResponse]):
     pass
 
 
-# @Route("/{version}/membership/enable", "GET")
+# @Route("/{version}/membership/enable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EnableMembership(CodeMashRequestBase, IReturn[EmptyResponse]):
@@ -10864,7 +10969,7 @@ class UpdateAuthenticationSettings(CodeMashRequestBase, IReturn[EmptyResponse]):
     """
 
 
-# @Route("/{version}/database/disable", "GET")
+# @Route("/{version}/database/disable", "PUT")
 # @Api(Description="Disable database service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -10876,7 +10981,7 @@ class DisableDatabase(CodeMashRequestBase, IReturn[EmptyResponse]):
     pass
 
 
-# @Route("/{version}/database/enable", "GET")
+# @Route("/{version}/database/enable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EnableDatabase(CodeMashRequestBase, IReturn[EmptyResponse]):
@@ -12580,14 +12685,14 @@ class TermsDeleted:
     filter: Optional[Object] = None
 
 
-# @Route("/{version}/files/disable", "GET")
+# @Route("/{version}/files/disable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class DisableFiles(CodeMashRequestBase, IReturn[EmptyResponse]):
     pass
 
 
-# @Route("/{version}/files/enable", "GET")
+# @Route("/{version}/files/enable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EnableFiles(CodeMashRequestBase, IReturn[EmptyResponse]):
@@ -12826,7 +12931,7 @@ class GetFolderFiles(CodeMashListPaginationRequestBase, IReturn[GetFolderFilesRe
     """
 
 
-# @Route("/{version}/notifications/email/disable", "GET")
+# @Route("/{version}/notifications/email/disable", "PUT")
 # @Api(Description="Disable email service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -12850,7 +12955,7 @@ class GetEmailDisableDependencies(CodeMashRequestBase, IReturn[GetNotificationMo
     pass
 
 
-# @Route("/{version}/notifications/email/enable", "GET")
+# @Route("/{version}/notifications/email/enable", "PUT")
 # @Api(Description="Enable email service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -13801,7 +13906,7 @@ class GetEmailCampaignMessagesRequest(CodeMashListPaginationRequestBase, IReturn
     """
 
 
-# @Route("/{version}/notifications/sms/disable", "GET")
+# @Route("/{version}/notifications/sms/disable", "PUT")
 # @Api(Description="Disable SMS service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -13825,7 +13930,7 @@ class GetSmsDisableDependencies(CodeMashRequestBase, IReturn[GetNotificationModu
     pass
 
 
-# @Route("/{version}/notifications/sms/enable", "GET")
+# @Route("/{version}/notifications/sms/enable", "PUT")
 # @Api(Description="Enable SMS service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -14168,87 +14273,6 @@ class TestSmsIntegration(CodeMashRequestBase, IReturn[TestSmsIntegrationResponse
     """
 
 
-# @Route("/{version}/notifications/sms/campaigns", "POST")
-# @Api(Description="Create SMS campaign")
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CreateSmsCampaignRequest(CodeMashRequestBase, IReturn[IdResponse]):
-    """
-    Create SMS campaign
-    """
-
-    # @ApiMember(Description="SMS template id to send — pick one with get_sms_templates. Never invent it.")
-    template_id: Optional[str] = None
-    """
-    SMS template id to send — pick one with get_sms_templates. Never invent it.
-    """
-
-
-    # @ApiMember(Description="Optional. Omit to use the project default database integration (resolved per environment).")
-    database_integration_id: Optional[str] = None
-    """
-    Optional. Omit to use the project default database integration (resolved per environment).
-    """
-
-
-    # @ApiMember(Description="SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it.", IsRequired=true)
-    integration_id: Optional[str] = None
-    """
-    SMS provider integration id the campaign sends through — pick one with get_sms_integrations (the project default unless the user named another). Required; never invent it.
-    """
-
-
-    # @ApiMember(Description="Optional language code forcing one template translation for every recipient.")
-    language: Optional[str] = None
-    """
-    Optional language code forcing one template translation for every recipient.
-    """
-
-
-    initiator_id: Optional[str] = None
-    # @ApiMember(Description="Audience type: 'AllUsers' (every project member subscribed to the SMS channel — role-based delivery can address MILLIONS of contacts), 'SpecifiedUsers' (exact member ids), or 'PhoneNumbers' (raw phone numbers). Fill EXACTLY the settings object matching this value. 'Collection' delivery is not available from chat.")
-    delivery_type: Optional[SmsCampaignRecipientsSourceTypes] = None
-    """
-    Audience type: 'AllUsers' (every project member subscribed to the SMS channel — role-based delivery can address MILLIONS of contacts), 'SpecifiedUsers' (exact member ids), or 'PhoneNumbers' (raw phone numbers). Fill EXACTLY the settings object matching this value. 'Collection' delivery is not available from chat.
-    """
-
-
-    # @ApiMember(Description="For deliveryType 'AllUsers'. JSON object: {\"recipientsSourceType\":\"AllUsers\",\"rolesNames\":[\"authenticated\"],\"userTags\":[],\"campaignTime\":<unix seconds UTC>}. rolesNames/userTags are optional narrowing filters — verify exact role names with get_roles.")
-    all_users: Optional[SmsToAllUsersDeliverySettingsDto] = None
-    """
-    For deliveryType 'AllUsers'. JSON object: {"recipientsSourceType":"AllUsers","rolesNames":["authenticated"],"userTags":[],"campaignTime":<unix seconds UTC>}. rolesNames/userTags are optional narrowing filters — verify exact role names with get_roles.
-    """
-
-
-    # @ApiMember(Description="For deliveryType 'SpecifiedUsers'. JSON object: {\"recipientsSourceType\":\"SpecifiedUsers\",\"recipients\":[<member ids>],\"campaignTime\":<unix seconds UTC>}.")
-    specified_users: Optional[SmsToUsersDeliverySettingsDto] = None
-    """
-    For deliveryType 'SpecifiedUsers'. JSON object: {"recipientsSourceType":"SpecifiedUsers","recipients":[<member ids>],"campaignTime":<unix seconds UTC>}.
-    """
-
-
-    # @ApiMember(Description="For deliveryType 'AccountUsers'. JSON object: {\"recipientsSourceType\":\"AccountUsers\",\"recipients\":[<account owner / team member ids>],\"campaignTime\":<unix seconds UTC>}. Members without a phone number are skipped.")
-    account_users: Optional[SmsToAccountUsersDeliverySettingsDto] = None
-    """
-    For deliveryType 'AccountUsers'. JSON object: {"recipientsSourceType":"AccountUsers","recipients":[<account owner / team member ids>],"campaignTime":<unix seconds UTC>}. Members without a phone number are skipped.
-    """
-
-
-    collection: Optional[SmsToCollectionRecordsDeliverySettingsDto] = None
-    # @ApiMember(Description="For deliveryType 'PhoneNumbers'. JSON object: {\"recipientsSourceType\":\"PhoneNumbers\",\"phoneNumbers\":[\"+37060000000\"],\"campaignTime\":<unix seconds UTC>}. Numbers in international format.")
-    phone_numbers: Optional[SmsToPhoneNumbersDeliverySettingsDto] = None
-    """
-    For deliveryType 'PhoneNumbers'. JSON object: {"recipientsSourceType":"PhoneNumbers","phoneNumbers":["+37060000000"],"campaignTime":<unix seconds UTC>}. Numbers in international format.
-    """
-
-
-    # @ApiMember(Description="Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.")
-    send_now: Optional[bool] = None
-    """
-    Optional. true sends the campaign now (or at a campaignTime sooner than the review window). Without it, a campaign created by an AI tool must be scheduled at least 24 hours ahead for role-based / all-users / collection audiences and at least 1 hour ahead for direct recipient lists, or it is rejected with CM-ERRORS-CAMPAIGNS-017. Set it only when the user explicitly asked to send now.
-    """
-
-
 # @Route("/{version}/notifications/sms/campaigns/{id}", "DELETE")
 # @Api(Description="Deletes sms campaign from queue")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -14585,7 +14609,7 @@ class GetMarketplaceFunctionCatalog(CodeMashRequestBase, IReturn[GetMarketplaceF
     """
 
 
-# @Route("/{version}/notifications/push/disable", "GET")
+# @Route("/{version}/notifications/push/disable", "PUT")
 # @Api(Description="Disable push service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -14609,7 +14633,7 @@ class GetPushDisableDependencies(CodeMashRequestBase, IReturn[GetNotificationMod
     pass
 
 
-# @Route("/{version}/notifications/push/enable", "GET")
+# @Route("/{version}/notifications/push/enable", "PUT")
 # @Api(Description="Enable push service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -15384,7 +15408,7 @@ class GetPushCampaignMessagesRequest(CodeMashListPaginationRequestBase, IReturn[
     """
 
 
-# @Route("/{version}/payments/disable", "GET")
+# @Route("/{version}/payments/disable", "PUT")
 # @Api(Description="Disable payments service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -15396,7 +15420,7 @@ class DisablePayments(CodeMashRequestBase, IReturn[EmptyResponse]):
     pass
 
 
-# @Route("/{version}/payments/enable", "GET")
+# @Route("/{version}/payments/enable", "PUT")
 # @Api(Description="Enable payments service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -15618,7 +15642,7 @@ class TestPaymentsIntegration(CodeMashRequestBase, IReturn[TestPaymentsIntegrati
     """
 
 
-# @Route("/{version}/logs/disable", "GET")
+# @Route("/{version}/logs/disable", "PUT")
 # @Api(Description="Disable logging service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -15630,7 +15654,7 @@ class DisableLogging(CodeMashRequestBase, IReturn[EmptyResponse]):
     pass
 
 
-# @Route("/{version}/logs/enable", "GET")
+# @Route("/{version}/logs/enable", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EnableLogging(CodeMashRequestBase, IReturn[EmptyResponse]):
