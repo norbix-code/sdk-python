@@ -23,6 +23,13 @@ dev = [
   "python-semantic-release>=9.15.0",
 ]
 
+[tool.uv]
+# Security floors for packages only the release tool pulls in (python-semantic-release →
+# GitPython, requests → urllib3). Locking only, never in the published wheel's metadata.
+# Alerts: GHSA-239g-whfq-7xj9, GHSA-g5vv-9gxw-82hx, GHSA-whh4-5q6c-9v3x, GHSA-59cr-6r3x-644w
+# (GitPython), GHSA-8988-9cw3-xx77, GHSA-vxq7-64xx-v4gw, GHSA-gh4c-6fx4-qh6g (urllib3).
+constraint-dependencies = ["gitpython>=3.1.62", "urllib3>=2.8.0"]
+
 [build-system]
 requires = ["hatchling>=1.26.0"]
 build-backend = "hatchling.build"
