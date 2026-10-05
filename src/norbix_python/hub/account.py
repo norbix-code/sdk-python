@@ -525,14 +525,56 @@ class AccountModule:
         )
 
     def get_account_collaborators(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/collaborators"""
+        """GET /{version}/account/collaborators
+
+        The account owner and team members. The gateway takes the account from
+        the signed-in session, so no ``account_id`` is needed. Page with the
+        flat fields ``pageSize`` (default 20), ``startingAfter`` and
+        ``endingBefore``; ``projectId`` (without ``includeAccountOwner``)
+        narrows the list to one project's collaborators.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/account/collaborators",
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_my_account_user_profile(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/me
+
+        The signed-in account user's own profile, including the phone saved
+        with ``update_my_account_user_phone``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/me",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_my_account_user_phone(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/me/phone
+
+        Saves the signed-in account user's ``phone`` (E.164 format, e.g.
+        ``+37060000000``; an empty value clears it). "Account users" SMS
+        campaigns send to this number.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/me/phone",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1441,14 +1483,56 @@ class AsyncAccountModule:
         )
 
     async def get_account_collaborators(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/collaborators"""
+        """GET /{version}/account/collaborators
+
+        The account owner and team members. The gateway takes the account from
+        the signed-in session, so no ``account_id`` is needed. Page with the
+        flat fields ``pageSize`` (default 20), ``startingAfter`` and
+        ``endingBefore``; ``projectId`` (without ``includeAccountOwner``)
+        narrows the list to one project's collaborators.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/account/collaborators",
             method="GET",
             path_params={},
             request=request,
-            scope="account",
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_my_account_user_profile(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/me
+
+        The signed-in account user's own profile, including the phone saved
+        with ``update_my_account_user_phone``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/me",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_my_account_user_phone(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/me/phone
+
+        Saves the signed-in account user's ``phone`` (E.164 format, e.g.
+        ``+37060000000``; an empty value clears it). "Account users" SMS
+        campaigns send to this number.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/me/phone",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
