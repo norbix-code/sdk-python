@@ -96,9 +96,17 @@ with warnings.catch_warnings():
 
 
 class WebhookEnvelope(_Model):
-    """The raw JSON envelope POSTed to a destination."""
+    """The raw JSON envelope POSTed to a destination.
+
+    ``id`` is one per delivery (a retry of the same delivery keeps it).
+    ``event_id`` (``eventId``) is one per change: every delivery made for the
+    same change (the plain delivery and each schema Webhook-trigger delivery)
+    carries the same value. Older gateways do not send it — use
+    :attr:`dedupe_id`, which falls back to ``id``.
+    """
 
     id: str
+    event_id: str | None = Field(default=None, alias="eventId")
     event: str
     created_on: str | None = Field(default=None, alias="createdOn")
     account_id: str | None = Field(default=None, alias="accountId")
@@ -106,15 +114,24 @@ class WebhookEnvelope(_Model):
     trigger_id: str | None = Field(default=None, alias="triggerId")
     data: Any = None
 
+    @property
+    def dedupe_id(self) -> str:
+        """The id to de-duplicate on: ``eventId``, or ``id`` when it is absent."""
+        return self.event_id or self.id
+
 
 class WebhookEvent(_Model):
     """Metadata object passed as the 2nd argument to a typed handler.
 
     Carries the delivery facts plus identifiers under ``metadata``.
+    ``delivery_id`` is the envelope ``id`` (one per delivery); ``event_id`` is
+    the envelope ``eventId`` (one per change — de-duplicate on it), set to
+    ``delivery_id`` when the gateway did not send one.
     """
 
     name: str
     delivery_id: str = Field(alias="deliveryId")
+    event_id: str | None = Field(default=None, alias="eventId")
     created_on: str | None = Field(default=None, alias="createdOn")
     trigger_id: str | None = Field(default=None, alias="triggerId")
     correlation_id: str | None = Field(default=None, alias="correlationId")
@@ -132,6 +149,7 @@ class WebhookContext(_Model):
 
     path: str | None = None
     verified: bool | None = None
+    event_id: str | None = Field(default=None, alias="eventId")
     account_id: str | None = Field(default=None, alias="accountId")
     project_id: str | None = Field(default=None, alias="projectId")
     integration_id: str | None = Field(default=None, alias="integrationId")
@@ -144,6 +162,7 @@ class WebhookHandleResult(_Model):
     received: bool = True
     event: str
     delivery_id: str = Field(alias="deliveryId")
+    event_id: str | None = Field(default=None, alias="eventId")
     verified: bool | None = None
     handled: bool = False
     trigger_id: str | None = Field(default=None, alias="triggerId")
