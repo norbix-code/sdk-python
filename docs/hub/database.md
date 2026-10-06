@@ -176,6 +176,12 @@ Other rules for record writes:
   ("Two schemas cannot share one collection"); the error context carries
   `SchemaName`. The schema name is the MongoDB collection name, so two schemas
   can never share it.
+- `delete_database_schema(id)` also drops the schema's records: its MongoDB
+  collection (with its indexes) in the request environment, in every active
+  database integration of that environment. For a schema with AI embed on, its
+  records are also removed from the AI knowledge. Request and response did not
+  change, and a retry is safe. When the delete is refused (below), nothing is
+  dropped.
 - `delete_database_schema(id)` is also refused while a saved aggregate starts
   from the schema or joins it: `CM-ERRORS-SCHEMA-018`. The message names the
   aggregates; `err.errors[0].context` has `BlockerAggregateIds` and
