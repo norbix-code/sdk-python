@@ -83,6 +83,38 @@ def on_updated(change, event):           # change: Mutation[UserDto]
 > Python note: `from` is a keyword, so the mutation field is `from_` (its JSON
 > alias is still `from`).
 
+## Delivery id vs event id — de-duplicate on `eventId`
+
+Every envelope carries two ids:
+
+| Field (JSON) | Python | One per | Use it to |
+|--------------|--------|---------|-----------|
+| `id` | `event.delivery_id`, `envelope.id` | delivery (a retry keeps it) | de-duplicate **retries** |
+| `eventId` | `event.event_id`, `envelope.event_id` | change | de-duplicate the **same change** arriving through several deliveries |
+
+One change can reach the same destination **twice**: when the destination is
+subscribed to the event **and** a schema Webhook trigger targets it, Norbix
+makes two deliveries — one with `triggerId` `None`, one with `triggerId` set.
+They have two different `id`s and **one** `eventId`. When the publisher has no
+shared event id (Files, Membership, Payments, AI triggers), `eventId` equals
+`id`.
+
+Older gateways do not send `eventId`. The receiver then sets
+`event.event_id` (and `ctx.event_id`, `result.event_id`) to the delivery `id`;
+`envelope.event_id` stays `None` and `envelope.dedupe_id` gives the fallback.
+
+```python
+seen: set[str] = set()  # use a shared store (Redis, a DB unique key) in production
+
+
+@receiver.on(NorbixWebhookEvents.Database.RECORD_UPDATED)
+def on_record_updated(change, event: WebhookEvent) -> None:
+    if event.event_id in seen:
+        return  # same change, already handled (other delivery or a retry)
+    seen.add(event.event_id)
+    ...
+```
+
 ## Signature verification
 
 Norbix signs each delivery with `X-Norbix-Signature: sha256=<hex>` over
@@ -100,7 +132,7 @@ skipped and `result.verified` is `None`.
 | `NorbixWebhookEvents` | Named event constants |
 | `NORBIX_WEBHOOK_EVENT_NAMES` | Closed catalog of event names |
 | `UserDto`, `FileResourceRef`, `Mutation`, `UserMutation` | Payload models |
-| `WebhookEvent`, `WebhookContext`, `WebhookEnvelope` | Metadata / raw models |
+| `WebhookEvent`, `WebhookContext`, `WebhookEnvelope` | Metadata / raw models (`event_id`, `delivery_id`, `envelope.dedupe_id`) |
 | `verify_signature`, `compute_signature`, `parse_webhook_headers` | Low-level helpers |
 | `normalize_webhook` | Envelope → `(payload, metadata)` |
 
