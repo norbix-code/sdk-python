@@ -27,6 +27,8 @@ def _body(event: str, data: dict[str, object], **extra: object) -> str:
         "triggerId": extra.get("triggerId", "trg_1"),
         "data": data,
     }
+    if "eventId" in extra:
+        payload["eventId"] = extra["eventId"]
     return json.dumps(payload)
 
 
@@ -221,3 +223,97 @@ def test_async_receiver_awaits_async_handler() -> None:
     asyncio.run(run())
     assert isinstance(captured["payload"], UserDto)
     assert captured["payload"].email == "x@y.io"  # type: ignore[union-attr]
+
+
+def test_event_id_is_exposed_on_event_context_and_result() -> None:
+    receiver = NorbixWebhookReceiver()
+    captured: dict[str, object] = {}
+
+    receiver.on(
+        NorbixWebhookEvents.Database.RECORD_INSERTED,
+        lambda payload, event: captured.update(event=event),
+    )
+    receiver.on_all(
+        [NorbixWebhookEvents.Database.RECORD_INSERTED],
+        lambda envelope, ctx: captured.update(envelope=envelope, ctx=ctx),
+    )
+    result = receiver.handle(
+        raw_body=_body(
+            "database.record.inserted",
+            {"schemaName": "users", "id": "rec_1", "document": {"id": "rec_1"}},
+            id="dlv_7",
+            eventId="evt_1",
+        ),
+        headers={},
+    )
+
+    event = captured["event"]
+    assert event.delivery_id == "dlv_7"  # type: ignore[attr-defined]
+    assert event.event_id == "evt_1"  # type: ignore[attr-defined]
+    assert event.raw.event_id == "evt_1"  # type: ignore[attr-defined]
+    assert captured["envelope"].dedupe_id == "evt_1"  # type: ignore[attr-defined]
+    assert captured["ctx"].event_id == "evt_1"  # type: ignore[attr-defined]
+    assert result.event_id == "evt_1"
+    assert result.delivery_id == "dlv_7"
+    assert result.model_dump(by_alias=True)["eventId"] == "evt_1"
+
+
+def test_event_id_falls_back_to_id_for_older_gateways() -> None:
+    receiver = NorbixWebhookReceiver()
+    captured: dict[str, object] = {}
+
+    receiver.on(
+        NorbixWebhookEvents.Membership.USER_REGISTERED,
+        lambda payload, event: captured.update(event=event),
+    )
+    result = receiver.handle(
+        raw_body=_body("membership.user.registered", {"id": "u", "to": {"id": "u"}}, id="dlv_9"),
+        headers={},
+    )
+
+    event = captured["event"]
+    assert event.raw.event_id is None  # type: ignore[attr-defined]
+    assert event.event_id == "dlv_9"  # type: ignore[attr-defined]
+    assert result.event_id == "dlv_9"
+
+
+def test_two_deliveries_of_one_change_share_event_id() -> None:
+    """Plain delivery + schema Webhook-trigger delivery: two ids, one eventId."""
+    receiver = NorbixWebhookReceiver()
+    seen: set[str] = set()
+    processed: list[str] = []
+
+    @receiver.on(NorbixWebhookEvents.Database.RECORD_INSERTED)
+    def handle(payload: object, event: object) -> None:  # noqa: ANN401
+        key = event.event_id  # type: ignore[attr-defined]
+        if key in seen:
+            return
+        seen.add(key)
+        processed.append(event.delivery_id)  # type: ignore[attr-defined]
+
+    data = {"schemaName": "users", "id": "rec_1", "document": {"id": "rec_1"}}
+    plain = _body("database.record.inserted", data, id="dlv_a", eventId="evt_1", triggerId=None)
+    trigger = _body("database.record.inserted", data, id="dlv_b", eventId="evt_1", triggerId="trg_1")
+
+    first = receiver.handle(raw_body=plain, headers={})
+    second = receiver.handle(raw_body=trigger, headers={})
+
+    assert (first.delivery_id, second.delivery_id) == ("dlv_a", "dlv_b")
+    assert first.event_id == second.event_id == "evt_1"
+    assert (first.trigger_id, second.trigger_id) == (None, "trg_1")
+    assert processed == ["dlv_a"]
+
+
+def test_async_receiver_exposes_event_id() -> None:
+    import asyncio
+
+    receiver = AsyncNorbixWebhookReceiver()
+
+    async def run() -> object:
+        return await receiver.handle(
+            raw_body=_body("files.file.uploaded", {}, id="dlv_3", eventId="evt_3"),
+            headers={},
+        )
+
+    result = asyncio.run(run())
+    assert result.event_id == "evt_3"  # type: ignore[attr-defined]

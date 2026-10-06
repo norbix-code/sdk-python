@@ -147,6 +147,7 @@ class _BaseReceiver:
         event = WebhookEvent(
             name=envelope.event,
             deliveryId=envelope.id,
+            eventId=envelope.dedupe_id,
             createdOn=envelope.created_on,
             triggerId=envelope.trigger_id,
             correlationId=None,
@@ -161,6 +162,7 @@ class _BaseReceiver:
         ctx = WebhookContext(
             path=None,
             verified=verified,
+            eventId=envelope.dedupe_id,
             accountId=dh.account_id or envelope.account_id,
             projectId=dh.project_id or envelope.project_id,
             integrationId=dh.integration_id,
@@ -175,6 +177,7 @@ class _BaseReceiver:
         return WebhookHandleResult(
             event=envelope.event,
             deliveryId=envelope.id,
+            eventId=envelope.dedupe_id,
             verified=verified,
             handled=handled,
             triggerId=envelope.trigger_id,
