@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-05 16:14:43
+Date: 2026-10-07 10:03:25
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -4754,6 +4754,7 @@ class TermTreeDto:
     order: Optional[int] = None
     name: Optional[str] = None
     names: Optional[Dict[str, str]] = None
+    slug: Optional[str] = None
     description: Optional[str] = None
     descriptions: Optional[Dict[str, str]] = None
     multi_parents: Optional[List[TermMultiParentDto]] = None
@@ -4782,6 +4783,7 @@ class TermDto:
     order: Optional[int] = None
     name: Optional[str] = None
     names: Optional[Dict[str, str]] = None
+    slug: Optional[str] = None
     description: Optional[str] = None
     descriptions: Optional[Dict[str, str]] = None
     multi_parents: Optional[List[TermMultiParentDto]] = None
@@ -5485,6 +5487,7 @@ class PushCampaignBatchNotificationDto(CampaignBatchNotificationDto):
 class PaymentsWebhookLogEntry:
     integration_id: Optional[str] = None
     source: Optional[str] = None
+    env: Optional[str] = None
     event_name: Optional[str] = None
     provider_event_id: Optional[str] = None
     status_code: int = 0
@@ -5525,6 +5528,7 @@ class TenantLogEntryDto:
     correlation_id: Optional[str] = None
     trace_id: Optional[str] = None
     span_id: Optional[str] = None
+    env: Optional[str] = None
     meta: Optional[IReadOnlyDictionary[str, str]] = None
 
 
@@ -6427,6 +6431,8 @@ class StringFieldDto(JsonSchemaFieldDto):
     min_length: Optional[int] = None
     max_length: Optional[int] = None
     translate_options: Optional[IReadOnlyDictionary[str, str]] = None
+    default: Optional[str] = None
+    unique: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6435,18 +6441,31 @@ class DecimalFieldDto(JsonSchemaFieldDto):
     minimum: Optional[Decimal] = None
     maximum: Optional[Decimal] = None
     multiple_of: Optional[Decimal] = None
+    default: Optional[Decimal] = None
+    unique: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CurrencyDefaultDto:
+    value: Decimal = decimal.Decimal(0)
+    currency: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class CurrencyFieldDto(JsonSchemaFieldDto):
     allowed_currencies: Optional[IReadOnlyList[str]] = None
+    multiple_of: Optional[Decimal] = None
+    minimum: Optional[Decimal] = None
+    maximum: Optional[Decimal] = None
+    default: Optional[CurrencyDefaultDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class BooleanFieldDto(JsonSchemaFieldDto):
-    pass
+    default: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6454,6 +6473,7 @@ class BooleanFieldDto(JsonSchemaFieldDto):
 class DateFieldDto(JsonSchemaFieldDto):
     minimum: Optional[int] = None
     maximum: Optional[int] = None
+    default: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6461,6 +6481,8 @@ class DateFieldDto(JsonSchemaFieldDto):
 class IntegerFieldDto(JsonSchemaFieldDto):
     minimum: Optional[int] = None
     maximum: Optional[int] = None
+    default: Optional[int] = None
+    unique: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6472,13 +6494,19 @@ class GeolocationFieldDto(JsonSchemaFieldDto):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class TagsFieldDto(JsonSchemaFieldDto):
-    pass
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    default: Optional[IReadOnlyList[str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class FileFieldDto(JsonSchemaFieldDto):
     storages: Optional[IReadOnlyList[str]] = None
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    allowed_file_type: Optional[str] = None
+    max_size_mb: Optional[Decimal] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6486,6 +6514,7 @@ class FileFieldDto(JsonSchemaFieldDto):
 class TaxonomySelectionFieldDto(JsonSchemaFieldDto):
     taxonomy_id: Optional[str] = None
     multiple: bool = False
+    display_field: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6500,12 +6529,14 @@ class CollectionSelectionFieldDto(JsonSchemaFieldDto):
 @dataclass
 class UserSelectionFieldDto(JsonSchemaFieldDto):
     multiple: bool = False
+    display_field: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class RoleSelectionFieldDto(JsonSchemaFieldDto):
     multiple: bool = False
+    display_field: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6513,6 +6544,29 @@ class RoleSelectionFieldDto(JsonSchemaFieldDto):
 class EnumSelectionFieldDto(JsonSchemaFieldDto):
     values: Optional[IReadOnlyList[str]] = None
     multiple: bool = False
+    default: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ObjectFieldDto(JsonSchemaFieldDto):
+    properties: Optional[IReadOnlyList[JsonSchemaFieldDto]] = None
+    required: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ArrayFieldDto(JsonSchemaFieldDto):
+    items: Optional[JsonSchemaFieldDto] = None
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    unique_items: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class JsonFieldDto(JsonSchemaFieldDto):
+    max_bytes: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7164,6 +7218,14 @@ class GetFilesIntegrationsResponse(ResponseBase):
 @dataclass
 class TestFilesIntegrationResponse(ResponseBase):
     items: Optional[IReadOnlyList[IntegrationTestResultItemDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetFileByIdResponse(ResponseBase):
+    file: Optional[FileResourceRefDto] = None
+    is_public: Optional[bool] = None
+    public_url: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -11341,10 +11403,10 @@ class SaveDatabaseTaxonomyTermRequest(CodeMashRequestBase, IReturn[IdResponse]):
     """
 
 
-    # @ApiMember(Description="The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents (\"additional categories\": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {\"name\":\"France\",\"order\":1}.", IsRequired=true)
+    # @ApiMember(Description="The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; slug (optional — the URL-safe name, unique inside the taxonomy; derived from name when omitted, e.g. 'France' → 'france', with a -2, -3… suffix when another term of the taxonomy already has that derived slug; an explicit slug another term has is refused, CM-ERRORS-TAXONOMIES-012); order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents (\"additional categories\": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {\"name\":\"France\",\"order\":1}.", IsRequired=true)
     document: Optional[str] = None
     """
-    The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents ("additional categories": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {"name":"France","order":1}.
+    The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; slug (optional — the URL-safe name, unique inside the taxonomy; derived from name when omitted, e.g. 'France' → 'france', with a -2, -3… suffix when another term of the taxonomy already has that derived slug; an explicit slug another term has is refused, CM-ERRORS-TAXONOMIES-012); order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents ("additional categories": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {"name":"France","order":1}.
     """
 
 
@@ -11378,10 +11440,10 @@ class UpdateDatabaseTaxonomyTermRequest(CodeMashRequestBase, IReturn[EmptyRespon
     """
 
 
-    # @ApiMember(Description="Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents (\"additional categories\": array of {taxonomyId, parentId}). Example to rank a term: {\"order\":1}.", IsRequired=true)
+    # @ApiMember(Description="Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map — a new name re-derives the slug unless 'slug' is sent too; a derived slug another term has gets a -2, -3… suffix); slug (optional — set explicitly, unique inside the taxonomy, CM-ERRORS-TAXONOMIES-012 when another term has it); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents (\"additional categories\": array of {taxonomyId, parentId}). Example to rank a term: {\"order\":1}.", IsRequired=true)
     update: Optional[str] = None
     """
-    Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents ("additional categories": array of {taxonomyId, parentId}). Example to rank a term: {"order":1}.
+    Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map — a new name re-derives the slug unless 'slug' is sent too; a derived slug another term has gets a -2, -3… suffix); slug (optional — set explicitly, unique inside the taxonomy, CM-ERRORS-TAXONOMIES-012 when another term has it); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents ("additional categories": array of {taxonomyId, parentId}). Example to rank a term: {"order":1}.
     """
 
 
@@ -11667,10 +11729,10 @@ class UpdateDatabaseSchemaDraftRequest(CodeMashRequestBase, IReturn[EmptyRespons
     """
 
 
-    # @ApiMember(Description="OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or invalid, the backend auto-generates a flat-list form from the data schema.")
+    # @ApiMember(Description="OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or empty (no field cell), the backend auto-generates a flat-list form from the data schema; a layout that fails the meta-schema is refused with the key named.")
     visual_schema: Optional[str] = None
     """
-    OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or invalid, the backend auto-generates a flat-list form from the data schema.
+    OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or empty (no field cell), the backend auto-generates a flat-list form from the data schema; a layout that fails the meta-schema is refused with the key named.
     """
 
 
@@ -11982,6 +12044,11 @@ class FindRecords(CodeMashListPaginationRequestBase, IReturn[FindRecordsResponse
     paging_args: Optional[PagingArgs] = None
     sort_by: Optional[str] = None
     sort_order: Optional[int] = None
+    # @ApiMember(Description="Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.")
+    expand_references: bool = False
+    """
+    Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.
+    """
 
 
 # @Route("/{version}/database/collections/{collectionName}/{id}", "GET")
@@ -12008,6 +12075,11 @@ class FindOneRecord(CodeMashRequestBase, IReturn[FindOneRecordResponse]):
 
 
     database_integration_id: Optional[str] = None
+    # @ApiMember(Description="Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.")
+    expand_references: bool = False
+    """
+    Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.
+    """
 
 
 # @Route("/{version}/database/collections/{collectionName}/indexes", "GET")
@@ -12163,10 +12235,17 @@ class UpdateManyRecords(CodeMashRequestBase, IReturn[EmptyResponse]):
     """
 
 
-    # @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON.", IsRequired=true)
+    # @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {\"address.city\":\"Vilnius\"}, {\"lines.$[].qty\":1}, or {\"lines.$[line].qty\":3} together with ArrayFilters.", IsRequired=true)
     update: Optional[str] = None
     """
-    The partial update document (applied with $set), as MongoDB extended-JSON.
+    The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {"address.city":"Vilnius"}, {"lines.$[].qty":1}, or {"lines.$[line].qty":3} together with ArrayFilters.
+    """
+
+
+    # @ApiMember(Description="Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{\"line.sku\":\"A-1\"}] for {\"lines.$[line].qty\":3}.")
+    array_filters: Optional[str] = None
+    """
+    Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{"line.sku":"A-1"}] for {"lines.$[line].qty":3}.
     """
 
 
@@ -12194,10 +12273,17 @@ class UpdateOneRecord(CodeMashRequestBase, IReturn[EmptyResponse]):
 
 
     database_integration_id: Optional[str] = None
-    # @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON.", IsRequired=true)
+    # @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {\"address.city\":\"Vilnius\"}, {\"lines.2.qty\":3}, {\"lines.$[].qty\":1}, or {\"lines.$[line].qty\":3} together with ArrayFilters.", IsRequired=true)
     update: Optional[str] = None
     """
-    The partial update document (applied with $set), as MongoDB extended-JSON.
+    The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {"address.city":"Vilnius"}, {"lines.2.qty":3}, {"lines.$[].qty":1}, or {"lines.$[line].qty":3} together with ArrayFilters.
+    """
+
+
+    # @ApiMember(Description="Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{\"line.sku\":\"A-1\"}] for {\"lines.$[line].qty\":3}.")
+    array_filters: Optional[str] = None
+    """
+    Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{"line.sku":"A-1"}] for {"lines.$[line].qty":3}.
     """
 
 
@@ -12854,6 +12940,24 @@ class TestFilesIntegration(CodeMashRequestBase, IReturn[TestFilesIntegrationResp
     integration_id: Optional[str] = None
     """
     Integration id, from get_files_integrations.
+    """
+
+
+# @Route("/{version}/files/item/by-id", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetFileById(CodeMashRequestBase, IReturn[GetFileByIdResponse]):
+    # @ApiMember(Description="The files integration id to read from, from get_files_integrations.", IsRequired=true)
+    files_integration_id: Optional[str] = None
+    """
+    The files integration id to read from, from get_files_integrations.
+    """
+
+
+    # @ApiMember(Description="The file id — nbfl_… as the Files endpoints return it, or its bare UUID.", IsRequired=true)
+    id: Optional[str] = None
+    """
+    The file id — nbfl_… as the Files endpoints return it, or its bare UUID.
     """
 
 
