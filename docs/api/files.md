@@ -6,6 +6,7 @@ Access with `norbix.api.files`.
 | --- | --- | --- | --- |
 | `list_files` | `GET` | `/{version}/files/{filesIntegrationId}` | `project` |
 | `get_file_info` | `GET` | `/{version}/files/{filesIntegrationId}/info` | `project` |
+| `get_file_by_id` | `GET` | `/{version}/files/{filesIntegrationId}/by-id/{id}` | `project` |
 | `get_signed_url` | `GET` | `/{version}/files/{filesIntegrationId}/sign` | `project` |
 | `request_upload_url` | `POST` | `/{version}/files/{filesIntegrationId}/upload-url` | `project` |
 | `commit_upload` | `POST` | `/{version}/files/{filesIntegrationId}/commit` | `project` |
@@ -73,6 +74,24 @@ The dashboard has its own method for the same probe,
 [`hub.files.test_files_integration`](../hub/files.md), which takes the id in the
 body (`integrationId=...`) instead of the path. This one is for code that uses
 an API key.
+
+## Reading a file by id
+
+A file has a stable id: the same on every listing, on `get_file_info`, and in
+a record's file field — it is the `id` an expanded reference
+(`find(..., expand_references=True)`) returns. `get_file_by_id` reads that
+file without knowing its path.
+
+```python
+answer = client.api.files.get_file_by_id(integration_id, "nbfl_7hK2abc")
+answer["file"]["path"]   # "invoices/invoice.pdf"
+answer["isPublic"]       # False
+answer["publicUrl"]      # None
+```
+
+An id no storage of the integration holds answers not found. A moved file has
+a new id — the path is a file's identity today. More on references:
+[Database — references](../database-rules.md#files-by-id).
 
 ## Reading a public link
 

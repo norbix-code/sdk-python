@@ -74,6 +74,26 @@ class FilesModule:
             bearer_token=bearer_token,
         )
 
+    # HAND-WRITTEN: not produced by scripts/generate_endpoints.py — keep on regeneration.
+    def get_file_by_id(self, files_integration_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/{filesIntegrationId}/by-id/{id}
+
+        Fetch one file by its stable id — the id a file field on a record stores,
+        and the ``id`` an expanded reference (``expand_references=True``) returns.
+        The answer carries ``file`` (resource, path), ``isPublic`` and ``publicUrl``.
+        An id no storage of the integration holds answers not found.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/files/{filesIntegrationId}/by-id/{id}",
+            method="GET",
+            path_params={"filesIntegrationId": files_integration_id, "id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_file_info(self, files_integration_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/files/{filesIntegrationId}/info"""
         return self._transport.send(
@@ -247,6 +267,26 @@ class AsyncFilesModule:
             path="/{version}/files/{filesIntegrationId}/download",
             method="GET",
             path_params={"filesIntegrationId": files_integration_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    # HAND-WRITTEN: not produced by scripts/generate_endpoints.py — keep on regeneration.
+    async def get_file_by_id(self, files_integration_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/{filesIntegrationId}/by-id/{id}
+
+        Fetch one file by its stable id — the id a file field on a record stores,
+        and the ``id`` an expanded reference (``expand_references=True``) returns.
+        The answer carries ``file`` (resource, path), ``isPublic`` and ``publicUrl``.
+        An id no storage of the integration holds answers not found.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/files/{filesIntegrationId}/by-id/{id}",
+            method="GET",
+            path_params={"filesIntegrationId": files_integration_id, "id": id},
             request=request,
             scope="project",
             timeout=timeout,
