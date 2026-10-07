@@ -113,7 +113,7 @@ def test_every_api_database_method_sends_its_documented_verb_and_path() -> None:
         assert transport.last_request is not None
         assert transport.last_request["method"] == verb, name
         sent = urlparse(transport.last_request["url"]).path
-        pattern = "^" + _TOKEN.sub("[^/]+", path.replace("{version}", "v2")) + "$"
+        pattern = "^" + _TOKEN.sub("[^/]+", path.replace("{version}", "v3")) + "$"
         assert re.match(pattern, sent), (name, sent)
 
 
@@ -128,7 +128,7 @@ def test_update_many_sends_all_records_in_the_body() -> None:
     client.api.database.update_many("products", filter="{}", update='{"seen": true}', allRecords=True)
     assert transport.last_request is not None
     assert transport.last_request["method"] == "PUT"
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/collections/products/many"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/collections/products/many"
     assert json.loads(transport.last_request["body"]) == {
         "filter": "{}",
         "update": '{"seen": true}',

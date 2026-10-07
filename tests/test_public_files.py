@@ -39,10 +39,10 @@ def _sent(transport):
 @pytest.mark.parametrize(
     ("method_name", "expected_path"),
     [
-        ("make_file_public", "/v2/files/item/public"),
-        ("make_file_private", "/v2/files/item/private"),
-        ("make_folder_public", "/v2/files/folder/public"),
-        ("make_folder_private", "/v2/files/folder/private"),
+        ("make_file_public", "/v3/files/item/public"),
+        ("make_file_private", "/v3/files/item/private"),
+        ("make_folder_public", "/v3/files/folder/public"),
+        ("make_folder_private", "/v3/files/folder/private"),
     ],
 )
 def test_hub_method_hits_its_own_route(method_name: str, expected_path: str) -> None:

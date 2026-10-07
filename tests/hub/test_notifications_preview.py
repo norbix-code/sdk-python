@@ -26,17 +26,17 @@ PreviewCase = tuple[str, str, Callable[[Any], Any]]
 PREVIEW_CASES: list[PreviewCase] = [
     (
         "push",
-        "/v2/notifications/push/preview",
+        "/v3/notifications/push/preview",
         lambda m: m.preview_push_notification(hash=HASH),
     ),
     (
         "email",
-        "/v2/notifications/email/preview",
+        "/v3/notifications/email/preview",
         lambda m: m.preview_email_notification(hash=HASH),
     ),
     (
         "sms",
-        "/v2/notifications/sms/preview",
+        "/v3/notifications/sms/preview",
         lambda m: m.preview_sms_notification(hash=HASH),
     ),
 ]

@@ -39,7 +39,7 @@ def test_get_triggers_needing_attention_hits_the_route_with_query_values() -> No
     assert transport.last_request is not None
     assert transport.last_request["method"] == "GET"
     url = urlparse(transport.last_request["url"])
-    assert url.path == "/v2/triggers/attention"
+    assert url.path == "/v3/triggers/attention"
     assert parse_qs(url.query) == {"triggerType": ["Schema"]}
     assert transport.last_request["body"] == ""
     assert transport.last_request["headers"]["x-cm-projectid"] == "test-project"
@@ -67,17 +67,17 @@ def test_async_get_triggers_needing_attention_hits_the_route() -> None:
 
     assert result == {"items": []}
     assert [(r.method, urlparse(str(r.url)).path, urlparse(str(r.url)).query) for r in seen] == [
-        ("GET", "/v2/triggers/attention", "triggerType=Files"),
+        ("GET", "/v3/triggers/attention", "triggerType=Files"),
     ]
 
 
 # name, expected path, call — every trigger save in the hub.
 SaveCase = tuple[str, str, Callable[[Any, dict[str, Any]], Any]]
 TRIGGER_SAVES: list[SaveCase] = [
-    ("save_schema_trigger", "/v2/database/schemas/triggers", lambda c, b: c.hub.database.save_schema_trigger(**b)),
-    ("save_files_trigger", "/v2/files/triggers", lambda c, b: c.hub.files.save_files_trigger(**b)),
-    ("save_membership_trigger", "/v2/membership/triggers", lambda c, b: c.hub.membership.save_membership_trigger(**b)),
-    ("save_payments_trigger", "/v2/payments/triggers", lambda c, b: c.hub.payments.save_payments_trigger(**b)),
+    ("save_schema_trigger", "/v3/database/schemas/triggers", lambda c, b: c.hub.database.save_schema_trigger(**b)),
+    ("save_files_trigger", "/v3/files/triggers", lambda c, b: c.hub.files.save_files_trigger(**b)),
+    ("save_membership_trigger", "/v3/membership/triggers", lambda c, b: c.hub.membership.save_membership_trigger(**b)),
+    ("save_payments_trigger", "/v3/payments/triggers", lambda c, b: c.hub.payments.save_payments_trigger(**b)),
 ]
 
 

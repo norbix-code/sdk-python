@@ -33,7 +33,7 @@ TEMPLATE_ID = "tpl_1"
 INTEGRATION_ID = "int_1"
 CAMPAIGN_TIME = 1_900_000_000  # unix seconds, UTC — a future time
 
-BASE = "/v2/notifications/sms"
+BASE = "/v3/notifications/sms"
 
 # name, verb, expected path, call
 SmsCase = tuple[str, str, str, Callable[[Any], Any]]
