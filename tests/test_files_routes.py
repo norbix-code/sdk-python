@@ -45,14 +45,14 @@ def test_enable_files() -> None:
     client, transport = make_client()
     client.hub.files.enable_files()
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("PUT", "/v2/files/enable")
+    assert (method, path) == ("PUT", "/v3/files/enable")
 
 
 def test_disable_files() -> None:
     client, transport = make_client()
     client.hub.files.disable_files()
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("PUT", "/v2/files/disable")
+    assert (method, path) == ("PUT", "/v3/files/disable")
 
 
 # --- hub: browsing -----------------------------------------------------------
@@ -62,7 +62,7 @@ def test_get_folder_files() -> None:
     client, transport = make_client()
     client.hub.files.get_folder_files(filesIntegrationId=INTEGRATION_ID, path="invoices/")
     method, path, query, _ = _sent(transport)
-    assert (method, path) == ("GET", "/v2/files/folder")
+    assert (method, path) == ("GET", "/v3/files/folder")
     assert INTEGRATION_ID in query
 
 
@@ -70,7 +70,7 @@ def test_get_file() -> None:
     client, transport = make_client()
     client.hub.files.get_file(filesIntegrationId=INTEGRATION_ID, path="invoices/invoice.pdf")
     method, path, query, _ = _sent(transport)
-    assert (method, path) == ("GET", "/v2/files/item")
+    assert (method, path) == ("GET", "/v3/files/item")
     assert INTEGRATION_ID in query
 
 
@@ -78,7 +78,7 @@ def test_get_file_by_id() -> None:
     client, transport = make_client()
     client.hub.files.get_file_by_id(INTEGRATION_ID, "nbfl_7hK2abc")
     method, path, query, _ = _sent(transport)
-    assert (method, path) == ("GET", "/v2/files/item/by-id")
+    assert (method, path) == ("GET", "/v3/files/item/by-id")
     assert parse_qs(query) == {"filesIntegrationId": [INTEGRATION_ID], "id": ["nbfl_7hK2abc"]}
 
 
@@ -89,14 +89,14 @@ def test_get_files_integrations() -> None:
     client, transport = make_client()
     client.hub.files.get_files_integrations()
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", "/v2/files/integrations")
+    assert (method, path) == ("GET", "/v3/files/integrations")
 
 
 def test_get_files_integration() -> None:
     client, transport = make_client()
     client.hub.files.get_files_integration(id=INTEGRATION_ID)
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", f"/v2/files/integrations/{INTEGRATION_ID}")
+    assert (method, path) == ("GET", f"/v3/files/integrations/{INTEGRATION_ID}")
 
 
 def test_save_files_integration() -> None:
@@ -105,7 +105,7 @@ def test_save_files_integration() -> None:
         integration={"integrationName": "Invoices bucket", "bucketName": "norbix-invoices"}
     )
     method, path, _, body = _sent(transport)
-    assert (method, path) == ("POST", "/v2/files/integrations")
+    assert (method, path) == ("POST", "/v3/files/integrations")
     assert body["integration"]["bucketName"] == "norbix-invoices"
 
 
@@ -113,35 +113,35 @@ def test_delete_files_integration() -> None:
     client, transport = make_client()
     client.hub.files.delete_files_integration(id=INTEGRATION_ID)
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("DELETE", f"/v2/files/integrations/{INTEGRATION_ID}")
+    assert (method, path) == ("DELETE", f"/v3/files/integrations/{INTEGRATION_ID}")
 
 
 def test_enable_files_integration() -> None:
     client, transport = make_client()
     client.hub.files.enable_files_integration(id=INTEGRATION_ID)
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("PUT", f"/v2/files/integrations/{INTEGRATION_ID}/enable")
+    assert (method, path) == ("PUT", f"/v3/files/integrations/{INTEGRATION_ID}/enable")
 
 
 def test_disable_files_integration() -> None:
     client, transport = make_client()
     client.hub.files.disable_files_integration(id=INTEGRATION_ID)
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("PUT", f"/v2/files/integrations/{INTEGRATION_ID}/disable")
+    assert (method, path) == ("PUT", f"/v3/files/integrations/{INTEGRATION_ID}/disable")
 
 
 def test_set_files_integration_as_default() -> None:
     client, transport = make_client()
     client.hub.files.set_files_integration_as_default(id=INTEGRATION_ID)
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("PUT", f"/v2/files/integrations/{INTEGRATION_ID}/default")
+    assert (method, path) == ("PUT", f"/v3/files/integrations/{INTEGRATION_ID}/default")
 
 
 def test_test_files_integration() -> None:
     client, transport = make_client()
     client.hub.files.test_files_integration(integrationId=INTEGRATION_ID)
     method, path, _, body = _sent(transport)
-    assert (method, path) == ("POST", "/v2/files/integrations/test")
+    assert (method, path) == ("POST", "/v3/files/integrations/test")
     assert body["integrationId"] == INTEGRATION_ID
 
 
@@ -152,21 +152,21 @@ def test_list_files() -> None:
     client, transport = make_client()
     client.api.files.list_files(INTEGRATION_ID, path="invoices/")
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", f"/v2/files/{INTEGRATION_ID}")
+    assert (method, path) == ("GET", f"/v3/files/{INTEGRATION_ID}")
 
 
 def test_get_file_info() -> None:
     client, transport = make_client()
     client.api.files.get_file_info(INTEGRATION_ID, path="invoices/invoice.pdf")
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", f"/v2/files/{INTEGRATION_ID}/info")
+    assert (method, path) == ("GET", f"/v3/files/{INTEGRATION_ID}/info")
 
 
 def test_api_get_file_by_id() -> None:
     client, transport = make_client()
     client.api.files.get_file_by_id(INTEGRATION_ID, "nbfl_7hK2abc")
     method, path, query, _ = _sent(transport)
-    assert (method, path) == ("GET", f"/v2/files/{INTEGRATION_ID}/by-id/nbfl_7hK2abc")
+    assert (method, path) == ("GET", f"/v3/files/{INTEGRATION_ID}/by-id/nbfl_7hK2abc")
     assert query == ""
 
 
@@ -174,7 +174,7 @@ def test_get_signed_url() -> None:
     client, transport = make_client()
     client.api.files.get_signed_url(INTEGRATION_ID, path="invoices/invoice.pdf")
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", f"/v2/files/{INTEGRATION_ID}/sign")
+    assert (method, path) == ("GET", f"/v3/files/{INTEGRATION_ID}/sign")
 
 
 def test_request_upload_url() -> None:
@@ -183,7 +183,7 @@ def test_request_upload_url() -> None:
         INTEGRATION_ID, path="invoices/invoice.pdf", contentType="application/pdf"
     )
     method, path, _, body = _sent(transport)
-    assert (method, path) == ("POST", f"/v2/files/{INTEGRATION_ID}/upload-url")
+    assert (method, path) == ("POST", f"/v3/files/{INTEGRATION_ID}/upload-url")
     assert body["contentType"] == "application/pdf"
 
 
@@ -193,7 +193,7 @@ def test_commit_upload() -> None:
         INTEGRATION_ID, path="invoices/invoice.pdf", contentType="application/pdf", sizeBytes=1024
     )
     method, path, _, body = _sent(transport)
-    assert (method, path) == ("POST", f"/v2/files/{INTEGRATION_ID}/commit")
+    assert (method, path) == ("POST", f"/v3/files/{INTEGRATION_ID}/commit")
     assert body["path"] == "invoices/invoice.pdf"
 
 
@@ -201,14 +201,14 @@ def test_download_file() -> None:
     client, transport = make_client()
     client.api.files.download_file_api(INTEGRATION_ID, path="invoices/invoice.pdf")
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("GET", f"/v2/files/{INTEGRATION_ID}/download")
+    assert (method, path) == ("GET", f"/v3/files/{INTEGRATION_ID}/download")
 
 
 def test_delete_file() -> None:
     client, transport = make_client()
     client.api.files.delete_file_api(INTEGRATION_ID, path="invoices/invoice.pdf")
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("DELETE", f"/v2/files/{INTEGRATION_ID}")
+    assert (method, path) == ("DELETE", f"/v3/files/{INTEGRATION_ID}")
 
 
 def test_delete_many_files() -> None:
@@ -217,7 +217,7 @@ def test_delete_many_files() -> None:
         INTEGRATION_ID, paths=["invoices/a.pdf", "invoices/b.pdf"]
     )
     method, path, _, _ = _sent(transport)
-    assert (method, path) == ("DELETE", f"/v2/files/{INTEGRATION_ID}/bulk")
+    assert (method, path) == ("DELETE", f"/v3/files/{INTEGRATION_ID}/bulk")
 
 
 # --- public API: testing an integration (slice API-TEST, #39) ----------------
@@ -275,7 +275,7 @@ def test_api_test_files_integration_route() -> None:
     client, transport = make_client()
     client.api.files.test_files_integration(INTEGRATION_ID)
     method, path, _, body = _sent(transport)
-    assert (method, path) == ("POST", f"/v2/files/{INTEGRATION_ID}/test")
+    assert (method, path) == ("POST", f"/v3/files/{INTEGRATION_ID}/test")
     # The id travels in the path only, not in the body as on the hub route.
     assert "integrationId" not in body
 
@@ -345,6 +345,6 @@ def test_api_test_files_integration_async() -> None:
     request = transport.last_request
     assert request is not None
     assert request["method"] == "POST"
-    assert urlparse(request["url"]).path == f"/v2/files/{INTEGRATION_ID}/test"
+    assert urlparse(request["url"]).path == f"/v3/files/{INTEGRATION_ID}/test"
     assert request["headers"]["x-cm-projectid"] == "test-project"
     assert result["items"][2]["operation"] == "GetAllFiles"

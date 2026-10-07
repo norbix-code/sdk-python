@@ -54,7 +54,7 @@ def test_initialize_returns_the_session_id_from_the_response_header() -> None:
     }
     request = seen[0]
     assert request.method == "POST"
-    assert request.url.path == "/v2/account/mcp"
+    assert request.url.path == "/v3/account/mcp"
     assert request.url.params["toolsets"] == "ai:campaigns,ai:project-context"
     assert json.loads(request.content) == INIT
     assert request.headers["accept"] == "application/json, text/event-stream"
@@ -104,7 +104,7 @@ def test_stream_asks_for_event_stream_and_resumes_from_the_last_event() -> None:
     assert result["body"] is None
     request = seen[0]
     assert request.method == "GET"
-    assert request.url.path == "/v2/account/mcp"
+    assert request.url.path == "/v3/account/mcp"
     assert request.url.query == b""
     assert request.headers["accept"] == "text/event-stream"
     assert request.headers["mcp-session-id"] == "mcps_1"
@@ -122,7 +122,7 @@ def test_end_session_sends_delete_with_the_session_header() -> None:
 
     assert result == {"status": 200, "sessionId": None, "body": None, "events": []}
     assert seen[0].method == "DELETE"
-    assert seen[0].url.path == "/v2/account/mcp"
+    assert seen[0].url.path == "/v3/account/mcp"
     assert seen[0].headers["mcp-session-id"] == "mcps_1"
 
 

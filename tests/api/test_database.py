@@ -170,7 +170,7 @@ def test_api_database_find_own_hits_the_own_route_with_query_values() -> None:
     assert transport.last_request["method"] == "GET"
     url = urlparse(transport.last_request["url"])
     assert url.netloc == "api.norbix.ai"
-    assert url.path == "/v2/database/collections/products/own"
+    assert url.path == "/v3/database/collections/products/own"
     assert parse_qs(url.query) == {"pageSize": ["10"]}
 
 
@@ -182,7 +182,7 @@ def test_api_database_find_merged_term_tree_hits_the_merged_tree_route() -> None
     assert transport.last_request["method"] == "GET"
     url = urlparse(transport.last_request["url"])
     assert url.netloc == "api.norbix.ai"
-    assert url.path == "/v2/database/taxonomies/services/merged-tree"
+    assert url.path == "/v3/database/taxonomies/services/merged-tree"
 
 
 def test_api_database_audit_methods_exist_on_the_async_module() -> None:
@@ -207,6 +207,6 @@ def test_api_database_audit_methods_exist_on_the_async_module() -> None:
     asyncio.run(run())
 
     assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
-        ("GET", "/v2/database/collections/products/own"),
-        ("GET", "/v2/database/taxonomies/services/merged-tree"),
+        ("GET", "/v3/database/collections/products/own"),
+        ("GET", "/v3/database/taxonomies/services/merged-tree"),
     ]

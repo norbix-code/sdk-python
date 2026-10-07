@@ -15,7 +15,7 @@ import pytest
 
 from norbix_python import AsyncNorbix, Norbix
 
-# (method, positional args, keyword body, verb, path after /v2, expected JSON body or None)
+# (method, positional args, keyword body, verb, path after /v3, expected JSON body or None)
 CASES: list[tuple[str, tuple[str, ...], dict[str, Any], str, str, dict[str, Any] | None]] = [
     ("update_project_admin_url", ("pr_1",), {"url": "https://admin.example.com"}, "PATCH",
      "/account/projects/pr_1/settings/admin-url", {"url": "https://admin.example.com"}),
@@ -52,7 +52,7 @@ def _capture(seen: list[httpx.Request]) -> Any:
 
 def _check(request: httpx.Request, verb: str, path: str, body: dict[str, Any] | None) -> None:
     assert request.method == verb
-    assert request.url.path == "/v2" + path
+    assert request.url.path == "/v3" + path
     assert request.headers["authorization"] == "Bearer test-token"
     assert request.headers["x-cm-projectid"] == "test-project"
     if body is None:

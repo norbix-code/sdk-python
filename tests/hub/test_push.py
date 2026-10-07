@@ -28,7 +28,7 @@ TEMPLATE_ID = "tpl_1"
 INTEGRATION_ID = "int_1"
 DEVICE_ID = "pnd_1"
 
-BASE = "/v2/notifications/push"
+BASE = "/v3/notifications/push"
 
 # name, verb, expected path, call
 PushCase = tuple[str, str, str, Callable[[Any], Any]]

@@ -12,7 +12,7 @@ from .transport import AsyncTransport, Transport, TransportConfig
 
 DEFAULT_BASE_URL_API = "https://api.norbix.ai"
 DEFAULT_BASE_URL_HUB = "https://hub.norbix.ai"
-DEFAULT_VERSION = "v2"
+DEFAULT_VERSION = "v3"
 DEFAULT_TIMEOUT = 30.0
 
 

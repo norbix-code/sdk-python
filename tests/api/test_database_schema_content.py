@@ -94,7 +94,7 @@ def test_find_sends_expand_references_in_the_query() -> None:
     client, transport = _client()
     client.api.database.find("articles", expand_references=True, pageSize=10)
     assert transport.last_request is not None
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/collections/articles"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/collections/articles"
     assert _query(transport) == {"expandReferences": ["true"], "pageSize": ["10"]}
 
 
@@ -102,7 +102,7 @@ def test_find_one_sends_expand_references_in_the_query() -> None:
     client, transport = _client()
     client.api.database.find_one("articles", "rec_1", expand_references=True)
     assert transport.last_request is not None
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/collections/articles/rec_1"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/collections/articles/rec_1"
     assert _query(transport) == {"expandReferences": ["true"]}
 
 
@@ -110,7 +110,7 @@ def test_find_own_sends_expand_references_in_the_query() -> None:
     client, transport = _client()
     client.api.database.find_own("articles", expand_references=True)
     assert transport.last_request is not None
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/collections/articles/own"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/collections/articles/own"
     assert _query(transport) == {"expandReferences": ["true"]}
 
 
@@ -204,7 +204,7 @@ def test_update_one_sends_array_filters_string_as_given() -> None:
     )
     assert transport.last_request is not None
     assert transport.last_request["method"] == "PUT"
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/collections/orders/rec_1"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/collections/orders/rec_1"
     assert _body(transport) == {
         "update": '{"lines.$[line].qty": 3, "meta.words": 130}',
         "arrayFilters": '[{"line.sku": "A-1"}]',
@@ -232,7 +232,7 @@ def test_update_many_sends_array_filters_in_the_body() -> None:
         array_filters="[]",
     )
     assert transport.last_request is not None
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/collections/orders/many"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/collections/orders/many"
     assert _body(transport) == {"filter": '{"status": "open"}', "update": '{"lines.$[].qty": 1}', "arrayFilters": "[]"}
 
 

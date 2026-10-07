@@ -16,7 +16,7 @@ from norbix_python import AsyncNorbix
 
 from ..helpers import make_client
 
-# (module attribute, method name, path after /v2)
+# (module attribute, method name, path after /v3)
 CASES = [
     ("database", "enable_database", "/database/enable"),
     ("database", "disable_database", "/database/disable"),
@@ -45,7 +45,7 @@ def test_sync_module_switch_uses_put(module: str, method: str, path: str) -> Non
     getattr(getattr(client.hub, module), method)()
     assert transport.last_request is not None
     sent = httpx.URL(transport.last_request["url"])
-    assert (transport.last_request["method"], sent.path) == ("PUT", "/v2" + path)
+    assert (transport.last_request["method"], sent.path) == ("PUT", "/v3" + path)
 
 
 @pytest.mark.parametrize(("module", "method", "path"), CASES, ids=[c[1] for c in CASES])
@@ -65,4 +65,4 @@ def test_async_module_switch_uses_put(module: str, method: str, path: str) -> No
             await getattr(getattr(client.hub, module), method)()
 
     asyncio.run(run())
-    assert [(r.method, r.url.path) for r in seen] == [("PUT", "/v2" + path)]
+    assert [(r.method, r.url.path) for r in seen] == [("PUT", "/v3" + path)]

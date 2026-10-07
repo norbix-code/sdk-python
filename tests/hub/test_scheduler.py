@@ -26,7 +26,7 @@ TASK_ID = "tsk_1"
 INITIATOR_USER_ID = "usr_1"
 EMAIL_TEMPLATE_ID = "etpl_1"
 
-BASE = "/v2/scheduler"
+BASE = "/v3/scheduler"
 
 # A complete save request: the initiator, the schedule, and an email campaign
 # task sent to all users. EmailCampaign is the only task type the gateway runs.

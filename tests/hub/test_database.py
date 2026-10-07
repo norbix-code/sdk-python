@@ -389,7 +389,7 @@ def test_hub_database_reveal_managed_flex_connection_string_request_shape() -> N
 # transport; nothing leaves the process.
 
 
-DB = "/v2/database"
+DB = "/v3/database"
 COLL = "products"
 REC = "rec_1"
 SCHEMA = "sch_1"

@@ -188,7 +188,7 @@ def test_every_hub_database_method_sends_its_documented_verb_and_path() -> None:
         fn(*args)
         assert transport.last_request is not None
         assert transport.last_request["method"] == verb, name
-        pattern = "^" + _TOKEN.sub("[^/]+", path.replace("{version}", "v2")) + "$"
+        pattern = "^" + _TOKEN.sub("[^/]+", path.replace("{version}", "v3")) + "$"
         sent = urlparse(transport.last_request["url"]).path
         assert re.match(pattern, sent), (name, sent)
         for arg in args:
@@ -211,12 +211,12 @@ def test_async_hub_database_has_the_same_methods_as_sync() -> None:
 @pytest.mark.parametrize(
     ("call", "verb", "path"),
     [
-        (lambda db: db.create_collection_import(schemaId="sch_1", file={"path": "imports/a.csv"}), "POST", "/v2/database/imports"),
-        (lambda db: db.get_collection_imports(), "GET", "/v2/database/imports"),
-        (lambda db: db.get_collection_import("imp_1"), "GET", "/v2/database/imports/imp_1"),
-        (lambda db: db.delete_collection_import("imp_1"), "DELETE", "/v2/database/imports/imp_1"),
-        (lambda db: db.request_import_upload_url(fileName="a.csv"), "POST", "/v2/database/imports/upload-url"),
-        (lambda db: db.analyze_import_file(file={"path": "imports/a.csv"}), "POST", "/v2/database/imports/analyze"),
+        (lambda db: db.create_collection_import(schemaId="sch_1", file={"path": "imports/a.csv"}), "POST", "/v3/database/imports"),
+        (lambda db: db.get_collection_imports(), "GET", "/v3/database/imports"),
+        (lambda db: db.get_collection_import("imp_1"), "GET", "/v3/database/imports/imp_1"),
+        (lambda db: db.delete_collection_import("imp_1"), "DELETE", "/v3/database/imports/imp_1"),
+        (lambda db: db.request_import_upload_url(fileName="a.csv"), "POST", "/v3/database/imports/upload-url"),
+        (lambda db: db.analyze_import_file(file={"path": "imports/a.csv"}), "POST", "/v3/database/imports/analyze"),
     ],
 )
 def test_collection_import_methods(call: Any, verb: str, path: str) -> None:
@@ -237,7 +237,7 @@ def test_update_many_records_sends_all_records_in_the_body() -> None:
     )
     assert transport.last_request is not None
     assert transport.last_request["method"] == "PUT"
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/collections/products/many"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/collections/products/many"
     assert json.loads(transport.last_request["body"]) == {
         "filter": "{}",
         "update": '{"status": "archived"}',
@@ -259,7 +259,7 @@ def test_delete_many_records_sends_all_records_in_the_query() -> None:
     assert transport.last_request is not None
     url = urlparse(transport.last_request["url"])
     assert transport.last_request["method"] == "DELETE"
-    assert url.path == "/v2/database/collections/products/many"
+    assert url.path == "/v3/database/collections/products/many"
     assert parse_qs(url.query) == {"filter": ["{}"], "allRecords": ["true"]}
 
 
@@ -326,7 +326,7 @@ def test_rename_schema_sends_only_the_new_name() -> None:
     client.hub.database.rename_database_schema("sch_1", title="Products")
     assert transport.last_request is not None
     assert transport.last_request["method"] == "PUT"
-    assert urlparse(transport.last_request["url"]).path == "/v2/database/schemas/sch_1/rename"
+    assert urlparse(transport.last_request["url"]).path == "/v3/database/schemas/sch_1/rename"
     assert json.loads(transport.last_request["body"]) == {"title": "Products"}
 
 
@@ -359,12 +359,12 @@ def test_delete_schema_used_by_an_aggregate_names_the_aggregates() -> None:
 @pytest.mark.parametrize(
     ("call", "verb", "path"),
     [
-        (lambda db: db.get_schema_triggers(), "GET", "/v2/database/schemas/triggers"),
-        (lambda db: db.get_schema_trigger("trg_1"), "GET", "/v2/database/schemas/triggers/trg_1"),
-        (lambda db: db.save_schema_trigger(schemaId="sch_1"), "POST", "/v2/database/schemas/triggers"),
-        (lambda db: db.enable_schema_trigger("trg_1"), "PATCH", "/v2/database/schemas/triggers/trg_1/enable"),
-        (lambda db: db.disable_schema_trigger("trg_1"), "PATCH", "/v2/database/schemas/triggers/trg_1/disable"),
-        (lambda db: db.delete_schema_trigger("trg_1"), "DELETE", "/v2/database/schemas/triggers/trg_1"),
+        (lambda db: db.get_schema_triggers(), "GET", "/v3/database/schemas/triggers"),
+        (lambda db: db.get_schema_trigger("trg_1"), "GET", "/v3/database/schemas/triggers/trg_1"),
+        (lambda db: db.save_schema_trigger(schemaId="sch_1"), "POST", "/v3/database/schemas/triggers"),
+        (lambda db: db.enable_schema_trigger("trg_1"), "PATCH", "/v3/database/schemas/triggers/trg_1/enable"),
+        (lambda db: db.disable_schema_trigger("trg_1"), "PATCH", "/v3/database/schemas/triggers/trg_1/disable"),
+        (lambda db: db.delete_schema_trigger("trg_1"), "DELETE", "/v3/database/schemas/triggers/trg_1"),
     ],
 )
 def test_schema_trigger_calls_carry_the_client_env(call: Any, verb: str, path: str) -> None:
@@ -431,7 +431,7 @@ def test_taxonomy_tree_with_terms_sends_include_terms() -> None:
     client.hub.database.get_database_taxonomy_tree(includeTerms=True)
     assert transport.last_request is not None
     url = urlparse(transport.last_request["url"])
-    assert url.path == "/v2/database/taxonomies/tree"
+    assert url.path == "/v3/database/taxonomies/tree"
     assert parse_qs(url.query) == {"includeTerms": ["true"]}
 
 
