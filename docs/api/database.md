@@ -27,6 +27,13 @@ Access with `norbix.api.database`.
 | `find_merged_term_tree` | `GET` | `/{version}/database/taxonomies/{taxonomyName}/merged-tree` | `project` |
 | `find_own` | `GET` | `/{version}/database/collections/{collectionName}/own` | `project` |
 
+`find`, `find_one` and `find_own` take `expand_references=True` to read every
+reference field as `{ id, display }`; `update_one` and `update_many` take
+`array_filters` for `$[name]` paths into lists. Nested documents, the typed
+schema fields, the term `slug`, files by id and the record error codes
+`030`–`056` are on
+[Database — references, nested documents, field rules](../database-rules.md).
+
 ## Working with terms
 
 A **taxonomy** is a named tree of **terms** (labels). A term can have one parent (a clean hierarchy) or several parents (the same item under many categories). Pick the call that matches what you want:
@@ -361,7 +368,10 @@ arguments as given).
   was refused with 403).
 - **No `$` operators in an update.** `update_one` / `update_many` take the new
   values as a plain document (`'{"price": 10}'`). `$inc`, `$set` and the like
-  are refused with `CM-ERRORS-DATABASE-035`.
+  are refused with `CM-ERRORS-DATABASE-035`. A key may be a nested path
+  (`'{"address.city": "Vilnius"}'`, `'{"lines.$[line].qty": 3}'` with
+  `array_filters=[{"line.sku": "A-1"}]`) — see
+  [Nested documents and arrays](../database-rules.md#nested-documents-and-arrays).
 - **A broken record document** on `insert_one`, `insert_many` or `replace_one`
   is refused with `CM-ERRORS-DATABASE-036` "Invalid record document" (before,
   `005`). For `insert_many`, `err.errors[0].context["Index"]` is the position

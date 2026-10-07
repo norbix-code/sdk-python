@@ -230,6 +230,11 @@ except NorbixError as exc:
     print(exc.body)  # the answer exactly as it arrived
 ```
 
+The Database rules the gateway checks — `expand_references` for `{ id, display }`
+references, nested documents and `array_filters`, the typed schema fields, files
+by id, and the code of each refusal — are on
+[docs/database-rules.md](./docs/database-rules.md).
+
 `message` and `error_code` are the gateway's own. The gateway puts them inside
 `responseStatus.errors[]`, so the SDK reads that list first, takes the first
 entry for the message and the code, and keeps every entry in `errors`. Only
