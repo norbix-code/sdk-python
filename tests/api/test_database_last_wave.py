@@ -57,7 +57,7 @@ def _documented_routes(module: Any) -> dict[str, tuple[str, str]]:
     for name, fn in inspect.getmembers(module, callable):
         if name.startswith("_"):
             continue
-        match = _DOC.match((fn.__doc__ or "").strip())
+        match = _DOC.match((fn.__doc__ or "").strip().splitlines()[0] if fn.__doc__ else "")
         if match:
             out[name] = (match.group(1), match.group(2))
     return out
