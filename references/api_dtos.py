@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-09-28 20:36:22
+Date: 2026-10-07 10:03:25
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5002
@@ -548,6 +548,7 @@ class TermTreeDto:
     order: Optional[int] = None
     name: Optional[str] = None
     names: Optional[Dict[str, str]] = None
+    slug: Optional[str] = None
     description: Optional[str] = None
     descriptions: Optional[Dict[str, str]] = None
     multi_parents: Optional[List[TermMultiParentDto]] = None
@@ -576,6 +577,7 @@ class TermDto:
     order: Optional[int] = None
     name: Optional[str] = None
     names: Optional[Dict[str, str]] = None
+    slug: Optional[str] = None
     description: Optional[str] = None
     descriptions: Optional[Dict[str, str]] = None
     multi_parents: Optional[List[TermMultiParentDto]] = None
@@ -763,6 +765,8 @@ class StringFieldDto(JsonSchemaFieldDto):
     min_length: Optional[int] = None
     max_length: Optional[int] = None
     translate_options: Optional[IReadOnlyDictionary[str, str]] = None
+    default: Optional[str] = None
+    unique: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -771,18 +775,31 @@ class DecimalFieldDto(JsonSchemaFieldDto):
     minimum: Optional[Decimal] = None
     maximum: Optional[Decimal] = None
     multiple_of: Optional[Decimal] = None
+    default: Optional[Decimal] = None
+    unique: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CurrencyDefaultDto:
+    value: Decimal = decimal.Decimal(0)
+    currency: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class CurrencyFieldDto(JsonSchemaFieldDto):
     allowed_currencies: Optional[IReadOnlyList[str]] = None
+    multiple_of: Optional[Decimal] = None
+    minimum: Optional[Decimal] = None
+    maximum: Optional[Decimal] = None
+    default: Optional[CurrencyDefaultDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class BooleanFieldDto(JsonSchemaFieldDto):
-    pass
+    default: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -790,6 +807,7 @@ class BooleanFieldDto(JsonSchemaFieldDto):
 class DateFieldDto(JsonSchemaFieldDto):
     minimum: Optional[int] = None
     maximum: Optional[int] = None
+    default: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -797,6 +815,8 @@ class DateFieldDto(JsonSchemaFieldDto):
 class IntegerFieldDto(JsonSchemaFieldDto):
     minimum: Optional[int] = None
     maximum: Optional[int] = None
+    default: Optional[int] = None
+    unique: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -808,13 +828,19 @@ class GeolocationFieldDto(JsonSchemaFieldDto):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class TagsFieldDto(JsonSchemaFieldDto):
-    pass
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    default: Optional[IReadOnlyList[str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class FileFieldDto(JsonSchemaFieldDto):
     storages: Optional[IReadOnlyList[str]] = None
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    allowed_file_type: Optional[str] = None
+    max_size_mb: Optional[Decimal] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -822,6 +848,7 @@ class FileFieldDto(JsonSchemaFieldDto):
 class TaxonomySelectionFieldDto(JsonSchemaFieldDto):
     taxonomy_id: Optional[str] = None
     multiple: bool = False
+    display_field: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -836,12 +863,14 @@ class CollectionSelectionFieldDto(JsonSchemaFieldDto):
 @dataclass
 class UserSelectionFieldDto(JsonSchemaFieldDto):
     multiple: bool = False
+    display_field: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class RoleSelectionFieldDto(JsonSchemaFieldDto):
     multiple: bool = False
+    display_field: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -849,6 +878,29 @@ class RoleSelectionFieldDto(JsonSchemaFieldDto):
 class EnumSelectionFieldDto(JsonSchemaFieldDto):
     values: Optional[IReadOnlyList[str]] = None
     multiple: bool = False
+    default: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ObjectFieldDto(JsonSchemaFieldDto):
+    properties: Optional[IReadOnlyList[JsonSchemaFieldDto]] = None
+    required: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ArrayFieldDto(JsonSchemaFieldDto):
+    items: Optional[JsonSchemaFieldDto] = None
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    unique_items: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class JsonFieldDto(JsonSchemaFieldDto):
+    max_bytes: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1099,6 +1151,14 @@ class FindResponse(ResponseBase):
 @dataclass
 class FindOneResponse(ResponseBase):
     result: Optional[Object] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetFileByIdResponse(ResponseBase):
+    file: Optional[FileResourceRefDto] = None
+    is_public: Optional[bool] = None
+    public_url: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2437,6 +2497,7 @@ class FindRequest(CodeMashListPaginationRequestBase, IReturn[FindResponse]):
     paging_args: Optional[PagingArgs] = None
     sort_by: Optional[str] = None
     sort_order: Optional[int] = None
+    expand_references: bool = False
 
 
 # @Route("/{version}/database/collections/{collectionName}/{id}", "GET")
@@ -2451,6 +2512,7 @@ class FindOneRequest(CodeMashRequestBase, IReturn[FindOneResponse]):
     collection_name: Optional[str] = None
     id: Optional[str] = None
     database_integration_id: Optional[str] = None
+    expand_references: bool = False
 
 
 # @Route("/{version}/database/collections/{collectionName}/own", "GET")
@@ -2467,6 +2529,11 @@ class FindOwnRequest(CodeMashListPaginationRequestBase, IReturn[FindResponse]):
     filter: Optional[str] = None
     schema_version: Optional[int] = None
     paging_args: Optional[PagingArgs] = None
+    # @ApiMember(Description="Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.")
+    expand_references: bool = False
+    """
+    Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.
+    """
 
 
 # @Route("/{version}/database/collections/{collectionName}/many", "POST")
@@ -2526,6 +2593,7 @@ class UpdateManyRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     filter: Optional[str] = None
     all_records: Optional[bool] = None
     update: Optional[str] = None
+    array_filters: Optional[str] = None
 
 
 # @Route("/{version}/database/collections/{collectionName}/{id}", "PUT")
@@ -2541,6 +2609,7 @@ class UpdateOneRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     id: Optional[str] = None
     database_integration_id: Optional[str] = None
     update: Optional[str] = None
+    array_filters: Optional[str] = None
 
 
 # @Route("/{version}/files/{filesIntegrationId}/commit", "POST")
@@ -2624,6 +2693,19 @@ class DownloadFileApiRequest(CodeMashRequestBase, IReturn[bytes]):
 
     files_integration_id: Optional[str] = None
     path: Optional[str] = None
+
+
+# @Route("/{version}/files/{filesIntegrationId}/by-id/{id}", "GET")
+# @Api(Description="Files")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetFileByIdRequest(CodeMashRequestBase, IReturn[GetFileByIdResponse]):
+    """
+    Files
+    """
+
+    files_integration_id: Optional[str] = None
+    id: Optional[str] = None
 
 
 # @Route("/{version}/files/{filesIntegrationId}/info", "GET")
