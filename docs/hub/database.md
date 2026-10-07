@@ -58,6 +58,7 @@ Access with `norbix.hub.database`.
 | `get_database_merged_term_tree` | `GET` | `/{version}/database/taxonomies/{TaxonomyName}/merged-tree` | `project` |
 | `get_database_taxonomy_term_tree` | `GET` | `/{version}/database/taxonomies/{TaxonomyName}/terms/tree` | `project` |
 | `apply_database_schema_bundle` | `POST` | `/{version}/database/schemas/apply-bundle` | `project` |
+| `get_database_schema_index_status` | `GET` | `/{version}/database/schemas/{Id}/index-status` | `project` |
 | `get_database_schema_list_settings` | `GET` | `/{version}/database/schemas/{Id}/list-settings` | `project` |
 | `update_database_schema_list_settings` | `PUT` | `/{version}/database/schemas/{Id}/list-settings` | `project` |
 | `update_database_schema_embed` | `PUT` | `/{version}/database/schemas/{Id}/embed` | `project` |
@@ -277,6 +278,7 @@ The request fields are listed under `RequestImportUploadUrlRequest`,
   terms of `services` are the roots, and the terms of its child taxonomies nest
   under them.
 - `get_database_schema_list_settings(id)` / `update_database_schema_list_settings(id, settings={...})`
+- `get_database_schema_index_status(id)` — the last schema-index run (Norbix creates `idx_<field>` per reference, `uniq_<field>` per unique field and `idx_<field>__id` for the default sort, at most 8): `status.state` is `building`, `ready`, `refused` or `partial`, with one entry per database under `status.integrations`
   — how the record list shows a schema (the update replaces the whole settings object).
   Each environment keeps its own list layout: the client's `env` (the
   `norbix-env` header) picks which one you read and write.
