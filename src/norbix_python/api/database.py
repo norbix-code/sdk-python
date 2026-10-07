@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from ..transport import AsyncTransport, Transport
@@ -178,8 +179,18 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
-    def find(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/collections/{collectionName}"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    def find(self, collection_name: str, *, expand_references: bool | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}
+
+        ``expand_references=True`` returns every reference field (user, role,
+        taxonomy term, record of another collection, file) as ``{"id", "display"}``
+        — see ``norbix_python.ReferenceDisplay``. The caller needs read permission
+        on every source the published schema links to, or the read is refused
+        with ``CM-ERRORS-DATABASE-056``. Default ``False`` returns the stored ids.
+        """
+        if expand_references is not None:
+            request["expandReferences"] = expand_references
         return self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}",
@@ -191,8 +202,18 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
-    def find_one(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/collections/{collectionName}/{id}"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    def find_one(self, collection_name: str, id: str, *, expand_references: bool | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/{id}
+
+        ``expand_references=True`` returns every reference field (user, role,
+        taxonomy term, record of another collection, file) as ``{"id", "display"}``
+        — see ``norbix_python.ReferenceDisplay``. The caller needs read permission
+        on every source the published schema links to, or the read is refused
+        with ``CM-ERRORS-DATABASE-056``. Default ``False`` returns the stored ids.
+        """
+        if expand_references is not None:
+            request["expandReferences"] = expand_references
         return self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/{id}",
@@ -243,8 +264,17 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
-    def update_many(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/database/collections/{collectionName}/many"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    def update_many(self, collection_name: str, *, array_filters: str | list[dict[str, Any]] | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/many
+
+        ``update`` keys may be nested paths (``"address.city"``, ``"lines.0.qty"``,
+        ``"lines.$[].qty"``, ``"lines.$[line].qty"``). ``array_filters`` picks the
+        list elements a ``$[name]`` path changes: one filter document per name,
+        as a JSON string or a list of dicts (``[{"line.sku": "A-1"}]``).
+        """
+        if array_filters is not None:
+            request["arrayFilters"] = array_filters if isinstance(array_filters, str) else json.dumps(array_filters)
         return self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/many",
@@ -256,8 +286,17 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
-    def update_one(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/database/collections/{collectionName}/{id}"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    def update_one(self, collection_name: str, id: str, *, array_filters: str | list[dict[str, Any]] | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}
+
+        ``update`` keys may be nested paths (``"address.city"``, ``"lines.0.qty"``,
+        ``"lines.$[].qty"``, ``"lines.$[line].qty"``). ``array_filters`` picks the
+        list elements a ``$[name]`` path changes: one filter document per name,
+        as a JSON string or a list of dicts (``[{"line.sku": "A-1"}]``).
+        """
+        if array_filters is not None:
+            request["arrayFilters"] = array_filters if isinstance(array_filters, str) else json.dumps(array_filters)
         return self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/{id}",
@@ -282,8 +321,18 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
-    def find_own(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/collections/{collectionName}/own"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    def find_own(self, collection_name: str, *, expand_references: bool | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/own
+
+        ``expand_references=True`` returns every reference field (user, role,
+        taxonomy term, record of another collection, file) as ``{"id", "display"}``
+        — see ``norbix_python.ReferenceDisplay``. The caller needs read permission
+        on every source the published schema links to, or the read is refused
+        with ``CM-ERRORS-DATABASE-056``. Default ``False`` returns the stored ids.
+        """
+        if expand_references is not None:
+            request["expandReferences"] = expand_references
         return self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/own",
@@ -469,8 +518,18 @@ class AsyncDatabaseModule:
             bearer_token=bearer_token,
         )
 
-    async def find(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/collections/{collectionName}"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    async def find(self, collection_name: str, *, expand_references: bool | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}
+
+        ``expand_references=True`` returns every reference field (user, role,
+        taxonomy term, record of another collection, file) as ``{"id", "display"}``
+        — see ``norbix_python.ReferenceDisplay``. The caller needs read permission
+        on every source the published schema links to, or the read is refused
+        with ``CM-ERRORS-DATABASE-056``. Default ``False`` returns the stored ids.
+        """
+        if expand_references is not None:
+            request["expandReferences"] = expand_references
         return await self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}",
@@ -482,8 +541,18 @@ class AsyncDatabaseModule:
             bearer_token=bearer_token,
         )
 
-    async def find_one(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/collections/{collectionName}/{id}"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    async def find_one(self, collection_name: str, id: str, *, expand_references: bool | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/{id}
+
+        ``expand_references=True`` returns every reference field (user, role,
+        taxonomy term, record of another collection, file) as ``{"id", "display"}``
+        — see ``norbix_python.ReferenceDisplay``. The caller needs read permission
+        on every source the published schema links to, or the read is refused
+        with ``CM-ERRORS-DATABASE-056``. Default ``False`` returns the stored ids.
+        """
+        if expand_references is not None:
+            request["expandReferences"] = expand_references
         return await self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/{id}",
@@ -534,8 +603,17 @@ class AsyncDatabaseModule:
             bearer_token=bearer_token,
         )
 
-    async def update_many(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/database/collections/{collectionName}/many"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    async def update_many(self, collection_name: str, *, array_filters: str | list[dict[str, Any]] | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/many
+
+        ``update`` keys may be nested paths (``"address.city"``, ``"lines.0.qty"``,
+        ``"lines.$[].qty"``, ``"lines.$[line].qty"``). ``array_filters`` picks the
+        list elements a ``$[name]`` path changes: one filter document per name,
+        as a JSON string or a list of dicts (``[{"line.sku": "A-1"}]``).
+        """
+        if array_filters is not None:
+            request["arrayFilters"] = array_filters if isinstance(array_filters, str) else json.dumps(array_filters)
         return await self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/many",
@@ -547,8 +625,17 @@ class AsyncDatabaseModule:
             bearer_token=bearer_token,
         )
 
-    async def update_one(self, collection_name: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/database/collections/{collectionName}/{id}"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    async def update_one(self, collection_name: str, id: str, *, array_filters: str | list[dict[str, Any]] | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/database/collections/{collectionName}/{id}
+
+        ``update`` keys may be nested paths (``"address.city"``, ``"lines.0.qty"``,
+        ``"lines.$[].qty"``, ``"lines.$[line].qty"``). ``array_filters`` picks the
+        list elements a ``$[name]`` path changes: one filter document per name,
+        as a JSON string or a list of dicts (``[{"line.sku": "A-1"}]``).
+        """
+        if array_filters is not None:
+            request["arrayFilters"] = array_filters if isinstance(array_filters, str) else json.dumps(array_filters)
         return await self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/{id}",
@@ -573,8 +660,18 @@ class AsyncDatabaseModule:
             bearer_token=bearer_token,
         )
 
-    async def find_own(self, collection_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/collections/{collectionName}/own"""
+    # HAND-WRITTEN keyword options (expand_references / array_filters) — keep on regeneration.
+    async def find_own(self, collection_name: str, *, expand_references: bool | None = None, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/collections/{collectionName}/own
+
+        ``expand_references=True`` returns every reference field (user, role,
+        taxonomy term, record of another collection, file) as ``{"id", "display"}``
+        — see ``norbix_python.ReferenceDisplay``. The caller needs read permission
+        on every source the published schema links to, or the read is refused
+        with ``CM-ERRORS-DATABASE-056``. Default ``False`` returns the stored ids.
+        """
+        if expand_references is not None:
+            request["expandReferences"] = expand_references
         return await self._transport.send(
             target="api",
             path="/{version}/database/collections/{collectionName}/own",
