@@ -711,6 +711,19 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def get_database_schema_index_status(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/schemas/{Id}/index-status — the last schema-index run of the collection (state building | ready | refused | partial, per database)."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/index-status",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_database_schema_list_settings(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/database/schemas/{Id}/list-settings"""
         return self._transport.send(
@@ -1659,6 +1672,19 @@ class AsyncDatabaseModule:
             path="/{version}/database/schemas/apply-bundle",
             method="POST",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_database_schema_index_status(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/schemas/{Id}/index-status — the last schema-index run of the collection (state building | ready | refused | partial, per database)."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/{Id}/index-status",
+            method="GET",
+            path_params={"Id": id},
             request=request,
             scope="project",
             timeout=timeout,

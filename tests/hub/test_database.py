@@ -405,6 +405,7 @@ HUB_DB_AUDIT_CASES: list[DbCase] = [
     ("get_database_taxonomy_term_tree", "GET", f"{DB}/taxonomies/{TAX}/terms/tree", lambda m: m.get_database_taxonomy_term_tree(TAX)),
     # schemas
     ("apply_database_schema_bundle", "POST", f"{DB}/schemas/apply-bundle", lambda m: m.apply_database_schema_bundle()),
+    ("get_database_schema_index_status", "GET", f"{DB}/schemas/{SCHEMA}/index-status", lambda m: m.get_database_schema_index_status(SCHEMA)),
     ("get_database_schema_list_settings", "GET", f"{DB}/schemas/{SCHEMA}/list-settings", lambda m: m.get_database_schema_list_settings(SCHEMA)),
     ("update_database_schema_list_settings", "PUT", f"{DB}/schemas/{SCHEMA}/list-settings", lambda m: m.update_database_schema_list_settings(SCHEMA)),
     ("update_database_schema_embed", "PUT", f"{DB}/schemas/{SCHEMA}/embed", lambda m: m.update_database_schema_embed(SCHEMA)),
@@ -447,9 +448,9 @@ def test_hub_database_audit_method_hits_the_gateway_route(
 
 
 def test_hub_database_audit_surface_size() -> None:
-    """23 Hub database routes were missing before the audit; all of them are covered here."""
-    assert len(HUB_DB_AUDIT_CASES) == 23
-    assert len({case[0] for case in HUB_DB_AUDIT_CASES}) == 23
+    """23 Hub database routes were missing before the audit, plus the schema index status (campaign 24 mongo-indexes); all of them are covered here."""
+    assert len(HUB_DB_AUDIT_CASES) == 24
+    assert len({case[0] for case in HUB_DB_AUDIT_CASES}) == 24
 
 
 def test_hub_database_find_records_sends_query_values() -> None:
