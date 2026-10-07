@@ -16,7 +16,7 @@ from __future__ import annotations
 import asyncio
 import json
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 import httpx
 import pytest
@@ -72,6 +72,14 @@ def test_get_file() -> None:
     method, path, query, _ = _sent(transport)
     assert (method, path) == ("GET", "/v2/files/item")
     assert INTEGRATION_ID in query
+
+
+def test_get_file_by_id() -> None:
+    client, transport = make_client()
+    client.hub.files.get_file_by_id(INTEGRATION_ID, "nbfl_7hK2abc")
+    method, path, query, _ = _sent(transport)
+    assert (method, path) == ("GET", "/v2/files/item/by-id")
+    assert parse_qs(query) == {"filesIntegrationId": [INTEGRATION_ID], "id": ["nbfl_7hK2abc"]}
 
 
 # --- hub: integrations -------------------------------------------------------
@@ -152,6 +160,14 @@ def test_get_file_info() -> None:
     client.api.files.get_file_info(INTEGRATION_ID, path="invoices/invoice.pdf")
     method, path, _, _ = _sent(transport)
     assert (method, path) == ("GET", f"/v2/files/{INTEGRATION_ID}/info")
+
+
+def test_api_get_file_by_id() -> None:
+    client, transport = make_client()
+    client.api.files.get_file_by_id(INTEGRATION_ID, "nbfl_7hK2abc")
+    method, path, query, _ = _sent(transport)
+    assert (method, path) == ("GET", f"/v2/files/{INTEGRATION_ID}/by-id/nbfl_7hK2abc")
+    assert query == ""
 
 
 def test_get_signed_url() -> None:

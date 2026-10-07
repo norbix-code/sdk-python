@@ -11,6 +11,7 @@ def test_hub_files_module_surface() -> None:
     assert callable(module.enable_files)
     assert callable(module.get_folder_files)
     assert callable(module.get_file)
+    assert callable(module.get_file_by_id)
     assert callable(module.delete_files_trigger)
     assert callable(module.disable_files_trigger)
     assert callable(module.enable_files_trigger)

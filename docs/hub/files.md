@@ -8,6 +8,7 @@ Access with `norbix.hub.files`.
 | `enable_files` | `PUT` | `/{version}/files/enable` | `project` |
 | `get_folder_files` | `GET` | `/{version}/files/folder` | `project` |
 | `get_file` | `GET` | `/{version}/files/item` | `project` |
+| `get_file_by_id` | `GET` | `/{version}/files/item/by-id` | `project` |
 | `delete_files_trigger` | `DELETE` | `/{version}/files/triggers/{triggerId}` | `project` |
 | `disable_files_trigger` | `PATCH` | `/{version}/files/triggers/{triggerId}/disable` | `project` |
 | `enable_files_trigger` | `PATCH` | `/{version}/files/triggers/{triggerId}/enable` | `project` |
@@ -33,7 +34,9 @@ Access with `norbix.hub.files`.
   container, a folder on the server. A project can have several; one is the
   default.
 * `get_folder_files` lists what is under a path. `get_file` reads the details of
-  one file.
+  one file by its path; `get_file_by_id(files_integration_id, id)` by its stable
+  id — the id a record's file field stores and an expanded reference returns.
+  Both answer `file`, `isPublic`, `publicUrl`.
 * `test_files_integration` checks the settings really work before you save them.
 
 Uploading and downloading file bytes is on the public API side — see

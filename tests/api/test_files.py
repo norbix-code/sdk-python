@@ -12,6 +12,7 @@ def test_api_files_module_surface() -> None:
     assert callable(module.commit_upload)
     assert callable(module.download_file_api)
     assert callable(module.get_file_info)
+    assert callable(module.get_file_by_id)
     assert callable(module.get_signed_url)
     assert callable(module.request_upload_url)
 

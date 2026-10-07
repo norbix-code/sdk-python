@@ -61,6 +61,26 @@ class FilesModule:
             bearer_token=bearer_token,
         )
 
+    # HAND-WRITTEN: not produced by scripts/generate_endpoints.py — keep on regeneration.
+    def get_file_by_id(self, files_integration_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/item/by-id
+
+        Fetch one file by its stable id (``filesIntegrationId`` + ``id`` go in the
+        query string). Same answer shape as ``get_file``: ``file``, ``isPublic``,
+        ``publicUrl``. The id is what a record's file field stores and what an
+        expanded reference returns.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/files/item/by-id",
+            method="GET",
+            path_params={},
+            request={"filesIntegrationId": files_integration_id, "id": id, **request},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def delete_files_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """DELETE /{version}/files/triggers/{triggerId}"""
         return self._transport.send(
@@ -386,6 +406,26 @@ class AsyncFilesModule:
             method="GET",
             path_params={},
             request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    # HAND-WRITTEN: not produced by scripts/generate_endpoints.py — keep on regeneration.
+    async def get_file_by_id(self, files_integration_id: str, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/files/item/by-id
+
+        Fetch one file by its stable id (``filesIntegrationId`` + ``id`` go in the
+        query string). Same answer shape as ``get_file``: ``file``, ``isPublic``,
+        ``publicUrl``. The id is what a record's file field stores and what an
+        expanded reference returns.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/files/item/by-id",
+            method="GET",
+            path_params={},
+            request={"filesIntegrationId": files_integration_id, "id": id, **request},
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
