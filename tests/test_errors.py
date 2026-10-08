@@ -19,7 +19,13 @@ from typing import Any
 import httpx
 import pytest
 
-from norbix_python import AsyncNorbix, Norbix, NorbixError, ValidationError
+from norbix_python import (
+    AsyncNorbix,
+    AuthenticationError,
+    Norbix,
+    NorbixError,
+    ValidationError,
+)
 
 INTEGRATION_ID = "int_7"
 
@@ -209,3 +215,130 @@ def test_the_async_client_fails_on_a_200_that_says_it_failed() -> None:
     assert caught.value.http_status == 200
     assert caught.value.message == "Integration not found"
     assert caught.value.error_code == "CM-ERRORS-INTEGRATIONS-001"
+
+
+# --- The gateway's answer shapes since every failure carries a real status ---
+# Each case runs through the sync and the async client: both transports must
+# read an answer the same way.
+
+MEMBERSHIP_403 = {
+    "responseStatus": {
+        "isSuccess": False,
+        "errors": [
+            {
+                "message": "Caller is missing required permission 'database:create on db_1'.",
+                "errorCode": "CM-ERRORS-MEMBERSHIP-039",
+                "context": {"MissingPermissions": "database:create on db_1"},
+            }
+        ],
+    }
+}
+
+INTERNAL_500 = {
+    "message": "A temporary internal error occurred. Reference: ref_1",
+    "errorCode": "CM-ERRORS-INFRA-NORBIX-001",
+    "context": {"ReferenceId": "ref_1"},
+}
+
+
+class _AsyncAnswersAny(httpx.AsyncBaseTransport):
+    def __init__(self, status: int, *, json: Any = None, text: str | None = None) -> None:
+        self.status = status
+        self.json = json
+        self.text = text
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        if self.text is not None:
+            return httpx.Response(
+                self.status, text=self.text, headers={"Content-Type": "text/html"}
+            )
+        return httpx.Response(self.status, json=self.json)
+
+
+def _call_sync(status: int, *, json: Any = None, text: str | None = None) -> Any:
+    return a_call(client_answering(status, json=json, text=text))
+
+
+def _call_async(status: int, *, json: Any = None, text: str | None = None) -> Any:
+    async def run() -> Any:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=_AsyncAnswersAny(status, json=json, text=text)),
+        )
+        return await client.api.files.test_files_integration(INTEGRATION_ID)
+
+    return asyncio.run(run())
+
+
+both_clients = pytest.mark.parametrize("call", [_call_sync, _call_async], ids=["sync", "async"])
+
+
+@both_clients
+def test_a_403_gives_the_membership_code_message_and_context(call: Any) -> None:
+    with pytest.raises(AuthenticationError) as caught:
+        call(403, json=MEMBERSHIP_403)
+
+    err = caught.value
+    assert err.http_status == 403
+    assert err.error_code == "CM-ERRORS-MEMBERSHIP-039"
+    assert err.message == "Caller is missing required permission 'database:create on db_1'."
+    assert err.context == {"MissingPermissions": "database:create on db_1"}
+    assert len(err.errors) == 1
+    assert err.body == MEMBERSHIP_403
+
+
+@both_clients
+def test_a_500_with_a_reference_id_reads_the_top_of_the_body(call: Any) -> None:
+    with pytest.raises(NorbixError) as caught:
+        call(500, json=INTERNAL_500)
+
+    err = caught.value
+    assert type(err) is NorbixError
+    assert err.http_status == 500
+    assert err.error_code == "CM-ERRORS-INFRA-NORBIX-001"
+    assert err.message == "A temporary internal error occurred. Reference: ref_1"
+    assert err.context == {"ReferenceId": "ref_1"}
+    assert err.errors == []
+
+
+@both_clients
+def test_a_200_that_says_it_failed_keeps_code_and_context(call: Any) -> None:
+    with pytest.raises(NorbixError) as caught:
+        call(200, json=MEMBERSHIP_403)
+
+    err = caught.value
+    assert err.http_status == 200
+    assert err.error_code == "CM-ERRORS-MEMBERSHIP-039"
+    assert err.context == {"MissingPermissions": "database:create on db_1"}
+
+
+@both_clients
+def test_a_502_that_is_not_json_uses_the_generic_message(call: Any) -> None:
+    with pytest.raises(NorbixError) as caught:
+        call(502, text="<html>502 Bad Gateway</html>")
+
+    err = caught.value
+    assert err.http_status == 502
+    assert err.message == "Request failed (HTTP 502)"
+    assert err.error_code == "HTTP_502"
+    assert err.context == {}
+    assert err.body == "<html>502 Bad Gateway</html>"
+
+
+@both_clients
+def test_a_success_still_comes_back_as_a_value(call: Any) -> None:
+    body = {"items": [{"result": "OK"}], "responseStatus": {"isSuccess": True}}
+
+    assert call(200, json=body) == body
+
+
+def test_an_empty_errors_list_falls_back_to_the_top_of_the_body() -> None:
+    """A responseStatus with nothing in it must not hide the top-level fields."""
+    body = {"responseStatus": {"isSuccess": False, "errors": []}, **INTERNAL_500}
+
+    with pytest.raises(NorbixError) as caught:
+        _call_sync(500, json=body)
+
+    assert caught.value.error_code == "CM-ERRORS-INFRA-NORBIX-001"
+    assert caught.value.context == {"ReferenceId": "ref_1"}
