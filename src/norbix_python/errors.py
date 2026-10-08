@@ -38,6 +38,7 @@ class NorbixError(Exception):
         details: dict[str, Any] | None = None,
         errors: list[ErrorItem] | None = None,
         body: Any = None,
+        context: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(message)
         self.message = message
@@ -48,6 +49,9 @@ class NorbixError(Exception):
         self.errors = errors or []
         #: The answer exactly as it arrived, for whoever needs the rest of it.
         self.body = body
+        #: Extra facts about the error the message came from — the missing
+        #: permission, the reference id of an internal error. Empty when none.
+        self.context = context or {}
 
     @property
     def http_status(self) -> int:
@@ -75,9 +79,16 @@ class AuthenticationError(NorbixError):
         details: dict[str, Any] | None = None,
         errors: list[ErrorItem] | None = None,
         body: Any = None,
+        context: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(
-            message, status=status, code=code, details=details, errors=errors, body=body
+            message,
+            status=status,
+            code=code,
+            details=details,
+            errors=errors,
+            body=body,
+            context=context,
         )
 
 
@@ -93,9 +104,16 @@ class NotFoundError(NorbixError):
         details: dict[str, Any] | None = None,
         errors: list[ErrorItem] | None = None,
         body: Any = None,
+        context: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(
-            message, status=status, code=code, details=details, errors=errors, body=body
+            message,
+            status=status,
+            code=code,
+            details=details,
+            errors=errors,
+            body=body,
+            context=context,
         )
 
 
@@ -111,9 +129,16 @@ class RateLimitError(NorbixError):
         details: dict[str, Any] | None = None,
         errors: list[ErrorItem] | None = None,
         body: Any = None,
+        context: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(
-            message, status=status, code=code, details=details, errors=errors, body=body
+            message,
+            status=status,
+            code=code,
+            details=details,
+            errors=errors,
+            body=body,
+            context=context,
         )
 
 
@@ -129,9 +154,16 @@ class ValidationError(NorbixError):
         details: dict[str, Any] | None = None,
         errors: list[ErrorItem] | None = None,
         body: Any = None,
+        context: dict[str, Any] | None = None,
     ) -> None:
         super().__init__(
-            message, status=status, code=code, details=details, errors=errors, body=body
+            message,
+            status=status,
+            code=code,
+            details=details,
+            errors=errors,
+            body=body,
+            context=context,
         )
 
 
@@ -143,6 +175,7 @@ def error_from_http(
     details: dict[str, Any],
     errors: list[ErrorItem] | None = None,
     body: Any = None,
+    context: dict[str, Any] | None = None,
 ) -> NorbixError:
     kwargs: dict[str, Any] = {
         "status": status,
@@ -150,6 +183,7 @@ def error_from_http(
         "details": details,
         "errors": errors,
         "body": body,
+        "context": context,
     }
     if status == 404:
         return NotFoundError(message, **kwargs)
@@ -213,27 +247,48 @@ def _text(value: Any) -> str:
     return value if isinstance(value, str) and value else ""
 
 
+def _context_of(value: Any) -> dict[str, Any] | None:
+    return value if isinstance(value, dict) and value else None
+
+
 def error_from_body(*, body: Any, status: int, text: str = "") -> NorbixError:
     """Build the error a gateway answer describes.
 
-    The gateway puts its message and its error code inside
-    ``responseStatus.errors[]``, not at the top of the block, so that list is
-    read first: the first entry gives the message and the code, and every entry
-    is kept in :attr:`NorbixError.errors`. Only when the body has no
-    ``responseStatus`` are the top-level ``message`` and ``errorCode`` read.
-    ``Request failed (HTTP <status>)`` is the last fallback, used when the body
-    says nothing at all — a 500 page that is not JSON, say.
+    Each of message, code and context is taken from the first place that has
+    it, in this order:
+
+    1. the first entry of ``responseStatus.errors[]`` that has a message or a
+       code — that is where the gateway puts them;
+    2. ``responseStatus.message`` / ``errorCode`` / ``context``;
+    3. the top-level ``message`` / ``errorCode`` / ``context`` (an answer from
+       outside the service layer, such as an internal error with a reference id).
+
+    ``Request failed (HTTP <status>)`` and ``HTTP_<status>`` are the last
+    fallback, used when the body says nothing at all — a 502 page that is not
+    JSON, say. Every entry of ``errors[]`` is kept in :attr:`NorbixError.errors`
+    and the body as it arrived in :attr:`NorbixError.body`.
     """
     details: dict[str, Any] = body if isinstance(body, dict) else {}
-    # source is responseStatus when the body has one, the body itself when it
-    # has none — so the top-level fields are read only in the second case.
-    source = _response_status_of(body) or details
+    response_status = _response_status_of(body) or {}
 
-    items = _items_of(source.get("errors"))
+    items = _items_of(response_status.get("errors"))
     first = next((i for i in items if i.message or i.error_code), None)
 
-    message = (first.message if first else "") or _text(source.get("message"))
-    code = (first.error_code if first else "") or _text(source.get("errorCode"))
+    message = (
+        (first.message if first else "")
+        or _text(response_status.get("message"))
+        or _text(details.get("message"))
+    )
+    code = (
+        (first.error_code if first else "")
+        or _text(response_status.get("errorCode"))
+        or _text(details.get("errorCode"))
+    )
+    context = (
+        (_context_of(first.context) if first else None)
+        or _context_of(response_status.get("context"))
+        or _context_of(details.get("context"))
+    )
 
     if not message:
         message = f"Request failed (HTTP {status})"
@@ -249,4 +304,5 @@ def error_from_body(*, body: Any, status: int, text: str = "") -> NorbixError:
         details=details,
         errors=items,
         body=body if body is not None else (text or None),
+        context=context,
     )
