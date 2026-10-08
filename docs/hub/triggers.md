@@ -41,3 +41,31 @@ norbix.hub.database.save_schema_trigger(
 ```
 
 Everything here is asserted in `tests/hub/test_triggers.py`.
+
+## Order and "break on failure"
+
+When several triggers fire for the same event, they run one after the other.
+Two optional fields on `trigger` decide that queue (all four save methods):
+
+- `order` — a whole number, 0 or more. Lower runs earlier; a trigger without
+  an order runs after every numbered one; equal places run by name.
+- `breakOnError` — `True` stops the triggers after this one when this
+  trigger's action fails. Default `False`: the others still run.
+
+```python
+norbix.hub.membership.save_membership_trigger(
+    trigger={
+        "type": "Membership",
+        "name": "welcome first",
+        "when": "OnRegistered",
+        "isEnabled": True,
+        "order": 1,
+        "breakOnError": True,
+        "action": {"type": "Email", "integrationId": "int_email", "templateId": "tpl_123"},
+    }
+)
+```
+
+Both come back on `get_*_trigger` and on every row of `get_*_triggers`. A
+negative `order` is refused with `CM-ERRORS-TRIGGERS-008`.
+

@@ -197,6 +197,9 @@ A trigger action (`save_schema_trigger`, `save_files_trigger`,
 `initiatorId` (who the send is attributed to) on Email, Push and SMS actions.
 Two related calls:
 
+- `trigger.order` (whole number, lower runs first) and `trigger.breakOnError`
+  (stop the later triggers of the same event when this one fails) set the queue
+  of one event's triggers — see [docs/hub/triggers.md](./docs/hub/triggers.md).
 - `norbix.hub.triggers.get_triggers_needing_attention(triggerType="Schema")` —
   triggers that need a fix (for example, their provider is gone); `{"items": [...]}`.
 - `norbix.hub.account.check_project_languages(project_id, languages=["en", "de"])` —
