@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-07 10:03:25
+Date: 2026-10-12 13:41:44
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -240,6 +240,8 @@ class SaveTriggerRequest:
     description: Optional[str] = None
     is_enabled: bool = False
     pre_execute_code: Optional[str] = None
+    order: Optional[int] = None
+    break_on_error: bool = False
     action: Optional[TriggerActionDto] = None
 
 
@@ -897,19 +899,57 @@ class PushIntegrationRequest:
 @dataclass
 class EdgeWebPushIntegrationRequest(PushIntegrationRequest):
     provider: Optional[PushProvider] = None
+    # @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     vapid_public_key: Optional[str] = None
+    """
+    VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.
+    """
+
+
+    # @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     vapid_private_key: Optional[str] = None
+    """
+    VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.
+    """
+
+
+    # @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     subject: Optional[str] = None
+    """
+    Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.
+    """
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ChromePluginPushIntegrationRequest(PushIntegrationRequest):
     provider: Optional[PushProvider] = None
+    # @ApiMember(Description="The extension's Chrome id: 32 lower-case letters a–p, as shown on chrome://extensions.", IsRequired=true)
     extension_id: Optional[str] = None
+    """
+    The extension's Chrome id: 32 lower-case letters a–p, as shown on chrome://extensions.
+    """
+
+
+    # @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     vapid_public_key: Optional[str] = None
+    """
+    VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.
+    """
+
+
+    # @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     vapid_private_key: Optional[str] = None
+    """
+    VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.
+    """
+
+
+    # @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     subject: Optional[str] = None
+    """
+    Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.
+    """
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -925,18 +965,50 @@ class SafariPushIntegrationRequest(PushIntegrationRequest):
 @dataclass
 class ChromeWebPushIntegrationRequest(PushIntegrationRequest):
     provider: Optional[PushProvider] = None
+    # @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     vapid_public_key: Optional[str] = None
+    """
+    VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.
+    """
+
+
+    # @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     vapid_private_key: Optional[str] = None
+    """
+    VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.
+    """
+
+
+    # @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     subject: Optional[str] = None
+    """
+    Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.
+    """
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class FirefoxWebPushIntegrationRequest(PushIntegrationRequest):
     provider: Optional[PushProvider] = None
+    # @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     vapid_public_key: Optional[str] = None
+    """
+    VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.
+    """
+
+
+    # @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     vapid_private_key: Optional[str] = None
+    """
+    VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.
+    """
+
+
+    # @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     subject: Optional[str] = None
+    """
+    Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.
+    """
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -970,6 +1042,7 @@ class CodeProvider(str, Enum):
     NETLIFY = 'Netlify'
     SUPABASE_EDGE = 'SupabaseEdge'
     MODAL = 'Modal'
+    FAKE = 'Fake'
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1395,6 +1468,21 @@ class TriggerActionPushDto(TriggerActionDto):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class FunctionRefDto:
+    integration_id: Optional[str] = None
+    provider: Optional[CodeProvider] = None
+    function_id: Optional[str] = None
+    qualifier: Optional[str] = None
+    display_name: Optional[str] = None
+
+
+class CodeInvocationType(str, Enum):
+    SYNC = 'Sync'
+    ASYNC = 'Async'
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class CodeDeliverySettingsDto:
     mapped_tokens: Optional[List[TokenMappingDto]] = None
 
@@ -1402,8 +1490,14 @@ class CodeDeliverySettingsDto:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class TriggerActionCodeDto(TriggerActionDto):
-    function_id: Optional[str] = None
+    function_ref: Optional[FunctionRefDto] = None
+    run_as_user_id: Optional[str] = None
+    invocation_type: Optional[CodeInvocationType] = None
+    config: Optional[str] = None
     delivery_settings: Optional[CodeDeliverySettingsDto] = None
+    function_id: Optional[str] = None
+    activation_code: Optional[str] = None
+    meta: Optional[Dict[str, str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2234,6 +2328,7 @@ class LocalFilesIntegrationDto(FilesIntegrationDto):
 class DatabaseIntegrationDto(IntegrationDto):
     provider: Optional[DatabaseProvider] = None
     is_system_owned: bool = False
+    can_manage_indexes: Optional[bool] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2353,6 +2448,8 @@ class AndroidFirebasePushIntegrationDto(PushIntegrationDto):
 class AppleApnsPushIntegrationDto(PushIntegrationDto):
     team_id: Optional[str] = None
     app_bundle_id: Optional[str] = None
+    key_id: Optional[str] = None
+    is_production: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2494,6 +2591,9 @@ class SchedulerTaskDto:
     env: Optional[str] = None
     created_at_unix: Optional[int] = None
     updated_at_unix: Optional[int] = None
+    is_failing: bool = False
+    last_failure_reason: Optional[str] = None
+    last_failed_at_unix: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3035,6 +3135,343 @@ class ConversationSnapshotEntryWireDto(AiChatEntryWireDto):
     covers_up_to_seq: int = 0
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class JsonSchemaFieldDto:
+    field_name: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class StringFieldDto(JsonSchemaFieldDto):
+    format: Optional[str] = None
+    pattern: Optional[str] = None
+    min_length: Optional[int] = None
+    max_length: Optional[int] = None
+    translate_options: Optional[IReadOnlyDictionary[str, str]] = None
+    default: Optional[str] = None
+    unique: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DecimalFieldDto(JsonSchemaFieldDto):
+    minimum: Optional[Decimal] = None
+    maximum: Optional[Decimal] = None
+    multiple_of: Optional[Decimal] = None
+    default: Optional[Decimal] = None
+    unique: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CurrencyDefaultDto:
+    value: Decimal = decimal.Decimal(0)
+    currency: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CurrencyFieldDto(JsonSchemaFieldDto):
+    allowed_currencies: Optional[IReadOnlyList[str]] = None
+    multiple_of: Optional[Decimal] = None
+    minimum: Optional[Decimal] = None
+    maximum: Optional[Decimal] = None
+    default: Optional[CurrencyDefaultDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class BooleanFieldDto(JsonSchemaFieldDto):
+    default: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DateFieldDto(JsonSchemaFieldDto):
+    minimum: Optional[int] = None
+    maximum: Optional[int] = None
+    default: Optional[int] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class IntegerFieldDto(JsonSchemaFieldDto):
+    minimum: Optional[int] = None
+    maximum: Optional[int] = None
+    default: Optional[int] = None
+    unique: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GeolocationFieldDto(JsonSchemaFieldDto):
+    allowed_types: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TagsFieldDto(JsonSchemaFieldDto):
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    default: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class FileFieldDto(JsonSchemaFieldDto):
+    storages: Optional[IReadOnlyList[str]] = None
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    allowed_file_type: Optional[str] = None
+    max_size_mb: Optional[Decimal] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class TaxonomySelectionFieldDto(JsonSchemaFieldDto):
+    taxonomy_id: Optional[str] = None
+    multiple: bool = False
+    display_field: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CollectionSelectionFieldDto(JsonSchemaFieldDto):
+    collection_id: Optional[str] = None
+    display_field: Optional[str] = None
+    multiple: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UserSelectionFieldDto(JsonSchemaFieldDto):
+    multiple: bool = False
+    display_field: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RoleSelectionFieldDto(JsonSchemaFieldDto):
+    multiple: bool = False
+    display_field: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EnumSelectionFieldDto(JsonSchemaFieldDto):
+    values: Optional[IReadOnlyList[str]] = None
+    multiple: bool = False
+    default: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ObjectFieldDto(JsonSchemaFieldDto):
+    properties: Optional[IReadOnlyList[JsonSchemaFieldDto]] = None
+    required: Optional[IReadOnlyList[str]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ArrayFieldDto(JsonSchemaFieldDto):
+    items: Optional[JsonSchemaFieldDto] = None
+    min_items: Optional[int] = None
+    max_items: Optional[int] = None
+    unique_items: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class JsonFieldDto(JsonSchemaFieldDto):
+    max_bytes: Optional[int] = None
+
+
+class CodeFunctionSource(str, Enum):
+    DATABASE = 'Database'
+    MEMBERSHIP = 'Membership'
+    FILES = 'Files'
+    PAYMENTS = 'Payments'
+    AI = 'Ai'
+    SCHEDULER = 'Scheduler'
+    MANUAL = 'Manual'
+
+
+class CodeFunctionCallerKind(str, Enum):
+    USER = 'User'
+    API_KEY = 'ApiKey'
+    SYSTEM = 'System'
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionCallerDto:
+    user_id: Optional[str] = None
+    email: Optional[str] = None
+    kind: Optional[CodeFunctionCallerKind] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionRunAsDto:
+    user_id: Optional[str] = None
+    access_token: Optional[str] = None
+    expires_at: Optional[datetime.datetime] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionContextDto:
+    account_id: Optional[str] = None
+    project_id: Optional[str] = None
+    environment: Optional[str] = None
+    region: Optional[str] = None
+    hub_url: Optional[str] = None
+    api_url: Optional[str] = None
+    echo_url: Optional[str] = None
+    trigger_id: Optional[str] = None
+    task_id: Optional[str] = None
+    correlation_id: Optional[str] = None
+    caller: Optional[CodeFunctionCallerDto] = None
+    run_as: Optional[CodeFunctionRunAsDto] = None
+
+
+class ResourceKindDto(str, Enum):
+    CONTACT = 'contact'
+    DOCUMENT = 'document'
+    FILE = 'file'
+    PAYMENT_CUSTOMER = 'paymentCustomer'
+    ORDER = 'order'
+    PAYMENT = 'payment'
+    PRODUCT = 'product'
+    INTEGRATION = 'integration'
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ResourceRefDto:
+    project_id: Optional[str] = None
+    integration_id: Optional[str] = None
+    kind: Optional[ResourceKindDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DocumentRefDto(ResourceRefDto):
+    kind: Optional[ResourceKindDto] = None
+    database_integration_id: Optional[str] = None
+    schema_id: Optional[str] = None
+    external_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DatabaseRecordChangeDto:
+    collection: Optional[str] = None
+    schema_id: Optional[str] = None
+    schema_version: Optional[int] = None
+    record_id: Optional[str] = None
+    old: Optional[Dict[str, Object]] = None
+    new: Optional[Dict[str, Object]] = None
+    truncated: bool = False
+    old_ref: Optional[DocumentRefDto] = None
+    new_ref: Optional[DocumentRefDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UserChangeDto:
+    user_id: Optional[str] = None
+    old: Optional[Dict[str, Object]] = None
+    new: Optional[Dict[str, Object]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class FileChangeDto:
+    old: Optional[Dict[str, Object]] = None
+    new: Optional[Dict[str, Object]] = None
+    path: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class PaymentFactDto:
+    integration_id: Optional[str] = None
+    provider: Optional[str] = None
+    provider_event_id: Optional[str] = None
+    event_name: Optional[str] = None
+    status: Optional[str] = None
+    amount_minor: Optional[int] = None
+    currency: Optional[str] = None
+    external_ids: Optional[Dict[str, str]] = None
+    occurred_on: Optional[datetime.datetime] = None
+    received_on: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiUsageEventDto:
+    payload: Dict[str, Object] = field(default_factory=dict)
+    target_user_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class ScheduledTaskInfoDto:
+    task_id: Optional[str] = None
+    name: Optional[str] = None
+    fired_at: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionDataDto:
+    database: Optional[DatabaseRecordChangeDto] = None
+    user: Optional[UserChangeDto] = None
+    file: Optional[FileChangeDto] = None
+    payment: Optional[PaymentFactDto] = None
+    ai: Optional[AiUsageEventDto] = None
+    task: Optional[ScheduledTaskInfoDto] = None
+    payload: Optional[Dict[str, Object]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionEventDto:
+    spec_version: Optional[str] = None
+    id: Optional[str] = None
+    event_id: Optional[str] = None
+    event: Optional[str] = None
+    source: Optional[CodeFunctionSource] = None
+    created_on: datetime.datetime = datetime.datetime(1, 1, 1)
+    context: Optional[CodeFunctionContextDto] = None
+    data: Optional[CodeFunctionDataDto] = None
+    config: Optional[Dict[str, Object]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class FakeCodeIntegrationDto(CodeIntegrationDto):
+    pass
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class FakeCodeIntegrationRequest(CodeIntegrationRequest):
+    provider: Optional[CodeProvider] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionSchedulerTaskRequest(SchedulerTaskRequest):
+    type: Optional[SchedulerTaskType] = None
+    function_ref: Optional[FunctionRefDto] = None
+    invocation_type: Optional[CodeInvocationType] = None
+    config: Optional[str] = None
+    mapped_tokens: Optional[List[TokenMappingDto]] = None
+
+
 class ICultureBasedRequest:
     culture_code: Optional[str] = None
 
@@ -3230,11 +3667,9 @@ class ProjectAiAssistantRequestBase(CodeMashRequestBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class AiScopeDto:
-    reach: Optional[str] = None
+class AiProjectRoleIdsDto:
     project_id: Optional[str] = None
-    rights: Optional[str] = None
-    envs: List[str] = field(default_factory=list)
+    role_ids: List[str] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3545,25 +3980,6 @@ class EmbeddingIntegrationRequest:
     api_key: Optional[str] = None
 
 
-class ResourceKindDto(str, Enum):
-    CONTACT = 'contact'
-    DOCUMENT = 'document'
-    FILE = 'file'
-    PAYMENT_CUSTOMER = 'paymentCustomer'
-    ORDER = 'order'
-    PAYMENT = 'payment'
-    PRODUCT = 'product'
-    INTEGRATION = 'integration'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ResourceRefDto:
-    project_id: Optional[str] = None
-    integration_id: Optional[str] = None
-    kind: Optional[ResourceKindDto] = None
-
-
 class CaseResolutionFixKind(str, Enum):
     CODE_FIX = 'CodeFix'
     CONFIG_CHANGE = 'ConfigChange'
@@ -3620,12 +4036,34 @@ class EchoRegionDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class EchoAgentSnippetDto:
+    client: Optional[str] = None
+    kind: Optional[str] = None
+    recommended: bool = False
+    auth: Optional[str] = None
+    config: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class EchoAgentDto:
     mcp_url: Optional[str] = None
     o_auth_metadata_url: Optional[str] = None
     installation_type: Optional[str] = None
     onboarding_docs_url: Optional[str] = None
     tools_url: Optional[str] = None
+    cli_package: Optional[str] = None
+    cli_install_command: Optional[str] = None
+    device_authorization_url: Optional[str] = None
+    device_token_url: Optional[str] = None
+    snippets: List[EchoAgentSnippetDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EchoHostingPlatformDto:
+    provider: Optional[str] = None
+    is_aws: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3717,6 +4155,8 @@ class AccountStatusDto:
     roles: List[str] = field(default_factory=list)
     allowed_projects: Optional[List[str]] = None
     trial_was_issued: bool = False
+    email_verified: bool = False
+    joined_by_invitation: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3900,7 +4340,7 @@ class ProjectAiSettingsDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class TriggerDto(IHasViewId):
+class TriggerDto(IHasViewId, IQueuedTrigger):
     type: Optional[TriggerType] = None
     view_id: Optional[str] = None
     name: Optional[str] = None
@@ -3908,6 +4348,8 @@ class TriggerDto(IHasViewId):
     description: Optional[str] = None
     is_enabled: bool = False
     activation_code: Optional[str] = None
+    order: Optional[int] = None
+    break_on_error: bool = False
     saved_by_auth_id: Optional[str] = None
 
 
@@ -3981,6 +4423,7 @@ class PolicyItemDto:
     name: Optional[str] = None
     description: Optional[str] = None
     is_system: bool = False
+    version: Optional[str] = None
     permissions: Optional[List[PermissionDto]] = None
 
 
@@ -4035,6 +4478,7 @@ class SchedulerDto:
 @dataclass
 class CodeDto:
     is_enabled: bool = False
+    default_integration_view_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4248,12 +4692,20 @@ class ApplicationModule(IntEnum):
     COMPLIANCE = 8192
     CONTACTS = 16384
     MARKETPLACE = 32768
+    DIAGNOSTICS = 65536
+
+
+class LanguageGapKind(str, Enum):
+    TEMPLATE = 'Template'
+    FOOTER = 'Footer'
+    SIGNATURE = 'Signature'
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class TemplateLanguageGapDto:
     module: Optional[ApplicationModule] = None
+    kind: Optional[LanguageGapKind] = None
     template_id: Optional[str] = None
     template_name: Optional[str] = None
     missing_languages: List[str] = field(default_factory=list)
@@ -4503,6 +4955,23 @@ class InstallationLicenseStatusDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class AiRoleDto:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    description: Optional[str] = None
+    is_system: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AiProjectRolesDto:
+    id: Optional[str] = None
+    name: Optional[str] = None
+    roles: List[AiRoleDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class AiServiceUserKeyDto:
     id: Optional[str] = None
     hint: Optional[str] = None
@@ -4514,7 +4983,8 @@ class AiServiceUserKeyDto:
 class AiServiceUserDto:
     id: Optional[str] = None
     name: Optional[str] = None
-    scope: Optional[AiScopeDto] = None
+    account_roles: List[AiRoleDto] = field(default_factory=list)
+    projects: List[AiProjectRolesDto] = field(default_factory=list)
     created_at: datetime.datetime = datetime.datetime(1, 1, 1)
     keys: List[AiServiceUserKeyDto] = field(default_factory=list)
 
@@ -4540,12 +5010,14 @@ class GetTriggerResponse(ResponseBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class TriggerProjectionList(IHasViewId):
+class TriggerProjectionList(IHasViewId, IQueuedTrigger):
     view_id: Optional[str] = None
     name: Optional[str] = None
     action_type: Optional[TriggerActionType] = None
     has_pre_execute_code: bool = False
     is_enabled: bool = False
+    order: Optional[int] = None
+    break_on_error: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4681,12 +5153,6 @@ class MembershipAuthenticationViewDto:
 class SchemaTriggerProjectionList(TriggerProjectionList):
     type: Optional[SchemaTriggerType] = None
     env: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class JsonSchemaFieldDto:
-    field_name: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -4852,6 +5318,40 @@ class SchemaDraftDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class SchemaIndexDto:
+    name: Optional[str] = None
+    keys: List[str] = field(default_factory=list)
+    unique: bool = False
+    reason: Optional[str] = None
+    field: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SchemaIndexIntegrationStatusDto:
+    integration_id: Optional[str] = None
+    state: Optional[str] = None
+    wanted: List[SchemaIndexDto] = field(default_factory=list)
+    created: List[str] = field(default_factory=list)
+    dropped: List[str] = field(default_factory=list)
+    over_cap: List[SchemaIndexDto] = field(default_factory=list)
+    refused_reason: Optional[str] = None
+    last_run_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SchemaIndexStatusDto:
+    schema_id: Optional[str] = None
+    env: Optional[str] = None
+    collection: Optional[str] = None
+    state: Optional[str] = None
+    integrations: List[SchemaIndexIntegrationStatusDto] = field(default_factory=list)
+    last_run_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class SchemaDiffDto:
     from_version: int = 0
     to_version: int = 0
@@ -4881,6 +5381,7 @@ class CollectionIndexKeyDto:
 class CollectionIndexDto:
     name: Optional[str] = None
     keys: List[CollectionIndexKeyDto] = field(default_factory=list)
+    created_by_norbix: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5070,7 +5571,10 @@ class HtmlFromMjmlResponse:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class SystemEmailTemplateListProjection(EmailTemplateListProjection):
-    pass
+    image_preview: Optional[str] = None
+    description: Optional[str] = None
+    theme: Optional[SystemEmailTemplateTheme] = None
+    system_tags: Optional[List[str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5399,6 +5903,46 @@ class CodeIntegrationListProjection(IntegrationListProjection):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class CodeFunctionDescriptorDto:
+    function_id: Optional[str] = None
+    display_name: Optional[str] = None
+    runtime: Optional[str] = None
+    region: Optional[str] = None
+    description: Optional[str] = None
+    last_modified: Optional[datetime.datetime] = None
+    tags: Optional[Dict[str, str]] = None
+    arn: Optional[str] = None
+
+
+class CodeFunctionQualifierKindDto(str, Enum):
+    ALIAS = 'Alias'
+    VERSION = 'Version'
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionQualifierDto:
+    name: Optional[str] = None
+    kind: Optional[CodeFunctionQualifierKindDto] = None
+    description: Optional[str] = None
+    target_version: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class CodeFunctionRunDto:
+    fired_at: datetime.datetime = datetime.datetime(1, 1, 1)
+    event: Optional[str] = None
+    source: Optional[str] = None
+    succeeded: bool = False
+    status_code: Optional[int] = None
+    duration_ms: Optional[int] = None
+    error: Optional[str] = None
+    request_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class PushTemplateListProjection(TemplateListProjection):
     languages: List[str] = field(default_factory=list)
 
@@ -5538,6 +6082,8 @@ class AgentOnboardingSnippet:
     client: Optional[str] = None
     config: Optional[str] = None
     auth: Optional[str] = None
+    kind: Optional[str] = None
+    recommended: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6040,7 +6586,28 @@ class SchedulerTaskListProjection(IHasViewId):
     cron: Optional[str] = None
     type: Optional[SchedulerTaskType] = None
     is_enabled: bool = False
+    is_failing: bool = False
+    last_failure_reason: Optional[str] = None
+    last_failed_at_unix: Optional[int] = None
     view_id: Optional[str] = None
+
+
+class SchedulerTaskRunOutcome(IntEnum):
+    FIRED = 1
+    FAILED = 2
+    SKIPPED = 3
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SchedulerTaskRunDto:
+    log_id: Optional[str] = None
+    at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+    at_unix: int = 0
+    outcome: Optional[SchedulerTaskRunOutcome] = None
+    reason: Optional[str] = None
+    detail: Optional[str] = None
+    correlation_id: Optional[str] = None
 
 
 class ResolvedRefStatus(str, Enum):
@@ -6414,6 +6981,13 @@ class IHasRazorTemplateCode:
     pass
 
 
+class IQueuedTrigger:
+    view_id: Optional[str] = None
+    name: Optional[str] = None
+    order: Optional[int] = None
+    break_on_error: bool = False
+
+
 class IHasResponsibleUserId:
     user_id: Optional[str] = None
 
@@ -6421,152 +6995,6 @@ class IHasResponsibleUserId:
 class ICursorArgs:
     field: Optional[str] = None
     order: int = 0
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class StringFieldDto(JsonSchemaFieldDto):
-    format: Optional[str] = None
-    pattern: Optional[str] = None
-    min_length: Optional[int] = None
-    max_length: Optional[int] = None
-    translate_options: Optional[IReadOnlyDictionary[str, str]] = None
-    default: Optional[str] = None
-    unique: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class DecimalFieldDto(JsonSchemaFieldDto):
-    minimum: Optional[Decimal] = None
-    maximum: Optional[Decimal] = None
-    multiple_of: Optional[Decimal] = None
-    default: Optional[Decimal] = None
-    unique: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CurrencyDefaultDto:
-    value: Decimal = decimal.Decimal(0)
-    currency: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CurrencyFieldDto(JsonSchemaFieldDto):
-    allowed_currencies: Optional[IReadOnlyList[str]] = None
-    multiple_of: Optional[Decimal] = None
-    minimum: Optional[Decimal] = None
-    maximum: Optional[Decimal] = None
-    default: Optional[CurrencyDefaultDto] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class BooleanFieldDto(JsonSchemaFieldDto):
-    default: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class DateFieldDto(JsonSchemaFieldDto):
-    minimum: Optional[int] = None
-    maximum: Optional[int] = None
-    default: Optional[int] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class IntegerFieldDto(JsonSchemaFieldDto):
-    minimum: Optional[int] = None
-    maximum: Optional[int] = None
-    default: Optional[int] = None
-    unique: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GeolocationFieldDto(JsonSchemaFieldDto):
-    allowed_types: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TagsFieldDto(JsonSchemaFieldDto):
-    min_items: Optional[int] = None
-    max_items: Optional[int] = None
-    default: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class FileFieldDto(JsonSchemaFieldDto):
-    storages: Optional[IReadOnlyList[str]] = None
-    min_items: Optional[int] = None
-    max_items: Optional[int] = None
-    allowed_file_type: Optional[str] = None
-    max_size_mb: Optional[Decimal] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TaxonomySelectionFieldDto(JsonSchemaFieldDto):
-    taxonomy_id: Optional[str] = None
-    multiple: bool = False
-    display_field: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CollectionSelectionFieldDto(JsonSchemaFieldDto):
-    collection_id: Optional[str] = None
-    display_field: Optional[str] = None
-    multiple: bool = False
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class UserSelectionFieldDto(JsonSchemaFieldDto):
-    multiple: bool = False
-    display_field: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class RoleSelectionFieldDto(JsonSchemaFieldDto):
-    multiple: bool = False
-    display_field: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class EnumSelectionFieldDto(JsonSchemaFieldDto):
-    values: Optional[IReadOnlyList[str]] = None
-    multiple: bool = False
-    default: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ObjectFieldDto(JsonSchemaFieldDto):
-    properties: Optional[IReadOnlyList[JsonSchemaFieldDto]] = None
-    required: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ArrayFieldDto(JsonSchemaFieldDto):
-    items: Optional[JsonSchemaFieldDto] = None
-    min_items: Optional[int] = None
-    max_items: Optional[int] = None
-    unique_items: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class JsonFieldDto(JsonSchemaFieldDto):
-    max_bytes: Optional[int] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6595,6 +7023,7 @@ class EchoResponse:
     installation_domain: Optional[str] = None
     licensing_docs_url: Optional[str] = None
     agent: Optional[EchoAgentDto] = None
+    hosting_platform: Optional[EchoHostingPlatformDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6637,7 +7066,8 @@ class GetAccountStatusResponse(ResponseBase):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class CreateStripeCheckoutSessionResponse(IdResponse):
-    pass
+    trial_included: bool = False
+    no_trial_reason: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7047,6 +7477,12 @@ class GetDatabaseSchemasResponse(ResponseBase):
 @dataclass
 class GetDatabaseSchemaDraftResponse(ResponseBase):
     item: Optional[SchemaDraftDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetDatabaseSchemaIndexStatusResponse(ResponseBase):
+    status: Optional[SchemaIndexStatusDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7586,6 +8022,7 @@ class GetCodeIntegrationResponse(ResponseBase):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class GetCodeIntegrationsResponse(ResponseBase):
+    default_integration_id: Optional[str] = None
     list: Optional[PaginatedResponse[CodeIntegrationListProjection]] = None
 
 
@@ -7593,6 +8030,40 @@ class GetCodeIntegrationsResponse(ResponseBase):
 @dataclass
 class TestCodeIntegrationResponse(ResponseBase):
     items: Optional[IReadOnlyList[IntegrationTestResultItemDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctionsResponse(ResponseBase):
+    list: Optional[PaginatedResponse[CodeFunctionDescriptorDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctionEventSampleResponse(ResponseBase):
+    sample: Optional[CodeFunctionEventDto] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctionQualifiersResponse(ResponseBase):
+    qualifiers: Optional[IReadOnlyList[CodeFunctionQualifierDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctionRunsResponse(ResponseBase):
+    runs: List[CodeFunctionRunDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class InvokeCodeFunctionResponse(ResponseBase):
+    status_code: int = 0
+    output: Optional[Object] = None
+    duration_ms: int = 0
+    request_id: Optional[str] = None
+    logs: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7942,6 +8413,70 @@ class GetAiTriggerResponse(GetTriggerResponse):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class AuthDeviceStartResponse(ResponseBase):
+    device_code: Optional[str] = None
+    user_code: Optional[str] = None
+    verification_uri: Optional[str] = None
+    verification_uri_complete: Optional[str] = None
+    expires_in: int = 0
+    interval: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AuthDeviceTokenResponse(ResponseBase):
+    error: Optional[str] = None
+    error_description: Optional[str] = None
+    error_code: Optional[str] = None
+    reason: Optional[str] = None
+    bearer_token: Optional[str] = None
+    refresh_token: Optional[str] = None
+    expires_in: Optional[int] = None
+    client_id: Optional[str] = None
+    user_id: Optional[str] = None
+    user_name: Optional[str] = None
+    display_name: Optional[str] = None
+    account_id: Optional[str] = None
+    project_id: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AuthDeviceConsentResponse(ResponseBase):
+    client_name: Optional[str] = None
+    device_name: Optional[str] = None
+    user_code: Optional[str] = None
+    project_id: Optional[str] = None
+    account_roles: List[AiRoleDto] = field(default_factory=list)
+    projects: List[AiProjectRolesDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AuthDeviceConsentDecisionResponse(ResponseBase):
+    pass
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthConsentResponse(ResponseBase):
+    client_name: Optional[str] = None
+    redirect_host: Optional[str] = None
+    client_host: Optional[str] = None
+    redirect_is_loopback: bool = False
+    consent_ticket: Optional[str] = None
+    account_roles: List[AiRoleDto] = field(default_factory=list)
+    projects: List[AiProjectRolesDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthConsentDecisionResponse(ResponseBase):
+    redirect_url: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class GetEmbeddingIntegrationResponse(ResponseBase):
     item: Optional[EmbeddingIntegrationDto] = None
 
@@ -8057,6 +8592,13 @@ class GetSchedulerTaskResponse(ResponseBase):
 @dataclass
 class GetSchedulerTasksResponse(ResponseBase):
     list: Optional[PaginatedResponse[SchedulerTaskListProjection]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetSchedulerTaskRunsResponse(ResponseBase):
+    logs_enabled: bool = False
+    runs: List[SchedulerTaskRunDto] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8793,6 +9335,38 @@ class InternalsTypeGen:
     typegen_243__action_pending_entry_wire_dto: Optional[ActionPendingEntryWireDto] = None
     typegen_244__notice_entry_wire_dto: Optional[NoticeEntryWireDto] = None
     typegen_245__conversation_snapshot_entry_wire_dto: Optional[ConversationSnapshotEntryWireDto] = None
+    typegen_252__string_field_dto: Optional[StringFieldDto] = None
+    typegen_253__decimal_field_dto: Optional[DecimalFieldDto] = None
+    typegen_254__currency_field_dto: Optional[CurrencyFieldDto] = None
+    typegen_255__boolean_field_dto: Optional[BooleanFieldDto] = None
+    typegen_256__date_field_dto: Optional[DateFieldDto] = None
+    typegen_257__integer_field_dto: Optional[IntegerFieldDto] = None
+    typegen_258__geolocation_field_dto: Optional[GeolocationFieldDto] = None
+    typegen_259__tags_field_dto: Optional[TagsFieldDto] = None
+    typegen_260__file_field_dto: Optional[FileFieldDto] = None
+    typegen_261__taxonomy_selection_field_dto: Optional[TaxonomySelectionFieldDto] = None
+    typegen_262__collection_selection_field_dto: Optional[CollectionSelectionFieldDto] = None
+    typegen_263__user_selection_field_dto: Optional[UserSelectionFieldDto] = None
+    typegen_264__role_selection_field_dto: Optional[RoleSelectionFieldDto] = None
+    typegen_265__enum_selection_field_dto: Optional[EnumSelectionFieldDto] = None
+    typegen_266__object_field_dto: Optional[ObjectFieldDto] = None
+    typegen_267__array_field_dto: Optional[ArrayFieldDto] = None
+    typegen_268__json_field_dto: Optional[JsonFieldDto] = None
+    typegen_269__function_ref_dto: Optional[FunctionRefDto] = None
+    typegen_270__code_function_event_dto: Optional[CodeFunctionEventDto] = None
+    typegen_271__code_function_context_dto: Optional[CodeFunctionContextDto] = None
+    typegen_272__code_function_caller_dto: Optional[CodeFunctionCallerDto] = None
+    typegen_273__code_function_run_as_dto: Optional[CodeFunctionRunAsDto] = None
+    typegen_274__code_function_data_dto: Optional[CodeFunctionDataDto] = None
+    typegen_275__database_record_change_dto: Optional[DatabaseRecordChangeDto] = None
+    typegen_276__user_change_dto: Optional[UserChangeDto] = None
+    typegen_277__file_change_dto: Optional[FileChangeDto] = None
+    typegen_278__payment_fact_dto: Optional[PaymentFactDto] = None
+    typegen_279__ai_usage_event_dto: Optional[AiUsageEventDto] = None
+    typegen_280__scheduled_task_info_dto: Optional[ScheduledTaskInfoDto] = None
+    typegen_281__fake_code_integration_dto: Optional[FakeCodeIntegrationDto] = None
+    typegen_282__fake_code_integration_request: Optional[FakeCodeIntegrationRequest] = None
+    typegen_283__code_function_scheduler_task_request: Optional[CodeFunctionSchedulerTaskRequest] = None
 
 
 # @Route("/{version}/echo", "GET")
@@ -8881,7 +9455,7 @@ class UpdateAccountProfile(RequestBase, IReturn[EmptyResponse]):
     """
 
 
-# @Route("/{version}/account/verify/resend", "GET")
+# @Route("/{version}/account/verify/resend", "POST")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ResendAccountVerificationToken(RequestBase, IReturn[EmptyResponse]):
@@ -8966,7 +9540,7 @@ class GetAccountUsageBilling(RequestBase, IReturn[GetAccountUsageBillingResponse
     pass
 
 
-# @Route("/{version}/account/verify", "GET")
+# @Route("/{version}/account/verify", "POST")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class VerifyAccount(RequestBase, IReturn[EmptyResponse], IHasAccountId):
@@ -10293,10 +10867,17 @@ class CreateAiServiceUserRequest(RequestBase, IReturn[CreateAiServiceUserRespons
     """
 
 
-    # @ApiMember(Description="Reach (account | project + projectId), rights (read | admin), envs ([\"TEST\"] or [\"TEST\",\"PROD\"]).", IsRequired=true)
-    scope: Optional[AiScopeDto] = None
+    # @ApiMember(Description="Account role ids (acc_…_nr_…) to give, built-in or custom. At least one role in total (account or project).")
+    account_role_ids: Optional[List[str]] = None
     """
-    Reach (account | project + projectId), rights (read | admin), envs (["TEST"] or ["TEST","PROD"]).
+    Account role ids (acc_…_nr_…) to give, built-in or custom. At least one role in total (account or project).
+    """
+
+
+    # @ApiMember(Description="Project roles to give: [{ projectId, roleIds: [pr_…_nr_…] }]. Without an account role the service user is pinned to these projects.")
+    project_roles: Optional[List[AiProjectRoleIdsDto]] = None
+    """
+    Project roles to give: [{ projectId, roleIds: [pr_…_nr_…] }]. Without an account role the service user is pinned to these projects.
     """
 
 
@@ -11565,6 +12146,22 @@ class GetDatabaseSchemas(CodeMashListPaginationRequestBase, IReturn[GetDatabaseS
 class GetDatabaseSchemaDraft(CodeMashRequestBase, IReturn[GetDatabaseSchemaDraftResponse]):
     """
     Gets the current draft of a database schema
+    """
+
+    # @ApiMember(Description="Schema id from get_database_schemas.", IsRequired=true)
+    id: Optional[str] = None
+    """
+    Schema id from get_database_schemas.
+    """
+
+
+# @Route("/{version}/database/schemas/{Id}/index-status", "GET")
+# @Api(Description="Gets the Norbix index status of a database schema")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetDatabaseSchemaIndexStatus(CodeMashRequestBase, IReturn[GetDatabaseSchemaIndexStatusResponse]):
+    """
+    Gets the Norbix index status of a database schema
     """
 
     # @ApiMember(Description="Schema id from get_database_schemas.", IsRequired=true)
@@ -12976,6 +13573,24 @@ class GetFolderFiles(CodeMashListPaginationRequestBase, IReturn[GetFolderFilesRe
     path: Optional[str] = None
     """
     Path prefix to list. Empty / null lists the root.
+    """
+
+
+# @Route("/{version}/files/item/use", "POST")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UseFileRequest(CodeMashRequestBase, IReturn[IdResponse]):
+    # @ApiMember(Description="The files integration the file lives on.", IsRequired=true)
+    files_integration_id: Optional[str] = None
+    """
+    The files integration the file lives on.
+    """
+
+
+    # @ApiMember(Description="Path of the file, relative to the integration.", IsRequired=true)
+    path: Optional[str] = None
+    """
+    Path of the file, relative to the integration.
     """
 
 
@@ -14657,6 +15272,132 @@ class GetMarketplaceFunctionCatalog(CodeMashRequestBase, IReturn[GetMarketplaceF
     """
 
 
+# @Route("/{version}/code/functions", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctions(CodeMashListPaginationRequestBase, IReturn[GetCodeFunctionsResponse]):
+    # @ApiMember(Description="Code integration id (int_…), from get_code_integrations.", IsRequired=true)
+    integration_id: Optional[str] = None
+    """
+    Code integration id (int_…), from get_code_integrations.
+    """
+
+
+    # @ApiMember(Description="Only functions whose id starts with this.")
+    prefix: Optional[str] = None
+    """
+    Only functions whose id starts with this.
+    """
+
+
+    # @ApiMember(Description="Only functions carrying this tag: \"key\" or \"key=value\".")
+    tag: Optional[str] = None
+    """
+    Only functions carrying this tag: "key" or "key=value".
+    """
+
+
+# @Route("/{version}/code/functions/event-sample", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctionEventSample(CodeMashRequestBase, IReturn[GetCodeFunctionEventSampleResponse]):
+    # @ApiMember(Description="Database | Membership | Files | Payments | Ai | Scheduler | Manual.", IsRequired=true)
+    source: Optional[CodeFunctionSource] = None
+    """
+    Database | Membership | Files | Payments | Ai | Scheduler | Manual.
+    """
+
+
+    # @ApiMember(Description="The event name, e.g. database.record.inserted; omitted = the source's usual one.")
+    event: Optional[str] = None
+    """
+    The event name, e.g. database.record.inserted; omitted = the source's usual one.
+    """
+
+
+    # @ApiMember(Description="The schema id to put into data.database.schemaId (Database source).")
+    schema_id: Optional[str] = None
+    """
+    The schema id to put into data.database.schemaId (Database source).
+    """
+
+
+# @Route("/{version}/code/functions/qualifiers", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctionQualifiers(CodeMashRequestBase, IReturn[GetCodeFunctionQualifiersResponse]):
+    # @ApiMember(Description="Code integration id (int_…), from get_code_integrations.", IsRequired=true)
+    integration_id: Optional[str] = None
+    """
+    Code integration id (int_…), from get_code_integrations.
+    """
+
+
+    # @ApiMember(Description="Provider-native function id, from get_code_functions.", IsRequired=true)
+    function_id: Optional[str] = None
+    """
+    Provider-native function id, from get_code_functions.
+    """
+
+
+# @Route("/{version}/code/functions/runs", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetCodeFunctionRuns(CodeMashRequestBase, IReturn[GetCodeFunctionRunsResponse]):
+    # @ApiMember(Description="The trigger whose function runs to list (trg_…). One of triggerId / taskId.")
+    trigger_id: Optional[str] = None
+    """
+    The trigger whose function runs to list (trg_…). One of triggerId / taskId.
+    """
+
+
+    # @ApiMember(Description="The scheduler task whose function runs to list (tsk_…). One of triggerId / taskId.")
+    task_id: Optional[str] = None
+    """
+    The scheduler task whose function runs to list (tsk_…). One of triggerId / taskId.
+    """
+
+
+    # @ApiMember(DataType="integer", Description="How many runs, newest first: 1-50. Default 20.")
+    limit: Optional[int] = None
+    """
+    How many runs, newest first: 1-50. Default 20.
+    """
+
+
+# @Route("/{version}/code/functions/invoke", "POST")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class InvokeCodeFunction(CodeMashRequestBase, IReturn[InvokeCodeFunctionResponse]):
+    # @ApiMember(Description="Which function: { integrationId, functionId, qualifier? }.", IsRequired=true)
+    function_ref: Optional[FunctionRefDto] = None
+    """
+    Which function: { integrationId, functionId, qualifier? }.
+    """
+
+
+    payload: Optional[Dict[str, Object]] = None
+    # @ApiMember(Description="Sync (wait for the result, default) or Async (fire and forget).")
+    invocation_type: Optional[CodeInvocationType] = None
+    """
+    Sync (wait for the result, default) or Async (fire and forget).
+    """
+
+
+    # @ApiMember(Description="The service user the function acts as (usr_…); omitted = you.")
+    run_as_user_id: Optional[str] = None
+    """
+    The service user the function acts as (usr_…); omitted = you.
+    """
+
+
+    # @ApiMember(Description="A JSON object → envelope config. No bindings: a manual call has nothing to bind them with.")
+    config: Optional[str] = None
+    """
+    A JSON object → envelope config. No bindings: a manual call has nothing to bind them with.
+    """
+
+
 # @Route("/{version}/notifications/push/disable", "PUT")
 # @Api(Description="Disable push service")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -15017,17 +15758,17 @@ class TestPushIntegration(CodeMashRequestBase, IReturn[TestEmailIntegrationRespo
     """
 
 
-    # @ApiMember(Description="Optional device token to send the test notification to. Requires DeliveryFamily when set.")
+    # @ApiMember(Description="The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Fake integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily.")
     test_token: Optional[str] = None
     """
-    Optional device token to send the test notification to. Requires DeliveryFamily when set.
+    The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Fake integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily.
     """
 
 
-    # @ApiMember(Description="Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set.")
+    # @ApiMember(Description="The delivery family of TestToken: ios, android, chrome (any browser web push) or safari. Requires TestToken.")
     delivery_family: Optional[str] = None
     """
-    Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set.
+    The delivery family of TestToken: ios, android, chrome (any browser web push) or safari. Requires TestToken.
     """
 
 
@@ -15896,6 +16637,20 @@ class GetLogs(CodeMashListPaginationRequestBase, IReturn[GetLogsResponse]):
     """
 
 
+    # @ApiMember(DataType="string", Description="Meta key to filter on (e.g. taskId). Letters, digits and _ only. Must come with metaValue.", Name="metaKey", ParameterType="query")
+    meta_key: Optional[str] = None
+    """
+    Meta key to filter on (e.g. taskId). Letters, digits and _ only. Must come with metaValue.
+    """
+
+
+    # @ApiMember(DataType="string", Description="Exact Meta value for metaKey (e.g. a task id tsk_...). Must come with metaKey.", Name="metaValue", ParameterType="query")
+    meta_value: Optional[str] = None
+    """
+    Exact Meta value for metaKey (e.g. a task id tsk_...). Must come with metaKey.
+    """
+
+
     # @ApiMember(Description="Start of the timestamp range (inclusive, UTC). Optional.")
     from_utc: Optional[datetime.datetime] = None
     """
@@ -16454,6 +17209,105 @@ class DeleteAiProjectTrigger(DeleteTrigger, IReturn[EmptyResponse]):
     pass
 
 
+# @Route("/{version}/auth/device/start", "POST")
+# @Api(Description="Starts a browser sign-in for the Norbix CLI (OAuth device authorization, RFC 8628): a device code for polling and a user code the person confirms on the dashboard.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AuthDeviceStartRequest(RequestBase, IReturn[AuthDeviceStartResponse]):
+    """
+    Starts a browser sign-in for the Norbix CLI (OAuth device authorization, RFC 8628): a device code for polling and a user code the person confirms on the dashboard.
+    """
+
+    # @ApiMember(Description="Who asks, shown on the dashboard, e.g. \"norbix-cli\". 1–80 printable characters.", IsRequired=true)
+    client_name: Optional[str] = None
+    """
+    Who asks, shown on the dashboard, e.g. "norbix-cli". 1–80 printable characters.
+    """
+
+
+    # @ApiMember(Description="The computer name, shown on the dashboard and part of the AI service user's name (cleaned, at most 40 characters).")
+    device_name: Optional[str] = None
+    """
+    The computer name, shown on the dashboard and part of the AI service user's name (cleaned, at most 40 characters).
+    """
+
+
+    # @ApiMember(Description="The project the CLI wants to work in. It must be a project of the account of the person who allows the sign-in.")
+    project_id: Optional[str] = None
+    """
+    The project the CLI wants to work in. It must be a project of the account of the person who allows the sign-in.
+    """
+
+
+# @Route("/{version}/auth/device/token", "POST")
+# @Api(Description="Polls a CLI browser sign-in (RFC 8628). Always HTTP 200: an error name (authorization_pending, slow_down, access_denied, expired_token, invalid_grant, invalid_request) or the tokens, once.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AuthDeviceTokenRequest(RequestBase, IReturn[AuthDeviceTokenResponse]):
+    """
+    Polls a CLI browser sign-in (RFC 8628). Always HTTP 200: an error name (authorization_pending, slow_down, access_denied, expired_token, invalid_grant, invalid_request) or the tokens, once.
+    """
+
+    # @ApiMember(Description="The deviceCode from POST /auth/device/start.", IsRequired=true)
+    device_code: Optional[str] = None
+    """
+    The deviceCode from POST /auth/device/start.
+    """
+
+
+# @Route("/{version}/auth/device/consent", "GET")
+# @Api(Description="The dashboard screen for a CLI browser sign-in: the client and computer that asked, and the roles the signed-in person may give.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AuthDeviceConsentRequest(RequestBase, IReturn[AuthDeviceConsentResponse]):
+    """
+    The dashboard screen for a CLI browser sign-in: the client and computer that asked, and the roles the signed-in person may give.
+    """
+
+    # @ApiMember(Description="The code the terminal shows, XXXX-XXXX (case, spaces and the dash do not matter).", IsRequired=true)
+    user_code: Optional[str] = None
+    """
+    The code the terminal shows, XXXX-XXXX (case, spaces and the dash do not matter).
+    """
+
+
+# @Route("/{version}/auth/device/consent", "POST")
+# @Api(Description="The signed-in person's decision on a CLI browser sign-in: allow with Membership roles, or deny.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class AuthDeviceConsentDecisionRequest(RequestBase, IReturn[AuthDeviceConsentDecisionResponse]):
+    """
+    The signed-in person's decision on a CLI browser sign-in: allow with Membership roles, or deny.
+    """
+
+    # @ApiMember(Description="The code the terminal shows, XXXX-XXXX.", IsRequired=true)
+    user_code: Optional[str] = None
+    """
+    The code the terminal shows, XXXX-XXXX.
+    """
+
+
+    # @ApiMember(Description="allow | deny.", IsRequired=true)
+    decision: Optional[str] = None
+    """
+    allow | deny.
+    """
+
+
+    # @ApiMember(Description="For allow: account role ids (acc_…_nr_…) to give.")
+    account_role_ids: Optional[List[str]] = None
+    """
+    For allow: account role ids (acc_…_nr_…) to give.
+    """
+
+
+    # @ApiMember(Description="For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }].")
+    project_roles: Optional[List[AiProjectRoleIdsDto]] = None
+    """
+    For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }].
+    """
+
+
 # @Route("/.well-known/oauth-protected-resource", "GET")
 # @Route("/.well-known/oauth-protected-resource/{Path*}", "GET")
 # @Api(Description="OAuth protected-resource metadata (RFC 9728) for the Hub MCP endpoint.")
@@ -16494,27 +17348,173 @@ class OAuthRegisterRequest(IReturn[str]):
 
 
 # @Route("/{version}/oauth/authorize", "GET")
-# @Api(Description="OAuth authorization endpoint: sign-in hint or the consent page (HTML).")
+# @Api(Description="OAuth authorization endpoint: checks the request and redirects to the dashboard consent screen.")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class OAuthAuthorizeRequest(IReturn[str]):
     """
-    OAuth authorization endpoint: sign-in hint or the consent page (HTML).
+    OAuth authorization endpoint: checks the request and redirects to the dashboard consent screen.
     """
 
     version: Optional[str] = None
 
 
-# @Route("/{version}/oauth/authorize", "POST")
-# @Api(Description="OAuth authorization endpoint: the person's decision from the consent page.")
+# @Route("/{version}/oauth/consent", "GET")
+# @Api(Description="The dashboard consent screen for an AI tool: the client, where it returns to, and the roles the signed-in person may give.")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class OAuthAuthorizeDecisionRequest(IReturn[str]):
+class OAuthConsentRequest(RequestBase, IReturn[OAuthConsentResponse]):
     """
-    OAuth authorization endpoint: the person's decision from the consent page.
+    The dashboard consent screen for an AI tool: the client, where it returns to, and the roles the signed-in person may give.
     """
 
-    version: Optional[str] = None
+    # @ApiMember(Description="OAuth response_type from the authorize request (must be \"code\").")
+    response_type: Optional[str] = None
+    """
+    OAuth response_type from the authorize request (must be "code").
+    """
+
+
+    # @ApiMember(Description="OAuth client_id from the authorize request.")
+    client_id: Optional[str] = None
+    """
+    OAuth client_id from the authorize request.
+    """
+
+
+    # @ApiMember(Description="OAuth redirect_uri from the authorize request.")
+    redirect_uri: Optional[str] = None
+    """
+    OAuth redirect_uri from the authorize request.
+    """
+
+
+    # @ApiMember(Description="PKCE code_challenge from the authorize request.")
+    code_challenge: Optional[str] = None
+    """
+    PKCE code_challenge from the authorize request.
+    """
+
+
+    # @ApiMember(Description="PKCE code_challenge_method from the authorize request (must be \"S256\").")
+    code_challenge_method: Optional[str] = None
+    """
+    PKCE code_challenge_method from the authorize request (must be "S256").
+    """
+
+
+    # @ApiMember(Description="OAuth state from the authorize request; returned to the client unchanged.")
+    state: Optional[str] = None
+    """
+    OAuth state from the authorize request; returned to the client unchanged.
+    """
+
+
+    # @ApiMember(Description="OAuth resource (RFC 8707) from the authorize request.")
+    resource: Optional[str] = None
+    """
+    OAuth resource (RFC 8707) from the authorize request.
+    """
+
+
+    # @ApiMember(Description="OAuth scope from the authorize request.")
+    scope: Optional[str] = None
+    """
+    OAuth scope from the authorize request.
+    """
+
+
+# @Route("/{version}/oauth/consent", "POST")
+# @Api(Description="The signed-in person's decision on the consent screen: allow with roles, or deny. Returns the address to send the browser to.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OAuthConsentDecisionRequest(RequestBase, IReturn[OAuthConsentDecisionResponse]):
+    """
+    The signed-in person's decision on the consent screen: allow with roles, or deny. Returns the address to send the browser to.
+    """
+
+    # @ApiMember(Description="OAuth response_type from the authorize request (must be \"code\").")
+    response_type: Optional[str] = None
+    """
+    OAuth response_type from the authorize request (must be "code").
+    """
+
+
+    # @ApiMember(Description="OAuth client_id from the authorize request.")
+    client_id: Optional[str] = None
+    """
+    OAuth client_id from the authorize request.
+    """
+
+
+    # @ApiMember(Description="OAuth redirect_uri from the authorize request.")
+    redirect_uri: Optional[str] = None
+    """
+    OAuth redirect_uri from the authorize request.
+    """
+
+
+    # @ApiMember(Description="PKCE code_challenge from the authorize request.")
+    code_challenge: Optional[str] = None
+    """
+    PKCE code_challenge from the authorize request.
+    """
+
+
+    # @ApiMember(Description="PKCE code_challenge_method from the authorize request (must be \"S256\").")
+    code_challenge_method: Optional[str] = None
+    """
+    PKCE code_challenge_method from the authorize request (must be "S256").
+    """
+
+
+    # @ApiMember(Description="OAuth state from the authorize request; returned to the client unchanged.")
+    state: Optional[str] = None
+    """
+    OAuth state from the authorize request; returned to the client unchanged.
+    """
+
+
+    # @ApiMember(Description="OAuth resource (RFC 8707) from the authorize request.")
+    resource: Optional[str] = None
+    """
+    OAuth resource (RFC 8707) from the authorize request.
+    """
+
+
+    # @ApiMember(Description="OAuth scope from the authorize request.")
+    scope: Optional[str] = None
+    """
+    OAuth scope from the authorize request.
+    """
+
+
+    # @ApiMember(Description="The consentTicket from GET /oauth/consent.", IsRequired=true)
+    consent_ticket: Optional[str] = None
+    """
+    The consentTicket from GET /oauth/consent.
+    """
+
+
+    # @ApiMember(Description="allow | deny.", IsRequired=true)
+    decision: Optional[str] = None
+    """
+    allow | deny.
+    """
+
+
+    # @ApiMember(Description="For allow: account role ids (acc_…_nr_…) to give.")
+    account_role_ids: Optional[List[str]] = None
+    """
+    For allow: account role ids (acc_…_nr_…) to give.
+    """
+
+
+    # @ApiMember(Description="For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }].")
+    project_roles: Optional[List[AiProjectRoleIdsDto]] = None
+    """
+    For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }].
+    """
 
 
 # @Route("/{version}/oauth/token", "POST")
@@ -16778,6 +17778,7 @@ class UpdateWebhookIntegrationExtraHeadersRequest(CodeMashRequestBase, IReturn[E
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ReceiveWebhook(IReturnVoid):
+    version: Optional[str] = None
     source: Optional[str] = None
     integration_instance_id: Optional[str] = None
     request_stream: Optional[bytes] = None
@@ -16929,6 +17930,23 @@ class GetSchedulerTasks(CodeMashListPaginationRequestBase, IReturn[GetSchedulerT
     enabled: Optional[bool] = None
     """
     Optional filter — only return tasks whose enabled state matches this value.
+    """
+
+
+# @Route("/{version}/scheduler/tasks/{id}/runs", "GET")
+# @Api(Description="Gets the latest runs of a scheduled task")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetSchedulerTaskRuns(CodeMashRequestBase, IReturn[GetSchedulerTaskRunsResponse]):
+    """
+    Gets the latest runs of a scheduled task
+    """
+
+    id: Optional[str] = None
+    # @ApiMember(DataType="integer", Description="How many runs to return, newest first: 1-50. Default 10.", Name="take", ParameterType="query")
+    take: Optional[int] = None
+    """
+    How many runs to return, newest first: 1-50. Default 10.
     """
 
 
