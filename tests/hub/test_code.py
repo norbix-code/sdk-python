@@ -24,7 +24,6 @@ def test_hub_code_module_surface() -> None:
     assert callable(module.confirm_code_integration_human_delivery)
     assert callable(module.test_code_integration)
     assert callable(module.delete_code_integration)
-    assert callable(module.set_code_integration_as_default)
     assert callable(module.disable_code_integration)
     assert callable(module.enable_code_integration)
     assert callable(module.get_code_integration)
@@ -105,14 +104,6 @@ def test_hub_code_delete_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.delete_code_integration(id="stub-id")
     assert transport.last_request['method'] == 'DELETE'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_set_code_integration_as_default_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.set_code_integration_as_default(id="stub-id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 

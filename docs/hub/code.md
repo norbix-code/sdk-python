@@ -23,7 +23,6 @@ Integration ids look like `int_…`.
 | `save_code_integration` | `POST` | `/{version}/code/integrations` | `project` | JSON body |
 | `test_code_integration` | `POST` | `/{version}/code/integrations/test` | `project` | JSON body |
 | `confirm_code_integration_human_delivery` | `POST` | `/{version}/code/integrations/confirm-human-delivery` | `project` | JSON body |
-| `set_code_integration_as_default` | `PUT` | `/{version}/code/integrations/{Id}/default` | `project` | path: `id` |
 | `enable_code_integration` | `PUT` | `/{version}/code/integrations/{Id}/enable` | `project` | path: `id` |
 | `disable_code_integration` | `PUT` | `/{version}/code/integrations/{Id}/disable` | `project` | path: `id` |
 | `delete_code_integration` | `DELETE` | `/{version}/code/integrations/{Id}` | `project` | path: `id` |
@@ -43,8 +42,8 @@ The five routes of the gateway contract `Code.Functions.md` (§3.3, §3.4,
 | `get_code_functions` | `GET` | `/{version}/code/functions` | `project` | query: `integrationId` (required), `prefix`, `tag` (`key` or `key=value`), `pageSize`, `startingAfter`, `endingBefore` |
 | `get_code_function_qualifiers` | `GET` | `/{version}/code/functions/qualifiers` | `project` | query: `integrationId`, `functionId` |
 | `invoke_code_function` | `POST` | `/{version}/code/functions/invoke` | `project` | JSON body: `functionRef` `{integrationId, functionId, qualifier?}`, `payload?`, `invocationType` (`Sync` / `Async`), `runAsUserId?`, `config?` |
-| `get_code_function_event_sample` | `GET` | `/{version}/code/functions/event-sample` | `project` | query: `source` (`database` · `membership` · `files` · `payments` · `ai` · `scheduler` · `manual`), `event?`, `schemaId?` |
-| `get_code_function_runs` | `GET` | `/{version}/code/functions/runs` | `project` | query: exactly one of `triggerId` / `taskId`, `limit` (1–50, default 20) |
+| `get_code_function_event_sample` | `GET` | `/{version}/code/functions/event-sample` | `project` | query: `source` (`database` · `membership` · `files` · `payments` · `ai` · `scheduler` · `manual`, any case), `event?`, `schemaId?` |
+| `get_code_function_runs` | `GET` | `/{version}/code/functions/runs` | `project` | query: exactly one of `triggerId` / `taskId`, `limit` (1–50, default 20); the last runs, newest first; each run carries `input` — the scrubbed envelope a Fake-provider run received |
 
 ```python
 integration_id = "int_6rBACnEaxQ0x1jTiHtAuWV"

@@ -100,19 +100,6 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
-    def set_code_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/code/integrations/{Id}/default"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/integrations/{Id}/default",
-            method="PUT",
-            path_params={"Id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def disable_code_integration(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/code/integrations/{Id}/disable"""
         return self._transport.send(
@@ -527,19 +514,6 @@ class AsyncCodeModule:
             target="hub",
             path="/{version}/code/integrations/{Id}",
             method="DELETE",
-            path_params={"Id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def set_code_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/code/integrations/{Id}/default"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/integrations/{Id}/default",
-            method="PUT",
             path_params={"Id": id},
             request=request,
             scope="project",
