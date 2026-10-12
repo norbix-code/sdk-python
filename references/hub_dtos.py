@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-12 13:41:44
+Date: 2026-10-12 16:28:57
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -4478,7 +4478,6 @@ class SchedulerDto:
 @dataclass
 class CodeDto:
     is_enabled: bool = False
-    default_integration_view_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5939,6 +5938,7 @@ class CodeFunctionRunDto:
     duration_ms: Optional[int] = None
     error: Optional[str] = None
     request_id: Optional[str] = None
+    input: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7298,6 +7298,12 @@ class GetInstallationLicenseStatusResponse(ResponseBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class GetLicenseKeyResponse(ResponseBase):
+    key: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class CreateAiServiceUserResponse(ResponseBase):
     id: Optional[str] = None
     key_id: Optional[str] = None
@@ -8022,7 +8028,6 @@ class GetCodeIntegrationResponse(ResponseBase):
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class GetCodeIntegrationsResponse(ResponseBase):
-    default_integration_id: Optional[str] = None
     list: Optional[PaginatedResponse[CodeIntegrationListProjection]] = None
 
 
@@ -8765,17 +8770,6 @@ class ConfirmCodeIntegrationHumanDeliveryRequest(CodeMashRequestBase, IReturn[Em
     """
 
 
-# @Route("/{version}/code/integrations/{Id}/default", "PUT")
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class SetCodeIntegrationAsDefault(CodeMashRequestBase, IReturn[EmptyResponse]):
-    # @ApiMember(Description="Integration id, from get_code_integrations.", IsRequired=true)
-    id: Optional[str] = None
-    """
-    Integration id, from get_code_integrations.
-    """
-
-
 # @Route("/{version}/code/integrations/{Id}", "DELETE")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -9299,7 +9293,6 @@ class InternalsTypeGen:
     typegen_205__save_code_integration: Optional[SaveCodeIntegration] = None
     typegen_206__test_code_integration: Optional[TestCodeIntegration] = None
     typegen_207__confirm_code_integration_human_delivery_request: Optional[ConfirmCodeIntegrationHumanDeliveryRequest] = None
-    typegen_208__set_code_integration_as_default: Optional[SetCodeIntegrationAsDefault] = None
     typegen_209__delete_code_integration_request: Optional[DeleteCodeIntegrationRequest] = None
     typegen_210__enable_code_integration_request: Optional[EnableCodeIntegrationRequest] = None
     typegen_211__disable_code_integration_request: Optional[DisableCodeIntegrationRequest] = None
@@ -10854,6 +10847,13 @@ class PostLicenseHeartbeat(RequestBase, IReturn[PostLicenseHeartbeatResponse]):
 @dataclass
 class GetInstallationLicenseStatus(RequestBase, IReturn[GetInstallationLicenseStatusResponse]):
     pass
+
+
+# @Route("/{version}/account/licenses/{Id}/key", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetLicenseKey(RequestBase, IReturn[GetLicenseKeyResponse]):
+    id: Optional[str] = None
 
 
 # @Route("/{version}/account/ai/service-users", "POST")
