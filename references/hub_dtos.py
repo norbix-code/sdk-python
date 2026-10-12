@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-12 16:28:57
+Date: 2026-10-12 21:43:18
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -128,6 +128,16 @@ class TokenMappingResolverType(str, Enum):
     EMAIL_FOOTERS = 'EmailFooters'
     OLD = 'Old'
     NEW = 'New'
+    REQUEST_INPUT = 'RequestInput'
+    INTEGRATION_CONFIG = 'IntegrationConfig'
+    INTEGRATION_SECRET = 'IntegrationSecret'
+
+
+class SecretValueFormat(str, Enum):
+    RAW = 'Raw'
+    BEARER = 'Bearer'
+    BASIC = 'Basic'
+    PREFIXED = 'Prefixed'
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -136,6 +146,8 @@ class TokenMappingDto:
     key: Optional[str] = None
     value: Optional[str] = None
     resolver: Optional[TokenMappingResolverType] = None
+    secret_keys: Optional[List[str]] = None
+    secret_format: Optional[SecretValueFormat] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1565,6 +1577,7 @@ class TriggerActionSseDto(TriggerActionDto):
 class TriggerActionMarketplaceDto(TriggerActionDto):
     function_id: Optional[str] = None
     payload: Optional[Dict[str, str]] = None
+    run_as_user_id: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2573,6 +2586,7 @@ class SchedulerTaskType(str, Enum):
     SMS_CAMPAIGN = 'SmsCampaign'
     CODE_FUNCTIONAL_CALL = 'CodeFunctionalCall'
     WEBHOOK_CALL = 'WebhookCall'
+    MARKETPLACE_FUNCTION_CALL = 'MarketplaceFunctionCall'
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2776,6 +2790,17 @@ class MarketplaceCategory(str, Enum):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class MarketplaceValidationStepResultDto:
+    key: Optional[str] = None
+    label: Optional[str] = None
+    required_for_functions: bool = False
+    succeeded: bool = False
+    skipped: bool = False
+    message: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MarketplaceIntegrationDto(IntegrationDto):
     listing_view_id: Optional[str] = None
     transport: Optional[MarketplaceTransport] = None
@@ -2783,33 +2808,17 @@ class MarketplaceIntegrationDto(IntegrationDto):
     category: Optional[MarketplaceCategory] = None
     description: Optional[str] = None
     config: Optional[IReadOnlyDictionary[str, str]] = None
-
-
-class MarketplaceTokenResolverKind(str, Enum):
-    STATIC = 'Static'
-    REQUEST = 'Request'
-    PROJECT = 'Project'
-    INITIATOR = 'Initiator'
-    CUSTOM = 'Custom'
-    INTEGRATION_CONFIG = 'IntegrationConfig'
-    INTEGRATION_SECRET = 'IntegrationSecret'
-
-
-class MarketplaceSecretValueFormat(str, Enum):
-    RAW = 'Raw'
-    BEARER = 'Bearer'
-    BASIC = 'Basic'
-    PREFIXED = 'Prefixed'
+    last_validation_steps: Optional[List[MarketplaceValidationStepResultDto]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class MarketplaceTokenMappingDto:
-    token: Optional[str] = None
-    resolver: Optional[MarketplaceTokenResolverKind] = None
-    value: Optional[str] = None
-    secret_keys: Optional[List[str]] = None
-    format: Optional[MarketplaceSecretValueFormat] = None
+class MarketplaceFunctionParameterDto:
+    name: Optional[str] = None
+    type: Optional[str] = None
+    description: Optional[str] = None
+    is_required: bool = False
+    default_value: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2822,7 +2831,15 @@ class MarketplaceFunctionDto(IHasViewId):
     description: Optional[str] = None
     is_enabled: bool = False
     request_template: Optional[str] = None
-    mapped_tokens: List[MarketplaceTokenMappingDto] = field(default_factory=list)
+    arguments: Dict[str, str] = field(default_factory=dict)
+    inputs: List[MarketplaceFunctionParameterDto] = field(default_factory=list)
+    mapped_tokens: List[TokenMappingDto] = field(default_factory=list)
+
+
+class MarketplaceAvailability(str, Enum):
+    DEVELOPMENT = 'Development'
+    STAGING = 'Staging'
+    PRODUCTION = 'Production'
 
 
 class MarketplaceFieldType(str, Enum):
@@ -2852,12 +2869,10 @@ class MarketplaceFieldDefinitionDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class MarketplaceFunctionParameterDto:
-    name: Optional[str] = None
-    type: Optional[str] = None
-    description: Optional[str] = None
-    is_required: bool = False
-    default_value: Optional[str] = None
+class MarketplaceInstallFormDto:
+    data_schema: Optional[str] = None
+    ui_schema: Optional[str] = None
+    secret_keys: List[str] = field(default_factory=list)
 
 
 class MarketplaceParameterLocation(str, Enum):
@@ -2891,17 +2906,38 @@ class MarketplaceHttpRequestSpecDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class MarketplaceValidationStepDto:
+    key: Optional[str] = None
+    label: Optional[str] = None
+    description: Optional[str] = None
+    required_for_functions: bool = False
+    probe: Optional[MarketplaceHttpRequestSpecDto] = None
+
+
+class MarketplaceFormKind(str, Enum):
+    GENERIC = 'Generic'
+    DATABASE_QUERY = 'DatabaseQuery'
+    DATABASE_WRITE = 'DatabaseWrite'
+    MESSAGE = 'Message'
+    PROMPT = 'Prompt'
+    WEB = 'Web'
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MarketplaceFunctionDefinitionDto:
     definition_id: Optional[str] = None
     function_key: Optional[str] = None
     display_name: Optional[str] = None
     description: Optional[str] = None
     group: Optional[str] = None
+    form_kind: Optional[MarketplaceFormKind] = None
+    inputs: Optional[IReadOnlyList[MarketplaceFunctionParameterDto]] = None
     parameters: Optional[IReadOnlyList[MarketplaceFunctionParameterDto]] = None
     request_schema: Optional[str] = None
     request_template: Optional[str] = None
     request: Optional[MarketplaceHttpRequestSpecDto] = None
-    default_token_mappings: List[MarketplaceTokenMappingDto] = field(default_factory=list)
+    default_token_mappings: List[TokenMappingDto] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2916,11 +2952,15 @@ class MarketplaceListingDto(IHasViewId):
     description: Optional[str] = None
     icon_url: Optional[str] = None
     documentation_url: Optional[str] = None
+    video_url: Optional[str] = None
+    availability: Optional[MarketplaceAvailability] = None
     is_official: bool = False
     tags: Optional[IReadOnlyList[str]] = None
     spec_version: int = 0
     config_fields: Optional[IReadOnlyList[MarketplaceFieldDefinitionDto]] = None
     secret_fields: Optional[IReadOnlyList[MarketplaceFieldDefinitionDto]] = None
+    install_form: Optional[MarketplaceInstallFormDto] = None
+    validation_steps: Optional[IReadOnlyList[MarketplaceValidationStepDto]] = None
     functions: Optional[IReadOnlyList[MarketplaceFunctionDefinitionDto]] = None
 
 
@@ -3426,6 +3466,15 @@ class ScheduledTaskInfoDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class MarketplaceFunctionCallDto:
+    function_id: Optional[str] = None
+    function_key: Optional[str] = None
+    integration_id: Optional[str] = None
+    payload: Dict[str, Object] = field(default_factory=dict)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class CodeFunctionDataDto:
     database: Optional[DatabaseRecordChangeDto] = None
     user: Optional[UserChangeDto] = None
@@ -3434,6 +3483,7 @@ class CodeFunctionDataDto:
     ai: Optional[AiUsageEventDto] = None
     task: Optional[ScheduledTaskInfoDto] = None
     payload: Optional[Dict[str, Object]] = None
+    marketplace: Optional[MarketplaceFunctionCallDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3470,6 +3520,14 @@ class CodeFunctionSchedulerTaskRequest(SchedulerTaskRequest):
     invocation_type: Optional[CodeInvocationType] = None
     config: Optional[str] = None
     mapped_tokens: Optional[List[TokenMappingDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarketplaceFunctionSchedulerTaskRequest(SchedulerTaskRequest):
+    type: Optional[SchedulerTaskType] = None
+    function_id: Optional[str] = None
+    payload: Optional[Dict[str, str]] = None
 
 
 class ICultureBasedRequest:
@@ -4949,6 +5007,8 @@ class InstallationLicenseStatusDto:
     host_kind: Optional[str] = None
     is_trial_license: bool = False
     license_expire_utc: Optional[datetime.datetime] = None
+    last_heartbeat_outcome: Optional[str] = None
+    last_heartbeat_error: Optional[str] = None
     message: Optional[str] = None
 
 
@@ -5864,6 +5924,8 @@ class MarketplaceListingProjection(IHasViewId):
     is_official: bool = False
     tags: Optional[IReadOnlyList[str]] = None
     function_count: int = 0
+    availability: Optional[MarketplaceAvailability] = None
+    video_url: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5892,6 +5954,21 @@ class MarketplaceFunctionProjection(IHasViewId):
     display_name: Optional[str] = None
     is_enabled: bool = False
     mapping_count: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarketplaceFunctionRunDto:
+    fired_at: datetime.datetime = datetime.datetime(1, 1, 1)
+    event: Optional[str] = None
+    source: Optional[str] = None
+    function_id: Optional[str] = None
+    run_as_user_id: Optional[str] = None
+    succeeded: bool = False
+    duration_ms: Optional[int] = None
+    error: Optional[str] = None
+    vendor_request_id: Optional[str] = None
+    input: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7985,6 +8062,7 @@ class RevealMarketplaceIntegrationSecretsResponse(ResponseBase):
 @dataclass
 class TestMarketplaceIntegrationResponse(ResponseBase):
     items: Optional[IReadOnlyList[IntegrationTestResultItemDto]] = None
+    steps: Optional[IReadOnlyList[MarketplaceValidationStepResultDto]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8009,6 +8087,12 @@ class GetMarketplaceFunctionsResponse(ResponseBase):
 @dataclass
 class GetMarketplaceFunctionCatalogResponse(ResponseBase):
     functions: Optional[IReadOnlyList[MarketplaceFunctionDefinitionDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetMarketplaceFunctionRunsResponse(ResponseBase):
+    runs: List[MarketplaceFunctionRunDto] = field(default_factory=list)
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -9360,6 +9444,7 @@ class InternalsTypeGen:
     typegen_281__fake_code_integration_dto: Optional[FakeCodeIntegrationDto] = None
     typegen_282__fake_code_integration_request: Optional[FakeCodeIntegrationRequest] = None
     typegen_283__code_function_scheduler_task_request: Optional[CodeFunctionSchedulerTaskRequest] = None
+    typegen_284__marketplace_function_scheduler_task_request: Optional[MarketplaceFunctionSchedulerTaskRequest] = None
 
 
 # @Route("/{version}/echo", "GET")
@@ -15258,7 +15343,7 @@ class SetMarketplaceIntegrationTokenMappingsRequest(CodeMashRequestBase, IReturn
     """
 
 
-    token_mappings: List[MarketplaceTokenMappingDto] = field(default_factory=list)
+    token_mappings: List[TokenMappingDto] = field(default_factory=list)
 
 
 # @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/catalog", "GET")
@@ -15269,6 +15354,31 @@ class GetMarketplaceFunctionCatalog(CodeMashRequestBase, IReturn[GetMarketplaceF
     integration_view_id: Optional[str] = None
     """
     Integration view id, from get_marketplace_integrations.
+    """
+
+
+# @Route("/{version}/code/marketplace/functions/runs", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetMarketplaceFunctionRuns(CodeMashRequestBase, IReturn[GetMarketplaceFunctionRunsResponse]):
+    # @ApiMember(Description="The trigger whose marketplace function runs to list (trg_…). One of triggerId / taskId.")
+    trigger_id: Optional[str] = None
+    """
+    The trigger whose marketplace function runs to list (trg_…). One of triggerId / taskId.
+    """
+
+
+    # @ApiMember(Description="The scheduler task whose marketplace function runs to list (tsk_…). One of triggerId / taskId.")
+    task_id: Optional[str] = None
+    """
+    The scheduler task whose marketplace function runs to list (tsk_…). One of triggerId / taskId.
+    """
+
+
+    # @ApiMember(DataType="integer", Description="How many runs, newest first: 1-50. Default 20.")
+    limit: Optional[int] = None
+    """
+    How many runs, newest first: 1-50. Default 20.
     """
 
 
