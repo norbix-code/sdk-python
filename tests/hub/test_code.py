@@ -27,23 +27,6 @@ def test_hub_code_module_surface() -> None:
     assert callable(module.disable_code_integration)
     assert callable(module.enable_code_integration)
     assert callable(module.get_code_integration)
-    assert callable(module.get_marketplace_integrations)
-    assert callable(module.save_marketplace_integration)
-    assert callable(module.delete_marketplace_integration)
-    assert callable(module.get_marketplace_integration)
-    assert callable(module.get_marketplace_bindings)
-    assert callable(module.save_marketplace_function_binding)
-    assert callable(module.delete_marketplace_function_binding)
-    assert callable(module.get_marketplace_binding)
-    assert callable(module.disable_marketplace_function_binding)
-    assert callable(module.enable_marketplace_function_binding)
-    assert callable(module.invoke_marketplace_function_binding)
-    assert callable(module.get_marketplace_binding_tokens)
-    assert callable(module.disable_marketplace_integration)
-    assert callable(module.enable_marketplace_integration)
-    assert callable(module.get_marketplace_function_catalog)
-    assert callable(module.get_marketplace_listings)
-    assert callable(module.get_marketplace_listing_function_tokens)
     # cloud functions (gateway audit/code, Code.Functions.md §3.3, §3.4, §5.1)
     assert callable(module.get_code_functions)
     assert callable(module.get_code_function_qualifiers)
@@ -127,142 +110,6 @@ def test_hub_code_enable_code_integration_request_shape() -> None:
 def test_hub_code_get_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.get_code_integration(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_integrations_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_integrations()
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_save_marketplace_integration_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.save_marketplace_integration()
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_delete_marketplace_integration_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.delete_marketplace_integration(integration_view_id="stub-integration_view_id")
-    assert transport.last_request['method'] == 'DELETE'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_integration_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_integration(integration_view_id="stub-integration_view_id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_bindings_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_bindings(integration_view_id="stub-integration_view_id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_save_marketplace_function_binding_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.save_marketplace_function_binding(integration_view_id="stub-integration_view_id")
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_delete_marketplace_function_binding_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.delete_marketplace_function_binding(integration_view_id="stub-integration_view_id", binding_view_id="stub-binding_view_id")
-    assert transport.last_request['method'] == 'DELETE'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_binding_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_binding(integration_view_id="stub-integration_view_id", binding_view_id="stub-binding_view_id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_disable_marketplace_function_binding_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.disable_marketplace_function_binding(integration_view_id="stub-integration_view_id", binding_view_id="stub-binding_view_id")
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_enable_marketplace_function_binding_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.enable_marketplace_function_binding(integration_view_id="stub-integration_view_id", binding_view_id="stub-binding_view_id")
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_invoke_marketplace_function_binding_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.invoke_marketplace_function_binding(integration_view_id="stub-integration_view_id", binding_view_id="stub-binding_view_id")
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_binding_tokens_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_binding_tokens(integration_view_id="stub-integration_view_id", binding_view_id="stub-binding_view_id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_disable_marketplace_integration_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.disable_marketplace_integration(integration_view_id="stub-integration_view_id")
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_enable_marketplace_integration_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.enable_marketplace_integration(integration_view_id="stub-integration_view_id")
-    assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_function_catalog_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_function_catalog(integration_view_id="stub-integration_view_id")
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_listings_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_listings()
-    assert transport.last_request['method'] == 'GET'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_code_get_marketplace_listing_function_tokens_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.code.get_marketplace_listing_function_tokens(listing_view_id="stub-listing_view_id", function_key="stub-function_key")
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
@@ -414,3 +261,98 @@ def test_invoke_code_function_sends_the_function_ref_in_the_body() -> None:
     assert transport.last_request is not None
     sent = json.loads(transport.last_request["body"])
     assert sent == {"functionRef": FUNCTION_REF, "invocationType": "Async"}
+
+
+# --- marketplace -------------------------------------------------------------
+#
+# The 23 routes of Code.Marketplace.md §14: the verb, the resolved path (version
+# and ids filled in) and where each parameter goes — GET / DELETE in the query
+# string, POST / PUT in the JSON body. Sync and async against a capture
+# transport, never a gateway.
+
+# name, verb, expected path, expected query (None: none), expected body (None: none), call
+MARKETPLACE_CASES: list[FunctionCase] = [
+    ("get_marketplace_listings", "GET", "/v3/code/marketplace/listings", {'search': ['slack']}, None, lambda m: m.get_marketplace_listings(search='slack')),
+    ("get_marketplace_listing_function_tokens", "GET", "/v3/code/marketplace/listings/ml_slack_v1/functions/slack.post-message/tokens", None, None, lambda m: m.get_marketplace_listing_function_tokens("ml_slack_v1", "slack.post-message")),
+    ("get_marketplace_integrations", "GET", "/v3/code/marketplace/integrations", None, None, lambda m: m.get_marketplace_integrations()),
+    ("get_marketplace_integration", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb", None, None, lambda m: m.get_marketplace_integration("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("save_marketplace_integration", "POST", "/v3/code/marketplace/integrations", None, {'integration': {'listingViewId': 'ml_slack_v1', 'config': {'workspace': 'acme'}}, 'secrets': {'botToken': 'xoxb-test'}}, lambda m: m.save_marketplace_integration(integration={'listingViewId': 'ml_slack_v1', 'config': {'workspace': 'acme'}}, secrets={'botToken': 'xoxb-test'})),
+    ("delete_marketplace_integration", "DELETE", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb", None, None, lambda m: m.delete_marketplace_integration("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("enable_marketplace_integration", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/enable", None, None, lambda m: m.enable_marketplace_integration("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("disable_marketplace_integration", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/disable", None, None, lambda m: m.disable_marketplace_integration("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("get_marketplace_functions", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/functions", None, None, lambda m: m.get_marketplace_functions("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("get_marketplace_function", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/functions/func_4hT2b9QkLm3XcT1yRfGh7a", None, None, lambda m: m.get_marketplace_function("int_6Qp1dW2kRm8NsT4vYc0Hb", "func_4hT2b9QkLm3XcT1yRfGh7a")),
+    ("save_marketplace_function", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/functions", None, {'function': {'functionKey': 'slack.post-message', 'displayName': 'Post order', 'arguments': {'channel': '#orders'}}}, lambda m: m.save_marketplace_function("int_6Qp1dW2kRm8NsT4vYc0Hb", function={'functionKey': 'slack.post-message', 'displayName': 'Post order', 'arguments': {'channel': '#orders'}})),
+    ("delete_marketplace_function", "DELETE", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/functions/func_4hT2b9QkLm3XcT1yRfGh7a", None, None, lambda m: m.delete_marketplace_function("int_6Qp1dW2kRm8NsT4vYc0Hb", "func_4hT2b9QkLm3XcT1yRfGh7a")),
+    ("enable_marketplace_function", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/functions/func_4hT2b9QkLm3XcT1yRfGh7a/enable", None, None, lambda m: m.enable_marketplace_function("int_6Qp1dW2kRm8NsT4vYc0Hb", "func_4hT2b9QkLm3XcT1yRfGh7a")),
+    ("disable_marketplace_function", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/functions/func_4hT2b9QkLm3XcT1yRfGh7a/disable", None, None, lambda m: m.disable_marketplace_function("int_6Qp1dW2kRm8NsT4vYc0Hb", "func_4hT2b9QkLm3XcT1yRfGh7a")),
+    ("get_marketplace_function_tokens", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/functions/func_4hT2b9QkLm3XcT1yRfGh7a/tokens", None, None, lambda m: m.get_marketplace_function_tokens("int_6Qp1dW2kRm8NsT4vYc0Hb", "func_4hT2b9QkLm3XcT1yRfGh7a")),
+    ("invoke_marketplace_function", "POST", "/v3/code/marketplace/functions/func_4hT2b9QkLm3XcT1yRfGh7a/invoke", None, {'payload': {'text': 'Order 6ac54a59 shipped'}}, lambda m: m.invoke_marketplace_function("func_4hT2b9QkLm3XcT1yRfGh7a", payload={'text': 'Order 6ac54a59 shipped'})),
+    ("get_marketplace_listing", "GET", "/v3/code/marketplace/listings/ml_slack_v1", None, None, lambda m: m.get_marketplace_listing("ml_slack_v1")),
+    ("test_marketplace_integration", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/test", None, None, lambda m: m.test_marketplace_integration("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("replace_marketplace_integration_secrets", "PUT", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/secrets", None, {'secrets': {'botToken': 'xoxb-new'}}, lambda m: m.replace_marketplace_integration_secrets("int_6Qp1dW2kRm8NsT4vYc0Hb", secrets={'botToken': 'xoxb-new'})),
+    ("reveal_marketplace_integration_secrets", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/secrets/reveal", None, None, lambda m: m.reveal_marketplace_integration_secrets("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("set_marketplace_integration_token_mappings", "PUT", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/token-mappings", None, {'tokenMappings': [{'key': 'channel', 'value': '#orders', 'resolver': 'Custom'}]}, lambda m: m.set_marketplace_integration_token_mappings("int_6Qp1dW2kRm8NsT4vYc0Hb", tokenMappings=[{'key': 'channel', 'value': '#orders', 'resolver': 'Custom'}])),
+    ("get_marketplace_function_catalog", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/catalog", None, None, lambda m: m.get_marketplace_function_catalog("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("get_marketplace_function_runs", "GET", "/v3/code/marketplace/functions/runs", {'triggerId': ['trg_1p4R3gTobGZpD6fXvHT4rd'], 'limit': ['5']}, None, lambda m: m.get_marketplace_function_runs(triggerId='trg_1p4R3gTobGZpD6fXvHT4rd', limit=5)),
+]
+
+
+@pytest.mark.parametrize(("name", "verb", "path", "query", "body", "call"), MARKETPLACE_CASES, ids=[c[0] for c in MARKETPLACE_CASES])
+def test_marketplace_request_shape(
+    name: str,
+    verb: str,
+    path: str,
+    query: dict[str, list[str]] | None,
+    body: dict[str, Any] | None,
+    call: Callable[[Any], Any],
+) -> None:
+    client, transport = make_client()
+    call(client.hub.code)
+    assert transport.last_request is not None
+    _assert_function_request(
+        name,
+        transport.last_request["method"],
+        transport.last_request["url"],
+        transport.last_request["body"],
+        verb,
+        path,
+        query,
+        body,
+    )
+    assert transport.last_request["headers"]["authorization"] == "Bearer test-token"
+
+
+def test_async_marketplace_endpoints_hit_the_same_routes() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        try:
+            for _, _, _, _, _, call in MARKETPLACE_CASES:
+                await call(client.hub.code)
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert len(seen) == len(MARKETPLACE_CASES)
+    for request, (name, verb, path, query, body, _) in zip(seen, MARKETPLACE_CASES, strict=True):
+        _assert_function_request(name, request.method, str(request.url), request.content.decode("utf-8"), verb, path, query, body)
+
+
+def test_marketplace_surface_size() -> None:
+    """23 marketplace routes in the gateway (Code.Marketplace.md §14). A new one changes this count."""
+    assert len(MARKETPLACE_CASES) == 23
+    assert len({case[0] for case in MARKETPLACE_CASES}) == 23
+    client, _ = make_client()
+    for name, *_ in MARKETPLACE_CASES:
+        assert callable(getattr(client.hub.code, name)), name

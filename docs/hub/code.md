@@ -27,9 +27,45 @@ Integration ids look like `int_…`.
 | `disable_code_integration` | `PUT` | `/{version}/code/integrations/{Id}/disable` | `project` | path: `id` |
 | `delete_code_integration` | `DELETE` | `/{version}/code/integrations/{Id}` | `project` | path: `id` |
 
-The 17 `*_marketplace_*` methods of the module are from an earlier
-generation of the gateway contract (the `…/bindings` routes); the marketplace
-is documented when its own campaign step lands.
+## Marketplace
+
+The 23 routes of the gateway contract `Code.Marketplace.md` §14: the catalog
+of listings, the installed connections (integration ids look like `int_…`),
+their secrets and token mappings, and the functions added on a connection
+(`func_…`). Every method, its verb, path, query and body are asserted in
+`tests/hub/test_code.py`, for the sync and the async client.
+
+| Method | Verb | Path | Scope | Parameters go in |
+| --- | --- | --- | --- | --- |
+| `get_marketplace_listings` | `GET` | `/{version}/code/marketplace/listings` | `project` | query: `categories`, `transports`, `search`, `officialOnly`, `tags` |
+| `get_marketplace_listing_function_tokens` | `GET` | `/{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens` | `project` | path: `listing_view_id`, `function_key` |
+| `get_marketplace_integrations` | `GET` | `/{version}/code/marketplace/integrations` | `project` | — |
+| `get_marketplace_integration` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}` | `project` | path: `integration_view_id` |
+| `save_marketplace_integration` | `POST` | `/{version}/code/marketplace/integrations` | `project` | JSON body: `integration`, `secrets` |
+| `delete_marketplace_integration` | `DELETE` | `/{version}/code/marketplace/integrations/{IntegrationViewId}` | `project` | path: `integration_view_id` |
+| `enable_marketplace_integration` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/enable` | `project` | path: `integration_view_id` |
+| `disable_marketplace_integration` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/disable` | `project` | path: `integration_view_id` |
+| `get_marketplace_functions` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/functions` | `project` | path: `integration_view_id` |
+| `get_marketplace_function` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}` | `project` | path: `integration_view_id`, `function_view_id` |
+| `save_marketplace_function` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/functions` | `project` | path: `integration_view_id`; JSON body: `function` |
+| `delete_marketplace_function` | `DELETE` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}` | `project` | path: `integration_view_id`, `function_view_id` |
+| `enable_marketplace_function` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/enable` | `project` | path: `integration_view_id`, `function_view_id` |
+| `disable_marketplace_function` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/disable` | `project` | path: `integration_view_id`, `function_view_id` |
+| `get_marketplace_function_tokens` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/tokens` | `project` | path: `integration_view_id`, `function_view_id` |
+| `invoke_marketplace_function` | `POST` | `/{version}/code/marketplace/functions/{FunctionViewId}/invoke` | `project` | path: `function_view_id`; JSON body: `payload` |
+| `get_marketplace_listing` | `GET` | `/{version}/code/marketplace/listings/{ListingViewId}` | `project` | path: `listing_view_id` |
+| `test_marketplace_integration` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/test` | `project` | path: `integration_view_id` |
+| `replace_marketplace_integration_secrets` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets` | `project` | path: `integration_view_id`; JSON body: `secrets` |
+| `reveal_marketplace_integration_secrets` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal` | `project` | path: `integration_view_id` |
+| `set_marketplace_integration_token_mappings` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings` | `project` | path: `integration_view_id`; JSON body: `tokenMappings` |
+| `get_marketplace_function_catalog` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/catalog` | `project` | path: `integration_view_id` |
+| `get_marketplace_function_runs` | `GET` | `/{version}/code/marketplace/functions/runs` | `project` | query: exactly one of `triggerId` / `taskId`, `limit` (1–50, default 20); newest first |
+
+```python
+listings = norbix.hub.code.get_marketplace_listings(search="slack")
+runs = norbix.hub.code.get_marketplace_function_runs(triggerId="trg_…", limit=5)
+result = norbix.hub.code.invoke_marketplace_function("func_…", payload={"text": "Order shipped"})
+```
 
 ## Cloud functions
 
