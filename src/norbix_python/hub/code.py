@@ -139,6 +139,32 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def get_marketplace_listings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/listings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_marketplace_listing_function_tokens(self, listing_view_id: str, function_key: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens",
+            method="GET",
+            path_params={"ListingViewId": listing_view_id, "FunctionKey": function_key},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_marketplace_integrations(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/code/marketplace/integrations"""
         return self._transport.send(
@@ -146,6 +172,19 @@ class CodeModule:
             path="/{version}/code/marketplace/integrations",
             method="GET",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}",
+            method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -178,117 +217,13 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
-    def get_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}"""
+    def enable_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/enable"""
         return self._transport.send(
             target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_marketplace_bindings(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def save_marketplace_function_binding(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/enable",
             method="POST",
             path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def delete_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}",
-            method="DELETE",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_marketplace_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def disable_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/disable"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/disable",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def enable_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/enable"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/enable",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def invoke_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/invoke"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/invoke",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_marketplace_binding_tokens(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/tokens"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/tokens",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -308,20 +243,7 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
-    def enable_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/enable"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/enable",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_marketplace_function_catalog(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+    def get_marketplace_functions(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/functions"""
         return self._transport.send(
             target="hub",
@@ -334,26 +256,182 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
-    def get_marketplace_listings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/listings"""
+    def get_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}"""
         return self._transport.send(
             target="hub",
-            path="/{version}/code/marketplace/listings",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}",
             method="GET",
-            path_params={},
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
             request=request,
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    def get_marketplace_listing_function_tokens(self, listing_view_id: str, function_key: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens"""
+    def save_marketplace_function(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/functions"""
         return self._transport.send(
             target="hub",
-            path="/{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}",
+            method="DELETE",
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def enable_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/enable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/enable",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def disable_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/disable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/disable",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_marketplace_function_tokens(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/tokens"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/tokens",
             method="GET",
-            path_params={"ListingViewId": listing_view_id, "FunctionKey": function_key},
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def invoke_marketplace_function(self, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/functions/{FunctionViewId}/invoke"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/functions/{FunctionViewId}/invoke",
+            method="POST",
+            path_params={"FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_marketplace_listing(self, listing_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/listings/{ListingViewId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings/{ListingViewId}",
+            method="GET",
+            path_params={"ListingViewId": listing_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/test"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/test",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def replace_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets",
+            method="PUT",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def reveal_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_marketplace_integration_token_mappings(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings",
+            method="PUT",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_marketplace_function_catalog(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/catalog"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/catalog",
+            method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_marketplace_function_runs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/functions/runs"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/functions/runs",
+            method="GET",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,
@@ -560,6 +638,32 @@ class AsyncCodeModule:
             bearer_token=bearer_token,
         )
 
+    async def get_marketplace_listings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/listings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_listing_function_tokens(self, listing_view_id: str, function_key: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens",
+            method="GET",
+            path_params={"ListingViewId": listing_view_id, "FunctionKey": function_key},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_marketplace_integrations(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/code/marketplace/integrations"""
         return await self._transport.send(
@@ -567,6 +671,19 @@ class AsyncCodeModule:
             path="/{version}/code/marketplace/integrations",
             method="GET",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}",
+            method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -599,117 +716,13 @@ class AsyncCodeModule:
             bearer_token=bearer_token,
         )
 
-    async def get_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}"""
+    async def enable_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/enable"""
         return await self._transport.send(
             target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_marketplace_bindings(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def save_marketplace_function_binding(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/enable",
             method="POST",
             path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def delete_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}",
-            method="DELETE",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_marketplace_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def disable_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/disable"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/disable",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def enable_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/enable"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/enable",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def invoke_marketplace_function_binding(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/invoke"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/invoke",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_marketplace_binding_tokens(self, integration_view_id: str, binding_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/tokens"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/bindings/{BindingViewId}/tokens",
-            method="GET",
-            path_params={"IntegrationViewId": integration_view_id, "BindingViewId": binding_view_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -729,20 +742,7 @@ class AsyncCodeModule:
             bearer_token=bearer_token,
         )
 
-    async def enable_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/enable"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/enable",
-            method="POST",
-            path_params={"IntegrationViewId": integration_view_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_marketplace_function_catalog(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+    async def get_marketplace_functions(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/functions"""
         return await self._transport.send(
             target="hub",
@@ -755,26 +755,182 @@ class AsyncCodeModule:
             bearer_token=bearer_token,
         )
 
-    async def get_marketplace_listings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/listings"""
+    async def get_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}"""
         return await self._transport.send(
             target="hub",
-            path="/{version}/code/marketplace/listings",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}",
             method="GET",
-            path_params={},
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
             request=request,
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
         )
 
-    async def get_marketplace_listing_function_tokens(self, listing_view_id: str, function_key: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens"""
+    async def save_marketplace_function(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/functions"""
         return await self._transport.send(
             target="hub",
-            path="/{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}",
+            method="DELETE",
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/enable",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_marketplace_function(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/disable",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_function_tokens(self, integration_view_id: str, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/tokens"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/functions/{FunctionViewId}/tokens",
             method="GET",
-            path_params={"ListingViewId": listing_view_id, "FunctionKey": function_key},
+            path_params={"IntegrationViewId": integration_view_id, "FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def invoke_marketplace_function(self, function_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/functions/{FunctionViewId}/invoke"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/functions/{FunctionViewId}/invoke",
+            method="POST",
+            path_params={"FunctionViewId": function_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_listing(self, listing_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/listings/{ListingViewId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings/{ListingViewId}",
+            method="GET",
+            path_params={"ListingViewId": listing_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/test"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/test",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def replace_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets",
+            method="PUT",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def reveal_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_marketplace_integration_token_mappings(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings",
+            method="PUT",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_function_catalog(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/catalog"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/catalog",
+            method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_function_runs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/functions/runs"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/functions/runs",
+            method="GET",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,
