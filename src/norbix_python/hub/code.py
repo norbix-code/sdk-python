@@ -373,6 +373,71 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def get_code_functions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/functions",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_function_qualifiers(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions/qualifiers"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/qualifiers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def invoke_code_function(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/functions/invoke"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/invoke",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_function_event_sample(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions/event-sample"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/event-sample",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_function_runs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions/runs"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/runs",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncCodeModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -736,6 +801,71 @@ class AsyncCodeModule:
             path="/{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens",
             method="GET",
             path_params={"ListingViewId": listing_view_id, "FunctionKey": function_key},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_functions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/functions",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_function_qualifiers(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions/qualifiers"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/qualifiers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def invoke_code_function(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/functions/invoke"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/invoke",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_function_event_sample(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions/event-sample"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/event-sample",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_function_runs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/functions/runs"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/functions/runs",
+            method="GET",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,

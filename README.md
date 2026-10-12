@@ -217,6 +217,35 @@ Details: [docs/hub/triggers.md](./docs/hub/triggers.md),
 [docs/hub/sms.md](./docs/hub/sms.md), [docs/hub/push.md](./docs/hub/push.md),
 [docs/hub/account.md](./docs/hub/account.md).
 
+## Cloud functions
+
+Norbix does not host code: a trigger, a scheduler task or a manual call runs a
+function in **your** cloud (AWS Lambda, Azure Functions, Google Cloud Functions)
+through a Code integration, and the function receives one JSON envelope — the
+event, the data, a token to call Norbix back as a service user, and your
+config. `parse_function_event` reads it; `client_options()` turns it into a
+client for that user:
+
+```python
+from norbix_python import Norbix, parse_function_event
+
+
+def handler(raw, _context):
+    event = parse_function_event(raw)                 # raises on an unknown shape / specVersion
+    if event.event == "database.record.updated":
+        change = event.as_database_record_change()    # .old / .new as dicts, None when absent
+        norbix = Norbix(**event.client_options())      # acts as the run-as user, 15 minutes
+        ...
+    return {"ok": True}
+```
+
+From your backend: `norbix.hub.code.get_code_functions(integrationId=...)`,
+`get_code_function_qualifiers(...)`, `invoke_code_function(functionRef=..., payload=..., invocationType="Sync")`,
+`get_code_function_event_sample(source="database")` and
+`get_code_function_runs(triggerId=...)`. Details and the typed views
+(`as_user_change`, `as_file_change`, `as_payment`, `as_scheduled_task`, `payload()`):
+[docs/hub/code.md](./docs/hub/code.md).
+
 ## Errors
 
 ```python

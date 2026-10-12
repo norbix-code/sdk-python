@@ -9,6 +9,7 @@ from .errors import (
     RateLimitError,
     ValidationError,
 )
+from .functions import FunctionEvent, NorbixFunctionEventError, parse_function_event
 from .models import AuthLoginResult, DatabaseFindResult, ReferenceDisplay
 from .webhooks import (
     AsyncNorbixWebhookReceiver,
@@ -22,15 +23,18 @@ __all__ = [
     "AuthenticationError",
     "DatabaseFindResult",
     "ErrorItem",
+    "FunctionEvent",
     "LoginCredentials",
     "Norbix",
     "NorbixApi",
     "NorbixHub",
     "NorbixError",
+    "NorbixFunctionEventError",
     "NorbixWebhookReceiver",
     "NotFoundError",
     "RateLimitError",
     "ReferenceDisplay",
     "ValidationError",
+    "parse_function_event",
 ]
 __version__ = "1.1.1"
