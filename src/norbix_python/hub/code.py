@@ -373,6 +373,19 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def get_marketplace_integration_tools(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/tools — the stored MCP tool catalog of a connection."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/tools",
+            method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def replace_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets"""
         return self._transport.send(
@@ -865,6 +878,19 @@ class AsyncCodeModule:
             target="hub",
             path="/{version}/code/marketplace/integrations/{IntegrationViewId}/test",
             method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_integration_tools(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/tools — the stored MCP tool catalog of a connection."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/tools",
+            method="GET",
             path_params={"IntegrationViewId": integration_view_id},
             request=request,
             scope="project",

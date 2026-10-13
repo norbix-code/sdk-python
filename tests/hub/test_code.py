@@ -290,6 +290,7 @@ MARKETPLACE_CASES: list[FunctionCase] = [
     ("invoke_marketplace_function", "POST", "/v3/code/marketplace/functions/func_4hT2b9QkLm3XcT1yRfGh7a/invoke", None, {'payload': {'text': 'Order 6ac54a59 shipped'}}, lambda m: m.invoke_marketplace_function("func_4hT2b9QkLm3XcT1yRfGh7a", payload={'text': 'Order 6ac54a59 shipped'})),
     ("get_marketplace_listing", "GET", "/v3/code/marketplace/listings/ml_slack_v1", None, None, lambda m: m.get_marketplace_listing("ml_slack_v1")),
     ("test_marketplace_integration", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/test", None, None, lambda m: m.test_marketplace_integration("int_6Qp1dW2kRm8NsT4vYc0Hb")),
+    ("get_marketplace_integration_tools", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/tools", None, None, lambda m: m.get_marketplace_integration_tools("int_6Qp1dW2kRm8NsT4vYc0Hb")),
     ("replace_marketplace_integration_secrets", "PUT", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/secrets", None, {'secrets': {'botToken': 'xoxb-new'}}, lambda m: m.replace_marketplace_integration_secrets("int_6Qp1dW2kRm8NsT4vYc0Hb", secrets={'botToken': 'xoxb-new'})),
     ("reveal_marketplace_integration_secrets", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/secrets/reveal", None, None, lambda m: m.reveal_marketplace_integration_secrets("int_6Qp1dW2kRm8NsT4vYc0Hb")),
     ("set_marketplace_integration_token_mappings", "PUT", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/token-mappings", None, {'tokenMappings': [{'key': 'channel', 'value': '#orders', 'resolver': 'Custom'}]}, lambda m: m.set_marketplace_integration_token_mappings("int_6Qp1dW2kRm8NsT4vYc0Hb", tokenMappings=[{'key': 'channel', 'value': '#orders', 'resolver': 'Custom'}])),
@@ -350,9 +351,9 @@ def test_async_marketplace_endpoints_hit_the_same_routes() -> None:
 
 
 def test_marketplace_surface_size() -> None:
-    """23 marketplace routes in the gateway (Code.Marketplace.md §14). A new one changes this count."""
-    assert len(MARKETPLACE_CASES) == 23
-    assert len({case[0] for case in MARKETPLACE_CASES}) == 23
+    """24 marketplace routes in the gateway (Code.Marketplace.md §14; 24 = MCP tool catalog). A new one changes this count."""
+    assert len(MARKETPLACE_CASES) == 24
+    assert len({case[0] for case in MARKETPLACE_CASES}) == 24
     client, _ = make_client()
     for name, *_ in MARKETPLACE_CASES:
         assert callable(getattr(client.hub.code, name)), name
