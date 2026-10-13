@@ -356,3 +356,58 @@ def test_marketplace_surface_size() -> None:
     client, _ = make_client()
     for name, *_ in MARKETPLACE_CASES:
         assert callable(getattr(client.hub.code, name)), name
+
+
+RUNS_PATH = "/v3/code/marketplace/functions/runs"
+RUNS_BY_FUNCTION_QUERY = {"functionId": ["func_1p4R3gTobGZpD6fXvHT4rd"], "limit": ["50"]}
+
+
+def test_marketplace_function_runs_by_function_id() -> None:
+    """Exactly one of functionId / triggerId / taskId (gateway item gw-runs): a function's own runs."""
+    client, transport = make_client()
+    client.hub.code.get_marketplace_function_runs(functionId="func_1p4R3gTobGZpD6fXvHT4rd", limit=50)
+    assert transport.last_request is not None
+    _assert_function_request(
+        "get_marketplace_function_runs(functionId)",
+        transport.last_request["method"],
+        transport.last_request["url"],
+        transport.last_request["body"],
+        "GET",
+        RUNS_PATH,
+        RUNS_BY_FUNCTION_QUERY,
+        None,
+    )
+
+
+def test_async_marketplace_function_runs_by_function_id() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={"runs": [{"functionId": "func_1p4R3gTobGZpD6fXvHT4rd", "status": "ok", "hasDetails": True}]})
+
+    async def run() -> Any:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        try:
+            return await client.hub.code.get_marketplace_function_runs(functionId="func_1p4R3gTobGZpD6fXvHT4rd", limit=50)
+        finally:
+            await client.aclose()
+
+    result = asyncio.run(run())
+
+    assert len(seen) == 1
+    _assert_function_request(
+        "async get_marketplace_function_runs(functionId)",
+        seen[0].method,
+        str(seen[0].url),
+        seen[0].content.decode("utf-8"),
+        "GET",
+        RUNS_PATH,
+        RUNS_BY_FUNCTION_QUERY,
+        None,
+    )
+    assert result == {"runs": [{"functionId": "func_1p4R3gTobGZpD6fXvHT4rd", "status": "ok", "hasDetails": True}]}
