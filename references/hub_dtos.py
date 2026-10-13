@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-12 21:43:18
+Date: 2026-10-13 06:06:37
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -5965,9 +5965,14 @@ class MarketplaceFunctionRunDto:
     function_id: Optional[str] = None
     run_as_user_id: Optional[str] = None
     succeeded: bool = False
+    status: Optional[str] = None
     duration_ms: Optional[int] = None
     error: Optional[str] = None
     vendor_request_id: Optional[str] = None
+    correlation_id: Optional[str] = None
+    has_details: bool = False
+    trigger_id: Optional[str] = None
+    task_id: Optional[str] = None
     input: Optional[str] = None
 
 
@@ -15361,17 +15366,24 @@ class GetMarketplaceFunctionCatalog(CodeMashRequestBase, IReturn[GetMarketplaceF
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class GetMarketplaceFunctionRuns(CodeMashRequestBase, IReturn[GetMarketplaceFunctionRunsResponse]):
-    # @ApiMember(Description="The trigger whose marketplace function runs to list (trg_…). One of triggerId / taskId.")
+    # @ApiMember(Description="The marketplace function whose runs to list, from every source (func_…). One of functionId / triggerId / taskId.")
+    function_id: Optional[str] = None
+    """
+    The marketplace function whose runs to list, from every source (func_…). One of functionId / triggerId / taskId.
+    """
+
+
+    # @ApiMember(Description="The trigger whose marketplace function runs to list (trg_…). One of functionId / triggerId / taskId.")
     trigger_id: Optional[str] = None
     """
-    The trigger whose marketplace function runs to list (trg_…). One of triggerId / taskId.
+    The trigger whose marketplace function runs to list (trg_…). One of functionId / triggerId / taskId.
     """
 
 
-    # @ApiMember(Description="The scheduler task whose marketplace function runs to list (tsk_…). One of triggerId / taskId.")
+    # @ApiMember(Description="The scheduler task whose marketplace function runs to list (tsk_…). One of functionId / triggerId / taskId.")
     task_id: Optional[str] = None
     """
-    The scheduler task whose marketplace function runs to list (tsk_…). One of triggerId / taskId.
+    The scheduler task whose marketplace function runs to list (tsk_…). One of functionId / triggerId / taskId.
     """
 
 
