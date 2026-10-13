@@ -425,6 +425,19 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def start_marketplace_integration_sign_in(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start — start the OAuth sign-in of an MCP connection; returns `authorizeUrl` (open it in a browser), `redirectUrl`, `expiresAt`."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def replace_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets"""
         return self._transport.send(
@@ -968,6 +981,19 @@ class AsyncCodeModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def start_marketplace_integration_sign_in(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start — start the OAuth sign-in of an MCP connection; returns `authorizeUrl` (open it in a browser), `redirectUrl`, `expiresAt`."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start",
             method="POST",
             path_params={"IntegrationViewId": integration_view_id},
             request=request,
