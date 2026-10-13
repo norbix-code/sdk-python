@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-13 09:01:23
+Date: 2026-10-13 12:57:22
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -2797,6 +2797,7 @@ class MarketplaceValidationStepResultDto:
     succeeded: bool = False
     skipped: bool = False
     message: Optional[str] = None
+    error_code: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -3949,6 +3950,15 @@ class SmsIntegrationRequest:
     provider: Optional[SmsProvider] = None
     integration_name: Optional[str] = None
     is_enabled: bool = False
+
+
+class MarketplaceAccessLevel(str, Enum):
+    NONE = 'None'
+    VIEWER = 'Viewer'
+    FUNCTIONS_ONLY = 'FunctionsOnly'
+    READ_ONLY = 'ReadOnly'
+    FULL_ACCESS = 'FullAccess'
+    MANAGE = 'Manage'
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5930,6 +5940,54 @@ class MarketplaceListingProjection(IHasViewId):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class MarketplaceAccessCustomPolicyDto:
+    policy_id: Optional[str] = None
+    name: Optional[str] = None
+    used_by_roles: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarketplaceAccessRoleDto:
+    role_id: Optional[str] = None
+    name: Optional[str] = None
+    scope: Optional[str] = None
+    is_system: bool = False
+    fixed: bool = False
+    package: Optional[MarketplaceAccessLevel] = None
+    is_custom: bool = False
+    manage: bool = False
+    custom: Optional[IReadOnlyList[MarketplaceAccessCustomPolicyDto]] = None
+    default_not_applied: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarketplaceAccessPackageDto:
+    kind: Optional[MarketplaceAccessLevel] = None
+    policy_id: Optional[str] = None
+    name: Optional[str] = None
+    exists: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarketplaceAccessToolDto:
+    name: Optional[str] = None
+    read_only: bool = False
+    grantable: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarketplaceAccessFunctionDto:
+    function_id: Optional[str] = None
+    name: Optional[str] = None
+    function_key: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MarketplaceIntegrationListProjection(IHasViewId):
     view_id: Optional[str] = None
     integration_name: Optional[str] = None
@@ -5954,6 +6012,14 @@ class MarketplaceMcpToolDto:
     input_schema: Optional[str] = None
     read_only_hint: Optional[bool] = None
     destructive_hint: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarketplaceAccessChangesDto:
+    read_only_added: Optional[IReadOnlyList[str]] = None
+    read_only_removed: Optional[IReadOnlyList[str]] = None
+    not_grantable: Optional[IReadOnlyList[str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8052,6 +8118,23 @@ class GetMarketplaceListingsResponse(ResponseBase):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class GetMarketplaceIntegrationAccessResponse(ResponseBase):
+    roles: Optional[IReadOnlyList[MarketplaceAccessRoleDto]] = None
+    packages: Optional[IReadOnlyList[MarketplaceAccessPackageDto]] = None
+    tools: Optional[IReadOnlyList[MarketplaceAccessToolDto]] = None
+    functions: Optional[IReadOnlyList[MarketplaceAccessFunctionDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SaveMarketplaceIntegrationCustomAccessResponse(ResponseBase):
+    policy_id: Optional[str] = None
+    created: bool = False
+    used_by_roles: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class GetMarketplaceIntegrationResponse(ResponseBase):
     integration: Optional[MarketplaceIntegrationDto] = None
 
@@ -8088,6 +8171,7 @@ class RevealMarketplaceIntegrationSecretsResponse(ResponseBase):
 class TestMarketplaceIntegrationResponse(ResponseBase):
     items: Optional[IReadOnlyList[IntegrationTestResultItemDto]] = None
     steps: Optional[IReadOnlyList[MarketplaceValidationStepResultDto]] = None
+    access_changes: Optional[MarketplaceAccessChangesDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -15329,6 +15413,102 @@ class GetSmsCampaignMessagesRequest(CodeMashListPaginationRequestBase, IReturn[G
     database_integration_id: Optional[str] = None
     """
     Optional. Omit to use the project default database integration (resolved per environment).
+    """
+
+
+# @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/access", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetMarketplaceIntegrationAccess(CodeMashRequestBase, IReturn[GetMarketplaceIntegrationAccessResponse]):
+    # @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    integration_view_id: Optional[str] = None
+    """
+    Integration view id, from get_marketplace_integrations.
+    """
+
+
+# @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles", "PUT")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SetMarketplaceIntegrationRoleAccess(CodeMashRequestBase, IReturn[IdResponse]):
+    # @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    integration_view_id: Optional[str] = None
+    """
+    Integration view id, from get_marketplace_integrations.
+    """
+
+
+    # @ApiMember(Description="The role's composite id: acc_…_nr_… (account / team role) or pr_…_nr_… (project role).", IsRequired=true)
+    role_id: Optional[str] = None
+    """
+    The role's composite id: acc_…_nr_… (account / team role) or pr_…_nr_… (project role).
+    """
+
+
+    # @ApiMember(Description="None, Viewer, FunctionsOnly, ReadOnly or FullAccess.")
+    package: Optional[MarketplaceAccessLevel] = None
+    """
+    None, Viewer, FunctionsOnly, ReadOnly or FullAccess.
+    """
+
+
+    # @ApiMember(Description="True to also give the Manage package (edit the connection, its secrets, validation and functions).")
+    manage: bool = False
+    """
+    True to also give the Manage package (edit the connection, its secrets, validation and functions).
+    """
+
+
+# @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom", "POST")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SaveMarketplaceIntegrationCustomAccess(CodeMashRequestBase, IReturn[SaveMarketplaceIntegrationCustomAccessResponse]):
+    # @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    integration_view_id: Optional[str] = None
+    """
+    Integration view id, from get_marketplace_integrations.
+    """
+
+
+    # @ApiMember(Description="The role's composite id: acc_…_nr_… or pr_…_nr_….", IsRequired=true)
+    role_id: Optional[str] = None
+    """
+    The role's composite id: acc_…_nr_… or pr_…_nr_….
+    """
+
+
+    # @ApiMember(Description="The package to start from: None, Viewer, FunctionsOnly, ReadOnly or FullAccess.")
+    base_package: Optional[MarketplaceAccessLevel] = None
+    """
+    The package to start from: None, Viewer, FunctionsOnly, ReadOnly or FullAccess.
+    """
+
+
+    # @ApiMember(Description="Tool names the role may run (from the connection's tools).")
+    tools: List[str] = field(default_factory=list)
+    """
+    Tool names the role may run (from the connection's tools).
+    """
+
+
+    # @ApiMember(Description="Function ids (func_…) of this connection the role may run.")
+    functions: List[str] = field(default_factory=list)
+    """
+    Function ids (func_…) of this connection the role may run.
+    """
+
+
+    # @ApiMember(Description="True to include the Manage rights (edit the connection, its secrets, validation and functions).")
+    manage: bool = False
+    """
+    True to include the Manage rights (edit the connection, its secrets, validation and functions).
+    """
+
+
+    # @ApiMember(Description="True to write a new policy for this role only when its current custom policy is shared with other roles.")
+    new_policy_for_this_role_only: bool = False
+    """
+    True to write a new policy for this role only when its current custom policy is shared with other roles.
     """
 
 
