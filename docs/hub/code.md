@@ -59,12 +59,36 @@ their secrets and token mappings, and the functions added on a connection
 | `reveal_marketplace_integration_secrets` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal` | `project` | path: `integration_view_id` |
 | `set_marketplace_integration_token_mappings` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings` | `project` | path: `integration_view_id`; JSON body: `tokenMappings` |
 | `get_marketplace_function_catalog` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/catalog` | `project` | path: `integration_view_id` |
-| `get_marketplace_function_runs` | `GET` | `/{version}/code/marketplace/functions/runs` | `project` | query: exactly one of `triggerId` / `taskId`, `limit` (1–50, default 20); newest first |
+| `get_marketplace_function_runs` | `GET` | `/{version}/code/marketplace/functions/runs` | `project` | query: exactly one of `functionId` / `triggerId` / `taskId`, `limit` (1–50, default 20); newest first |
 
 ```python
 listings = norbix.hub.code.get_marketplace_listings(search="slack")
 runs = norbix.hub.code.get_marketplace_function_runs(triggerId="trg_…", limit=5)
 result = norbix.hub.code.invoke_marketplace_function("func_…", payload={"text": "Order shipped"})
+```
+
+### Marketplace function runs and their details
+
+Each call of a marketplace function is one run row: an invoke (user, API key,
+AI), a trigger run or a scheduler fire. `functionId` lists every source of one
+function (up to 50 kept); `triggerId` / `taskId` list the runs one trigger or
+task started (20 kept). A row carries `status` (`ok` / `failed` / `skipped`,
+`None` on rows written before the field existed), `durationMs`, `source`
+(`user`, `api-key`, `ai`, `trigger`, `scheduler`), `event`, `correlationId`
+and `hasDetails`.
+
+The input, steps and response of a run are written to the project log under
+the row's `correlationId`, only while the environment's Norbix Logging is on —
+then `hasDetails` is `True`. Read them with the logs route; its query field is
+`targetCorrelationId`:
+
+```python
+runs = norbix.hub.code.get_marketplace_function_runs(functionId="func_…", limit=10)
+for run in runs.get("runs", []):
+    if not run.get("hasDetails"):
+        continue  # logs were off for this run
+    details = norbix.hub.logs.get_logs_by_correlation_id(targetCorrelationId=run["correlationId"])
+    # details["items"]: marketplace:run:started → marketplace:run:step … → completed | failed | skipped
 ```
 
 ## Cloud functions
