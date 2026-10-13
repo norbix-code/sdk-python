@@ -29,7 +29,7 @@ Integration ids look like `int_…`.
 
 ## Marketplace
 
-The 24 routes of the gateway contract `Code.Marketplace.md` §14: the catalog
+The 27 routes of the gateway contract `Code.Marketplace.md` §14: the catalog
 of listings, the installed connections (integration ids look like `int_…`),
 their secrets and token mappings, and the functions added on a connection
 (`func_…`). Every method, its verb, path, query and body are asserted in
@@ -56,6 +56,9 @@ their secrets and token mappings, and the functions added on a connection
 | `get_marketplace_listing` | `GET` | `/{version}/code/marketplace/listings/{ListingViewId}` | `project` | path: `listing_view_id` |
 | `test_marketplace_integration` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/test` | `project` | path: `integration_view_id` |
 | `get_marketplace_integration_tools` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/tools` | `project` | path: `integration_view_id`; returns the stored MCP tool catalog (`tools`, `listedAt`, `catalogHash`, `truncated`) |
+| `get_marketplace_integration_access` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/access` | `project` | path: `integration_view_id`; returns the access matrix (`roles`, `packages`, `tools`, `functions`) |
+| `set_marketplace_integration_role_access` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles` | `project` | path: `integration_view_id`; JSON body: `roleId`, `package` (`None`, `Viewer`, `FunctionsOnly`, `ReadOnly`, `FullAccess`), `manage`; returns the role id |
+| `save_marketplace_integration_custom_access` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom` | `project` | path: `integration_view_id`; JSON body: `roleId`, `basePackage`, `tools`, `functions`, `manage`, `newPolicyForThisRoleOnly`; returns `policyId`, `created`, `usedByRoles` |
 | `replace_marketplace_integration_secrets` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets` | `project` | path: `integration_view_id`; JSON body: `secrets` |
 | `reveal_marketplace_integration_secrets` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal` | `project` | path: `integration_view_id` |
 | `set_marketplace_integration_token_mappings` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings` | `project` | path: `integration_view_id`; JSON body: `tokenMappings` |
