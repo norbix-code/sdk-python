@@ -294,6 +294,7 @@ MARKETPLACE_CASES: list[FunctionCase] = [
     ("get_marketplace_integration_access", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/access", None, None, lambda m: m.get_marketplace_integration_access("int_6Qp1dW2kRm8NsT4vYc0Hb")),
     ("set_marketplace_integration_role_access", "PUT", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/access/roles", None, {'roleId': 'acc_6Qp1dW2kRm8NsT4vYc0Hb_nr_3kLm9QwErTyU', 'package': 'ReadOnly', 'manage': False}, lambda m: m.set_marketplace_integration_role_access("int_6Qp1dW2kRm8NsT4vYc0Hb", roleId='acc_6Qp1dW2kRm8NsT4vYc0Hb_nr_3kLm9QwErTyU', package='ReadOnly', manage=False)),
     ("save_marketplace_integration_custom_access", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/access/roles/custom", None, {'roleId': 'acc_6Qp1dW2kRm8NsT4vYc0Hb_nr_3kLm9QwErTyU', 'basePackage': 'ReadOnly', 'tools': ['create_issue'], 'functions': ['func_4hT2b9QkLm3XcT1yRfGh7a'], 'manage': False, 'newPolicyForThisRoleOnly': True}, lambda m: m.save_marketplace_integration_custom_access("int_6Qp1dW2kRm8NsT4vYc0Hb", roleId='acc_6Qp1dW2kRm8NsT4vYc0Hb_nr_3kLm9QwErTyU', basePackage='ReadOnly', tools=['create_issue'], functions=['func_4hT2b9QkLm3XcT1yRfGh7a'], manage=False, newPolicyForThisRoleOnly=True)),
+    ("start_marketplace_integration_sign_in", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/oauth/start", None, None, lambda m: m.start_marketplace_integration_sign_in("int_6Qp1dW2kRm8NsT4vYc0Hb")),
     ("replace_marketplace_integration_secrets", "PUT", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/secrets", None, {'secrets': {'botToken': 'xoxb-new'}}, lambda m: m.replace_marketplace_integration_secrets("int_6Qp1dW2kRm8NsT4vYc0Hb", secrets={'botToken': 'xoxb-new'})),
     ("reveal_marketplace_integration_secrets", "POST", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/secrets/reveal", None, None, lambda m: m.reveal_marketplace_integration_secrets("int_6Qp1dW2kRm8NsT4vYc0Hb")),
     ("set_marketplace_integration_token_mappings", "PUT", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb/token-mappings", None, {'tokenMappings': [{'key': 'channel', 'value': '#orders', 'resolver': 'Custom'}]}, lambda m: m.set_marketplace_integration_token_mappings("int_6Qp1dW2kRm8NsT4vYc0Hb", tokenMappings=[{'key': 'channel', 'value': '#orders', 'resolver': 'Custom'}])),
@@ -354,9 +355,9 @@ def test_async_marketplace_endpoints_hit_the_same_routes() -> None:
 
 
 def test_marketplace_surface_size() -> None:
-    """27 marketplace routes in the gateway (Code.Marketplace.md §14; 24 = MCP tool catalog, 25–27 = connection access). A new one changes this count."""
-    assert len(MARKETPLACE_CASES) == 27
-    assert len({case[0] for case in MARKETPLACE_CASES}) == 27
+    """28 marketplace routes in the gateway (Code.Marketplace.md §14; 24 = MCP tool catalog, 25–27 = connection access, 28 = OAuth sign-in start; 29, the callback, is not in the metadata). A new one changes this count."""
+    assert len(MARKETPLACE_CASES) == 28
+    assert len({case[0] for case in MARKETPLACE_CASES}) == 28
     client, _ = make_client()
     for name, *_ in MARKETPLACE_CASES:
         assert callable(getattr(client.hub.code, name)), name
