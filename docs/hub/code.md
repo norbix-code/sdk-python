@@ -29,7 +29,7 @@ Integration ids look like `int_…`.
 
 ## Marketplace
 
-The 28 routes of the gateway contract `Code.Marketplace.md` §14: the catalog
+The 29 routes of the gateway contract `Code.Marketplace.md` §14: the catalog
 of listings, the installed connections (integration ids look like `int_…`),
 their secrets and token mappings, and the functions added on a connection
 (`func_…`). Every method, its verb, path, query and body are asserted in
@@ -60,6 +60,7 @@ their secrets and token mappings, and the functions added on a connection
 | `set_marketplace_integration_role_access` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles` | `project` | path: `integration_view_id`; JSON body: `roleId`, `package` (`None`, `Viewer`, `FunctionsOnly`, `ReadOnly`, `FullAccess`), `manage`; returns the role id |
 | `save_marketplace_integration_custom_access` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom` | `project` | path: `integration_view_id`; JSON body: `roleId`, `basePackage`, `tools`, `functions`, `manage`, `newPolicyForThisRoleOnly`; returns `policyId`, `created`, `usedByRoles` |
 | `start_marketplace_integration_sign_in` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start` | `project` | path: `integration_view_id`; returns `authorizeUrl` (open it in a browser), `redirectUrl`, `expiresAt` |
+| `sign_out_marketplace_integration` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/sign-out` | `project` | path: `integration_view_id`; returns `wasSignedIn`, `revoke` |
 | `replace_marketplace_integration_secrets` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets` | `project` | path: `integration_view_id`; JSON body: `secrets` |
 | `reveal_marketplace_integration_secrets` | `POST` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets/reveal` | `project` | path: `integration_view_id` |
 | `set_marketplace_integration_token_mappings` | `PUT` | `/{version}/code/marketplace/integrations/{IntegrationViewId}/token-mappings` | `project` | path: `integration_view_id`; JSON body: `tokenMappings` |

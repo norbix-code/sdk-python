@@ -438,6 +438,19 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def sign_out_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/sign-out — sign an MCP connection out of OAuth; returns `wasSignedIn` and `revoke` (`Revoked`, `NoRevocationEndpoint`, `Failed` or None)."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/sign-out",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def replace_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets"""
         return self._transport.send(
@@ -994,6 +1007,19 @@ class AsyncCodeModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def sign_out_marketplace_integration(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/sign-out — sign an MCP connection out of OAuth; returns `wasSignedIn` and `revoke` (`Revoked`, `NoRevocationEndpoint`, `Failed` or None)."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/sign-out",
             method="POST",
             path_params={"IntegrationViewId": integration_view_id},
             request=request,
