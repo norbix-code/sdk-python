@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-13 06:06:37
+Date: 2026-10-13 09:01:23
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -5947,6 +5947,17 @@ class MarketplaceIntegrationListProjection(IHasViewId):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class MarketplaceMcpToolDto:
+    name: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    input_schema: Optional[str] = None
+    read_only_hint: Optional[bool] = None
+    destructive_hint: Optional[bool] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class MarketplaceFunctionProjection(IHasViewId):
     view_id: Optional[str] = None
     integration_view_id: Optional[str] = None
@@ -8049,6 +8060,15 @@ class GetMarketplaceIntegrationResponse(ResponseBase):
 @dataclass
 class GetMarketplaceIntegrationsResponse(ResponseBase):
     list: Optional[PaginatedResponse[MarketplaceIntegrationListProjection]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetMarketplaceIntegrationToolsResponse(ResponseBase):
+    tools: Optional[IReadOnlyList[MarketplaceMcpToolDto]] = None
+    listed_at: Optional[datetime.datetime] = None
+    catalog_hash: Optional[str] = None
+    truncated: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -15309,6 +15329,17 @@ class GetSmsCampaignMessagesRequest(CodeMashListPaginationRequestBase, IReturn[G
     database_integration_id: Optional[str] = None
     """
     Optional. Omit to use the project default database integration (resolved per environment).
+    """
+
+
+# @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/tools", "GET")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetMarketplaceIntegrationTools(CodeMashRequestBase, IReturn[GetMarketplaceIntegrationToolsResponse]):
+    # @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    integration_view_id: Optional[str] = None
+    """
+    Integration view id, from get_marketplace_integrations.
     """
 
 
