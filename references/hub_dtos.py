@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-13 13:23:39
+Date: 2026-10-13 16:21:29
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -5071,6 +5071,7 @@ class ServiceUserApiKeyDto:
     name: Optional[str] = None
     visible_key: Optional[str] = None
     scopes: List[str] = field(default_factory=list)
+    environment: Optional[str] = None
     created_date: datetime.datetime = datetime.datetime(1, 1, 1)
     expiry_date: Optional[datetime.datetime] = None
     cancelled_date: Optional[datetime.datetime] = None
@@ -5965,6 +5966,7 @@ class MarketplaceAccessRoleDto:
     manage: bool = False
     custom: Optional[IReadOnlyList[MarketplaceAccessCustomPolicyDto]] = None
     default_not_applied: Optional[str] = None
+    can_change: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5982,6 +5984,8 @@ class MarketplaceAccessToolDto:
     name: Optional[str] = None
     read_only: bool = False
     grantable: bool = False
+    curated: bool = False
+    excluded_from_full_access: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6028,6 +6032,8 @@ class MarketplaceAccessChangesDto:
     read_only_added: Optional[IReadOnlyList[str]] = None
     read_only_removed: Optional[IReadOnlyList[str]] = None
     not_grantable: Optional[IReadOnlyList[str]] = None
+    read_only_hint_overridden: Optional[IReadOnlyList[str]] = None
+    excluded_from_full_access: Optional[IReadOnlyList[str]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6059,6 +6065,8 @@ class MarketplaceFunctionRunDto:
     trigger_id: Optional[str] = None
     task_id: Optional[str] = None
     input: Optional[str] = None
+    integration_id: Optional[str] = None
+    tool_name: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6142,6 +6150,12 @@ class PushDeviceListProjection:
     os_name: Optional[str] = None
     os_version: Optional[str] = None
     platform_api_level: Optional[int] = None
+    platform: Optional[str] = None
+    app_version: Optional[str] = None
+    installation_id: Optional[str] = None
+    locale: Optional[str] = None
+    time_zone: Optional[str] = None
+    updated_at_utc: Optional[datetime.datetime] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6187,10 +6201,18 @@ class PushCampaignBatchDto(CampaignBatchDto):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class NotificationReadMarkDto:
+    user_id: Optional[str] = None
+    read_at_utc: datetime.datetime = datetime.datetime(1, 1, 1)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class PushCampaignBatchNotificationDto(CampaignBatchNotificationDto):
     subject: Optional[str] = None
     recipients: Optional[PushRecipientsDto] = None
     content: Optional[PushMessageContentDto] = None
+    read_by: Optional[List[NotificationReadMarkDto]] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -7496,12 +7518,15 @@ class IssueServiceUserApiKeyResponse:
     id: int = 0
     name: Optional[str] = None
     key: Optional[str] = None
+    environment: Optional[str] = None
+    response_status: Optional[CodeMashResponseStatus] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class ListServiceUserApiKeysResponse:
     keys: List[ServiceUserApiKeyDto] = field(default_factory=list)
+    response_status: Optional[CodeMashResponseStatus] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8131,6 +8156,7 @@ class GetMarketplaceIntegrationAccessResponse(ResponseBase):
     packages: Optional[IReadOnlyList[MarketplaceAccessPackageDto]] = None
     tools: Optional[IReadOnlyList[MarketplaceAccessToolDto]] = None
     functions: Optional[IReadOnlyList[MarketplaceAccessFunctionDto]] = None
+    can_manage: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8168,6 +8194,13 @@ class StartMarketplaceIntegrationSignInResponse(ResponseBase):
     authorize_url: Optional[str] = None
     redirect_url: Optional[str] = None
     expires_at: Optional[datetime.datetime] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SignOutMarketplaceIntegrationResponse(ResponseBase):
+    was_signed_in: bool = False
+    revoke: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -12858,6 +12891,9 @@ class FindRecords(CodeMashListPaginationRequestBase, IReturn[FindRecordsResponse
     """
 
 
+    all_languages: bool = False
+
+
 # @Route("/{version}/database/collections/{collectionName}/{id}", "GET")
 # @Api(Description="Database")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -12887,6 +12923,9 @@ class FindOneRecord(CodeMashRequestBase, IReturn[FindOneRecordResponse]):
     """
     Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.
     """
+
+
+    all_languages: bool = False
 
 
 # @Route("/{version}/database/collections/{collectionName}/indexes", "GET")
@@ -15550,6 +15589,17 @@ class StartMarketplaceIntegrationSignIn(CodeMashRequestBase, IReturn[StartMarket
     """
 
 
+# @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/sign-out", "POST")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class SignOutMarketplaceIntegration(CodeMashRequestBase, IReturn[SignOutMarketplaceIntegrationResponse]):
+    # @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    integration_view_id: Optional[str] = None
+    """
+    Integration view id, from get_marketplace_integrations.
+    """
+
+
 # @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets", "PUT")
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
@@ -15622,6 +15672,13 @@ class GetMarketplaceFunctionRuns(CodeMashRequestBase, IReturn[GetMarketplaceFunc
     task_id: Optional[str] = None
     """
     The scheduler task whose marketplace function runs to list (tsk_…). One of functionId / triggerId / taskId.
+    """
+
+
+    # @ApiMember(Description="The MCP connection whose tool runs to list — the calls an AI chat made to one of its tools without a saved function (int_…). One of functionId / triggerId / taskId / integrationId.")
+    integration_id: Optional[str] = None
+    """
+    The MCP connection whose tool runs to list — the calls an AI chat made to one of its tools without a saved function (int_…). One of functionId / triggerId / taskId / integrationId.
     """
 
 
