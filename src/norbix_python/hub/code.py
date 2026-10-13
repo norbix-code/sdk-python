@@ -386,6 +386,45 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def get_marketplace_integration_access(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/access — the access matrix of a connection: roles, packages, tools and functions."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/access",
+            method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_marketplace_integration_role_access(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles — give a role one package (None, Viewer, FunctionsOnly, ReadOnly, FullAccess) and the Manage flag; body `roleId`, `package`, `manage`."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles",
+            method="PUT",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_marketplace_integration_custom_access(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom — a custom access policy of the connection for one role; body `roleId`, `basePackage`, `tools`, `functions`, `manage`, `newPolicyForThisRoleOnly`."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom",
+            method="POST",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def replace_marketplace_integration_secrets(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/secrets"""
         return self._transport.send(
@@ -891,6 +930,45 @@ class AsyncCodeModule:
             target="hub",
             path="/{version}/code/marketplace/integrations/{IntegrationViewId}/tools",
             method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_marketplace_integration_access(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/code/marketplace/integrations/{IntegrationViewId}/access — the access matrix of a connection: roles, packages, tools and functions."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/access",
+            method="GET",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_marketplace_integration_role_access(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles — give a role one package (None, Viewer, FunctionsOnly, ReadOnly, FullAccess) and the Manage flag; body `roleId`, `package`, `manage`."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles",
+            method="PUT",
+            path_params={"IntegrationViewId": integration_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_marketplace_integration_custom_access(self, integration_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom — a custom access policy of the connection for one role; body `roleId`, `basePackage`, `tools`, `functions`, `manage`, `newPolicyForThisRoleOnly`."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom",
+            method="POST",
             path_params={"IntegrationViewId": integration_view_id},
             request=request,
             scope="project",
