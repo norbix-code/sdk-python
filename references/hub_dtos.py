@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-13 12:57:22
+Date: 2026-10-13 13:23:39
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -2810,6 +2810,10 @@ class MarketplaceIntegrationDto(IntegrationDto):
     description: Optional[str] = None
     config: Optional[IReadOnlyDictionary[str, str]] = None
     last_validation_steps: Optional[List[MarketplaceValidationStepResultDto]] = None
+    signed_in: bool = False
+    signed_in_by: Optional[str] = None
+    signed_in_at: Optional[datetime.datetime] = None
+    token_expires_at: Optional[datetime.datetime] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -2955,6 +2959,8 @@ class MarketplaceListingDto(IHasViewId):
     documentation_url: Optional[str] = None
     video_url: Optional[str] = None
     availability: Optional[MarketplaceAvailability] = None
+    connect_steps: Optional[IReadOnlyList[str]] = None
+    o_auth_redirect_url: Optional[str] = None
     is_official: bool = False
     tags: Optional[IReadOnlyList[str]] = None
     spec_version: int = 0
@@ -6001,6 +6007,8 @@ class MarketplaceIntegrationListProjection(IHasViewId):
     last_integration_test_errors: Optional[IReadOnlyList[str]] = None
     human_delivery_confirmed_at_utc: Optional[datetime.datetime] = None
     requires_human_delivery_confirmation: bool = False
+    signed_in: bool = False
+    signed_in_at: Optional[datetime.datetime] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -8152,6 +8160,14 @@ class GetMarketplaceIntegrationToolsResponse(ResponseBase):
     listed_at: Optional[datetime.datetime] = None
     catalog_hash: Optional[str] = None
     truncated: bool = False
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class StartMarketplaceIntegrationSignInResponse(ResponseBase):
+    authorize_url: Optional[str] = None
+    redirect_url: Optional[str] = None
+    expires_at: Optional[datetime.datetime] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -15516,6 +15532,17 @@ class SaveMarketplaceIntegrationCustomAccess(CodeMashRequestBase, IReturn[SaveMa
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class GetMarketplaceIntegrationTools(CodeMashRequestBase, IReturn[GetMarketplaceIntegrationToolsResponse]):
+    # @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    integration_view_id: Optional[str] = None
+    """
+    Integration view id, from get_marketplace_integrations.
+    """
+
+
+# @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start", "POST")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class StartMarketplaceIntegrationSignIn(CodeMashRequestBase, IReturn[StartMarketplaceIntegrationSignInResponse]):
     # @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
     integration_view_id: Optional[str] = None
     """
