@@ -1,6 +1,6 @@
 /* Options:
-Date: 2025-10-22 10:51:05
-Version: 8.30
+Date: 2026-10-14 08:01:40
+Version: 10.20
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: http://localhost:5002
 
@@ -45,13 +45,8 @@ export module CodeMashApi2
     }
 
     // @DataContract(Namespace="http://codemash.io/types/")
-    export class RequestBase implements ICultureBasedRequest, IVersionBasedRequest, IHasCorrelationIdRequest
+    export class RequestBase implements IVersionBasedRequest, IHasCorrelationIdRequest
     {
-        /** @description Specify culture code when your response from the API should be localised. E.g.: en */
-        // @DataMember
-        // @ApiMember(DataType="string", Description="Specify culture code when your response from the API should be localised. E.g.: en", Name="CultureCode", ParameterType="header")
-        public cultureCode?: string;
-
         /** @description TimeZone */
         // @DataMember
         // @ApiMember(DataType="string", Description="TimeZone", Name="TimeZoneId", ParameterType="header")
@@ -68,11 +63,6 @@ export module CodeMashApi2
         public correlationId?: string;
 
         public constructor(init?: Partial<RequestBase>) { (Object as any).assign(this, init); }
-    }
-
-    export interface ICultureBasedRequest
-    {
-        cultureCode?: string;
     }
 
     export interface IVersionBasedRequest
@@ -260,33 +250,6 @@ export module CodeMashApi2
         Production = 'Production',
     }
 
-    // @DataContract
-    export class EchoLicenseDto
-    {
-        // @DataMember(Name="domain")
-        public domain?: string;
-
-        // @DataMember(Name="accountId")
-        public accountId?: string;
-
-        // @DataMember(Name="email")
-        public email?: string;
-
-        // @DataMember(Name="release")
-        public release?: string;
-
-        // @DataMember(Name="expire")
-        public expire: number;
-
-        // @DataMember(Name="isTrial")
-        public isTrial: boolean;
-
-        // @DataMember(Name="cap")
-        public cap: number;
-
-        public constructor(init?: Partial<EchoLicenseDto>) { (Object as any).assign(this, init); }
-    }
-
     export class EchoRegionDto
     {
         public code: string;
@@ -297,6 +260,17 @@ export module CodeMashApi2
         public constructor(init?: Partial<EchoRegionDto>) { (Object as any).assign(this, init); }
     }
 
+    export class EchoAgentSnippetDto
+    {
+        public client: string;
+        public kind: string;
+        public recommended: boolean;
+        public auth: string;
+        public config: string;
+
+        public constructor(init?: Partial<EchoAgentSnippetDto>) { (Object as any).assign(this, init); }
+    }
+
     export class EchoAgentDto
     {
         public mcpUrl: string;
@@ -304,8 +278,21 @@ export module CodeMashApi2
         public installationType: string;
         public onboardingDocsUrl: string;
         public toolsUrl: string;
+        public cliPackage: string;
+        public cliInstallCommand: string;
+        public deviceAuthorizationUrl: string;
+        public deviceTokenUrl: string;
+        public snippets: EchoAgentSnippetDto[] = [];
 
         public constructor(init?: Partial<EchoAgentDto>) { (Object as any).assign(this, init); }
+    }
+
+    export class EchoHostingPlatformDto
+    {
+        public provider: string;
+        public isAws: boolean;
+
+        public constructor(init?: Partial<EchoHostingPlatformDto>) { (Object as any).assign(this, init); }
     }
 
     export class PublicBrandDto
@@ -623,6 +610,9 @@ export module CodeMashApi2
         public names?: { [index:string]: string; };
 
         // @DataMember
+        public slug?: string;
+
+        // @DataMember
         public description?: string;
 
         // @DataMember
@@ -685,6 +675,9 @@ export module CodeMashApi2
 
         // @DataMember
         public names?: { [index:string]: string; };
+
+        // @DataMember
+        public slug?: string;
 
         // @DataMember
         public description?: string;
@@ -792,7 +785,7 @@ export module CodeMashApi2
     }
 
     // @DataContract
-    export class TriggerDto implements IHasViewId
+    export class TriggerDto implements IHasViewId, IQueuedTrigger
     {
         // @DataMember
         public type: TriggerType;
@@ -814,6 +807,12 @@ export module CodeMashApi2
 
         // @DataMember
         public activationCode?: string;
+
+        // @DataMember
+        public order?: number;
+
+        // @DataMember
+        public breakOnError: boolean;
 
         // @DataMember
         public savedByAuthId?: string;
@@ -904,7 +903,7 @@ export module CodeMashApi2
     export class FileResourceDto
     {
         // @DataMember(Order=1)
-        public id: string;
+        public id?: string;
 
         // @DataMember(Order=2)
         public originalFileName: string;
@@ -994,6 +993,81 @@ export module CodeMashApi2
     }
 
     // @DataContract
+    export class OwnPushDeviceDto
+    {
+        // @DataMember
+        public id: string;
+
+        // @DataMember
+        public provider: string;
+
+        // @DataMember
+        public token: string;
+
+        // @DataMember
+        public platform?: string;
+
+        // @DataMember
+        public osName?: string;
+
+        // @DataMember
+        public osVersion?: string;
+
+        // @DataMember
+        public appVersion?: string;
+
+        // @DataMember
+        public deviceName?: string;
+
+        // @DataMember
+        public modelName?: string;
+
+        // @DataMember
+        public brand?: string;
+
+        // @DataMember
+        public installationId?: string;
+
+        // @DataMember
+        public locale?: string;
+
+        // @DataMember
+        public timeZone?: string;
+
+        // @DataMember
+        public updatedAtUtc?: string;
+
+        public constructor(init?: Partial<OwnPushDeviceDto>) { (Object as any).assign(this, init); }
+    }
+
+    // @DataContract
+    export class OwnPushMessageDto
+    {
+        // @DataMember
+        public id: string;
+
+        // @DataMember
+        public campaignId: string;
+
+        // @DataMember
+        public title?: string;
+
+        // @DataMember
+        public body?: string;
+
+        // @DataMember
+        public sentAtUtc?: string;
+
+        // @DataMember
+        public isRead: boolean;
+
+        // @DataMember
+        public readAtUtc?: string;
+
+        public constructor(init?: Partial<OwnPushMessageDto>) { (Object as any).assign(this, init); }
+    }
+
+    // @DataContract
     export class ResponseError
     {
         // @DataMember(Order=1)
@@ -1047,154 +1121,16 @@ export module CodeMashApi2
         order: number;
     }
 
-    export class StringFieldDto extends JsonSchemaFieldDto
+    export interface IQueuedTrigger
     {
-        // @DataMember
-        public format?: string;
-
-        // @DataMember
-        public pattern?: string;
-
-        // @DataMember
-        public minLength?: number;
-
-        // @DataMember
-        public maxLength?: number;
-
-        // @DataMember
-        public translateOptions?: IReadOnlyDictionary<string, string>;
-
-        public constructor(init?: Partial<StringFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class DecimalFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public minimum?: number;
-
-        // @DataMember
-        public maximum?: number;
-
-        // @DataMember
-        public multipleOf?: number;
-
-        public constructor(init?: Partial<DecimalFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class CurrencyFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public allowedCurrencies?: IReadOnlyList<string>;
-
-        public constructor(init?: Partial<CurrencyFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class BooleanFieldDto extends JsonSchemaFieldDto
-    {
-
-        public constructor(init?: Partial<BooleanFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class DateFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public minimum?: number;
-
-        // @DataMember
-        public maximum?: number;
-
-        public constructor(init?: Partial<DateFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class IntegerFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public minimum?: number;
-
-        // @DataMember
-        public maximum?: number;
-
-        public constructor(init?: Partial<IntegerFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class GeolocationFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public allowedTypes?: IReadOnlyList<string>;
-
-        public constructor(init?: Partial<GeolocationFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class TagsFieldDto extends JsonSchemaFieldDto
-    {
-
-        public constructor(init?: Partial<TagsFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class FileFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public storages?: IReadOnlyList<string>;
-
-        public constructor(init?: Partial<FileFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class TaxonomySelectionFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public taxonomyId?: string;
-
-        // @DataMember
-        public multiple: boolean;
-
-        public constructor(init?: Partial<TaxonomySelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class CollectionSelectionFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public collectionId?: string;
-
-        // @DataMember
-        public displayField?: string;
-
-        // @DataMember
-        public multiple: boolean;
-
-        public constructor(init?: Partial<CollectionSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class UserSelectionFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public multiple: boolean;
-
-        public constructor(init?: Partial<UserSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class RoleSelectionFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public multiple: boolean;
-
-        public constructor(init?: Partial<RoleSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-    }
-
-    export class EnumSelectionFieldDto extends JsonSchemaFieldDto
-    {
-        // @DataMember
-        public values?: IReadOnlyList<string>;
-
-        // @DataMember
-        public multiple: boolean;
-
-        public constructor(init?: Partial<EnumSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+        viewId: string;
+        name: string;
+        order?: number;
+        breakOnError: boolean;
     }
 
     export class EchoResponse
     {
-        public containerName?: string;
-        public ip: string;
         public release: CodeMashRelease;
         public runtime: CodeMashRuntime;
         public managedServiceHubUrl: string;
@@ -1203,19 +1139,12 @@ export module CodeMashApi2
         public apiUrl: string;
         public apiVersion: string;
         public hubVersion: string;
-        public mjmlUrl: string;
         public adminUrlTemplate?: string;
-        public license?: EchoLicenseDto;
-        public askForEnterpriseLicenseEmail?: string;
         public emailServiceConfigured: boolean;
         public rootBootstrapPasswordSource?: string;
         public regions?: EchoRegionDto[];
-        public isProductionInstallation: boolean;
-        public licensingMode: string;
-        public graceDaysLeft?: number;
-        public installationDomain?: string;
-        public licensingDocsUrl?: string;
         public agent?: EchoAgentDto;
+        public hostingPlatform?: EchoHostingPlatformDto;
 
         public constructor(init?: Partial<EchoResponse>) { (Object as any).assign(this, init); }
     }
@@ -1492,6 +1421,15 @@ export module CodeMashApi2
         public constructor(init?: Partial<FindOneResponse>) { super(init); (Object as any).assign(this, init); }
     }
 
+    export class GetFileByIdResponse extends ResponseBase
+    {
+        public file?: FileResourceRefDto;
+        public isPublic?: boolean;
+        public publicUrl?: string;
+
+        public constructor(init?: Partial<GetFileByIdResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
     export class GetFileInfoResponse extends ResponseBase
     {
         public file?: FileResourceRefDto;
@@ -1531,6 +1469,20 @@ export module CodeMashApi2
         public items?: IReadOnlyList<IntegrationTestResultItemDto>;
 
         public constructor(init?: Partial<TestFilesIntegrationResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class GetOwnPushDevicesResponse extends ResponseBase
+    {
+        public items: OwnPushDeviceDto[] = [];
+
+        public constructor(init?: Partial<GetOwnPushDevicesResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class GetOwnPushMessagesResponse extends ResponseBase
+    {
+        public list?: PaginatedResponse<OwnPushMessageDto>;
+
+        public constructor(init?: Partial<GetOwnPushMessagesResponse>) { super(init); (Object as any).assign(this, init); }
     }
 
     // @DataContract
@@ -2749,6 +2701,11 @@ export module CodeMashApi2
     // @DataContract
     export class FindMergedTermTreeRequest extends CodeMashRequestBase implements IReturn<FindMergedTermTreeResponse>
     {
+        /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+        // @DataMember
+        // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+        public allLanguages: boolean;
+
         // @DataMember
         public taxonomyName: string;
 
@@ -2767,6 +2724,11 @@ export module CodeMashApi2
     // @DataContract
     export class FindTaxonomyTreeRequest extends CodeMashRequestBase implements IReturn<FindTaxonomyTreeResponse>
     {
+        /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+        // @DataMember
+        // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+        public allLanguages: boolean;
+
         // @DataMember
         public includeTerms: boolean;
 
@@ -2785,6 +2747,11 @@ export module CodeMashApi2
     // @DataContract
     export class FindTermsRequest extends CodeMashListPaginationRequestBase implements IReturn<FindTermsResponse>
     {
+        /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+        // @DataMember
+        // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+        public allLanguages: boolean;
+
         // @DataMember
         public taxonomyName: string;
 
@@ -2812,6 +2779,11 @@ export module CodeMashApi2
     // @DataContract
     export class FindTermsChildrenRequest extends CodeMashListPaginationRequestBase implements IReturn<FindTermsChildrenResponse>
     {
+        /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+        // @DataMember
+        // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+        public allLanguages: boolean;
+
         // @DataMember
         public taxonomyName: string;
 
@@ -2839,6 +2811,11 @@ export module CodeMashApi2
     // @DataContract
     export class FindTermTreeRequest extends CodeMashRequestBase implements IReturn<FindTermTreeResponse>
     {
+        /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+        // @DataMember
+        // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+        public allLanguages: boolean;
+
         // @DataMember
         public taxonomyName: string;
 
@@ -3079,6 +3056,12 @@ export module CodeMashApi2
         // @DataMember
         public sortOrder?: number;
 
+        // @DataMember
+        public expandReferences: boolean;
+
+        // @DataMember
+        public allLanguages: boolean;
+
         public constructor(init?: Partial<FindRequest>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'FindRequest'; }
         public getMethod() { return 'GET'; }
@@ -3099,6 +3082,12 @@ export module CodeMashApi2
 
         // @DataMember
         public databaseIntegrationId?: string;
+
+        // @DataMember
+        public expandReferences: boolean;
+
+        // @DataMember
+        public allLanguages: boolean;
 
         public constructor(init?: Partial<FindOneRequest>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'FindOneRequest'; }
@@ -3126,6 +3115,14 @@ export module CodeMashApi2
 
         // @DataMember
         public pagingArgs?: PagingArgs;
+
+        /** @description Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids. */
+        // @DataMember
+        // @ApiMember(Description="Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.")
+        public expandReferences: boolean;
+
+        // @DataMember
+        public allLanguages: boolean;
 
         public constructor(init?: Partial<FindOwnRequest>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'FindOwnRequest'; }
@@ -3220,6 +3217,9 @@ export module CodeMashApi2
         // @DataMember
         public update: string;
 
+        // @DataMember
+        public arrayFilters?: string;
+
         public constructor(init?: Partial<UpdateManyRequest>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'UpdateManyRequest'; }
         public getMethod() { return 'PUT'; }
@@ -3243,6 +3243,9 @@ export module CodeMashApi2
 
         // @DataMember
         public update: string;
+
+        // @DataMember
+        public arrayFilters?: string;
 
         public constructor(init?: Partial<UpdateOneRequest>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'UpdateOneRequest'; }
@@ -3374,6 +3377,24 @@ export module CodeMashApi2
     }
 
     /** @description Files */
+    // @Route("/{version}/files/{filesIntegrationId}/by-id/{id}", "GET")
+    // @Api(Description="Files")
+    // @DataContract
+    export class GetFileByIdRequest extends CodeMashRequestBase implements IReturn<GetFileByIdResponse>
+    {
+        // @DataMember
+        public filesIntegrationId: string;
+
+        // @DataMember
+        public id: string;
+
+        public constructor(init?: Partial<GetFileByIdRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'GetFileByIdRequest'; }
+        public getMethod() { return 'GET'; }
+        public createResponse() { return new GetFileByIdResponse(); }
+    }
+
+    /** @description Files */
     // @Route("/{version}/files/{filesIntegrationId}/info", "GET")
     // @Api(Description="Files")
     // @DataContract
@@ -3485,6 +3506,165 @@ export module CodeMashApi2
         public getTypeName() { return 'TestFilesIntegrationRequest'; }
         public getMethod() { return 'POST'; }
         public createResponse() { return new TestFilesIntegrationResponse(); }
+    }
+
+    /** @description Files */
+    // @Route("/{version}/files/{filesIntegrationId}/use", "POST")
+    // @Api(Description="Files")
+    // @DataContract
+    export class UseFileRequest extends CodeMashRequestBase implements IReturn<IdResponse>
+    {
+        // @DataMember
+        public filesIntegrationId: string;
+
+        // @DataMember
+        public path: string;
+
+        public constructor(init?: Partial<UseFileRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'UseFileRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new IdResponse(); }
+    }
+
+    /** @description Registers or refreshes a push device for the signed-in user. */
+    // @Route("/{version}/notifications/push/devices", "POST")
+    // @Api(Description="Registers or refreshes a push device for the signed-in user.")
+    export class RegisterOwnPushDeviceRequest extends CodeMashRequestBase implements IReturn<IdResponse>
+    {
+        /** @description Who issued the token: expo (getExpoPushTokenAsync), fcm (Android / Firebase) or apns (iOS). */
+        // @ApiMember(Description="Who issued the token: expo (getExpoPushTokenAsync), fcm (Android / Firebase) or apns (iOS).", IsRequired=true)
+        public provider: string;
+
+        /** @description The push token, exactly as the provider gave it. */
+        // @ApiMember(Description="The push token, exactly as the provider gave it.", IsRequired=true)
+        public token: string;
+
+        /** @description The app's platform: ios, android or web. */
+        // @ApiMember(Description="The app's platform: ios, android or web.")
+        public platform?: string;
+
+        /** @description Operating system name, e.g. iOS. */
+        // @ApiMember(Description="Operating system name, e.g. iOS.")
+        public osName?: string;
+
+        /** @description Operating system version, e.g. 18.1. */
+        // @ApiMember(Description="Operating system version, e.g. 18.1.")
+        public osVersion?: string;
+
+        /** @description The app version, e.g. 2.4.1. */
+        // @ApiMember(Description="The app version, e.g. 2.4.1.")
+        public appVersion?: string;
+
+        /** @description The device name the user sees, e.g. Anna's iPhone. */
+        // @ApiMember(Description="The device name the user sees, e.g. Anna's iPhone.")
+        public deviceName?: string;
+
+        /** @description The device model, e.g. iPhone 15. */
+        // @ApiMember(Description="The device model, e.g. iPhone 15.")
+        public modelName?: string;
+
+        public brand?: string;
+        public manufacturer?: string;
+        /** @description A stable id the app keeps for this installation (not the token). */
+        // @ApiMember(Description="A stable id the app keeps for this installation (not the token).")
+        public installationId?: string;
+
+        /** @description The device locale, e.g. lt-LT. */
+        // @ApiMember(Description="The device locale, e.g. lt-LT.")
+        public locale?: string;
+
+        /** @description The device time zone (IANA), e.g. Europe/Vilnius. */
+        // @ApiMember(Description="The device time zone (IANA), e.g. Europe/Vilnius.")
+        public timeZone?: string;
+
+        public constructor(init?: Partial<RegisterOwnPushDeviceRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'RegisterOwnPushDeviceRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new IdResponse(); }
+    }
+
+    /** @description Lists the signed-in user's own push devices. */
+    // @Route("/{version}/notifications/push/devices", "GET")
+    // @Api(Description="Lists the signed-in user's own push devices.")
+    export class GetOwnPushDevicesRequest extends CodeMashRequestBase implements IReturn<GetOwnPushDevicesResponse>
+    {
+
+        public constructor(init?: Partial<GetOwnPushDevicesRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'GetOwnPushDevicesRequest'; }
+        public getMethod() { return 'GET'; }
+        public createResponse() { return new GetOwnPushDevicesResponse(); }
+    }
+
+    /** @description Removes one of the signed-in user's own push devices by id. */
+    // @Route("/{version}/notifications/push/devices/{Id}", "DELETE")
+    // @Api(Description="Removes one of the signed-in user's own push devices by id.")
+    export class DeleteOwnPushDeviceRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+    {
+        /** @description The device id (pnd_…) from the devices list or the register answer. */
+        // @ApiMember(Description="The device id (pnd_…) from the devices list or the register answer.", IsRequired=true)
+        public id: string;
+
+        public constructor(init?: Partial<DeleteOwnPushDeviceRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'DeleteOwnPushDeviceRequest'; }
+        public getMethod() { return 'DELETE'; }
+        public createResponse() { return new EmptyResponse(); }
+    }
+
+    /** @description Removes the signed-in user's push device registered with a token (sign-out). */
+    // @Route("/{version}/notifications/push/devices", "DELETE")
+    // @Api(Description="Removes the signed-in user's push device registered with a token (sign-out).")
+    export class DeleteOwnPushDeviceByTokenRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+    {
+        /** @description The push token the device was registered with. */
+        // @ApiMember(Description="The push token the device was registered with.", IsRequired=true)
+        public token: string;
+
+        public constructor(init?: Partial<DeleteOwnPushDeviceByTokenRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'DeleteOwnPushDeviceByTokenRequest'; }
+        public getMethod() { return 'DELETE'; }
+        public createResponse() { return new EmptyResponse(); }
+    }
+
+    /** @description Lists the push messages sent to the signed-in user. */
+    // @Route("/{version}/notifications/push/messages", "GET")
+    // @Api(Description="Lists the push messages sent to the signed-in user.")
+    export class GetOwnPushMessagesRequest extends CodeMashListPaginationRequestBase implements IReturn<GetOwnPushMessagesResponse>
+    {
+        /** @description Only messages the caller has not marked read. */
+        // @ApiMember(Description="Only messages the caller has not marked read.")
+        public unreadOnly: boolean;
+
+        public constructor(init?: Partial<GetOwnPushMessagesRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'GetOwnPushMessagesRequest'; }
+        public getMethod() { return 'GET'; }
+        public createResponse() { return new GetOwnPushMessagesResponse(); }
+    }
+
+    /** @description Marks one push message sent to the signed-in user read. */
+    // @Route("/{version}/notifications/push/messages/{Id}/read", "POST")
+    // @Api(Description="Marks one push message sent to the signed-in user read.")
+    export class MarkOwnPushMessageReadRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+    {
+        /** @description The message id (ntf_…) from the messages list. */
+        // @ApiMember(Description="The message id (ntf_…) from the messages list.", IsRequired=true)
+        public id: string;
+
+        public constructor(init?: Partial<MarkOwnPushMessageReadRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'MarkOwnPushMessageReadRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new EmptyResponse(); }
+    }
+
+    /** @description Marks every push message sent to the signed-in user read. */
+    // @Route("/{version}/notifications/push/messages/read", "POST")
+    // @Api(Description="Marks every push message sent to the signed-in user read.")
+    export class MarkAllOwnPushMessagesReadRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+    {
+
+        public constructor(init?: Partial<MarkAllOwnPushMessagesReadRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'MarkAllOwnPushMessagesReadRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new EmptyResponse(); }
     }
 
     /** @description Sign In */

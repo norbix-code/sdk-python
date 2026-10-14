@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-07 10:03:25
+Date: 2026-10-14 08:01:41
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5002
@@ -29,14 +29,7 @@ Object = TypeVar('Object')
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class RequestBase(ICultureBasedRequest, IVersionBasedRequest, IHasCorrelationIdRequest):
-    # @ApiMember(DataType="string", Description="Specify culture code when your response from the API should be localised. E.g.: en", Name="CultureCode", ParameterType="header")
-    culture_code: Optional[str] = None
-    """
-    Specify culture code when your response from the API should be localised. E.g.: en
-    """
-
-
+class RequestBase(IVersionBasedRequest, IHasCorrelationIdRequest):
     # @ApiMember(DataType="string", Description="TimeZone", Name="TimeZoneId", ParameterType="header")
     time_zone_id: Optional[str] = None
     """
@@ -56,10 +49,6 @@ class RequestBase(ICultureBasedRequest, IVersionBasedRequest, IHasCorrelationIdR
     """
     CorrelationId for each request
     """
-
-
-class ICultureBasedRequest:
-    culture_code: Optional[str] = None
 
 
 class IVersionBasedRequest:
@@ -250,23 +239,21 @@ class CodeMashRuntime(str, Enum):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class EchoLicenseDto:
-    domain: Optional[str] = None
-    account_id: Optional[str] = None
-    email: Optional[str] = None
-    release: Optional[str] = None
-    expire: int = 0
-    is_trial: bool = False
-    projects_cap: int = 0
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
 class EchoRegionDto:
     code: Optional[str] = None
     display_name: Optional[str] = None
     api_url: Optional[str] = None
     hub_url: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EchoAgentSnippetDto:
+    client: Optional[str] = None
+    kind: Optional[str] = None
+    recommended: bool = False
+    auth: Optional[str] = None
+    config: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -277,6 +264,18 @@ class EchoAgentDto:
     installation_type: Optional[str] = None
     onboarding_docs_url: Optional[str] = None
     tools_url: Optional[str] = None
+    cli_package: Optional[str] = None
+    cli_install_command: Optional[str] = None
+    device_authorization_url: Optional[str] = None
+    device_token_url: Optional[str] = None
+    snippets: List[EchoAgentSnippetDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class EchoHostingPlatformDto:
+    provider: Optional[str] = None
+    is_aws: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -647,7 +646,7 @@ class TriggerActionDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class TriggerDto(IHasViewId):
+class TriggerDto(IHasViewId, IQueuedTrigger):
     type: Optional[TriggerType] = None
     view_id: Optional[str] = None
     name: Optional[str] = None
@@ -655,6 +654,8 @@ class TriggerDto(IHasViewId):
     description: Optional[str] = None
     is_enabled: bool = False
     activation_code: Optional[str] = None
+    order: Optional[int] = None
+    break_on_error: bool = False
     saved_by_auth_id: Optional[str] = None
 
 
@@ -744,6 +745,37 @@ class IntegrationTestResultItemDto:
     errors: Optional[IReadOnlyList[str]] = None
 
 
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OwnPushDeviceDto:
+    id: Optional[str] = None
+    provider: Optional[str] = None
+    token: Optional[str] = None
+    platform: Optional[str] = None
+    os_name: Optional[str] = None
+    os_version: Optional[str] = None
+    app_version: Optional[str] = None
+    device_name: Optional[str] = None
+    model_name: Optional[str] = None
+    brand: Optional[str] = None
+    installation_id: Optional[str] = None
+    locale: Optional[str] = None
+    time_zone: Optional[str] = None
+    updated_at_utc: Optional[datetime.datetime] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class OwnPushMessageDto:
+    id: Optional[str] = None
+    campaign_id: Optional[str] = None
+    title: Optional[str] = None
+    body: Optional[str] = None
+    sent_at_utc: Optional[datetime.datetime] = None
+    is_read: bool = False
+    read_at_utc: Optional[datetime.datetime] = None
+
+
 class IBindableContract:
     pass
 
@@ -757,157 +789,16 @@ class ICursorArgs:
     order: int = 0
 
 
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class StringFieldDto(JsonSchemaFieldDto):
-    format: Optional[str] = None
-    pattern: Optional[str] = None
-    min_length: Optional[int] = None
-    max_length: Optional[int] = None
-    translate_options: Optional[IReadOnlyDictionary[str, str]] = None
-    default: Optional[str] = None
-    unique: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class DecimalFieldDto(JsonSchemaFieldDto):
-    minimum: Optional[Decimal] = None
-    maximum: Optional[Decimal] = None
-    multiple_of: Optional[Decimal] = None
-    default: Optional[Decimal] = None
-    unique: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CurrencyDefaultDto:
-    value: Decimal = decimal.Decimal(0)
-    currency: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CurrencyFieldDto(JsonSchemaFieldDto):
-    allowed_currencies: Optional[IReadOnlyList[str]] = None
-    multiple_of: Optional[Decimal] = None
-    minimum: Optional[Decimal] = None
-    maximum: Optional[Decimal] = None
-    default: Optional[CurrencyDefaultDto] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class BooleanFieldDto(JsonSchemaFieldDto):
-    default: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class DateFieldDto(JsonSchemaFieldDto):
-    minimum: Optional[int] = None
-    maximum: Optional[int] = None
-    default: Optional[int] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class IntegerFieldDto(JsonSchemaFieldDto):
-    minimum: Optional[int] = None
-    maximum: Optional[int] = None
-    default: Optional[int] = None
-    unique: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class GeolocationFieldDto(JsonSchemaFieldDto):
-    allowed_types: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TagsFieldDto(JsonSchemaFieldDto):
-    min_items: Optional[int] = None
-    max_items: Optional[int] = None
-    default: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class FileFieldDto(JsonSchemaFieldDto):
-    storages: Optional[IReadOnlyList[str]] = None
-    min_items: Optional[int] = None
-    max_items: Optional[int] = None
-    allowed_file_type: Optional[str] = None
-    max_size_mb: Optional[Decimal] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class TaxonomySelectionFieldDto(JsonSchemaFieldDto):
-    taxonomy_id: Optional[str] = None
-    multiple: bool = False
-    display_field: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class CollectionSelectionFieldDto(JsonSchemaFieldDto):
-    collection_id: Optional[str] = None
-    display_field: Optional[str] = None
-    multiple: bool = False
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class UserSelectionFieldDto(JsonSchemaFieldDto):
-    multiple: bool = False
-    display_field: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class RoleSelectionFieldDto(JsonSchemaFieldDto):
-    multiple: bool = False
-    display_field: Optional[str] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class EnumSelectionFieldDto(JsonSchemaFieldDto):
-    values: Optional[IReadOnlyList[str]] = None
-    multiple: bool = False
-    default: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ObjectFieldDto(JsonSchemaFieldDto):
-    properties: Optional[IReadOnlyList[JsonSchemaFieldDto]] = None
-    required: Optional[IReadOnlyList[str]] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class ArrayFieldDto(JsonSchemaFieldDto):
-    items: Optional[JsonSchemaFieldDto] = None
-    min_items: Optional[int] = None
-    max_items: Optional[int] = None
-    unique_items: Optional[bool] = None
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class JsonFieldDto(JsonSchemaFieldDto):
-    max_bytes: Optional[int] = None
+class IQueuedTrigger:
+    view_id: Optional[str] = None
+    name: Optional[str] = None
+    order: Optional[int] = None
+    break_on_error: bool = False
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EchoResponse:
-    container_name: Optional[str] = None
-    ip: Optional[str] = None
     release: Optional[CodeMashRelease] = None
     runtime: Optional[CodeMashRuntime] = None
     managed_service_hub_url: Optional[str] = None
@@ -916,19 +807,12 @@ class EchoResponse:
     api_url: Optional[str] = None
     api_version: Optional[str] = None
     hub_version: Optional[str] = None
-    mjml_url: Optional[str] = None
     admin_url_template: Optional[str] = None
-    license: Optional[EchoLicenseDto] = None
-    ask_for_enterprise_license_email: Optional[str] = None
     email_service_configured: bool = False
     root_bootstrap_password_source: Optional[str] = None
     regions: Optional[List[EchoRegionDto]] = None
-    is_production_installation: bool = False
-    licensing_mode: Optional[str] = None
-    grace_days_left: Optional[int] = None
-    installation_domain: Optional[str] = None
-    licensing_docs_url: Optional[str] = None
     agent: Optional[EchoAgentDto] = None
+    hosting_platform: Optional[EchoHostingPlatformDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -1193,6 +1077,18 @@ class RequestUploadUrlResponse(ResponseBase):
 @dataclass
 class TestFilesIntegrationResponse(ResponseBase):
     items: Optional[IReadOnlyList[IntegrationTestResultItemDto]] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetOwnPushDevicesResponse(ResponseBase):
+    items: List[OwnPushDeviceDto] = field(default_factory=list)
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetOwnPushMessagesResponse(ResponseBase):
+    list: Optional[PaginatedResponse[OwnPushMessageDto]] = None
 
 
 # @Route("/{version}/echo", "GET")
@@ -2289,6 +2185,13 @@ class FindMergedTermTreeRequest(CodeMashRequestBase, IReturn[FindMergedTermTreeR
     Database
     """
 
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
+
     taxonomy_name: Optional[str] = None
     database_integration_id: Optional[str] = None
 
@@ -2302,6 +2205,13 @@ class FindTaxonomyTreeRequest(CodeMashRequestBase, IReturn[FindTaxonomyTreeRespo
     Database
     """
 
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
+
     include_terms: bool = False
     database_integration_id: Optional[str] = None
 
@@ -2314,6 +2224,13 @@ class FindTermsRequest(CodeMashListPaginationRequestBase, IReturn[FindTermsRespo
     """
     Database
     """
+
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
 
     taxonomy_name: Optional[str] = None
     database_integration_id: Optional[str] = None
@@ -2331,6 +2248,13 @@ class FindTermsChildrenRequest(CodeMashListPaginationRequestBase, IReturn[FindTe
     Database
     """
 
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
+
     taxonomy_name: Optional[str] = None
     parent_id: Optional[str] = None
     database_integration_id: Optional[str] = None
@@ -2346,6 +2270,13 @@ class FindTermTreeRequest(CodeMashRequestBase, IReturn[FindTermTreeResponse]):
     """
     Database
     """
+
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
 
     taxonomy_name: Optional[str] = None
     root_term_id: Optional[str] = None
@@ -2498,6 +2429,7 @@ class FindRequest(CodeMashListPaginationRequestBase, IReturn[FindResponse]):
     sort_by: Optional[str] = None
     sort_order: Optional[int] = None
     expand_references: bool = False
+    all_languages: bool = False
 
 
 # @Route("/{version}/database/collections/{collectionName}/{id}", "GET")
@@ -2513,6 +2445,7 @@ class FindOneRequest(CodeMashRequestBase, IReturn[FindOneResponse]):
     id: Optional[str] = None
     database_integration_id: Optional[str] = None
     expand_references: bool = False
+    all_languages: bool = False
 
 
 # @Route("/{version}/database/collections/{collectionName}/own", "GET")
@@ -2534,6 +2467,9 @@ class FindOwnRequest(CodeMashListPaginationRequestBase, IReturn[FindResponse]):
     """
     Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.
     """
+
+
+    all_languages: bool = False
 
 
 # @Route("/{version}/database/collections/{collectionName}/many", "POST")
@@ -2786,4 +2722,193 @@ class TestFilesIntegrationRequest(CodeMashRequestBase, IReturn[TestFilesIntegrat
     """
 
     files_integration_id: Optional[str] = None
+
+
+# @Route("/{version}/files/{filesIntegrationId}/use", "POST")
+# @Api(Description="Files")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class UseFileRequest(CodeMashRequestBase, IReturn[IdResponse]):
+    """
+    Files
+    """
+
+    files_integration_id: Optional[str] = None
+    path: Optional[str] = None
+
+
+# @Route("/{version}/notifications/push/devices", "POST")
+# @Api(Description="Registers or refreshes a push device for the signed-in user.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RegisterOwnPushDeviceRequest(CodeMashRequestBase, IReturn[IdResponse]):
+    """
+    Registers or refreshes a push device for the signed-in user.
+    """
+
+    # @ApiMember(Description="Who issued the token: expo (getExpoPushTokenAsync), fcm (Android / Firebase) or apns (iOS).", IsRequired=true)
+    provider: Optional[str] = None
+    """
+    Who issued the token: expo (getExpoPushTokenAsync), fcm (Android / Firebase) or apns (iOS).
+    """
+
+
+    # @ApiMember(Description="The push token, exactly as the provider gave it.", IsRequired=true)
+    token: Optional[str] = None
+    """
+    The push token, exactly as the provider gave it.
+    """
+
+
+    # @ApiMember(Description="The app's platform: ios, android or web.")
+    platform: Optional[str] = None
+    """
+    The app's platform: ios, android or web.
+    """
+
+
+    # @ApiMember(Description="Operating system name, e.g. iOS.")
+    os_name: Optional[str] = None
+    """
+    Operating system name, e.g. iOS.
+    """
+
+
+    # @ApiMember(Description="Operating system version, e.g. 18.1.")
+    os_version: Optional[str] = None
+    """
+    Operating system version, e.g. 18.1.
+    """
+
+
+    # @ApiMember(Description="The app version, e.g. 2.4.1.")
+    app_version: Optional[str] = None
+    """
+    The app version, e.g. 2.4.1.
+    """
+
+
+    # @ApiMember(Description="The device name the user sees, e.g. Anna's iPhone.")
+    device_name: Optional[str] = None
+    """
+    The device name the user sees, e.g. Anna's iPhone.
+    """
+
+
+    # @ApiMember(Description="The device model, e.g. iPhone 15.")
+    model_name: Optional[str] = None
+    """
+    The device model, e.g. iPhone 15.
+    """
+
+
+    brand: Optional[str] = None
+    manufacturer: Optional[str] = None
+    # @ApiMember(Description="A stable id the app keeps for this installation (not the token).")
+    installation_id: Optional[str] = None
+    """
+    A stable id the app keeps for this installation (not the token).
+    """
+
+
+    # @ApiMember(Description="The device locale, e.g. lt-LT.")
+    locale: Optional[str] = None
+    """
+    The device locale, e.g. lt-LT.
+    """
+
+
+    # @ApiMember(Description="The device time zone (IANA), e.g. Europe/Vilnius.")
+    time_zone: Optional[str] = None
+    """
+    The device time zone (IANA), e.g. Europe/Vilnius.
+    """
+
+
+# @Route("/{version}/notifications/push/devices", "GET")
+# @Api(Description="Lists the signed-in user's own push devices.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetOwnPushDevicesRequest(CodeMashRequestBase, IReturn[GetOwnPushDevicesResponse]):
+    """
+    Lists the signed-in user's own push devices.
+    """
+
+    pass
+
+
+# @Route("/{version}/notifications/push/devices/{Id}", "DELETE")
+# @Api(Description="Removes one of the signed-in user's own push devices by id.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DeleteOwnPushDeviceRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Removes one of the signed-in user's own push devices by id.
+    """
+
+    # @ApiMember(Description="The device id (pnd_…) from the devices list or the register answer.", IsRequired=true)
+    id: Optional[str] = None
+    """
+    The device id (pnd_…) from the devices list or the register answer.
+    """
+
+
+# @Route("/{version}/notifications/push/devices", "DELETE")
+# @Api(Description="Removes the signed-in user's push device registered with a token (sign-out).")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class DeleteOwnPushDeviceByTokenRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Removes the signed-in user's push device registered with a token (sign-out).
+    """
+
+    # @ApiMember(Description="The push token the device was registered with.", IsRequired=true)
+    token: Optional[str] = None
+    """
+    The push token the device was registered with.
+    """
+
+
+# @Route("/{version}/notifications/push/messages", "GET")
+# @Api(Description="Lists the push messages sent to the signed-in user.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class GetOwnPushMessagesRequest(CodeMashListPaginationRequestBase, IReturn[GetOwnPushMessagesResponse]):
+    """
+    Lists the push messages sent to the signed-in user.
+    """
+
+    # @ApiMember(Description="Only messages the caller has not marked read.")
+    unread_only: bool = False
+    """
+    Only messages the caller has not marked read.
+    """
+
+
+# @Route("/{version}/notifications/push/messages/{Id}/read", "POST")
+# @Api(Description="Marks one push message sent to the signed-in user read.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarkOwnPushMessageReadRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Marks one push message sent to the signed-in user read.
+    """
+
+    # @ApiMember(Description="The message id (ntf_…) from the messages list.", IsRequired=true)
+    id: Optional[str] = None
+    """
+    The message id (ntf_…) from the messages list.
+    """
+
+
+# @Route("/{version}/notifications/push/messages/read", "POST")
+# @Api(Description="Marks every push message sent to the signed-in user read.")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class MarkAllOwnPushMessagesReadRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
+    """
+    Marks every push message sent to the signed-in user read.
+    """
+
+    pass
 
