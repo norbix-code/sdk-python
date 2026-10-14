@@ -22,7 +22,7 @@ class RegionsModule:
         self._transport = transport
 
     def list(
-        self, *, timeout: float | None = None, bearer_token: str | None = None, region: str | None = None, **request: Any
+        self, *, timeout: float | None = None, bearer_token: str | None = None, region: str | None = None, language: str | None = None, **request: Any
     ) -> Any:
         """GET /{version}/account/regions
 
@@ -39,6 +39,7 @@ class RegionsModule:
             timeout=timeout,
             bearer_token=bearer_token,
             region=region,
+            language=language,
         )
 
     def update_project_regions(
@@ -50,6 +51,7 @@ class RegionsModule:
         timeout: float | None = None,
         bearer_token: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         **request: Any,
     ) -> Any:
         """PATCH /{version}/account/projects/{projectId}/settings/regions
@@ -71,6 +73,7 @@ class RegionsModule:
             timeout=timeout,
             bearer_token=bearer_token,
             region=region,
+            language=language,
         )
 
 
@@ -79,7 +82,7 @@ class AsyncRegionsModule:
         self._transport = transport
 
     async def list(
-        self, *, timeout: float | None = None, bearer_token: str | None = None, region: str | None = None, **request: Any
+        self, *, timeout: float | None = None, bearer_token: str | None = None, region: str | None = None, language: str | None = None, **request: Any
     ) -> Any:
         """GET /{version}/account/regions"""
         return await self._transport.send(
@@ -92,6 +95,7 @@ class AsyncRegionsModule:
             timeout=timeout,
             bearer_token=bearer_token,
             region=region,
+            language=language,
         )
 
     async def update_project_regions(
@@ -103,6 +107,7 @@ class AsyncRegionsModule:
         timeout: float | None = None,
         bearer_token: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         **request: Any,
     ) -> Any:
         """PATCH /{version}/account/projects/{projectId}/settings/regions"""
@@ -120,4 +125,5 @@ class AsyncRegionsModule:
             timeout=timeout,
             bearer_token=bearer_token,
             region=region,
+            language=language,
         )

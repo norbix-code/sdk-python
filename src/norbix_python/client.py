@@ -54,6 +54,7 @@ def _build_config(
     timeout: float | None,
     default_headers: dict[str, str] | None,
     client_name: str,
+    language: str | None = None,
 ) -> TransportConfig:
     resolved_project_id = project_id or os.getenv("NORBIX_PROJECT_ID")
     if not resolved_project_id:
@@ -88,6 +89,9 @@ def _build_config(
         timeout=timeout or DEFAULT_TIMEOUT,
         env=env or os.getenv("NORBIX_ENV") or "PROD",
         region=resolved_region,
+        # Language: explicit setting → NORBIX_LANGUAGE env var → unset (no
+        # Accept-Language header).
+        language=language or os.getenv("NORBIX_LANGUAGE") or None,
         base_url_api_is_default=base_url_api_is_default,
         base_url_hub_is_default=base_url_hub_is_default,
         default_headers=default_headers or {},
@@ -154,6 +158,18 @@ class _AuthMixin:
         """Current Norbix region the client targets (None when unset)."""
         return self._transport._cfg.region
 
+    def set_language(self, language: str | None) -> None:
+        """Set the preferred response language for subsequent requests (Accept-Language header).
+
+        Accepts a single tag ("lt") or a full Accept-Language value
+        ("lt-LT, en;q=0.8"). Pass None to clear it (no header is sent).
+        """
+        self._transport._cfg.language = language or None
+
+    def get_language(self) -> str | None:
+        """Current Accept-Language value the client sends (None when unset)."""
+        return self._transport._cfg.language
+
     def is_authenticated(self) -> bool:
         return bool(self._transport._cfg.bearer_token or self._transport._cfg.api_key)
 
@@ -168,6 +184,7 @@ class Norbix(_AuthMixin):
         account_id: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         base_url_api: str | None = None,
         base_url_hub: str | None = None,
         api_version: str | None = None,
@@ -183,6 +200,7 @@ class Norbix(_AuthMixin):
             account_id=account_id,
             env=env,
             region=region,
+            language=language,
             base_url_api=base_url_api,
             base_url_hub=base_url_hub,
             api_version=api_version,
@@ -217,6 +235,7 @@ class NorbixApi(_AuthMixin):
         account_id: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         base_url_api: str | None = None,
         api_version: str | None = None,
         timeout: float | None = None,
@@ -230,6 +249,7 @@ class NorbixApi(_AuthMixin):
             account_id=account_id,
             env=env,
             region=region,
+            language=language,
             base_url_api=base_url_api,
             base_url_hub=None,
             api_version=api_version,
@@ -267,6 +287,7 @@ class NorbixHub(_AuthMixin):
         account_id: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         base_url_hub: str | None = None,
         hub_version: str | None = None,
         timeout: float | None = None,
@@ -280,6 +301,7 @@ class NorbixHub(_AuthMixin):
             account_id=account_id,
             env=env,
             region=region,
+            language=language,
             base_url_api=None,
             base_url_hub=base_url_hub,
             api_version=None,
@@ -341,6 +363,7 @@ class AsyncNorbix:
         account_id: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         base_url_api: str | None = None,
         base_url_hub: str | None = None,
         api_version: str | None = None,
@@ -356,6 +379,7 @@ class AsyncNorbix:
             account_id=account_id,
             env=env,
             region=region,
+            language=language,
             base_url_api=base_url_api,
             base_url_hub=base_url_hub,
             api_version=api_version,
@@ -423,6 +447,18 @@ class AsyncNorbix:
     def get_region(self) -> str | None:
         """Current Norbix region the client targets (None when unset)."""
         return self._transport._cfg.region
+
+    def set_language(self, language: str | None) -> None:
+        """Set the preferred response language for subsequent requests (Accept-Language header).
+
+        Accepts a single tag ("lt") or a full Accept-Language value
+        ("lt-LT, en;q=0.8"). Pass None to clear it (no header is sent).
+        """
+        self._transport._cfg.language = language or None
+
+    def get_language(self) -> str | None:
+        """Current Accept-Language value the client sends (None when unset)."""
+        return self._transport._cfg.language
 
     def is_authenticated(self) -> bool:
         return bool(self._transport._cfg.bearer_token or self._transport._cfg.api_key)
