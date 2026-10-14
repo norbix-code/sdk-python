@@ -1,5 +1,5 @@
 """ Options:
-Date: 2026-10-13 16:21:29
+Date: 2026-10-14 08:01:43
 Version: 10.20
 Tip: To override a DTO option, remove "#" prefix before updating
 BaseUrl: http://localhost:5001
@@ -1582,14 +1582,7 @@ class TriggerActionMarketplaceDto(TriggerActionDto):
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
-class RequestBase(ICultureBasedRequest, IVersionBasedRequest, IHasCorrelationIdRequest):
-    # @ApiMember(DataType="string", Description="Specify culture code when your response from the API should be localised. E.g.: en", Name="CultureCode", ParameterType="header")
-    culture_code: Optional[str] = None
-    """
-    Specify culture code when your response from the API should be localised. E.g.: en
-    """
-
-
+class RequestBase(IVersionBasedRequest, IHasCorrelationIdRequest):
     # @ApiMember(DataType="string", Description="TimeZone", Name="TimeZoneId", ParameterType="header")
     time_zone_id: Optional[str] = None
     """
@@ -3537,10 +3530,6 @@ class MarketplaceFunctionSchedulerTaskRequest(SchedulerTaskRequest):
     payload: Optional[Dict[str, str]] = None
 
 
-class ICultureBasedRequest:
-    culture_code: Optional[str] = None
-
-
 class IVersionBasedRequest:
     version: Optional[str] = None
 
@@ -4085,18 +4074,6 @@ class CodeMashRuntime(str, Enum):
     CI = 'CI'
     STAGING = 'Staging'
     PRODUCTION = 'Production'
-
-
-@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
-@dataclass
-class EchoLicenseDto:
-    domain: Optional[str] = None
-    account_id: Optional[str] = None
-    email: Optional[str] = None
-    release: Optional[str] = None
-    expire: int = 0
-    is_trial: bool = False
-    projects_cap: int = 0
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -5010,6 +4987,18 @@ class LicenseHeartbeatVerdictDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class InstallationLicenseDetailsDto:
+    domain: Optional[str] = None
+    account_id: Optional[str] = None
+    email: Optional[str] = None
+    release: Optional[str] = None
+    expire: int = 0
+    is_trial: bool = False
+    projects_cap: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class InstallationLicenseStatusDto:
     stored_mode: Optional[str] = None
     effective_mode: Optional[str] = None
@@ -5026,6 +5015,9 @@ class InstallationLicenseStatusDto:
     last_heartbeat_outcome: Optional[str] = None
     last_heartbeat_error: Optional[str] = None
     message: Optional[str] = None
+    license: Optional[InstallationLicenseDetailsDto] = None
+    licensing_docs_url: Optional[str] = None
+    ask_for_enterprise_license_email: Optional[str] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -6858,6 +6850,17 @@ class UserDto:
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
+class ContactRolesRepairDto:
+    dry_run: bool = False
+    contacts_without_roles: int = 0
+    contacts_to_repair: int = 0
+    contacts_repaired: int = 0
+    contacts_without_login_role_ids: int = 0
+    legacy_role_names_ignored: int = 0
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
 class ConsentPurposeDto:
     key: Optional[str] = None
     name: Optional[str] = None
@@ -7189,8 +7192,6 @@ class ICursorArgs:
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
 @dataclass
 class EchoResponse:
-    container_name: Optional[str] = None
-    ip: Optional[str] = None
     release: Optional[CodeMashRelease] = None
     runtime: Optional[CodeMashRuntime] = None
     managed_service_hub_url: Optional[str] = None
@@ -7199,18 +7200,10 @@ class EchoResponse:
     api_url: Optional[str] = None
     api_version: Optional[str] = None
     hub_version: Optional[str] = None
-    mjml_url: Optional[str] = None
     admin_url_template: Optional[str] = None
-    license: Optional[EchoLicenseDto] = None
-    ask_for_enterprise_license_email: Optional[str] = None
     email_service_configured: bool = False
     root_bootstrap_password_source: Optional[str] = None
     regions: Optional[List[EchoRegionDto]] = None
-    is_production_installation: bool = False
-    licensing_mode: Optional[str] = None
-    grace_days_left: Optional[int] = None
-    installation_domain: Optional[str] = None
-    licensing_docs_url: Optional[str] = None
     agent: Optional[EchoAgentDto] = None
     hosting_platform: Optional[EchoHostingPlatformDto] = None
 
@@ -8865,6 +8858,12 @@ class GetContactResponse(ResponseBase):
 class GetAllContactsResponse(ResponseBase):
     items: Optional[IReadOnlyList[UserDto]] = None
     next_cursor: Optional[str] = None
+
+
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RepairContactRolesResponse(ResponseBase):
+    result: Optional[ContactRolesRepairDto] = None
 
 
 @dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
@@ -11982,6 +11981,13 @@ class GetDatabaseTaxonomyTreeRequest(CodeMashRequestBase, IReturn[GetDatabaseTax
     Returns the single-parent taxonomy structure tree
     """
 
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
+
     # @ApiMember(Description="When true, each taxonomy node also carries its own term tree (heavier response).")
     include_terms: bool = False
     """
@@ -12123,6 +12129,13 @@ class GetDatabaseTaxonomyTermRequest(CodeMashRequestBase, IReturn[GetDatabaseTax
     Get a single term from a taxonomy by id
     """
 
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
+
     # @ApiMember(Description="Taxonomy id from get_database_taxonomies.", IsRequired=true)
     taxonomy_id: Optional[str] = None
     """
@@ -12153,6 +12166,13 @@ class GetDatabaseMergedTermTreeRequest(CodeMashRequestBase, IReturn[GetDatabaseM
     Returns a merged term tree across a taxonomy and its child taxonomies
     """
 
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
+
     # @ApiMember(Description="Root taxonomy slug/name (from get_database_taxonomies). Its terms are the roots; child-taxonomy terms nest under them.", IsRequired=true)
     taxonomy_name: Optional[str] = None
     """
@@ -12175,6 +12195,13 @@ class GetDatabaseTaxonomyTermTreeRequest(CodeMashRequestBase, IReturn[GetDatabas
     """
     Returns the whole term tree of a taxonomy (or a sub-tree) in one call
     """
+
+    # @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    all_languages: bool = False
+    """
+    Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.
+    """
+
 
     # @ApiMember(Description="Taxonomy slug/name to fetch the term tree for, from get_database_taxonomies.", IsRequired=true)
     taxonomy_name: Optional[str] = None
@@ -18542,6 +18569,22 @@ class MergeContactsRequest(CodeMashRequestBase, IReturn[EmptyResponse]):
     merged_ids: List[str] = field(default_factory=list)
     """
     The contact ids (ct_…) to merge into the survivor and archive. At least one.
+    """
+
+
+# @Route("/{version}/membership/users/repair-roles", "POST")
+# @Api(Description="Repair contact roles from their logins")
+@dataclass_json(letter_case=LetterCase.CAMEL, undefined=Undefined.EXCLUDE)
+@dataclass
+class RepairContactRolesRequest(CodeMashRequestBase, IReturn[RepairContactRolesResponse]):
+    """
+    Repair contact roles from their logins
+    """
+
+    # @ApiMember(Description="True (default) = only count what would change. False = write.")
+    dry_run: bool = False
+    """
+    True (default) = only count what would change. False = write.
     """
 
 

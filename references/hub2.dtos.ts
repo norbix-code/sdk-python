@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-10-05 16:14:43
+Date: 2026-10-14 08:01:42
 Version: 10.20
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: http://localhost:5001
@@ -154,6 +154,17 @@ export enum TokenMappingResolverType
     EmailFooters = 'EmailFooters',
     Old = 'Old',
     New = 'New',
+    RequestInput = 'RequestInput',
+    IntegrationConfig = 'IntegrationConfig',
+    IntegrationSecret = 'IntegrationSecret',
+}
+
+export enum SecretValueFormat
+{
+    Raw = 'Raw',
+    Bearer = 'Bearer',
+    Basic = 'Basic',
+    Prefixed = 'Prefixed',
 }
 
 // @DataContract
@@ -167,6 +178,12 @@ export class TokenMappingDto
 
     // @DataMember
     public resolver: TokenMappingResolverType;
+
+    // @DataMember
+    public secretKeys?: string[];
+
+    // @DataMember
+    public secretFormat?: SecretValueFormat;
 
     public constructor(init?: Partial<TokenMappingDto>) { (Object as any).assign(this, init); }
 }
@@ -289,6 +306,8 @@ export class SaveTriggerRequest
     public description?: string;
     public isEnabled: boolean;
     public preExecuteCode?: string;
+    public order?: number;
+    public breakOnError: boolean;
     public action: TriggerActionDto;
 
     public constructor(init?: Partial<SaveTriggerRequest>) { (Object as any).assign(this, init); }
@@ -1012,8 +1031,16 @@ export class PushIntegrationRequest
 export class EdgeWebPushIntegrationRequest extends PushIntegrationRequest
 {
     public provider: PushProvider;
+    /** @description VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey. */
+    // @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     public vapidPublicKey: string;
+
+    /** @description VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret. */
+    // @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     public vapidPrivateKey: string;
+
+    /** @description Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:. */
+    // @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     public subject?: string;
 
     public constructor(init?: Partial<EdgeWebPushIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
@@ -1022,9 +1049,20 @@ export class EdgeWebPushIntegrationRequest extends PushIntegrationRequest
 export class ChromePluginPushIntegrationRequest extends PushIntegrationRequest
 {
     public provider: PushProvider;
+    /** @description The extension's Chrome id: 32 lower-case letters a–p, as shown on chrome://extensions. */
+    // @ApiMember(Description="The extension's Chrome id: 32 lower-case letters a–p, as shown on chrome://extensions.", IsRequired=true)
     public extensionId: string;
+
+    /** @description VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey. */
+    // @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     public vapidPublicKey: string;
+
+    /** @description VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret. */
+    // @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     public vapidPrivateKey: string;
+
+    /** @description Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:. */
+    // @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     public subject?: string;
 
     public constructor(init?: Partial<ChromePluginPushIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
@@ -1043,8 +1081,16 @@ export class SafariPushIntegrationRequest extends PushIntegrationRequest
 export class ChromeWebPushIntegrationRequest extends PushIntegrationRequest
 {
     public provider: PushProvider;
+    /** @description VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey. */
+    // @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     public vapidPublicKey: string;
+
+    /** @description VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret. */
+    // @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     public vapidPrivateKey: string;
+
+    /** @description Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:. */
+    // @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     public subject?: string;
 
     public constructor(init?: Partial<ChromeWebPushIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
@@ -1053,8 +1099,16 @@ export class ChromeWebPushIntegrationRequest extends PushIntegrationRequest
 export class FirefoxWebPushIntegrationRequest extends PushIntegrationRequest
 {
     public provider: PushProvider;
+    /** @description VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey. */
+    // @ApiMember(Description="VAPID public key (URL-safe Base-64, 65 bytes), generated together with the private key — e.g. `npx web-push generate-vapid-keys`. The browser subscribes with it as applicationServerKey.", IsRequired=true)
     public vapidPublicKey: string;
+
+    /** @description VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret. */
+    // @ApiMember(Description="VAPID private key (URL-safe Base-64, 32 bytes). Stored as a secret.", IsRequired=true)
     public vapidPrivateKey: string;
+
+    /** @description Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:. */
+    // @ApiMember(Description="Contact e-mail the browser push services can reach you at, e.g. admin@example.com. An e-mail address only (no URL); it is sent as mailto:.")
     public subject?: string;
 
     public constructor(init?: Partial<FirefoxWebPushIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
@@ -1094,6 +1148,7 @@ export enum CodeProvider
     Netlify = 'Netlify',
     SupabaseEdge = 'SupabaseEdge',
     Modal = 'Modal',
+    Fake = 'Fake',
 }
 
 export class CodeIntegrationRequest
@@ -1428,7 +1483,7 @@ export class FileChecksumDto
 export class FileResourceDto
 {
     // @DataMember(Order=1)
-    public id: string;
+    public id?: string;
 
     // @DataMember(Order=2)
     public originalFileName: string;
@@ -1697,6 +1752,33 @@ export class TriggerActionPushDto extends TriggerActionDto
 }
 
 // @DataContract
+export class FunctionRefDto
+{
+    // @DataMember
+    public integrationId: string;
+
+    // @DataMember
+    public provider?: CodeProvider;
+
+    // @DataMember
+    public functionId: string;
+
+    // @DataMember
+    public qualifier?: string;
+
+    // @DataMember
+    public displayName?: string;
+
+    public constructor(init?: Partial<FunctionRefDto>) { (Object as any).assign(this, init); }
+}
+
+export enum CodeInvocationType
+{
+    Sync = 'Sync',
+    Async = 'Async',
+}
+
+// @DataContract
 export class CodeDeliverySettingsDto
 {
     // @DataMember
@@ -1709,10 +1791,28 @@ export class CodeDeliverySettingsDto
 export class TriggerActionCodeDto extends TriggerActionDto
 {
     // @DataMember
-    public functionId: string;
+    public functionRef?: FunctionRefDto;
 
     // @DataMember
-    public deliverySettings: CodeDeliverySettingsDto;
+    public runAsUserId?: string;
+
+    // @DataMember
+    public invocationType: CodeInvocationType;
+
+    // @DataMember
+    public config?: string;
+
+    // @DataMember
+    public deliverySettings?: CodeDeliverySettingsDto;
+
+    // @DataMember
+    public functionId?: string;
+
+    // @DataMember
+    public activationCode?: string;
+
+    // @DataMember
+    public meta?: { [index:string]: string; };
 
     public constructor(init?: Partial<TriggerActionCodeDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -1837,17 +1937,15 @@ export class TriggerActionMarketplaceDto extends TriggerActionDto
     // @DataMember
     public payload?: { [index:string]: string; };
 
+    // @DataMember
+    public runAsUserId?: string;
+
     public constructor(init?: Partial<TriggerActionMarketplaceDto>) { super(init); (Object as any).assign(this, init); }
 }
 
 // @DataContract(Namespace="http://codemash.io/types/")
-export class RequestBase implements ICultureBasedRequest, IVersionBasedRequest, IHasCorrelationIdRequest
+export class RequestBase implements IVersionBasedRequest, IHasCorrelationIdRequest
 {
-    /** @description Specify culture code when your response from the API should be localised. E.g.: en */
-    // @DataMember
-    // @ApiMember(DataType="string", Description="Specify culture code when your response from the API should be localised. E.g.: en", Name="CultureCode", ParameterType="header")
-    public cultureCode?: string;
-
     /** @description TimeZone */
     // @DataMember
     // @ApiMember(DataType="string", Description="TimeZone", Name="TimeZoneId", ParameterType="header")
@@ -2760,6 +2858,7 @@ export class DatabaseIntegrationDto extends IntegrationDto
 {
     public provider: DatabaseProvider;
     public isSystemOwned: boolean;
+    public canManageIndexes?: boolean;
 
     public constructor(init?: Partial<DatabaseIntegrationDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -2894,6 +2993,8 @@ export class AppleApnsPushIntegrationDto extends PushIntegrationDto
 {
     public teamId: string;
     public appBundleId: string;
+    public keyId?: string;
+    public isProduction: boolean;
 
     public constructor(init?: Partial<AppleApnsPushIntegrationDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -3044,6 +3145,7 @@ export enum SchedulerTaskType
     SmsCampaign = 'SmsCampaign',
     CodeFunctionalCall = 'CodeFunctionalCall',
     WebhookCall = 'WebhookCall',
+    MarketplaceFunctionCall = 'MarketplaceFunctionCall',
 }
 
 // @DataContract
@@ -3087,6 +3189,15 @@ export class SchedulerTaskDto
 
     // @DataMember
     public updatedAtUnix?: number;
+
+    // @DataMember
+    public isFailing: boolean;
+
+    // @DataMember
+    public lastFailureReason?: string;
+
+    // @DataMember
+    public lastFailedAtUnix?: number;
 
     public constructor(init?: Partial<SchedulerTaskDto>) { (Object as any).assign(this, init); }
 }
@@ -3290,6 +3401,33 @@ export enum MarketplaceCategory
 }
 
 // @DataContract
+export class MarketplaceValidationStepResultDto
+{
+    // @DataMember
+    public key: string;
+
+    // @DataMember
+    public label: string;
+
+    // @DataMember
+    public requiredForFunctions: boolean;
+
+    // @DataMember
+    public succeeded: boolean;
+
+    // @DataMember
+    public skipped: boolean;
+
+    // @DataMember
+    public message?: string;
+
+    // @DataMember
+    public errorCode?: string;
+
+    public constructor(init?: Partial<MarketplaceValidationStepResultDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
 export class MarketplaceIntegrationDto extends IntegrationDto
 {
     // @DataMember
@@ -3310,47 +3448,43 @@ export class MarketplaceIntegrationDto extends IntegrationDto
     // @DataMember
     public config: IReadOnlyDictionary<string, string>;
 
+    // @DataMember
+    public lastValidationSteps?: MarketplaceValidationStepResultDto[];
+
+    // @DataMember
+    public signedIn: boolean;
+
+    // @DataMember
+    public signedInBy?: string;
+
+    // @DataMember
+    public signedInAt?: string;
+
+    // @DataMember
+    public tokenExpiresAt?: string;
+
     public constructor(init?: Partial<MarketplaceIntegrationDto>) { super(init); (Object as any).assign(this, init); }
 }
 
-export enum MarketplaceTokenResolverKind
-{
-    Static = 'Static',
-    Request = 'Request',
-    Project = 'Project',
-    Initiator = 'Initiator',
-    Custom = 'Custom',
-    IntegrationConfig = 'IntegrationConfig',
-    IntegrationSecret = 'IntegrationSecret',
-}
-
-export enum MarketplaceSecretValueFormat
-{
-    Raw = 'Raw',
-    Bearer = 'Bearer',
-    Basic = 'Basic',
-    Prefixed = 'Prefixed',
-}
-
 // @DataContract
-export class MarketplaceTokenMappingDto
+export class MarketplaceFunctionParameterDto
 {
     // @DataMember
-    public token: string;
+    public name: string;
 
     // @DataMember
-    public resolver: MarketplaceTokenResolverKind;
+    public type: string;
 
     // @DataMember
-    public value?: string;
+    public description?: string;
 
     // @DataMember
-    public secretKeys?: string[];
+    public isRequired: boolean;
 
     // @DataMember
-    public format: MarketplaceSecretValueFormat;
+    public defaultValue?: string;
 
-    public constructor(init?: Partial<MarketplaceTokenMappingDto>) { (Object as any).assign(this, init); }
+    public constructor(init?: Partial<MarketplaceFunctionParameterDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -3375,12 +3509,25 @@ export class MarketplaceFunctionDto implements IHasViewId
     public isEnabled: boolean;
 
     // @DataMember
-    public requestTemplate: string;
+    public requestTemplate?: string;
 
     // @DataMember
-    public mappedTokens: MarketplaceTokenMappingDto[] = [];
+    public arguments: { [index:string]: string; } = {};
+
+    // @DataMember
+    public inputs: MarketplaceFunctionParameterDto[] = [];
+
+    // @DataMember
+    public mappedTokens: TokenMappingDto[] = [];
 
     public constructor(init?: Partial<MarketplaceFunctionDto>) { (Object as any).assign(this, init); }
+}
+
+export enum MarketplaceAvailability
+{
+    Development = 'Development',
+    Staging = 'Staging',
+    Production = 'Production',
 }
 
 export enum MarketplaceFieldType
@@ -3431,24 +3578,18 @@ export class MarketplaceFieldDefinitionDto
 }
 
 // @DataContract
-export class MarketplaceFunctionParameterDto
+export class MarketplaceInstallFormDto
 {
     // @DataMember
-    public name: string;
+    public dataSchema: string;
 
     // @DataMember
-    public type: string;
+    public uiSchema: string;
 
     // @DataMember
-    public description?: string;
+    public secretKeys: string[] = [];
 
-    // @DataMember
-    public isRequired: boolean;
-
-    // @DataMember
-    public defaultValue?: string;
-
-    public constructor(init?: Partial<MarketplaceFunctionParameterDto>) { (Object as any).assign(this, init); }
+    public constructor(init?: Partial<MarketplaceInstallFormDto>) { (Object as any).assign(this, init); }
 }
 
 export enum MarketplaceParameterLocation
@@ -3508,6 +3649,37 @@ export class MarketplaceHttpRequestSpecDto
 }
 
 // @DataContract
+export class MarketplaceValidationStepDto
+{
+    // @DataMember
+    public key: string;
+
+    // @DataMember
+    public label: string;
+
+    // @DataMember
+    public description?: string;
+
+    // @DataMember
+    public requiredForFunctions: boolean;
+
+    // @DataMember
+    public probe?: MarketplaceHttpRequestSpecDto;
+
+    public constructor(init?: Partial<MarketplaceValidationStepDto>) { (Object as any).assign(this, init); }
+}
+
+export enum MarketplaceFormKind
+{
+    Generic = 'Generic',
+    DatabaseQuery = 'DatabaseQuery',
+    DatabaseWrite = 'DatabaseWrite',
+    Message = 'Message',
+    Prompt = 'Prompt',
+    Web = 'Web',
+}
+
+// @DataContract
 export class MarketplaceFunctionDefinitionDto
 {
     // @DataMember
@@ -3526,6 +3698,12 @@ export class MarketplaceFunctionDefinitionDto
     public group?: string;
 
     // @DataMember
+    public formKind: MarketplaceFormKind;
+
+    // @DataMember
+    public inputs: IReadOnlyList<MarketplaceFunctionParameterDto>;
+
+    // @DataMember
     public parameters: IReadOnlyList<MarketplaceFunctionParameterDto>;
 
     // @DataMember
@@ -3538,7 +3716,7 @@ export class MarketplaceFunctionDefinitionDto
     public request?: MarketplaceHttpRequestSpecDto;
 
     // @DataMember
-    public defaultTokenMappings: MarketplaceTokenMappingDto[] = [];
+    public defaultTokenMappings: TokenMappingDto[] = [];
 
     public constructor(init?: Partial<MarketplaceFunctionDefinitionDto>) { (Object as any).assign(this, init); }
 }
@@ -3574,6 +3752,18 @@ export class MarketplaceListingDto implements IHasViewId
     public documentationUrl?: string;
 
     // @DataMember
+    public videoUrl?: string;
+
+    // @DataMember
+    public availability: MarketplaceAvailability;
+
+    // @DataMember
+    public connectSteps: IReadOnlyList<string>;
+
+    // @DataMember
+    public oAuthRedirectUrl?: string;
+
+    // @DataMember
     public isOfficial: boolean;
 
     // @DataMember
@@ -3587,6 +3777,12 @@ export class MarketplaceListingDto implements IHasViewId
 
     // @DataMember
     public secretFields: IReadOnlyList<MarketplaceFieldDefinitionDto>;
+
+    // @DataMember
+    public installForm?: MarketplaceInstallFormDto;
+
+    // @DataMember
+    public validationSteps: IReadOnlyList<MarketplaceValidationStepDto>;
 
     // @DataMember
     public functions: IReadOnlyList<MarketplaceFunctionDefinitionDto>;
@@ -3827,9 +4023,631 @@ export class ConversationSnapshotEntryWireDto extends AiChatEntryWireDto
     public constructor(init?: Partial<ConversationSnapshotEntryWireDto>) { super(init); (Object as any).assign(this, init); }
 }
 
-export interface ICultureBasedRequest
+export class JsonSchemaFieldDto
 {
-    cultureCode?: string;
+    // @DataMember
+    public fieldName: string;
+
+    public constructor(init?: Partial<JsonSchemaFieldDto>) { (Object as any).assign(this, init); }
+}
+
+export class StringFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public format?: string;
+
+    // @DataMember
+    public pattern?: string;
+
+    // @DataMember
+    public minLength?: number;
+
+    // @DataMember
+    public maxLength?: number;
+
+    // @DataMember
+    public translateOptions?: IReadOnlyDictionary<string, string>;
+
+    // @DataMember
+    public default?: string;
+
+    // @DataMember
+    public unique?: boolean;
+
+    public constructor(init?: Partial<StringFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class DecimalFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public minimum?: number;
+
+    // @DataMember
+    public maximum?: number;
+
+    // @DataMember
+    public multipleOf?: number;
+
+    // @DataMember
+    public default?: number;
+
+    // @DataMember
+    public unique?: boolean;
+
+    public constructor(init?: Partial<DecimalFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class CurrencyDefaultDto
+{
+    // @DataMember
+    public value: number;
+
+    // @DataMember
+    public currency: string;
+
+    public constructor(init?: Partial<CurrencyDefaultDto>) { (Object as any).assign(this, init); }
+}
+
+export class CurrencyFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public allowedCurrencies?: IReadOnlyList<string>;
+
+    // @DataMember
+    public multipleOf?: number;
+
+    // @DataMember
+    public minimum?: number;
+
+    // @DataMember
+    public maximum?: number;
+
+    // @DataMember
+    public default?: CurrencyDefaultDto;
+
+    public constructor(init?: Partial<CurrencyFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class BooleanFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public default?: boolean;
+
+    public constructor(init?: Partial<BooleanFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class DateFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public minimum?: number;
+
+    // @DataMember
+    public maximum?: number;
+
+    // @DataMember
+    public default?: number;
+
+    public constructor(init?: Partial<DateFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class IntegerFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public minimum?: number;
+
+    // @DataMember
+    public maximum?: number;
+
+    // @DataMember
+    public default?: number;
+
+    // @DataMember
+    public unique?: boolean;
+
+    public constructor(init?: Partial<IntegerFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GeolocationFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public allowedTypes?: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<GeolocationFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class TagsFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public minItems?: number;
+
+    // @DataMember
+    public maxItems?: number;
+
+    // @DataMember
+    public default?: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<TagsFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class FileFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public storages?: IReadOnlyList<string>;
+
+    // @DataMember
+    public minItems?: number;
+
+    // @DataMember
+    public maxItems?: number;
+
+    // @DataMember
+    public allowedFileType?: string;
+
+    // @DataMember
+    public maxSizeMb?: number;
+
+    public constructor(init?: Partial<FileFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class TaxonomySelectionFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public taxonomyId?: string;
+
+    // @DataMember
+    public multiple: boolean;
+
+    // @DataMember
+    public displayField?: string;
+
+    public constructor(init?: Partial<TaxonomySelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class CollectionSelectionFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public collectionId?: string;
+
+    // @DataMember
+    public displayField?: string;
+
+    // @DataMember
+    public multiple: boolean;
+
+    public constructor(init?: Partial<CollectionSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class UserSelectionFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public multiple: boolean;
+
+    // @DataMember
+    public displayField?: string;
+
+    public constructor(init?: Partial<UserSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class RoleSelectionFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public multiple: boolean;
+
+    // @DataMember
+    public displayField?: string;
+
+    public constructor(init?: Partial<RoleSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class EnumSelectionFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public values?: IReadOnlyList<string>;
+
+    // @DataMember
+    public multiple: boolean;
+
+    // @DataMember
+    public default?: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<EnumSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class ObjectFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public properties: IReadOnlyList<JsonSchemaFieldDto>;
+
+    // @DataMember
+    public required?: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<ObjectFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class ArrayFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public items: JsonSchemaFieldDto;
+
+    // @DataMember
+    public minItems?: number;
+
+    // @DataMember
+    public maxItems?: number;
+
+    // @DataMember
+    public uniqueItems?: boolean;
+
+    public constructor(init?: Partial<ArrayFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class JsonFieldDto extends JsonSchemaFieldDto
+{
+    // @DataMember
+    public maxBytes?: number;
+
+    public constructor(init?: Partial<JsonFieldDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export enum CodeFunctionSource
+{
+    Database = 'Database',
+    Membership = 'Membership',
+    Files = 'Files',
+    Payments = 'Payments',
+    Ai = 'Ai',
+    Scheduler = 'Scheduler',
+    Manual = 'Manual',
+}
+
+export enum CodeFunctionCallerKind
+{
+    User = 'User',
+    ApiKey = 'ApiKey',
+    System = 'System',
+}
+
+// @DataContract
+export class CodeFunctionCallerDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public email?: string;
+
+    // @DataMember
+    public kind: CodeFunctionCallerKind;
+
+    public constructor(init?: Partial<CodeFunctionCallerDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionRunAsDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public accessToken?: string;
+
+    // @DataMember
+    public expiresAt?: string;
+
+    public constructor(init?: Partial<CodeFunctionRunAsDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionContextDto
+{
+    // @DataMember
+    public accountId: string;
+
+    // @DataMember
+    public projectId: string;
+
+    // @DataMember
+    public environment: string;
+
+    // @DataMember
+    public region?: string;
+
+    // @DataMember
+    public hubUrl: string;
+
+    // @DataMember
+    public apiUrl: string;
+
+    // @DataMember
+    public echoUrl: string;
+
+    // @DataMember
+    public triggerId?: string;
+
+    // @DataMember
+    public taskId?: string;
+
+    // @DataMember
+    public correlationId?: string;
+
+    // @DataMember
+    public caller?: CodeFunctionCallerDto;
+
+    // @DataMember
+    public runAs?: CodeFunctionRunAsDto;
+
+    public constructor(init?: Partial<CodeFunctionContextDto>) { (Object as any).assign(this, init); }
+}
+
+export enum ResourceKindDto
+{
+    Contact = 'contact',
+    Document = 'document',
+    File = 'file',
+    PaymentCustomer = 'paymentCustomer',
+    Order = 'order',
+    Payment = 'payment',
+    Product = 'product',
+    Integration = 'integration',
+}
+
+export class ResourceRefDto
+{
+    public projectId: string;
+    public integrationId?: string;
+    public kind: ResourceKindDto;
+
+    public constructor(init?: Partial<ResourceRefDto>) { (Object as any).assign(this, init); }
+}
+
+export class DocumentRefDto extends ResourceRefDto
+{
+    public kind: ResourceKindDto;
+    public databaseIntegrationId: string;
+    public schemaId: string;
+    public externalId: string;
+
+    public constructor(init?: Partial<DocumentRefDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class DatabaseRecordChangeDto
+{
+    // @DataMember
+    public collection: string;
+
+    // @DataMember
+    public schemaId: string;
+
+    // @DataMember
+    public schemaVersion?: number;
+
+    // @DataMember
+    public recordId?: string;
+
+    // @DataMember
+    public old?: { [index:string]: Object; };
+
+    // @DataMember
+    public new?: { [index:string]: Object; };
+
+    // @DataMember
+    public truncated: boolean;
+
+    // @DataMember
+    public oldRef?: DocumentRefDto;
+
+    // @DataMember
+    public newRef?: DocumentRefDto;
+
+    public constructor(init?: Partial<DatabaseRecordChangeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class UserChangeDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public old?: { [index:string]: Object; };
+
+    // @DataMember
+    public new?: { [index:string]: Object; };
+
+    public constructor(init?: Partial<UserChangeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class FileChangeDto
+{
+    // @DataMember
+    public old?: { [index:string]: Object; };
+
+    // @DataMember
+    public new?: { [index:string]: Object; };
+
+    // @DataMember
+    public path?: string;
+
+    public constructor(init?: Partial<FileChangeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class PaymentFactDto
+{
+    // @DataMember
+    public integrationId: string;
+
+    // @DataMember
+    public provider: string;
+
+    // @DataMember
+    public providerEventId: string;
+
+    // @DataMember
+    public eventName: string;
+
+    // @DataMember
+    public status: string;
+
+    // @DataMember
+    public amountMinor?: number;
+
+    // @DataMember
+    public currency?: string;
+
+    // @DataMember
+    public externalIds?: { [index:string]: string; };
+
+    // @DataMember
+    public occurredOn?: string;
+
+    // @DataMember
+    public receivedOn: string;
+
+    public constructor(init?: Partial<PaymentFactDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiUsageEventDto
+{
+    // @DataMember
+    public payload: { [index:string]: Object; } = {};
+
+    // @DataMember
+    public targetUserId?: string;
+
+    public constructor(init?: Partial<AiUsageEventDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ScheduledTaskInfoDto
+{
+    // @DataMember
+    public taskId: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public firedAt: string;
+
+    public constructor(init?: Partial<ScheduledTaskInfoDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceFunctionCallDto
+{
+    // @DataMember
+    public functionId: string;
+
+    // @DataMember
+    public functionKey: string;
+
+    // @DataMember
+    public integrationId: string;
+
+    // @DataMember
+    public payload: { [index:string]: Object; } = {};
+
+    public constructor(init?: Partial<MarketplaceFunctionCallDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionDataDto
+{
+    // @DataMember
+    public database?: DatabaseRecordChangeDto;
+
+    // @DataMember
+    public user?: UserChangeDto;
+
+    // @DataMember
+    public file?: FileChangeDto;
+
+    // @DataMember
+    public payment?: PaymentFactDto;
+
+    // @DataMember
+    public ai?: AiUsageEventDto;
+
+    // @DataMember
+    public task?: ScheduledTaskInfoDto;
+
+    // @DataMember
+    public payload?: { [index:string]: Object; };
+
+    // @DataMember
+    public marketplace?: MarketplaceFunctionCallDto;
+
+    public constructor(init?: Partial<CodeFunctionDataDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionEventDto
+{
+    // @DataMember
+    public specVersion: string;
+
+    // @DataMember
+    public id: string;
+
+    // @DataMember
+    public eventId: string;
+
+    // @DataMember
+    public event: string;
+
+    // @DataMember
+    public source: CodeFunctionSource;
+
+    // @DataMember
+    public createdOn: string;
+
+    // @DataMember
+    public context: CodeFunctionContextDto;
+
+    // @DataMember
+    public data: CodeFunctionDataDto;
+
+    // @DataMember
+    public config?: { [index:string]: Object; };
+
+    public constructor(init?: Partial<CodeFunctionEventDto>) { (Object as any).assign(this, init); }
+}
+
+export class FakeCodeIntegrationDto extends CodeIntegrationDto
+{
+
+    public constructor(init?: Partial<FakeCodeIntegrationDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class FakeCodeIntegrationRequest extends CodeIntegrationRequest
+{
+    public provider: CodeProvider;
+
+    public constructor(init?: Partial<FakeCodeIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class CodeFunctionSchedulerTaskRequest extends SchedulerTaskRequest
+{
+    public type: SchedulerTaskType;
+    public functionRef?: FunctionRefDto;
+    public invocationType: CodeInvocationType;
+    public config?: string;
+    public mappedTokens?: TokenMappingDto[];
+
+    public constructor(init?: Partial<CodeFunctionSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class MarketplaceFunctionSchedulerTaskRequest extends SchedulerTaskRequest
+{
+    public type: SchedulerTaskType;
+    public functionId?: string;
+    public payload?: { [index:string]: string; };
+
+    public constructor(init?: Partial<MarketplaceFunctionSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
 }
 
 export interface IVersionBasedRequest
@@ -4052,21 +4870,15 @@ export class ProjectAiAssistantRequestBase extends CodeMashRequestBase
 }
 
 // @DataContract
-export class AiScopeDto
+export class AiProjectRoleIdsDto
 {
     // @DataMember
-    public reach: string;
+    public projectId: string;
 
     // @DataMember
-    public projectId?: string;
+    public roleIds: string[] = [];
 
-    // @DataMember
-    public rights: string;
-
-    // @DataMember
-    public envs: string[] = [];
-
-    public constructor(init?: Partial<AiScopeDto>) { (Object as any).assign(this, init); }
+    public constructor(init?: Partial<AiProjectRoleIdsDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -4331,6 +5143,16 @@ export class SmsIntegrationRequest
     public constructor(init?: Partial<SmsIntegrationRequest>) { (Object as any).assign(this, init); }
 }
 
+export enum MarketplaceAccessLevel
+{
+    None = 'None',
+    Viewer = 'Viewer',
+    FunctionsOnly = 'FunctionsOnly',
+    ReadOnly = 'ReadOnly',
+    FullAccess = 'FullAccess',
+    Manage = 'Manage',
+}
+
 export class SavePushTemplate extends CodeMashRequestBase
 {
     /** @description The template's display name. */
@@ -4432,27 +5254,6 @@ export class EmbeddingIntegrationRequest
     public constructor(init?: Partial<EmbeddingIntegrationRequest>) { (Object as any).assign(this, init); }
 }
 
-export enum ResourceKindDto
-{
-    Contact = 'contact',
-    Document = 'document',
-    File = 'file',
-    PaymentCustomer = 'paymentCustomer',
-    Order = 'order',
-    Payment = 'payment',
-    Product = 'product',
-    Integration = 'integration',
-}
-
-export class ResourceRefDto
-{
-    public projectId: string;
-    public integrationId?: string;
-    public kind: ResourceKindDto;
-
-    public constructor(init?: Partial<ResourceRefDto>) { (Object as any).assign(this, init); }
-}
-
 export enum CaseResolutionFixKind
 {
     CodeFix = 'CodeFix',
@@ -4503,33 +5304,6 @@ export enum CodeMashRuntime
     Production = 'Production',
 }
 
-// @DataContract
-export class EchoLicenseDto
-{
-    // @DataMember(Name="domain")
-    public domain?: string;
-
-    // @DataMember(Name="accountId")
-    public accountId?: string;
-
-    // @DataMember(Name="email")
-    public email?: string;
-
-    // @DataMember(Name="release")
-    public release?: string;
-
-    // @DataMember(Name="expire")
-    public expire: number;
-
-    // @DataMember(Name="isTrial")
-    public isTrial: boolean;
-
-    // @DataMember(Name="cap")
-    public cap: number;
-
-    public constructor(init?: Partial<EchoLicenseDto>) { (Object as any).assign(this, init); }
-}
-
 export class EchoRegionDto
 {
     public code: string;
@@ -4540,6 +5314,17 @@ export class EchoRegionDto
     public constructor(init?: Partial<EchoRegionDto>) { (Object as any).assign(this, init); }
 }
 
+export class EchoAgentSnippetDto
+{
+    public client: string;
+    public kind: string;
+    public recommended: boolean;
+    public auth: string;
+    public config: string;
+
+    public constructor(init?: Partial<EchoAgentSnippetDto>) { (Object as any).assign(this, init); }
+}
+
 export class EchoAgentDto
 {
     public mcpUrl: string;
@@ -4547,8 +5332,21 @@ export class EchoAgentDto
     public installationType: string;
     public onboardingDocsUrl: string;
     public toolsUrl: string;
+    public cliPackage: string;
+    public cliInstallCommand: string;
+    public deviceAuthorizationUrl: string;
+    public deviceTokenUrl: string;
+    public snippets: EchoAgentSnippetDto[] = [];
 
     public constructor(init?: Partial<EchoAgentDto>) { (Object as any).assign(this, init); }
+}
+
+export class EchoHostingPlatformDto
+{
+    public provider: string;
+    public isAws: boolean;
+
+    public constructor(init?: Partial<EchoHostingPlatformDto>) { (Object as any).assign(this, init); }
 }
 
 export class PublicBrandDto
@@ -4687,6 +5485,12 @@ export class AccountStatusDto
 
     // @DataMember
     public trialWasIssued: boolean;
+
+    // @DataMember
+    public emailVerified: boolean;
+
+    // @DataMember
+    public joinedByInvitation: boolean;
 
     public constructor(init?: Partial<AccountStatusDto>) { (Object as any).assign(this, init); }
 }
@@ -5018,7 +5822,7 @@ export class ProjectAiSettingsDto
 }
 
 // @DataContract
-export class TriggerDto implements IHasViewId
+export class TriggerDto implements IHasViewId, IQueuedTrigger
 {
     // @DataMember
     public type: TriggerType;
@@ -5040,6 +5844,12 @@ export class TriggerDto implements IHasViewId
 
     // @DataMember
     public activationCode?: string;
+
+    // @DataMember
+    public order?: number;
+
+    // @DataMember
+    public breakOnError: boolean;
 
     // @DataMember
     public savedByAuthId?: string;
@@ -5150,6 +5960,7 @@ export class PolicyItemDto
     public name: string;
     public description?: string;
     public isSystem: boolean;
+    public version: string;
     public permissions?: PermissionDto[];
 
     public constructor(init?: Partial<PolicyItemDto>) { (Object as any).assign(this, init); }
@@ -5712,6 +6523,14 @@ export enum ApplicationModule
     Compliance = 8192,
     Contacts = 16384,
     Marketplace = 32768,
+    Diagnostics = 65536,
+}
+
+export enum LanguageGapKind
+{
+    Template = 'Template',
+    Footer = 'Footer',
+    Signature = 'Signature',
 }
 
 // @DataContract
@@ -5719,6 +6538,9 @@ export class TemplateLanguageGapDto
 {
     // @DataMember
     public module: ApplicationModule;
+
+    // @DataMember
+    public kind: LanguageGapKind;
 
     // @DataMember
     public templateId: string;
@@ -6038,6 +6860,33 @@ export class LicenseHeartbeatVerdictDto
 }
 
 // @DataContract
+export class InstallationLicenseDetailsDto
+{
+    // @DataMember(Name="domain")
+    public domain?: string;
+
+    // @DataMember(Name="accountId")
+    public accountId?: string;
+
+    // @DataMember(Name="email")
+    public email?: string;
+
+    // @DataMember(Name="release")
+    public release?: string;
+
+    // @DataMember(Name="expire")
+    public expire: number;
+
+    // @DataMember(Name="isTrial")
+    public isTrial: boolean;
+
+    // @DataMember(Name="cap")
+    public cap: number;
+
+    public constructor(init?: Partial<InstallationLicenseDetailsDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
 export class InstallationLicenseStatusDto
 {
     // @DataMember(Name="storedMode")
@@ -6076,10 +6925,58 @@ export class InstallationLicenseStatusDto
     // @DataMember(Name="licenseExpireUtc")
     public licenseExpireUtc?: string;
 
+    // @DataMember(Name="lastHeartbeatOutcome")
+    public lastHeartbeatOutcome?: string;
+
+    // @DataMember(Name="lastHeartbeatError")
+    public lastHeartbeatError?: string;
+
     // @DataMember(Name="message")
     public message?: string;
 
+    // @DataMember(Name="license")
+    public license?: InstallationLicenseDetailsDto;
+
+    // @DataMember(Name="licensingDocsUrl")
+    public licensingDocsUrl?: string;
+
+    // @DataMember(Name="askForEnterpriseLicenseEmail")
+    public askForEnterpriseLicenseEmail?: string;
+
     public constructor(init?: Partial<InstallationLicenseStatusDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiRoleDto
+{
+    // @DataMember
+    public id: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public description: string;
+
+    // @DataMember
+    public isSystem: boolean;
+
+    public constructor(init?: Partial<AiRoleDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiProjectRolesDto
+{
+    // @DataMember
+    public id: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public roles: AiRoleDto[] = [];
+
+    public constructor(init?: Partial<AiProjectRolesDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -6107,7 +7004,10 @@ export class AiServiceUserDto
     public name: string;
 
     // @DataMember
-    public scope: AiScopeDto;
+    public accountRoles: AiRoleDto[] = [];
+
+    // @DataMember
+    public projects: AiProjectRolesDto[] = [];
 
     // @DataMember
     public createdAt: string;
@@ -6124,6 +7024,7 @@ export class ServiceUserApiKeyDto
     public name: string;
     public visibleKey?: string;
     public scopes: string[] = [];
+    public environment?: string;
     public createdDate: string;
     public expiryDate?: string;
     public cancelledDate?: string;
@@ -6139,7 +7040,7 @@ export class GetTriggerResponse extends ResponseBase
 }
 
 // @DataContract
-export class TriggerProjectionList implements IHasViewId
+export class TriggerProjectionList implements IHasViewId, IQueuedTrigger
 {
     // @DataMember
     public viewId: string;
@@ -6155,6 +7056,12 @@ export class TriggerProjectionList implements IHasViewId
 
     // @DataMember
     public isEnabled: boolean;
+
+    // @DataMember
+    public order?: number;
+
+    // @DataMember
+    public breakOnError: boolean;
 
     public constructor(init?: Partial<TriggerProjectionList>) { (Object as any).assign(this, init); }
 }
@@ -6393,14 +7300,6 @@ export class SchemaTriggerProjectionList extends TriggerProjectionList
     public constructor(init?: Partial<SchemaTriggerProjectionList>) { super(init); (Object as any).assign(this, init); }
 }
 
-export class JsonSchemaFieldDto
-{
-    // @DataMember
-    public fieldName: string;
-
-    public constructor(init?: Partial<JsonSchemaFieldDto>) { (Object as any).assign(this, init); }
-}
-
 export class DataSchemaDto
 {
     // @DataMember
@@ -6530,6 +7429,9 @@ export class TermTreeDto
     public names?: { [index:string]: string; };
 
     // @DataMember
+    public slug?: string;
+
+    // @DataMember
     public description?: string;
 
     // @DataMember
@@ -6592,6 +7494,9 @@ export class TermDto
 
     // @DataMember
     public names?: { [index:string]: string; };
+
+    // @DataMember
+    public slug?: string;
 
     // @DataMember
     public description?: string;
@@ -6740,6 +7645,78 @@ export class SchemaDraftDto
     public constructor(init?: Partial<SchemaDraftDto>) { (Object as any).assign(this, init); }
 }
 
+export class SchemaIndexDto
+{
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public keys: string[] = [];
+
+    // @DataMember
+    public unique: boolean;
+
+    // @DataMember
+    public reason: string;
+
+    // @DataMember
+    public field: string;
+
+    public constructor(init?: Partial<SchemaIndexDto>) { (Object as any).assign(this, init); }
+}
+
+export class SchemaIndexIntegrationStatusDto
+{
+    // @DataMember
+    public integrationId: string;
+
+    // @DataMember
+    public state: string;
+
+    // @DataMember
+    public wanted: SchemaIndexDto[] = [];
+
+    // @DataMember
+    public created: string[] = [];
+
+    // @DataMember
+    public dropped: string[] = [];
+
+    // @DataMember
+    public overCap: SchemaIndexDto[] = [];
+
+    // @DataMember
+    public refusedReason?: string;
+
+    // @DataMember
+    public lastRunUtc: string;
+
+    public constructor(init?: Partial<SchemaIndexIntegrationStatusDto>) { (Object as any).assign(this, init); }
+}
+
+export class SchemaIndexStatusDto
+{
+    // @DataMember
+    public schemaId: string;
+
+    // @DataMember
+    public env: string;
+
+    // @DataMember
+    public collection: string;
+
+    // @DataMember
+    public state: string;
+
+    // @DataMember
+    public integrations: SchemaIndexIntegrationStatusDto[] = [];
+
+    // @DataMember
+    public lastRunUtc: string;
+
+    public constructor(init?: Partial<SchemaIndexStatusDto>) { (Object as any).assign(this, init); }
+}
+
 export class SchemaDiffDto
 {
     // @DataMember
@@ -6795,6 +7772,9 @@ export class CollectionIndexDto
 
     // @DataMember
     public keys: CollectionIndexKeyDto[] = [];
+
+    // @DataMember
+    public createdByNorbix: boolean;
 
     public constructor(init?: Partial<CollectionIndexDto>) { (Object as any).assign(this, init); }
 }
@@ -7153,6 +8133,17 @@ export class HtmlFromMjmlResponse
 
 export class SystemEmailTemplateListProjection extends EmailTemplateListProjection
 {
+    // @DataMember
+    public imagePreview?: string;
+
+    // @DataMember
+    public description?: string;
+
+    // @DataMember
+    public theme?: SystemEmailTemplateTheme;
+
+    // @DataMember
+    public systemTags?: string[];
 
     public constructor(init?: Partial<SystemEmailTemplateListProjection>) { super(init); (Object as any).assign(this, init); }
 }
@@ -7659,7 +8650,121 @@ export class MarketplaceListingProjection implements IHasViewId
     // @DataMember
     public functionCount: number;
 
+    // @DataMember
+    public availability: MarketplaceAvailability;
+
+    // @DataMember
+    public videoUrl?: string;
+
     public constructor(init?: Partial<MarketplaceListingProjection>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceAccessCustomPolicyDto
+{
+    // @DataMember
+    public policyId: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public usedByRoles: number;
+
+    public constructor(init?: Partial<MarketplaceAccessCustomPolicyDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceAccessRoleDto
+{
+    // @DataMember
+    public roleId: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public scope: string;
+
+    // @DataMember
+    public isSystem: boolean;
+
+    // @DataMember
+    public fixed: boolean;
+
+    // @DataMember
+    public package: MarketplaceAccessLevel;
+
+    // @DataMember
+    public isCustom: boolean;
+
+    // @DataMember
+    public manage: boolean;
+
+    // @DataMember
+    public custom: IReadOnlyList<MarketplaceAccessCustomPolicyDto>;
+
+    // @DataMember
+    public defaultNotApplied?: string;
+
+    // @DataMember
+    public canChange: boolean;
+
+    public constructor(init?: Partial<MarketplaceAccessRoleDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceAccessPackageDto
+{
+    // @DataMember
+    public kind: MarketplaceAccessLevel;
+
+    // @DataMember
+    public policyId: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public exists: boolean;
+
+    public constructor(init?: Partial<MarketplaceAccessPackageDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceAccessToolDto
+{
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public readOnly: boolean;
+
+    // @DataMember
+    public grantable: boolean;
+
+    // @DataMember
+    public curated: boolean;
+
+    // @DataMember
+    public excludedFromFullAccess: boolean;
+
+    public constructor(init?: Partial<MarketplaceAccessToolDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceAccessFunctionDto
+{
+    // @DataMember
+    public functionId: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public functionKey: string;
+
+    public constructor(init?: Partial<MarketplaceAccessFunctionDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -7701,7 +8806,58 @@ export class MarketplaceIntegrationListProjection implements IHasViewId
     // @DataMember
     public requiresHumanDeliveryConfirmation: boolean;
 
+    // @DataMember
+    public signedIn: boolean;
+
+    // @DataMember
+    public signedInAt?: string;
+
     public constructor(init?: Partial<MarketplaceIntegrationListProjection>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceMcpToolDto
+{
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public title?: string;
+
+    // @DataMember
+    public description?: string;
+
+    // @DataMember
+    public inputSchema: string;
+
+    // @DataMember
+    public readOnlyHint?: boolean;
+
+    // @DataMember
+    public destructiveHint?: boolean;
+
+    public constructor(init?: Partial<MarketplaceMcpToolDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceAccessChangesDto
+{
+    // @DataMember
+    public readOnlyAdded: IReadOnlyList<string>;
+
+    // @DataMember
+    public readOnlyRemoved: IReadOnlyList<string>;
+
+    // @DataMember
+    public notGrantable: IReadOnlyList<string>;
+
+    // @DataMember
+    public readOnlyHintOverridden: IReadOnlyList<string>;
+
+    // @DataMember
+    public excludedFromFullAccess: IReadOnlyList<string>;
+
+    public constructor(init?: Partial<MarketplaceAccessChangesDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -7728,12 +8884,156 @@ export class MarketplaceFunctionProjection implements IHasViewId
     public constructor(init?: Partial<MarketplaceFunctionProjection>) { (Object as any).assign(this, init); }
 }
 
+// @DataContract
+export class MarketplaceFunctionRunDto
+{
+    // @DataMember
+    public firedAt: string;
+
+    // @DataMember
+    public event: string;
+
+    // @DataMember
+    public source: string;
+
+    // @DataMember
+    public functionId: string;
+
+    // @DataMember
+    public runAsUserId?: string;
+
+    // @DataMember
+    public succeeded: boolean;
+
+    // @DataMember
+    public status?: string;
+
+    // @DataMember
+    public durationMs?: number;
+
+    // @DataMember
+    public error?: string;
+
+    // @DataMember
+    public vendorRequestId?: string;
+
+    // @DataMember
+    public correlationId?: string;
+
+    // @DataMember
+    public hasDetails: boolean;
+
+    // @DataMember
+    public triggerId?: string;
+
+    // @DataMember
+    public taskId?: string;
+
+    // @DataMember
+    public input?: string;
+
+    // @DataMember
+    public integrationId?: string;
+
+    // @DataMember
+    public toolName?: string;
+
+    public constructor(init?: Partial<MarketplaceFunctionRunDto>) { (Object as any).assign(this, init); }
+}
+
 export class CodeIntegrationListProjection extends IntegrationListProjection
 {
     // @DataMember
     public provider: CodeProvider;
 
     public constructor(init?: Partial<CodeIntegrationListProjection>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionDescriptorDto
+{
+    // @DataMember
+    public functionId: string;
+
+    // @DataMember
+    public displayName: string;
+
+    // @DataMember
+    public runtime?: string;
+
+    // @DataMember
+    public region?: string;
+
+    // @DataMember
+    public description?: string;
+
+    // @DataMember
+    public lastModified?: string;
+
+    // @DataMember
+    public tags?: { [index:string]: string; };
+
+    // @DataMember
+    public arn?: string;
+
+    public constructor(init?: Partial<CodeFunctionDescriptorDto>) { (Object as any).assign(this, init); }
+}
+
+export enum CodeFunctionQualifierKindDto
+{
+    Alias = 'Alias',
+    Version = 'Version',
+}
+
+// @DataContract
+export class CodeFunctionQualifierDto
+{
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public kind: CodeFunctionQualifierKindDto;
+
+    // @DataMember
+    public description?: string;
+
+    // @DataMember
+    public targetVersion?: string;
+
+    public constructor(init?: Partial<CodeFunctionQualifierDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionRunDto
+{
+    // @DataMember
+    public firedAt: string;
+
+    // @DataMember
+    public event: string;
+
+    // @DataMember
+    public source: string;
+
+    // @DataMember
+    public succeeded: boolean;
+
+    // @DataMember
+    public statusCode?: number;
+
+    // @DataMember
+    public durationMs?: number;
+
+    // @DataMember
+    public error?: string;
+
+    // @DataMember
+    public requestId?: string;
+
+    // @DataMember
+    public input?: string;
+
+    public constructor(init?: Partial<CodeFunctionRunDto>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -7799,6 +9099,24 @@ export class PushDeviceListProjection
 
     // @DataMember
     public platformApiLevel?: number;
+
+    // @DataMember
+    public platform?: string;
+
+    // @DataMember
+    public appVersion?: string;
+
+    // @DataMember
+    public installationId?: string;
+
+    // @DataMember
+    public locale?: string;
+
+    // @DataMember
+    public timeZone?: string;
+
+    // @DataMember
+    public updatedAtUtc?: string;
 
     public constructor(init?: Partial<PushDeviceListProjection>) { (Object as any).assign(this, init); }
 }
@@ -7882,6 +9200,18 @@ export class PushCampaignBatchDto extends CampaignBatchDto
 }
 
 // @DataContract
+export class NotificationReadMarkDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public readAtUtc: string;
+
+    public constructor(init?: Partial<NotificationReadMarkDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
 export class PushCampaignBatchNotificationDto extends CampaignBatchNotificationDto
 {
     // @DataMember
@@ -7893,6 +9223,9 @@ export class PushCampaignBatchNotificationDto extends CampaignBatchNotificationD
     // @DataMember
     public content?: PushMessageContentDto;
 
+    // @DataMember
+    public readBy?: NotificationReadMarkDto[];
+
     public constructor(init?: Partial<PushCampaignBatchNotificationDto>) { super(init); (Object as any).assign(this, init); }
 }
 
@@ -7900,6 +9233,7 @@ export class PaymentsWebhookLogEntry
 {
     public integrationId: string;
     public source: string;
+    public env?: string;
     public eventName?: string;
     public providerEventId?: string;
     public statusCode: number;
@@ -7974,6 +9308,9 @@ export class TenantLogEntryDto
     public spanId?: string;
 
     // @DataMember
+    public env: string;
+
+    // @DataMember
     public meta?: IReadOnlyDictionary<string, string>;
 
     public constructor(init?: Partial<TenantLogEntryDto>) { (Object as any).assign(this, init); }
@@ -7984,6 +9321,8 @@ export class AgentOnboardingSnippet
     public client: string;
     public config: string;
     public auth: string;
+    public kind: string;
+    public recommended: boolean;
 
     public constructor(init?: Partial<AgentOnboardingSnippet>) { (Object as any).assign(this, init); }
 }
@@ -8544,9 +9883,52 @@ export class SchedulerTaskListProjection implements IHasViewId
     public isEnabled: boolean;
 
     // @DataMember
+    public isFailing: boolean;
+
+    // @DataMember
+    public lastFailureReason?: string;
+
+    // @DataMember
+    public lastFailedAtUnix?: number;
+
+    // @DataMember
     public viewId: string;
 
     public constructor(init?: Partial<SchedulerTaskListProjection>) { (Object as any).assign(this, init); }
+}
+
+export enum SchedulerTaskRunOutcome
+{
+    Fired = 1,
+    Failed = 2,
+    Skipped = 3,
+}
+
+// @DataContract
+export class SchedulerTaskRunDto
+{
+    // @DataMember
+    public logId: string;
+
+    // @DataMember
+    public atUtc: string;
+
+    // @DataMember
+    public atUnix: number;
+
+    // @DataMember
+    public outcome: SchedulerTaskRunOutcome;
+
+    // @DataMember
+    public reason?: string;
+
+    // @DataMember
+    public detail?: string;
+
+    // @DataMember
+    public correlationId?: string;
+
+    public constructor(init?: Partial<SchedulerTaskRunDto>) { (Object as any).assign(this, init); }
 }
 
 export enum ResolvedRefStatus
@@ -8668,6 +10050,30 @@ export class UserDto
     public marketingPreferences?: { [index:string]: ChannelSubscriptionStateDto; };
 
     public constructor(init?: Partial<UserDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ContactRolesRepairDto
+{
+    // @DataMember(Name="dryRun")
+    public dryRun: boolean;
+
+    // @DataMember(Name="contactsWithoutRoles")
+    public contactsWithoutRoles: number;
+
+    // @DataMember(Name="contactsToRepair")
+    public contactsToRepair: number;
+
+    // @DataMember(Name="contactsRepaired")
+    public contactsRepaired: number;
+
+    // @DataMember(Name="contactsWithoutLoginRoleIds")
+    public contactsWithoutLoginRoleIds: number;
+
+    // @DataMember(Name="legacyRoleNamesIgnored")
+    public legacyRoleNamesIgnored: number;
+
+    public constructor(init?: Partial<ContactRolesRepairDto>) { (Object as any).assign(this, init); }
 }
 
 export class ConsentPurposeDto
@@ -9237,6 +10643,14 @@ export interface IHasRazorTemplateCode
 {
 }
 
+export interface IQueuedTrigger
+{
+    viewId: string;
+    name: string;
+    order?: number;
+    breakOnError: boolean;
+}
+
 export interface IHasResponsibleUserId
 {
     userId: string;
@@ -9248,154 +10662,8 @@ export interface ICursorArgs
     order: number;
 }
 
-export class StringFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public format?: string;
-
-    // @DataMember
-    public pattern?: string;
-
-    // @DataMember
-    public minLength?: number;
-
-    // @DataMember
-    public maxLength?: number;
-
-    // @DataMember
-    public translateOptions?: IReadOnlyDictionary<string, string>;
-
-    public constructor(init?: Partial<StringFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class DecimalFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public minimum?: number;
-
-    // @DataMember
-    public maximum?: number;
-
-    // @DataMember
-    public multipleOf?: number;
-
-    public constructor(init?: Partial<DecimalFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class CurrencyFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public allowedCurrencies?: IReadOnlyList<string>;
-
-    public constructor(init?: Partial<CurrencyFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class BooleanFieldDto extends JsonSchemaFieldDto
-{
-
-    public constructor(init?: Partial<BooleanFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class DateFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public minimum?: number;
-
-    // @DataMember
-    public maximum?: number;
-
-    public constructor(init?: Partial<DateFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class IntegerFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public minimum?: number;
-
-    // @DataMember
-    public maximum?: number;
-
-    public constructor(init?: Partial<IntegerFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class GeolocationFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public allowedTypes?: IReadOnlyList<string>;
-
-    public constructor(init?: Partial<GeolocationFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class TagsFieldDto extends JsonSchemaFieldDto
-{
-
-    public constructor(init?: Partial<TagsFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class FileFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public storages?: IReadOnlyList<string>;
-
-    public constructor(init?: Partial<FileFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class TaxonomySelectionFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public taxonomyId?: string;
-
-    // @DataMember
-    public multiple: boolean;
-
-    public constructor(init?: Partial<TaxonomySelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class CollectionSelectionFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public collectionId?: string;
-
-    // @DataMember
-    public displayField?: string;
-
-    // @DataMember
-    public multiple: boolean;
-
-    public constructor(init?: Partial<CollectionSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class UserSelectionFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public multiple: boolean;
-
-    public constructor(init?: Partial<UserSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class RoleSelectionFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public multiple: boolean;
-
-    public constructor(init?: Partial<RoleSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class EnumSelectionFieldDto extends JsonSchemaFieldDto
-{
-    // @DataMember
-    public values?: IReadOnlyList<string>;
-
-    // @DataMember
-    public multiple: boolean;
-
-    public constructor(init?: Partial<EnumSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
-}
-
 export class EchoResponse
 {
-    public containerName?: string;
-    public ip: string;
     public release: CodeMashRelease;
     public runtime: CodeMashRuntime;
     public managedServiceHubUrl: string;
@@ -9404,19 +10672,12 @@ export class EchoResponse
     public apiUrl: string;
     public apiVersion: string;
     public hubVersion: string;
-    public mjmlUrl: string;
     public adminUrlTemplate?: string;
-    public license?: EchoLicenseDto;
-    public askForEnterpriseLicenseEmail?: string;
     public emailServiceConfigured: boolean;
     public rootBootstrapPasswordSource?: string;
     public regions?: EchoRegionDto[];
-    public isProductionInstallation: boolean;
-    public licensingMode: string;
-    public graceDaysLeft?: number;
-    public installationDomain?: string;
-    public licensingDocsUrl?: string;
     public agent?: EchoAgentDto;
+    public hostingPlatform?: EchoHostingPlatformDto;
 
     public constructor(init?: Partial<EchoResponse>) { (Object as any).assign(this, init); }
 }
@@ -9474,6 +10735,11 @@ export class GetAccountStatusResponse extends ResponseBase
 // @DataContract
 export class CreateStripeCheckoutSessionResponse extends IdResponse
 {
+    // @DataMember
+    public trialIncluded: boolean;
+
+    // @DataMember
+    public noTrialReason?: string;
 
     public constructor(init?: Partial<CreateStripeCheckoutSessionResponse>) { super(init); (Object as any).assign(this, init); }
 }
@@ -9745,6 +11011,13 @@ export class GetInstallationLicenseStatusResponse extends ResponseBase
     public constructor(init?: Partial<GetInstallationLicenseStatusResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class GetLicenseKeyResponse extends ResponseBase
+{
+    public key?: string;
+
+    public constructor(init?: Partial<GetLicenseKeyResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 // @DataContract
 export class CreateAiServiceUserResponse extends ResponseBase
 {
@@ -9786,6 +11059,8 @@ export class IssueServiceUserApiKeyResponse
     public id: number;
     public name: string;
     public key: string;
+    public environment?: string;
+    public responseStatus?: CodeMashResponseStatus;
 
     public constructor(init?: Partial<IssueServiceUserApiKeyResponse>) { (Object as any).assign(this, init); }
 }
@@ -9793,6 +11068,7 @@ export class IssueServiceUserApiKeyResponse
 export class ListServiceUserApiKeysResponse
 {
     public keys: ServiceUserApiKeyDto[] = [];
+    public responseStatus?: CodeMashResponseStatus;
 
     public constructor(init?: Partial<ListServiceUserApiKeysResponse>) { (Object as any).assign(this, init); }
 }
@@ -9979,6 +11255,13 @@ export class GetDatabaseSchemaDraftResponse extends ResponseBase
     public item?: SchemaDraftDto;
 
     public constructor(init?: Partial<GetDatabaseSchemaDraftResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetDatabaseSchemaIndexStatusResponse extends ResponseBase
+{
+    public status?: SchemaIndexStatusDto;
+
+    public constructor(init?: Partial<GetDatabaseSchemaIndexStatusResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetDatabaseSchemaListSettingsResponse extends ResponseBase
@@ -10193,6 +11476,15 @@ export class GetFileResponse extends ResponseBase
     public publicUrl?: string;
 
     public constructor(init?: Partial<GetFileResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetFileByIdResponse extends ResponseBase
+{
+    public file?: FileResourceRefDto;
+    public isPublic?: boolean;
+    public publicUrl?: string;
+
+    public constructor(init?: Partial<GetFileByIdResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetFolderFilesResponse extends ResponseBase
@@ -10538,6 +11830,42 @@ export class GetMarketplaceListingsResponse extends ResponseBase
     public constructor(init?: Partial<GetMarketplaceListingsResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+// @DataContract
+export class GetMarketplaceIntegrationAccessResponse extends ResponseBase
+{
+    // @DataMember
+    public roles: IReadOnlyList<MarketplaceAccessRoleDto>;
+
+    // @DataMember
+    public packages: IReadOnlyList<MarketplaceAccessPackageDto>;
+
+    // @DataMember
+    public tools: IReadOnlyList<MarketplaceAccessToolDto>;
+
+    // @DataMember
+    public functions: IReadOnlyList<MarketplaceAccessFunctionDto>;
+
+    // @DataMember
+    public canManage: boolean;
+
+    public constructor(init?: Partial<GetMarketplaceIntegrationAccessResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class SaveMarketplaceIntegrationCustomAccessResponse extends ResponseBase
+{
+    // @DataMember
+    public policyId?: string;
+
+    // @DataMember
+    public created: boolean;
+
+    // @DataMember
+    public usedByRoles: number;
+
+    public constructor(init?: Partial<SaveMarketplaceIntegrationCustomAccessResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class GetMarketplaceIntegrationResponse extends ResponseBase
 {
     public integration?: MarketplaceIntegrationDto;
@@ -10550,6 +11878,33 @@ export class GetMarketplaceIntegrationsResponse extends ResponseBase
     public list?: PaginatedResponse<MarketplaceIntegrationListProjection>;
 
     public constructor(init?: Partial<GetMarketplaceIntegrationsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetMarketplaceIntegrationToolsResponse extends ResponseBase
+{
+    public tools: IReadOnlyList<MarketplaceMcpToolDto>;
+    public listedAt?: string;
+    public catalogHash?: string;
+    public truncated: boolean;
+
+    public constructor(init?: Partial<GetMarketplaceIntegrationToolsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class StartMarketplaceIntegrationSignInResponse extends ResponseBase
+{
+    public authorizeUrl?: string;
+    public redirectUrl?: string;
+    public expiresAt?: string;
+
+    public constructor(init?: Partial<StartMarketplaceIntegrationSignInResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class SignOutMarketplaceIntegrationResponse extends ResponseBase
+{
+    public wasSignedIn: boolean;
+    public revoke?: string;
+
+    public constructor(init?: Partial<SignOutMarketplaceIntegrationResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class EmptyMarketplaceSecretsResponse extends ResponseBase
@@ -10570,6 +11925,12 @@ export class TestMarketplaceIntegrationResponse extends ResponseBase
 {
     // @DataMember
     public items?: IReadOnlyList<IntegrationTestResultItemDto>;
+
+    // @DataMember
+    public steps?: IReadOnlyList<MarketplaceValidationStepResultDto>;
+
+    // @DataMember
+    public accessChanges?: MarketplaceAccessChangesDto;
 
     public constructor(init?: Partial<TestMarketplaceIntegrationResponse>) { super(init); (Object as any).assign(this, init); }
 }
@@ -10599,6 +11960,13 @@ export class GetMarketplaceFunctionCatalogResponse extends ResponseBase
     public functions: IReadOnlyList<MarketplaceFunctionDefinitionDto>;
 
     public constructor(init?: Partial<GetMarketplaceFunctionCatalogResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetMarketplaceFunctionRunsResponse extends ResponseBase
+{
+    public runs: MarketplaceFunctionRunDto[] = [];
+
+    public constructor(init?: Partial<GetMarketplaceFunctionRunsResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class InvokeMarketplaceFunctionResponse extends ResponseBase
@@ -10631,6 +11999,45 @@ export class TestCodeIntegrationResponse extends ResponseBase
     public items?: IReadOnlyList<IntegrationTestResultItemDto>;
 
     public constructor(init?: Partial<TestCodeIntegrationResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetCodeFunctionsResponse extends ResponseBase
+{
+    public list?: PaginatedResponse<CodeFunctionDescriptorDto>;
+
+    public constructor(init?: Partial<GetCodeFunctionsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetCodeFunctionEventSampleResponse extends ResponseBase
+{
+    public sample?: CodeFunctionEventDto;
+
+    public constructor(init?: Partial<GetCodeFunctionEventSampleResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetCodeFunctionQualifiersResponse extends ResponseBase
+{
+    public qualifiers?: IReadOnlyList<CodeFunctionQualifierDto>;
+
+    public constructor(init?: Partial<GetCodeFunctionQualifiersResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetCodeFunctionRunsResponse extends ResponseBase
+{
+    public runs: CodeFunctionRunDto[] = [];
+
+    public constructor(init?: Partial<GetCodeFunctionRunsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class InvokeCodeFunctionResponse extends ResponseBase
+{
+    public statusCode: number;
+    public output?: Object;
+    public durationMs: number;
+    public requestId?: string;
+    public logs?: string;
+
+    public constructor(init?: Partial<InvokeCodeFunctionResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetPushTemplateResponse extends ResponseBase
@@ -11030,6 +12437,75 @@ export class GetAiTriggerResponse extends GetTriggerResponse
     public constructor(init?: Partial<GetAiTriggerResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class AuthDeviceStartResponse extends ResponseBase
+{
+    public deviceCode?: string;
+    public userCode?: string;
+    public verificationUri?: string;
+    public verificationUriComplete?: string;
+    public expiresIn: number;
+    public interval: number;
+
+    public constructor(init?: Partial<AuthDeviceStartResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class AuthDeviceTokenResponse extends ResponseBase
+{
+    public error?: string;
+    public errorDescription?: string;
+    public errorCode?: string;
+    public reason?: string;
+    public bearerToken?: string;
+    public refreshToken?: string;
+    public expiresIn?: number;
+    public clientId?: string;
+    public userId?: string;
+    public userName?: string;
+    public displayName?: string;
+    public accountId?: string;
+    public projectId?: string;
+
+    public constructor(init?: Partial<AuthDeviceTokenResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class AuthDeviceConsentResponse extends ResponseBase
+{
+    public clientName: string;
+    public deviceName: string;
+    public userCode: string;
+    public projectId?: string;
+    public accountRoles: AiRoleDto[] = [];
+    public projects: AiProjectRolesDto[] = [];
+
+    public constructor(init?: Partial<AuthDeviceConsentResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class AuthDeviceConsentDecisionResponse extends ResponseBase
+{
+
+    public constructor(init?: Partial<AuthDeviceConsentDecisionResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class OAuthConsentResponse extends ResponseBase
+{
+    public clientName: string;
+    public redirectHost: string;
+    public clientHost: string;
+    public redirectIsLoopback: boolean;
+    public consentTicket: string;
+    public accountRoles: AiRoleDto[] = [];
+    public projects: AiProjectRolesDto[] = [];
+
+    public constructor(init?: Partial<OAuthConsentResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class OAuthConsentDecisionResponse extends ResponseBase
+{
+    public redirectUrl?: string;
+
+    public constructor(init?: Partial<OAuthConsentDecisionResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class GetEmbeddingIntegrationResponse extends ResponseBase
 {
     public item?: EmbeddingIntegrationDto;
@@ -11172,6 +12648,14 @@ export class GetSchedulerTasksResponse extends ResponseBase
     public constructor(init?: Partial<GetSchedulerTasksResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class GetSchedulerTaskRunsResponse extends ResponseBase
+{
+    public logsEnabled: boolean;
+    public runs: SchedulerTaskRunDto[] = [];
+
+    public constructor(init?: Partial<GetSchedulerTaskRunsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class ResolveResourcesResponse extends ResponseBase
 {
     public resolved: IReadOnlyList<ResolvedResourceEntry>;
@@ -11192,6 +12676,13 @@ export class GetAllContactsResponse extends ResponseBase
     public nextCursor?: string;
 
     public constructor(init?: Partial<GetAllContactsResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class RepairContactRolesResponse extends ResponseBase
+{
+    public result?: ContactRolesRepairDto;
+
+    public constructor(init?: Partial<RepairContactRolesResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetComplianceSettingsResponse extends ResponseBase
@@ -11436,19 +12927,6 @@ export class ConfirmCodeIntegrationHumanDeliveryRequest extends CodeMashRequestB
     public constructor(init?: Partial<ConfirmCodeIntegrationHumanDeliveryRequest>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'ConfirmCodeIntegrationHumanDeliveryRequest'; }
     public getMethod() { return 'POST'; }
-    public createResponse() { return new EmptyResponse(); }
-}
-
-// @Route("/{version}/code/integrations/{Id}/default", "PUT")
-export class SetCodeIntegrationAsDefault extends CodeMashRequestBase implements IReturn<EmptyResponse>
-{
-    /** @description Integration id, from get_code_integrations. */
-    // @ApiMember(Description="Integration id, from get_code_integrations.", IsRequired=true)
-    public id: string;
-
-    public constructor(init?: Partial<SetCodeIntegrationAsDefault>) { super(init); (Object as any).assign(this, init); }
-    public getTypeName() { return 'SetCodeIntegrationAsDefault'; }
-    public getMethod() { return 'PUT'; }
     public createResponse() { return new EmptyResponse(); }
 }
 
@@ -11991,7 +13469,6 @@ export class InternalsTypeGen
     public typegen_205_SaveCodeIntegration?: SaveCodeIntegration;
     public typegen_206_TestCodeIntegration?: TestCodeIntegration;
     public typegen_207_ConfirmCodeIntegrationHumanDeliveryRequest?: ConfirmCodeIntegrationHumanDeliveryRequest;
-    public typegen_208_SetCodeIntegrationAsDefault?: SetCodeIntegrationAsDefault;
     public typegen_209_DeleteCodeIntegrationRequest?: DeleteCodeIntegrationRequest;
     public typegen_210_EnableCodeIntegrationRequest?: EnableCodeIntegrationRequest;
     public typegen_211_DisableCodeIntegrationRequest?: DisableCodeIntegrationRequest;
@@ -12027,6 +13504,39 @@ export class InternalsTypeGen
     public typegen_243_ActionPendingEntryWireDto?: ActionPendingEntryWireDto;
     public typegen_244_NoticeEntryWireDto?: NoticeEntryWireDto;
     public typegen_245_ConversationSnapshotEntryWireDto?: ConversationSnapshotEntryWireDto;
+    public typegen_252_StringFieldDto?: StringFieldDto;
+    public typegen_253_DecimalFieldDto?: DecimalFieldDto;
+    public typegen_254_CurrencyFieldDto?: CurrencyFieldDto;
+    public typegen_255_BooleanFieldDto?: BooleanFieldDto;
+    public typegen_256_DateFieldDto?: DateFieldDto;
+    public typegen_257_IntegerFieldDto?: IntegerFieldDto;
+    public typegen_258_GeolocationFieldDto?: GeolocationFieldDto;
+    public typegen_259_TagsFieldDto?: TagsFieldDto;
+    public typegen_260_FileFieldDto?: FileFieldDto;
+    public typegen_261_TaxonomySelectionFieldDto?: TaxonomySelectionFieldDto;
+    public typegen_262_CollectionSelectionFieldDto?: CollectionSelectionFieldDto;
+    public typegen_263_UserSelectionFieldDto?: UserSelectionFieldDto;
+    public typegen_264_RoleSelectionFieldDto?: RoleSelectionFieldDto;
+    public typegen_265_EnumSelectionFieldDto?: EnumSelectionFieldDto;
+    public typegen_266_ObjectFieldDto?: ObjectFieldDto;
+    public typegen_267_ArrayFieldDto?: ArrayFieldDto;
+    public typegen_268_JsonFieldDto?: JsonFieldDto;
+    public typegen_269_FunctionRefDto?: FunctionRefDto;
+    public typegen_270_CodeFunctionEventDto?: CodeFunctionEventDto;
+    public typegen_271_CodeFunctionContextDto?: CodeFunctionContextDto;
+    public typegen_272_CodeFunctionCallerDto?: CodeFunctionCallerDto;
+    public typegen_273_CodeFunctionRunAsDto?: CodeFunctionRunAsDto;
+    public typegen_274_CodeFunctionDataDto?: CodeFunctionDataDto;
+    public typegen_275_DatabaseRecordChangeDto?: DatabaseRecordChangeDto;
+    public typegen_276_UserChangeDto?: UserChangeDto;
+    public typegen_277_FileChangeDto?: FileChangeDto;
+    public typegen_278_PaymentFactDto?: PaymentFactDto;
+    public typegen_279_AiUsageEventDto?: AiUsageEventDto;
+    public typegen_280_ScheduledTaskInfoDto?: ScheduledTaskInfoDto;
+    public typegen_281_FakeCodeIntegrationDto?: FakeCodeIntegrationDto;
+    public typegen_282_FakeCodeIntegrationRequest?: FakeCodeIntegrationRequest;
+    public typegen_283_CodeFunctionSchedulerTaskRequest?: CodeFunctionSchedulerTaskRequest;
+    public typegen_284_MarketplaceFunctionSchedulerTaskRequest?: MarketplaceFunctionSchedulerTaskRequest;
 
     public constructor(init?: Partial<InternalsTypeGen>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'InternalsTypeGen'; }
@@ -12137,13 +13647,13 @@ export class UpdateAccountProfile extends RequestBase implements IReturn<EmptyRe
     public createResponse() { return new EmptyResponse(); }
 }
 
-// @Route("/{version}/account/verify/resend", "GET")
+// @Route("/{version}/account/verify/resend", "POST")
 export class ResendAccountVerificationToken extends RequestBase implements IReturn<EmptyResponse>
 {
 
     public constructor(init?: Partial<ResendAccountVerificationToken>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'ResendAccountVerificationToken'; }
-    public getMethod() { return 'GET'; }
+    public getMethod() { return 'POST'; }
     public createResponse() { return new EmptyResponse(); }
 }
 
@@ -12237,7 +13747,7 @@ export class GetAccountUsageBilling extends RequestBase implements IReturn<GetAc
     public createResponse() { return new GetAccountUsageBillingResponse(); }
 }
 
-// @Route("/{version}/account/verify", "GET")
+// @Route("/{version}/account/verify", "POST")
 export class VerifyAccount extends RequestBase implements IReturn<EmptyResponse>, IHasAccountId
 {
     public token: string;
@@ -12245,7 +13755,7 @@ export class VerifyAccount extends RequestBase implements IReturn<EmptyResponse>
 
     public constructor(init?: Partial<VerifyAccount>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'VerifyAccount'; }
-    public getMethod() { return 'GET'; }
+    public getMethod() { return 'POST'; }
     public createResponse() { return new EmptyResponse(); }
 }
 
@@ -13606,6 +15116,17 @@ export class GetInstallationLicenseStatus extends RequestBase implements IReturn
     public createResponse() { return new GetInstallationLicenseStatusResponse(); }
 }
 
+// @Route("/{version}/account/licenses/{Id}/key", "GET")
+export class GetLicenseKey extends RequestBase implements IReturn<GetLicenseKeyResponse>
+{
+    public id?: string;
+
+    public constructor(init?: Partial<GetLicenseKey>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetLicenseKey'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetLicenseKeyResponse(); }
+}
+
 // @Route("/{version}/account/ai/service-users", "POST")
 export class CreateAiServiceUserRequest extends RequestBase implements IReturn<CreateAiServiceUserResponse>
 {
@@ -13613,9 +15134,13 @@ export class CreateAiServiceUserRequest extends RequestBase implements IReturn<C
     // @ApiMember(Description="A name people recognise, e.g. \"Claude Code on my laptop\".", IsRequired=true)
     public name: string;
 
-    /** @description Reach (account | project + projectId), rights (read | admin), envs (["TEST"] or ["TEST","PROD"]). */
-    // @ApiMember(Description="Reach (account | project + projectId), rights (read | admin), envs ([\"TEST\"] or [\"TEST\",\"PROD\"]).", IsRequired=true)
-    public scope: AiScopeDto;
+    /** @description Account role ids (acc_…_nr_…) to give, built-in or custom. At least one role in total (account or project). */
+    // @ApiMember(Description="Account role ids (acc_…_nr_…) to give, built-in or custom. At least one role in total (account or project).")
+    public accountRoleIds?: string[];
+
+    /** @description Project roles to give: [{ projectId, roleIds: [pr_…_nr_…] }]. Without an account role the service user is pinned to these projects. */
+    // @ApiMember(Description="Project roles to give: [{ projectId, roleIds: [pr_…_nr_…] }]. Without an account role the service user is pinned to these projects.")
+    public projectRoles?: AiProjectRoleIdsDto[];
 
     public constructor(init?: Partial<CreateAiServiceUserRequest>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'CreateAiServiceUserRequest'; }
@@ -14450,6 +15975,11 @@ export class GetDatabaseTaxonomies extends CodeMashListPaginationRequestBase imp
 // @DataContract
 export class GetDatabaseTaxonomyTreeRequest extends CodeMashRequestBase implements IReturn<GetDatabaseTaxonomyTreeResponse>
 {
+    /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+    // @DataMember
+    // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    public allLanguages: boolean;
+
     /** @description When true, each taxonomy node also carries its own term tree (heavier response). */
     // @DataMember
     // @ApiMember(Description="When true, each taxonomy node also carries its own term tree (heavier response).")
@@ -14573,6 +16103,11 @@ export class DeleteManyDatabaseTaxonomyTermsRequest extends CodeMashRequestBase 
 // @DataContract
 export class GetDatabaseTaxonomyTermRequest extends CodeMashRequestBase implements IReturn<GetDatabaseTaxonomyTermResponse>
 {
+    /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+    // @DataMember
+    // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    public allLanguages: boolean;
+
     /** @description Taxonomy id from get_database_taxonomies. */
     // @DataMember
     // @ApiMember(Description="Taxonomy id from get_database_taxonomies.", IsRequired=true)
@@ -14600,6 +16135,11 @@ export class GetDatabaseTaxonomyTermRequest extends CodeMashRequestBase implemen
 // @DataContract
 export class GetDatabaseMergedTermTreeRequest extends CodeMashRequestBase implements IReturn<GetDatabaseMergedTermTreeResponse>
 {
+    /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+    // @DataMember
+    // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    public allLanguages: boolean;
+
     /** @description Root taxonomy slug/name (from get_database_taxonomies). Its terms are the roots; child-taxonomy terms nest under them. */
     // @DataMember
     // @ApiMember(Description="Root taxonomy slug/name (from get_database_taxonomies). Its terms are the roots; child-taxonomy terms nest under them.", IsRequired=true)
@@ -14622,6 +16162,11 @@ export class GetDatabaseMergedTermTreeRequest extends CodeMashRequestBase implem
 // @DataContract
 export class GetDatabaseTaxonomyTermTreeRequest extends CodeMashRequestBase implements IReturn<GetDatabaseTaxonomyTermTreeResponse>
 {
+    /** @description Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions. */
+    // @DataMember
+    // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
+    public allLanguages: boolean;
+
     /** @description Taxonomy slug/name to fetch the term tree for, from get_database_taxonomies. */
     // @DataMember
     // @ApiMember(Description="Taxonomy slug/name to fetch the term tree for, from get_database_taxonomies.", IsRequired=true)
@@ -14664,9 +16209,9 @@ export class SaveDatabaseTaxonomyTermRequest extends CodeMashRequestBase impleme
     // @ApiMember(Description="Optional database integration id. When omitted, the project's default database integration is used.")
     public databaseIntegrationId?: string;
 
-    /** @description The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents ("additional categories": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {"name":"France","order":1}. */
+    /** @description The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; slug (optional — the URL-safe name, unique inside the taxonomy; derived from name when omitted, e.g. 'France' → 'france', with a -2, -3… suffix when another term of the taxonomy already has that derived slug; an explicit slug another term has is refused, CM-ERRORS-TAXONOMIES-012); order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents ("additional categories": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {"name":"France","order":1}. */
     // @DataMember
-    // @ApiMember(Description="The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents (\"additional categories\": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {\"name\":\"France\",\"order\":1}.", IsRequired=true)
+    // @ApiMember(Description="The term to insert, as a MongoDB extended-JSON document string (a raw JSON object). Supported term fields: name (string, or a {lang:value} map — required); description; slug (optional — the URL-safe name, unique inside the taxonomy; derived from name when omitted, e.g. 'France' → 'france', with a -2, -3… suffix when another term of the taxonomy already has that derived slug; an explicit slug another term has is refused, CM-ERRORS-TAXONOMIES-012); order (integer sort position, lower shows first — omit for unordered); parentId (id of the single parent term); multiParents (\"additional categories\": array of {taxonomyId, parentId}). The server stamps taxonomyId/taxonomyName automatically — do not include them. Example: {\"name\":\"France\",\"order\":1}.", IsRequired=true)
     public document: string;
 
     public constructor(init?: Partial<SaveDatabaseTaxonomyTermRequest>) { super(init); (Object as any).assign(this, init); }
@@ -14696,9 +16241,9 @@ export class UpdateDatabaseTaxonomyTermRequest extends CodeMashRequestBase imple
     // @ApiMember(Description="Optional database integration id. When omitted, the project's default database integration is used.")
     public databaseIntegrationId?: string;
 
-    /** @description Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents ("additional categories": array of {taxonomyId, parentId}). Example to rank a term: {"order":1}. */
+    /** @description Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map — a new name re-derives the slug unless 'slug' is sent too; a derived slug another term has gets a -2, -3… suffix); slug (optional — set explicitly, unique inside the taxonomy, CM-ERRORS-TAXONOMIES-012 when another term has it); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents ("additional categories": array of {taxonomyId, parentId}). Example to rank a term: {"order":1}. */
     // @DataMember
-    // @ApiMember(Description="Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents (\"additional categories\": array of {taxonomyId, parentId}). Example to rank a term: {\"order\":1}.", IsRequired=true)
+    // @ApiMember(Description="Partial update document as MongoDB extended-JSON (a raw JSON object of fields to change), applied with $set — only the given fields change. Updatable term fields: name (string or {lang:value} map — a new name re-derives the slug unless 'slug' is sent too; a derived slug another term has gets a -2, -3… suffix); slug (optional — set explicitly, unique inside the taxonomy, CM-ERRORS-TAXONOMIES-012 when another term has it); description; order (integer sort position, lower shows first — use this to numerate/rank terms; set null to clear); parentId (single parent term id — a term from THIS taxonomy's parent taxonomy; e.g. link a country to its region by setting the country term's parentId to the region term id); multiParents (\"additional categories\": array of {taxonomyId, parentId}). Example to rank a term: {\"order\":1}.", IsRequired=true)
     public update: string;
 
     public constructor(init?: Partial<UpdateDatabaseTaxonomyTermRequest>) { super(init); (Object as any).assign(this, init); }
@@ -14826,6 +16371,23 @@ export class GetDatabaseSchemaDraft extends CodeMashRequestBase implements IRetu
     public getTypeName() { return 'GetDatabaseSchemaDraft'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetDatabaseSchemaDraftResponse(); }
+}
+
+/** @description Gets the Norbix index status of a database schema */
+// @Route("/{version}/database/schemas/{Id}/index-status", "GET")
+// @Api(Description="Gets the Norbix index status of a database schema")
+// @DataContract
+export class GetDatabaseSchemaIndexStatus extends CodeMashRequestBase implements IReturn<GetDatabaseSchemaIndexStatusResponse>
+{
+    /** @description Schema id from get_database_schemas. */
+    // @DataMember
+    // @ApiMember(Description="Schema id from get_database_schemas.", IsRequired=true)
+    public id: string;
+
+    public constructor(init?: Partial<GetDatabaseSchemaIndexStatus>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetDatabaseSchemaIndexStatus'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetDatabaseSchemaIndexStatusResponse(); }
 }
 
 /** @description Gets database schema records-list display settings */
@@ -14978,9 +16540,9 @@ export class UpdateDatabaseSchemaDraftRequest extends CodeMashRequestBase implem
     // @ApiMember(Description="Raw JSON string matching the Norbix data meta-schema (https://norbix.ai/schemas/meta/v1.json) for the draft's data schema.")
     public dataSchema?: string;
 
-    /** @description OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or invalid, the backend auto-generates a flat-list form from the data schema. */
+    /** @description OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or empty (no field cell), the backend auto-generates a flat-list form from the data schema; a layout that fails the meta-schema is refused with the key named. */
     // @DataMember
-    // @ApiMember(Description="OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or invalid, the backend auto-generates a flat-list form from the data schema.")
+    // @ApiMember(Description="OPTIONAL raw JSON string matching the Norbix UI/visual meta-schema (https://norbix.ai/schemas/ui/v1.json) for the draft's record form. If omitted or empty (no field cell), the backend auto-generates a flat-list form from the data schema; a layout that fails the meta-schema is refused with the key named.")
     public visualSchema?: string;
 
     public constructor(init?: Partial<UpdateDatabaseSchemaDraftRequest>) { super(init); (Object as any).assign(this, init); }
@@ -15238,6 +16800,11 @@ export class FindRecords extends CodeMashListPaginationRequestBase implements IR
     public pagingArgs?: PagingArgs;
     public sortBy?: string;
     public sortOrder?: number;
+    /** @description Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids. */
+    // @ApiMember(Description="Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.")
+    public expandReferences: boolean;
+
+    public allLanguages: boolean;
 
     public constructor(init?: Partial<FindRecords>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'FindRecords'; }
@@ -15259,6 +16826,11 @@ export class FindOneRecord extends CodeMashRequestBase implements IReturn<FindOn
     public id: string;
 
     public databaseIntegrationId?: string;
+    /** @description Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids. */
+    // @ApiMember(Description="Set true to get every reference value as { id, display } (display = the target's displayField per the schema; null when the target is gone). Needs read permission on every source the schema links to (users, roles, taxonomy, collection, files) — otherwise the read is refused with CM-ERRORS-DATABASE-056 naming the source. Default false returns the stored ids.")
+    public expandReferences: boolean;
+
+    public allLanguages: boolean;
 
     public constructor(init?: Partial<FindOneRecord>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'FindOneRecord'; }
@@ -15388,9 +16960,13 @@ export class UpdateManyRecords extends CodeMashRequestBase implements IReturn<Em
     // @ApiMember(Description="Set to true to update EVERY record of the collection with an empty filter ({}). Without it an empty filter is refused (CM-ERRORS-DATABASE-037).")
     public allRecords?: boolean;
 
-    /** @description The partial update document (applied with $set), as MongoDB extended-JSON. */
-    // @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON.", IsRequired=true)
+    /** @description The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {"address.city":"Vilnius"}, {"lines.$[].qty":1}, or {"lines.$[line].qty":3} together with ArrayFilters. */
+    // @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {\"address.city\":\"Vilnius\"}, {\"lines.$[].qty\":1}, or {\"lines.$[line].qty\":3} together with ArrayFilters.", IsRequired=true)
     public update: string;
+
+    /** @description Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{"line.sku":"A-1"}] for {"lines.$[line].qty":3}. */
+    // @ApiMember(Description="Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{\"line.sku\":\"A-1\"}] for {\"lines.$[line].qty\":3}.")
+    public arrayFilters?: string;
 
     public constructor(init?: Partial<UpdateManyRecords>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateManyRecords'; }
@@ -15412,9 +16988,13 @@ export class UpdateOneRecord extends CodeMashRequestBase implements IReturn<Empt
     public id: string;
 
     public databaseIntegrationId?: string;
-    /** @description The partial update document (applied with $set), as MongoDB extended-JSON. */
-    // @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON.", IsRequired=true)
+    /** @description The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {"address.city":"Vilnius"}, {"lines.2.qty":3}, {"lines.$[].qty":1}, or {"lines.$[line].qty":3} together with ArrayFilters. */
+    // @ApiMember(Description="The partial update document (applied with $set), as MongoDB extended-JSON. Dotted paths reach nested data: {\"address.city\":\"Vilnius\"}, {\"lines.2.qty\":3}, {\"lines.$[].qty\":1}, or {\"lines.$[line].qty\":3} together with ArrayFilters.", IsRequired=true)
     public update: string;
+
+    /** @description Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{"line.sku":"A-1"}] for {"lines.$[line].qty":3}. */
+    // @ApiMember(Description="Optional MongoDB arrayFilters — a JSON array of filter documents, one per $[name] identifier used in the Update paths, e.g. [{\"line.sku\":\"A-1\"}] for {\"lines.$[line].qty\":3}.")
+    public arrayFilters?: string;
 
     public constructor(init?: Partial<UpdateOneRecord>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateOneRecord'; }
@@ -16087,6 +17667,23 @@ export class GetFile extends CodeMashRequestBase implements IReturn<GetFileRespo
     public createResponse() { return new GetFileResponse(); }
 }
 
+// @Route("/{version}/files/item/by-id", "GET")
+export class GetFileById extends CodeMashRequestBase implements IReturn<GetFileByIdResponse>
+{
+    /** @description The files integration id to read from, from get_files_integrations. */
+    // @ApiMember(Description="The files integration id to read from, from get_files_integrations.", IsRequired=true)
+    public filesIntegrationId: string;
+
+    /** @description The file id — nbfl_… as the Files endpoints return it, or its bare UUID. */
+    // @ApiMember(Description="The file id — nbfl_… as the Files endpoints return it, or its bare UUID.", IsRequired=true)
+    public id: string;
+
+    public constructor(init?: Partial<GetFileById>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetFileById'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetFileByIdResponse(); }
+}
+
 // @Route("/{version}/files/folder", "GET")
 export class GetFolderFiles extends CodeMashListPaginationRequestBase implements IReturn<GetFolderFilesResponse>
 {
@@ -16102,6 +17699,23 @@ export class GetFolderFiles extends CodeMashListPaginationRequestBase implements
     public getTypeName() { return 'GetFolderFiles'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetFolderFilesResponse(); }
+}
+
+// @Route("/{version}/files/item/use", "POST")
+export class UseFileRequest extends CodeMashRequestBase implements IReturn<IdResponse>
+{
+    /** @description The files integration the file lives on. */
+    // @ApiMember(Description="The files integration the file lives on.", IsRequired=true)
+    public filesIntegrationId: string;
+
+    /** @description Path of the file, relative to the integration. */
+    // @ApiMember(Description="Path of the file, relative to the integration.", IsRequired=true)
+    public path: string;
+
+    public constructor(init?: Partial<UseFileRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UseFileRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new IdResponse(); }
 }
 
 /** @description Disable email service */
@@ -17547,6 +19161,133 @@ export class GetSmsCampaignMessagesRequest extends CodeMashListPaginationRequest
     public createResponse() { return new GetSmsCampaignMessagesResponse(); }
 }
 
+// @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/access", "GET")
+export class GetMarketplaceIntegrationAccess extends CodeMashRequestBase implements IReturn<GetMarketplaceIntegrationAccessResponse>
+{
+    /** @description Integration view id, from get_marketplace_integrations. */
+    // @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    public integrationViewId: string;
+
+    public constructor(init?: Partial<GetMarketplaceIntegrationAccess>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetMarketplaceIntegrationAccess'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetMarketplaceIntegrationAccessResponse(); }
+}
+
+// @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles", "PUT")
+// @DataContract
+export class SetMarketplaceIntegrationRoleAccess extends CodeMashRequestBase implements IReturn<IdResponse>
+{
+    /** @description Integration view id, from get_marketplace_integrations. */
+    // @DataMember
+    // @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    public integrationViewId: string;
+
+    /** @description The role's composite id: acc_…_nr_… (account / team role) or pr_…_nr_… (project role). */
+    // @DataMember
+    // @ApiMember(Description="The role's composite id: acc_…_nr_… (account / team role) or pr_…_nr_… (project role).", IsRequired=true)
+    public roleId: string;
+
+    /** @description None, Viewer, FunctionsOnly, ReadOnly or FullAccess. */
+    // @DataMember
+    // @ApiMember(Description="None, Viewer, FunctionsOnly, ReadOnly or FullAccess.")
+    public package: MarketplaceAccessLevel;
+
+    /** @description True to also give the Manage package (edit the connection, its secrets, validation and functions). */
+    // @DataMember
+    // @ApiMember(Description="True to also give the Manage package (edit the connection, its secrets, validation and functions).")
+    public manage: boolean;
+
+    public constructor(init?: Partial<SetMarketplaceIntegrationRoleAccess>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SetMarketplaceIntegrationRoleAccess'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new IdResponse(); }
+}
+
+// @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/access/roles/custom", "POST")
+// @DataContract
+export class SaveMarketplaceIntegrationCustomAccess extends CodeMashRequestBase implements IReturn<SaveMarketplaceIntegrationCustomAccessResponse>
+{
+    /** @description Integration view id, from get_marketplace_integrations. */
+    // @DataMember
+    // @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    public integrationViewId: string;
+
+    /** @description The role's composite id: acc_…_nr_… or pr_…_nr_…. */
+    // @DataMember
+    // @ApiMember(Description="The role's composite id: acc_…_nr_… or pr_…_nr_….", IsRequired=true)
+    public roleId: string;
+
+    /** @description The package to start from: None, Viewer, FunctionsOnly, ReadOnly or FullAccess. */
+    // @DataMember
+    // @ApiMember(Description="The package to start from: None, Viewer, FunctionsOnly, ReadOnly or FullAccess.")
+    public basePackage: MarketplaceAccessLevel;
+
+    /** @description Tool names the role may run (from the connection's tools). */
+    // @DataMember
+    // @ApiMember(Description="Tool names the role may run (from the connection's tools).")
+    public tools: string[] = [];
+
+    /** @description Function ids (func_…) of this connection the role may run. */
+    // @DataMember
+    // @ApiMember(Description="Function ids (func_…) of this connection the role may run.")
+    public functions: string[] = [];
+
+    /** @description True to include the Manage rights (edit the connection, its secrets, validation and functions). */
+    // @DataMember
+    // @ApiMember(Description="True to include the Manage rights (edit the connection, its secrets, validation and functions).")
+    public manage: boolean;
+
+    /** @description True to write a new policy for this role only when its current custom policy is shared with other roles. */
+    // @DataMember
+    // @ApiMember(Description="True to write a new policy for this role only when its current custom policy is shared with other roles.")
+    public newPolicyForThisRoleOnly: boolean;
+
+    public constructor(init?: Partial<SaveMarketplaceIntegrationCustomAccess>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SaveMarketplaceIntegrationCustomAccess'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new SaveMarketplaceIntegrationCustomAccessResponse(); }
+}
+
+// @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/tools", "GET")
+export class GetMarketplaceIntegrationTools extends CodeMashRequestBase implements IReturn<GetMarketplaceIntegrationToolsResponse>
+{
+    /** @description Integration view id, from get_marketplace_integrations. */
+    // @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    public integrationViewId: string;
+
+    public constructor(init?: Partial<GetMarketplaceIntegrationTools>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetMarketplaceIntegrationTools'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetMarketplaceIntegrationToolsResponse(); }
+}
+
+// @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/start", "POST")
+export class StartMarketplaceIntegrationSignIn extends CodeMashRequestBase implements IReturn<StartMarketplaceIntegrationSignInResponse>
+{
+    /** @description Integration view id, from get_marketplace_integrations. */
+    // @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    public integrationViewId: string;
+
+    public constructor(init?: Partial<StartMarketplaceIntegrationSignIn>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'StartMarketplaceIntegrationSignIn'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new StartMarketplaceIntegrationSignInResponse(); }
+}
+
+// @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/oauth/sign-out", "POST")
+export class SignOutMarketplaceIntegration extends CodeMashRequestBase implements IReturn<SignOutMarketplaceIntegrationResponse>
+{
+    /** @description Integration view id, from get_marketplace_integrations. */
+    // @ApiMember(Description="Integration view id, from get_marketplace_integrations.", IsRequired=true)
+    public integrationViewId: string;
+
+    public constructor(init?: Partial<SignOutMarketplaceIntegration>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'SignOutMarketplaceIntegration'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new SignOutMarketplaceIntegrationResponse(); }
+}
+
 // @Route("/{version}/code/marketplace/integrations/{IntegrationViewId}/secrets", "PUT")
 // @DataContract
 export class ReplaceMarketplaceIntegrationSecretsRequest extends CodeMashRequestBase implements IReturn<EmptyMarketplaceSecretsResponse>
@@ -17590,7 +19331,7 @@ export class SetMarketplaceIntegrationTokenMappingsRequest extends CodeMashReque
     public integrationViewId: string;
 
     // @DataMember
-    public tokenMappings: MarketplaceTokenMappingDto[] = [];
+    public tokenMappings: TokenMappingDto[] = [];
 
     public constructor(init?: Partial<SetMarketplaceIntegrationTokenMappingsRequest>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'SetMarketplaceIntegrationTokenMappingsRequest'; }
@@ -17609,6 +19350,148 @@ export class GetMarketplaceFunctionCatalog extends CodeMashRequestBase implement
     public getTypeName() { return 'GetMarketplaceFunctionCatalog'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetMarketplaceFunctionCatalogResponse(); }
+}
+
+// @Route("/{version}/code/marketplace/functions/runs", "GET")
+export class GetMarketplaceFunctionRuns extends CodeMashRequestBase implements IReturn<GetMarketplaceFunctionRunsResponse>
+{
+    /** @description The marketplace function whose runs to list, from every source (func_…). One of functionId / triggerId / taskId. */
+    // @ApiMember(Description="The marketplace function whose runs to list, from every source (func_…). One of functionId / triggerId / taskId.")
+    public functionId?: string;
+
+    /** @description The trigger whose marketplace function runs to list (trg_…). One of functionId / triggerId / taskId. */
+    // @ApiMember(Description="The trigger whose marketplace function runs to list (trg_…). One of functionId / triggerId / taskId.")
+    public triggerId?: string;
+
+    /** @description The scheduler task whose marketplace function runs to list (tsk_…). One of functionId / triggerId / taskId. */
+    // @ApiMember(Description="The scheduler task whose marketplace function runs to list (tsk_…). One of functionId / triggerId / taskId.")
+    public taskId?: string;
+
+    /** @description The MCP connection whose tool runs to list — the calls an AI chat made to one of its tools without a saved function (int_…). One of functionId / triggerId / taskId / integrationId. */
+    // @ApiMember(Description="The MCP connection whose tool runs to list — the calls an AI chat made to one of its tools without a saved function (int_…). One of functionId / triggerId / taskId / integrationId.")
+    public integrationId?: string;
+
+    /** @description How many runs, newest first: 1-50. Default 20. */
+    // @ApiMember(DataType="integer", Description="How many runs, newest first: 1-50. Default 20.")
+    public limit?: number;
+
+    public constructor(init?: Partial<GetMarketplaceFunctionRuns>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetMarketplaceFunctionRuns'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetMarketplaceFunctionRunsResponse(); }
+}
+
+// @Route("/{version}/code/functions", "GET")
+export class GetCodeFunctions extends CodeMashListPaginationRequestBase implements IReturn<GetCodeFunctionsResponse>
+{
+    /** @description Code integration id (int_…), from get_code_integrations. */
+    // @ApiMember(Description="Code integration id (int_…), from get_code_integrations.", IsRequired=true)
+    public integrationId: string;
+
+    /** @description Only functions whose id starts with this. */
+    // @ApiMember(Description="Only functions whose id starts with this.")
+    public prefix?: string;
+
+    /** @description Only functions carrying this tag: "key" or "key=value". */
+    // @ApiMember(Description="Only functions carrying this tag: \"key\" or \"key=value\".")
+    public tag?: string;
+
+    public constructor(init?: Partial<GetCodeFunctions>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetCodeFunctions'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetCodeFunctionsResponse(); }
+}
+
+// @Route("/{version}/code/functions/event-sample", "GET")
+export class GetCodeFunctionEventSample extends CodeMashRequestBase implements IReturn<GetCodeFunctionEventSampleResponse>
+{
+    /** @description Database | Membership | Files | Payments | Ai | Scheduler | Manual. */
+    // @ApiMember(Description="Database | Membership | Files | Payments | Ai | Scheduler | Manual.", IsRequired=true)
+    public source: CodeFunctionSource;
+
+    /** @description The event name, e.g. database.record.inserted; omitted = the source's usual one. */
+    // @ApiMember(Description="The event name, e.g. database.record.inserted; omitted = the source's usual one.")
+    public event?: string;
+
+    /** @description The schema id to put into data.database.schemaId (Database source). */
+    // @ApiMember(Description="The schema id to put into data.database.schemaId (Database source).")
+    public schemaId?: string;
+
+    public constructor(init?: Partial<GetCodeFunctionEventSample>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetCodeFunctionEventSample'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetCodeFunctionEventSampleResponse(); }
+}
+
+// @Route("/{version}/code/functions/qualifiers", "GET")
+export class GetCodeFunctionQualifiers extends CodeMashRequestBase implements IReturn<GetCodeFunctionQualifiersResponse>
+{
+    /** @description Code integration id (int_…), from get_code_integrations. */
+    // @ApiMember(Description="Code integration id (int_…), from get_code_integrations.", IsRequired=true)
+    public integrationId: string;
+
+    /** @description Provider-native function id, from get_code_functions. */
+    // @ApiMember(Description="Provider-native function id, from get_code_functions.", IsRequired=true)
+    public functionId: string;
+
+    public constructor(init?: Partial<GetCodeFunctionQualifiers>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetCodeFunctionQualifiers'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetCodeFunctionQualifiersResponse(); }
+}
+
+// @Route("/{version}/code/functions/runs", "GET")
+export class GetCodeFunctionRuns extends CodeMashRequestBase implements IReturn<GetCodeFunctionRunsResponse>
+{
+    /** @description The trigger whose function runs to list (trg_…). One of triggerId / taskId. */
+    // @ApiMember(Description="The trigger whose function runs to list (trg_…). One of triggerId / taskId.")
+    public triggerId?: string;
+
+    /** @description The scheduler task whose function runs to list (tsk_…). One of triggerId / taskId. */
+    // @ApiMember(Description="The scheduler task whose function runs to list (tsk_…). One of triggerId / taskId.")
+    public taskId?: string;
+
+    /** @description How many runs, newest first: 1-50. Default 20. */
+    // @ApiMember(DataType="integer", Description="How many runs, newest first: 1-50. Default 20.")
+    public limit?: number;
+
+    public constructor(init?: Partial<GetCodeFunctionRuns>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetCodeFunctionRuns'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetCodeFunctionRunsResponse(); }
+}
+
+// @Route("/{version}/code/functions/invoke", "POST")
+// @DataContract
+export class InvokeCodeFunction extends CodeMashRequestBase implements IReturn<InvokeCodeFunctionResponse>
+{
+    /** @description Which function: { integrationId, functionId, qualifier? }. */
+    // @DataMember
+    // @ApiMember(Description="Which function: { integrationId, functionId, qualifier? }.", IsRequired=true)
+    public functionRef: FunctionRefDto;
+
+    // @DataMember
+    public payload?: { [index:string]: Object; };
+
+    /** @description Sync (wait for the result, default) or Async (fire and forget). */
+    // @DataMember
+    // @ApiMember(Description="Sync (wait for the result, default) or Async (fire and forget).")
+    public invocationType: CodeInvocationType;
+
+    /** @description The service user the function acts as (usr_…); omitted = you. */
+    // @DataMember
+    // @ApiMember(Description="The service user the function acts as (usr_…); omitted = you.")
+    public runAsUserId?: string;
+
+    /** @description A JSON object → envelope config. No bindings: a manual call has nothing to bind them with. */
+    // @DataMember
+    // @ApiMember(Description="A JSON object → envelope config. No bindings: a manual call has nothing to bind them with.")
+    public config?: string;
+
+    public constructor(init?: Partial<InvokeCodeFunction>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'InvokeCodeFunction'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new InvokeCodeFunctionResponse(); }
 }
 
 /** @description Disable push service */
@@ -17948,14 +19831,14 @@ export class TestPushIntegration extends CodeMashRequestBase implements IReturn<
     // @ApiMember(Description="The push integration id to test. Get it from get_push_integrations.", IsRequired=true)
     public integrationId: string;
 
-    /** @description Optional device token to send the test notification to. Requires DeliveryFamily when set. */
+    /** @description The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Fake integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily. */
     // @DataMember
-    // @ApiMember(Description="Optional device token to send the test notification to. Requires DeliveryFamily when set.")
+    // @ApiMember(Description="The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Fake integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily.")
     public testToken?: string;
 
-    /** @description Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set. */
+    /** @description The delivery family of TestToken: ios, android, chrome (any browser web push) or safari. Requires TestToken. */
     // @DataMember
-    // @ApiMember(Description="Optional delivery family for the test token (ios, android, chrome or safari). Requires TestToken when set.")
+    // @ApiMember(Description="The delivery family of TestToken: ios, android, chrome (any browser web push) or safari. Requires TestToken.")
     public deliveryFamily?: string;
 
     public constructor(init?: Partial<TestPushIntegration>) { super(init); (Object as any).assign(this, init); }
@@ -18737,6 +20620,14 @@ export class GetLogs extends CodeMashListPaginationRequestBase implements IRetur
     // @ApiMember(DataType="string", Description="Free-text search over title and message.", Name="search", ParameterType="query")
     public search?: string;
 
+    /** @description Meta key to filter on (e.g. taskId). Letters, digits and _ only. Must come with metaValue. */
+    // @ApiMember(DataType="string", Description="Meta key to filter on (e.g. taskId). Letters, digits and _ only. Must come with metaValue.", Name="metaKey", ParameterType="query")
+    public metaKey?: string;
+
+    /** @description Exact Meta value for metaKey (e.g. a task id tsk_...). Must come with metaKey. */
+    // @ApiMember(DataType="string", Description="Exact Meta value for metaKey (e.g. a task id tsk_...). Must come with metaKey.", Name="metaValue", ParameterType="query")
+    public metaValue?: string;
+
     /** @description Start of the timestamp range (inclusive, UTC). Optional. */
     // @ApiMember(Description="Start of the timestamp range (inclusive, UTC). Optional.")
     public fromUtc?: string;
@@ -19287,6 +21178,86 @@ export class DeleteAiProjectTrigger extends DeleteTrigger implements IReturn<Emp
     public createResponse() { return new EmptyResponse(); }
 }
 
+/** @description Starts a browser sign-in for the Norbix CLI (OAuth device authorization, RFC 8628): a device code for polling and a user code the person confirms on the dashboard. */
+// @Route("/{version}/auth/device/start", "POST")
+// @Api(Description="Starts a browser sign-in for the Norbix CLI (OAuth device authorization, RFC 8628): a device code for polling and a user code the person confirms on the dashboard.")
+export class AuthDeviceStartRequest extends RequestBase implements IReturn<AuthDeviceStartResponse>
+{
+    /** @description Who asks, shown on the dashboard, e.g. "norbix-cli". 1–80 printable characters. */
+    // @ApiMember(Description="Who asks, shown on the dashboard, e.g. \"norbix-cli\". 1–80 printable characters.", IsRequired=true)
+    public clientName: string;
+
+    /** @description The computer name, shown on the dashboard and part of the AI service user's name (cleaned, at most 40 characters). */
+    // @ApiMember(Description="The computer name, shown on the dashboard and part of the AI service user's name (cleaned, at most 40 characters).")
+    public deviceName?: string;
+
+    /** @description The project the CLI wants to work in. It must be a project of the account of the person who allows the sign-in. */
+    // @ApiMember(Description="The project the CLI wants to work in. It must be a project of the account of the person who allows the sign-in.")
+    public projectId?: string;
+
+    public constructor(init?: Partial<AuthDeviceStartRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'AuthDeviceStartRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new AuthDeviceStartResponse(); }
+}
+
+/** @description Polls a CLI browser sign-in (RFC 8628). Always HTTP 200: an error name (authorization_pending, slow_down, access_denied, expired_token, invalid_grant, invalid_request) or the tokens, once. */
+// @Route("/{version}/auth/device/token", "POST")
+// @Api(Description="Polls a CLI browser sign-in (RFC 8628). Always HTTP 200: an error name (authorization_pending, slow_down, access_denied, expired_token, invalid_grant, invalid_request) or the tokens, once.")
+export class AuthDeviceTokenRequest extends RequestBase implements IReturn<AuthDeviceTokenResponse>
+{
+    /** @description The deviceCode from POST /auth/device/start. */
+    // @ApiMember(Description="The deviceCode from POST /auth/device/start.", IsRequired=true)
+    public deviceCode: string;
+
+    public constructor(init?: Partial<AuthDeviceTokenRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'AuthDeviceTokenRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new AuthDeviceTokenResponse(); }
+}
+
+/** @description The dashboard screen for a CLI browser sign-in: the client and computer that asked, and the roles the signed-in person may give. */
+// @Route("/{version}/auth/device/consent", "GET")
+// @Api(Description="The dashboard screen for a CLI browser sign-in: the client and computer that asked, and the roles the signed-in person may give.")
+export class AuthDeviceConsentRequest extends RequestBase implements IReturn<AuthDeviceConsentResponse>
+{
+    /** @description The code the terminal shows, XXXX-XXXX (case, spaces and the dash do not matter). */
+    // @ApiMember(Description="The code the terminal shows, XXXX-XXXX (case, spaces and the dash do not matter).", IsRequired=true)
+    public userCode: string;
+
+    public constructor(init?: Partial<AuthDeviceConsentRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'AuthDeviceConsentRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new AuthDeviceConsentResponse(); }
+}
+
+/** @description The signed-in person's decision on a CLI browser sign-in: allow with Membership roles, or deny. */
+// @Route("/{version}/auth/device/consent", "POST")
+// @Api(Description="The signed-in person's decision on a CLI browser sign-in: allow with Membership roles, or deny.")
+export class AuthDeviceConsentDecisionRequest extends RequestBase implements IReturn<AuthDeviceConsentDecisionResponse>
+{
+    /** @description The code the terminal shows, XXXX-XXXX. */
+    // @ApiMember(Description="The code the terminal shows, XXXX-XXXX.", IsRequired=true)
+    public userCode: string;
+
+    /** @description allow | deny. */
+    // @ApiMember(Description="allow | deny.", IsRequired=true)
+    public decision: string;
+
+    /** @description For allow: account role ids (acc_…_nr_…) to give. */
+    // @ApiMember(Description="For allow: account role ids (acc_…_nr_…) to give.")
+    public accountRoleIds?: string[];
+
+    /** @description For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }]. */
+    // @ApiMember(Description="For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }].")
+    public projectRoles?: AiProjectRoleIdsDto[];
+
+    public constructor(init?: Partial<AuthDeviceConsentDecisionRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'AuthDeviceConsentDecisionRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new AuthDeviceConsentDecisionResponse(); }
+}
+
 /** @description OAuth protected-resource metadata (RFC 9728) for the Hub MCP endpoint. */
 // @Route("/.well-known/oauth-protected-resource", "GET")
 // @Route("/.well-known/oauth-protected-resource/{Path*}", "GET")
@@ -19329,9 +21300,9 @@ export class OAuthRegisterRequest implements IReturn<string>
     public createResponse() { return ''; }
 }
 
-/** @description OAuth authorization endpoint: sign-in hint or the consent page (HTML). */
+/** @description OAuth authorization endpoint: checks the request and redirects to the dashboard consent screen. */
 // @Route("/{version}/oauth/authorize", "GET")
-// @Api(Description="OAuth authorization endpoint: sign-in hint or the consent page (HTML).")
+// @Api(Description="OAuth authorization endpoint: checks the request and redirects to the dashboard consent screen.")
 export class OAuthAuthorizeRequest implements IReturn<string>
 {
     public version?: string;
@@ -19342,17 +21313,106 @@ export class OAuthAuthorizeRequest implements IReturn<string>
     public createResponse() { return ''; }
 }
 
-/** @description OAuth authorization endpoint: the person's decision from the consent page. */
-// @Route("/{version}/oauth/authorize", "POST")
-// @Api(Description="OAuth authorization endpoint: the person's decision from the consent page.")
-export class OAuthAuthorizeDecisionRequest implements IReturn<string>
+/** @description The dashboard consent screen for an AI tool: the client, where it returns to, and the roles the signed-in person may give. */
+// @Route("/{version}/oauth/consent", "GET")
+// @Api(Description="The dashboard consent screen for an AI tool: the client, where it returns to, and the roles the signed-in person may give.")
+export class OAuthConsentRequest extends RequestBase implements IReturn<OAuthConsentResponse>
 {
-    public version?: string;
+    /** @description OAuth response_type from the authorize request (must be "code"). */
+    // @ApiMember(Description="OAuth response_type from the authorize request (must be \"code\").")
+    public responseType?: string;
 
-    public constructor(init?: Partial<OAuthAuthorizeDecisionRequest>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'OAuthAuthorizeDecisionRequest'; }
+    /** @description OAuth client_id from the authorize request. */
+    // @ApiMember(Description="OAuth client_id from the authorize request.")
+    public clientId?: string;
+
+    /** @description OAuth redirect_uri from the authorize request. */
+    // @ApiMember(Description="OAuth redirect_uri from the authorize request.")
+    public redirectUri?: string;
+
+    /** @description PKCE code_challenge from the authorize request. */
+    // @ApiMember(Description="PKCE code_challenge from the authorize request.")
+    public codeChallenge?: string;
+
+    /** @description PKCE code_challenge_method from the authorize request (must be "S256"). */
+    // @ApiMember(Description="PKCE code_challenge_method from the authorize request (must be \"S256\").")
+    public codeChallengeMethod?: string;
+
+    /** @description OAuth state from the authorize request; returned to the client unchanged. */
+    // @ApiMember(Description="OAuth state from the authorize request; returned to the client unchanged.")
+    public state?: string;
+
+    /** @description OAuth resource (RFC 8707) from the authorize request. */
+    // @ApiMember(Description="OAuth resource (RFC 8707) from the authorize request.")
+    public resource?: string;
+
+    /** @description OAuth scope from the authorize request. */
+    // @ApiMember(Description="OAuth scope from the authorize request.")
+    public scope?: string;
+
+    public constructor(init?: Partial<OAuthConsentRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthConsentRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new OAuthConsentResponse(); }
+}
+
+/** @description The signed-in person's decision on the consent screen: allow with roles, or deny. Returns the address to send the browser to. */
+// @Route("/{version}/oauth/consent", "POST")
+// @Api(Description="The signed-in person's decision on the consent screen: allow with roles, or deny. Returns the address to send the browser to.")
+export class OAuthConsentDecisionRequest extends RequestBase implements IReturn<OAuthConsentDecisionResponse>
+{
+    /** @description OAuth response_type from the authorize request (must be "code"). */
+    // @ApiMember(Description="OAuth response_type from the authorize request (must be \"code\").")
+    public responseType?: string;
+
+    /** @description OAuth client_id from the authorize request. */
+    // @ApiMember(Description="OAuth client_id from the authorize request.")
+    public clientId?: string;
+
+    /** @description OAuth redirect_uri from the authorize request. */
+    // @ApiMember(Description="OAuth redirect_uri from the authorize request.")
+    public redirectUri?: string;
+
+    /** @description PKCE code_challenge from the authorize request. */
+    // @ApiMember(Description="PKCE code_challenge from the authorize request.")
+    public codeChallenge?: string;
+
+    /** @description PKCE code_challenge_method from the authorize request (must be "S256"). */
+    // @ApiMember(Description="PKCE code_challenge_method from the authorize request (must be \"S256\").")
+    public codeChallengeMethod?: string;
+
+    /** @description OAuth state from the authorize request; returned to the client unchanged. */
+    // @ApiMember(Description="OAuth state from the authorize request; returned to the client unchanged.")
+    public state?: string;
+
+    /** @description OAuth resource (RFC 8707) from the authorize request. */
+    // @ApiMember(Description="OAuth resource (RFC 8707) from the authorize request.")
+    public resource?: string;
+
+    /** @description OAuth scope from the authorize request. */
+    // @ApiMember(Description="OAuth scope from the authorize request.")
+    public scope?: string;
+
+    /** @description The consentTicket from GET /oauth/consent. */
+    // @ApiMember(Description="The consentTicket from GET /oauth/consent.", IsRequired=true)
+    public consentTicket: string;
+
+    /** @description allow | deny. */
+    // @ApiMember(Description="allow | deny.", IsRequired=true)
+    public decision: string;
+
+    /** @description For allow: account role ids (acc_…_nr_…) to give. */
+    // @ApiMember(Description="For allow: account role ids (acc_…_nr_…) to give.")
+    public accountRoleIds?: string[];
+
+    /** @description For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }]. */
+    // @ApiMember(Description="For allow: project roles to give, [{ projectId, roleIds: [pr_…_nr_…] }].")
+    public projectRoles?: AiProjectRoleIdsDto[];
+
+    public constructor(init?: Partial<OAuthConsentDecisionRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'OAuthConsentDecisionRequest'; }
     public getMethod() { return 'POST'; }
-    public createResponse() { return ''; }
+    public createResponse() { return new OAuthConsentDecisionResponse(); }
 }
 
 /** @description OAuth token endpoint: authorization code (PKCE S256) or refresh token → access token. */
@@ -19680,6 +21740,7 @@ export class UpdateWebhookIntegrationExtraHeadersRequest extends CodeMashRequest
 // @Route("/{version}/webhooks/{source}/{integrationInstanceId}", "POST")
 export class ReceiveWebhook implements IReturnVoid
 {
+    public version?: string;
     public source: string;
     public integrationInstanceId: string;
     public requestStream: string;
@@ -19845,6 +21906,22 @@ export class GetSchedulerTasks extends CodeMashListPaginationRequestBase impleme
     public getTypeName() { return 'GetSchedulerTasks'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetSchedulerTasksResponse(); }
+}
+
+/** @description Gets the latest runs of a scheduled task */
+// @Route("/{version}/scheduler/tasks/{id}/runs", "GET")
+// @Api(Description="Gets the latest runs of a scheduled task")
+export class GetSchedulerTaskRuns extends CodeMashRequestBase implements IReturn<GetSchedulerTaskRunsResponse>
+{
+    public id: string;
+    /** @description How many runs to return, newest first: 1-50. Default 10. */
+    // @ApiMember(DataType="integer", Description="How many runs to return, newest first: 1-50. Default 10.", Name="take", ParameterType="query")
+    public take?: number;
+
+    public constructor(init?: Partial<GetSchedulerTaskRuns>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetSchedulerTaskRuns'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetSchedulerTaskRunsResponse(); }
 }
 
 /** @description Save scheduled task */
@@ -20014,6 +22091,21 @@ export class MergeContactsRequest extends CodeMashRequestBase implements IReturn
     public getTypeName() { return 'MergeContactsRequest'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Repair contact roles from their logins */
+// @Route("/{version}/membership/users/repair-roles", "POST")
+// @Api(Description="Repair contact roles from their logins")
+export class RepairContactRolesRequest extends CodeMashRequestBase implements IReturn<RepairContactRolesResponse>
+{
+    /** @description True (default) = only count what would change. False = write. */
+    // @ApiMember(Description="True (default) = only count what would change. False = write.")
+    public dryRun: boolean;
+
+    public constructor(init?: Partial<RepairContactRolesRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'RepairContactRolesRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new RepairContactRolesResponse(); }
 }
 
 /** @description Update a contact */
