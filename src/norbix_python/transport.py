@@ -42,6 +42,9 @@ class TransportConfig:
     timeout: float
     env: str = "PROD"
     region: str | None = None
+    # Accept-Language value (e.g. "lt" or "lt-LT, en;q=0.8"). No default —
+    # when unset no Accept-Language header is sent.
+    language: str | None = None
     base_url_api_is_default: bool = False
     base_url_hub_is_default: bool = False
     default_headers: dict[str, str] = field(default_factory=dict)
@@ -68,6 +71,7 @@ class Transport:
         bearer_token: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         response_type: ResponseType = "json",
         follow_redirects: bool = False,
         extra_headers: dict[str, str] | None = None,
@@ -118,6 +122,13 @@ class Transport:
         resolved_region = region if region is not None else self._cfg.region
         if resolved_region:
             headers["nb-region"] = resolved_region
+        # Language: per-call override wins over the client default. The
+        # gateway reads only the standard Accept-Language header (q-values
+        # honoured; project default when nothing matches). No default here —
+        # the header is omitted when unset.
+        resolved_language = language if language is not None else self._cfg.language
+        if resolved_language:
+            headers["Accept-Language"] = resolved_language
         if body is not None:
             headers["Content-Type"] = "application/json"
         # Per-call headers win over everything above (e.g. the MCP endpoint
@@ -226,6 +237,7 @@ class AsyncTransport:
         bearer_token: str | None = None,
         env: str | None = None,
         region: str | None = None,
+        language: str | None = None,
         response_type: ResponseType = "json",
         follow_redirects: bool = False,
         extra_headers: dict[str, str] | None = None,
@@ -276,6 +288,13 @@ class AsyncTransport:
         resolved_region = region if region is not None else self._cfg.region
         if resolved_region:
             headers["nb-region"] = resolved_region
+        # Language: per-call override wins over the client default. The
+        # gateway reads only the standard Accept-Language header (q-values
+        # honoured; project default when nothing matches). No default here —
+        # the header is omitted when unset.
+        resolved_language = language if language is not None else self._cfg.language
+        if resolved_language:
+            headers["Accept-Language"] = resolved_language
         if body is not None:
             headers["Content-Type"] = "application/json"
         # Per-call headers win over everything above (e.g. the MCP endpoint

@@ -314,6 +314,7 @@ NORBIX_ACCOUNT_ID=acc_456
 NORBIX_API_URL=https://api.norbix.ai
 NORBIX_HUB_URL=https://hub.norbix.ai
 NORBIX_REGION=nb-eu-germany
+NORBIX_LANGUAGE=lt
 ```
 
 ```python
@@ -408,6 +409,33 @@ norbix.account.create_project(
 
 With the combined client the same modules live under `client.hub`
 (`norbix.hub.regions.list()`, `norbix.hub.account.create_project(...)`).
+
+## Response language (Accept-Language)
+
+The gateway picks the response language **only** from the standard
+`Accept-Language` header (q-values are honoured; the project default language
+is used when nothing matches) and reports the chosen one in the
+`Content-Language` response header. The old `cultureCode` field and the
+`CultureCode` / `norbix-language` headers are gone.
+
+The SDK has **no default language**: when none is configured, no
+`Accept-Language` header is sent. Resolution order: explicit `language=` on
+the client → `NORBIX_LANGUAGE` environment variable → unset.
+
+```python
+norbix = Norbix(api_key="sk_live_xxx", project_id="proj_123", language="lt")
+norbix = Norbix(api_key="sk_live_xxx", project_id="proj_123", language="lt-LT, en;q=0.8")
+
+norbix.set_language("en")   # subsequent requests send Accept-Language: en
+norbix.get_language()       # "en"
+norbix.set_language(None)   # clear — no Accept-Language header is sent
+
+# Per-call override, wherever a per-call region= is accepted:
+norbix.hub.regions.list(language="de")
+```
+
+`language=` is accepted by `Norbix`, `NorbixApi`, `NorbixHub` and
+`AsyncNorbix`.
 
 ### Async
 
