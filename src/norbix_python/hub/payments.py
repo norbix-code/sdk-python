@@ -35,6 +35,19 @@ class PaymentsModule:
             bearer_token=bearer_token,
         )
 
+    def get_payments_webhook_log(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/payments/webhooks/log — the received payment webhooks of the project, newest first (optional ``integration_id``, ``limit``)."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/payments/webhooks/log",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def delete_payments_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """DELETE /{version}/payments/triggers/{triggerId}"""
         return self._transport.send(
@@ -241,6 +254,19 @@ class AsyncPaymentsModule:
             target="hub",
             path="/{version}/payments/enable",
             method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_payments_webhook_log(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/payments/webhooks/log — the received payment webhooks of the project, newest first (optional ``integration_id``, ``limit``)."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/payments/webhooks/log",
+            method="GET",
             path_params={},
             request=request,
             scope="project",
