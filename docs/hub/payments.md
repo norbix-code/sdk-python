@@ -18,5 +18,6 @@ Access with `norbix.hub.payments`.
 | `enable_payments_integration` | `PUT` | `/{version}/payments/integrations/{Id}/enable` | `project` |
 | `get_payments_integration` | `GET` | `/{version}/payments/integrations/{id}` | `project` |
 | `get_payments_integrations` | `GET` | `/{version}/payments/integrations` | `project` |
+| `get_payments_webhook_log` | `GET` | `/{version}/payments/webhooks/log` | `project` |
 | `save_payments_integration` | `POST` | `/{version}/payments/integrations` | `project` |
 | `test_payments_integration` | `POST` | `/{version}/payments/integrations/test` | `project` |
