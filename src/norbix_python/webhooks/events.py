@@ -22,6 +22,7 @@ NORBIX_WEBHOOK_EVENT_NAMES: Final[tuple[str, ...]] = (
     "membership.user.reactivated",
     "files.file.uploaded",
     "files.file.deleted",
+    "payments.webhook.received",
 )
 
 
@@ -54,3 +55,9 @@ class NorbixWebhookEvents:
     class Files:
         FILE_UPLOADED: Final = "files.file.uploaded"
         FILE_DELETED: Final = "files.file.deleted"
+
+    class Payments:
+        #: A payment provider (Stripe, Apple In-App, Google In-App, …) called the
+        #: project's payments webhook. The payload is the normalized payment fact
+        #: (``PaymentFact``); the provider's own event name is ``payload.event_name``.
+        WEBHOOK_RECEIVED: Final = "payments.webhook.received"

@@ -317,3 +317,36 @@ def test_async_receiver_exposes_event_id() -> None:
 
     result = asyncio.run(run())
     assert result.event_id == "evt_3"  # type: ignore[attr-defined]
+
+
+def test_payments_payload_is_the_payment_fact_with_provider_ids_on_metadata() -> None:
+    # gateway campaign audit/payments: every payment provider callback reaches a
+    # destination as ONE event; data is the normalized fact, never the raw payload.
+    receiver = NorbixWebhookReceiver()
+    captured: dict[str, object] = {}
+    fact = {
+        "integrationId": "int_stripe",
+        "provider": "Stripe",
+        "providerEventId": "evt_1",
+        "eventName": "payment_intent.succeeded",
+        "status": "Succeeded",
+        "amountMinor": 1099,
+        "currency": "USD",
+        "externalIds": {"customer": "cus_1"},
+    }
+
+    receiver.on(
+        NorbixWebhookEvents.Payments.WEBHOOK_RECEIVED,
+        lambda payload, event: captured.update(payload=payload, event=event),
+    )
+    receiver.handle(raw_body=_body("payments.webhook.received", fact), headers={})
+
+    payment = captured["payload"]
+    assert payment.event_name == "payment_intent.succeeded"  # type: ignore[attr-defined]
+    assert payment.status == "Succeeded"  # type: ignore[attr-defined]
+    assert payment.raw["amountMinor"] == 1099  # type: ignore[attr-defined]
+    event = captured["event"]
+    assert event.metadata.integration_id == "int_stripe"  # type: ignore[attr-defined]
+    assert event.metadata.payment.provider == "Stripe"  # type: ignore[attr-defined]
+    assert event.metadata.payment.provider_event_id == "evt_1"  # type: ignore[attr-defined]
+    assert "payments.webhook.received" in NORBIX_WEBHOOK_EVENT_NAMES

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from ..functions import PaymentFact
 from .models import (
     FileDeleted,
     FileResourceRef,
@@ -11,6 +12,7 @@ from .models import (
     WebhookEntityRef,
     WebhookEnvelope,
     WebhookEventMetadata,
+    WebhookPaymentRef,
     WebhookRecordIds,
     WebhookSchemaInfo,
 )
@@ -84,5 +86,19 @@ def normalize_webhook(envelope: WebhookEnvelope) -> tuple[Any, WebhookEventMetad
         if event == "files.file.deleted":
             return FileDeleted(path=data.get("path")), metadata
         return envelope.data, metadata
+
+    if event.startswith("payments."):
+        # The whole data object IS the normalized payment fact (the same shape
+        # as a Code function's ``data.payment``); the provider ids are lifted
+        # onto metadata so a handler can de-duplicate on them.
+        if isinstance(data.get("integrationId"), str):
+            metadata.integration_id = data["integrationId"]
+        if all(isinstance(data.get(k), str) for k in ("provider", "providerEventId", "eventName")):
+            metadata.payment = WebhookPaymentRef(
+                provider=data["provider"],
+                providerEventId=data["providerEventId"],
+                eventName=data["eventName"],
+            )
+        return PaymentFact(_as_dict(data)), metadata
 
     return envelope.data, metadata

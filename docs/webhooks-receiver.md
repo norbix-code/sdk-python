@@ -69,6 +69,7 @@ flips give the **entity directly**; only an arbitrary mutation gives a
 | `database.record.updated` / `replaced` | mutation | `Mutation` of documents |
 | `database.records.inserted` | batch | `list` of documents |
 | `files.file.uploaded` | entity | `FileResourceRef` |
+| `payments.webhook.received` | entity | `PaymentFact` — the normalized payment fact (`event_name` = the provider's own name, `status`, `raw["amountMinor"]`, …); `event.metadata.payment` = provider ids |
 
 Wrapper identifiers (entity id, schema, record ids) are lifted onto
 `event.metadata` (`event.metadata.user`, `.schema`, `.record`, `.records`).
