@@ -19,6 +19,7 @@ from .models import (
     WebhookEvent,
     WebhookEventMetadata,
     WebhookHandleResult,
+    WebhookPaymentRef,
     WebhookRecordIds,
     WebhookSchemaInfo,
 )
@@ -40,6 +41,7 @@ __all__ = [
     "AsyncNorbixWebhookReceiver",
     "FileDeleted",
     "FileResourceRef",
+    "WebhookPaymentRef",
     "Mutation",
     "NorbixWebhookError",
     "NorbixWebhookEvents",

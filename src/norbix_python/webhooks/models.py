@@ -73,6 +73,14 @@ class WebhookEntityRef(_Model):
     id: str
 
 
+class WebhookPaymentRef(_Model):
+    """The provider ids of a payments.* delivery."""
+
+    provider: str
+    provider_event_id: str = Field(alias="providerEventId")
+    event_name: str = Field(alias="eventName")
+
+
 class WebhookRecordIds(_Model):
     """Batch record ids."""
 
@@ -93,6 +101,9 @@ with warnings.catch_warnings():
         record: WebhookEntityRef | None = None
         records: WebhookRecordIds | None = None
         integration_id: str | None = Field(default=None, alias="integrationId")
+        #: payments.* events: the provider and its own event id / name
+        #: (e.g. ``Stripe``, ``evt_…``, ``payment_intent.succeeded``).
+        payment: WebhookPaymentRef | None = None
 
 
 class WebhookEnvelope(_Model):
