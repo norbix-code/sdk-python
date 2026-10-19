@@ -7,4 +7,5 @@
 | [`echo`](./echo.md) | 1 |
 | [`files`](./files.md) | 10 |
 | [`membership`](./membership.md) | 18 |
+| [`payments`](./payments.md) | 4 |
 | [`public`](./public.md) | 2 |
