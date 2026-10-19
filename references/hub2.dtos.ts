@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-10-14 08:01:42
+Date: 2026-10-19 11:26:14
 Version: 10.20
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: http://localhost:5001
@@ -338,6 +338,9 @@ export enum SchemaTriggerType
     OnInserted = 'OnInserted',
     OnDeleted = 'OnDeleted',
     OnUpdated = 'OnUpdated',
+    OnInsertedMany = 'OnInsertedMany',
+    OnUpdatedMany = 'OnUpdatedMany',
+    OnDeletedMany = 'OnDeletedMany',
 }
 
 export class SchemaTriggerRequest extends SaveTriggerRequest
@@ -370,6 +373,7 @@ export enum PaymentTriggerType
     OnOrderCreated = 'OnOrderCreated',
     OnOrderPaid = 'OnOrderPaid',
     OnWebhookCallReceived = 'OnWebhookCallReceived',
+    OnOrderPaymentChanged = 'OnOrderPaymentChanged',
 }
 
 export class PaymentTriggerRequest extends SaveTriggerRequest
@@ -888,6 +892,7 @@ export enum PaymentGatewayPlatform
     CheckOutCom = 'CheckOutCom',
     Mollie = 'Mollie',
     Worldpay = 'Worldpay',
+    Montonio = 'Montonio',
 }
 
 export class PaymentIntegrationRequest
@@ -995,6 +1000,88 @@ export class GoogleInAppPaymentIntegrationRequest extends PaymentIntegrationRequ
     public webhookPackageName?: string;
 
     public constructor(init?: Partial<GoogleInAppPaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class MontonioPaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public accessKey: string;
+    public secretKey: string;
+    public isSandbox: boolean;
+    public locale?: string;
+
+    public constructor(init?: Partial<MontonioPaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class ShopifyPaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public shopDomain: string;
+    public webhookSecret: string;
+
+    public constructor(init?: Partial<ShopifyPaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class WooCommercePaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public storeUrl: string;
+    public webhookSecret: string;
+
+    public constructor(init?: Partial<WooCommercePaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class MagentoPaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public storeUrl: string;
+    public webhookSecret: string;
+
+    public constructor(init?: Partial<MagentoPaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class BraintreePaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public merchantId: string;
+    public environment: string;
+    public privateKey: string;
+    public webhookSecret?: string;
+
+    public constructor(init?: Partial<BraintreePaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class AuthorizeNetPaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public merchantLoginId: string;
+    public environment: string;
+    public transactionKey: string;
+    public webhookSignatureKey?: string;
+
+    public constructor(init?: Partial<AuthorizeNetPaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class CheckOutComPaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public merchantAccount: string;
+    public environment: string;
+    public secretKey: string;
+    public webhookSecret?: string;
+
+    public constructor(init?: Partial<CheckOutComPaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class WorldpayPaymentIntegrationRequest extends PaymentIntegrationRequest
+{
+    public provider: PaymentGatewayPlatform;
+    public merchantCode: string;
+    public environment: string;
+    public apiKey: string;
+    public webhookSecret?: string;
+
+    public constructor(init?: Partial<WorldpayPaymentIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -2121,6 +2208,9 @@ export class EmailToCollectionRecordsDeliverySettingsDto extends EmailCampaignDe
     // @DataMember
     public languages?: string[];
 
+    // @DataMember
+    public recordIds?: string[];
+
     public constructor(init?: Partial<EmailToCollectionRecordsDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
 }
 
@@ -2186,6 +2276,9 @@ export class PushToCollectionRecordsDeliverySettingsDto extends PushCampaignDeli
 
     // @DataMember
     public languages?: string[];
+
+    // @DataMember
+    public recordIds?: string[];
 
     public constructor(init?: Partial<PushToCollectionRecordsDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -2258,6 +2351,9 @@ export class SmsToCollectionRecordsDeliverySettingsDto extends SmsCampaignDelive
 
     // @DataMember
     public languages?: string[];
+
+    // @DataMember
+    public recordIds?: string[];
 
     public constructor(init?: Partial<SmsToCollectionRecordsDeliverySettingsDto>) { super(init); (Object as any).assign(this, init); }
 }
@@ -2581,6 +2677,173 @@ export class WorldpayPaymentIntegrationDto extends PaymentsIntegrationDto
     public webhookSecret?: string;
 
     public constructor(init?: Partial<WorldpayPaymentIntegrationDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class MontonioPaymentIntegrationDto extends PaymentsIntegrationDto
+{
+    public accessKey: string;
+    public isSandbox: boolean;
+    public locale?: string;
+
+    public constructor(init?: Partial<MontonioPaymentIntegrationDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class PaymentOrderLineDto
+{
+    // @DataMember
+    public sku: string;
+
+    // @DataMember
+    public title: string;
+
+    // @DataMember
+    public quantity: number;
+
+    // @DataMember
+    public unitAmountMinor: number;
+
+    // @DataMember
+    public amountMinor: number;
+
+    public constructor(init?: Partial<PaymentOrderLineDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class PaymentOrderCheckoutDto
+{
+    // @DataMember
+    public attempt: number;
+
+    // @DataMember
+    public integrationId: string;
+
+    // @DataMember
+    public provider: string;
+
+    // @DataMember
+    public providerOrderId: string;
+
+    // @DataMember
+    public providerReference: string;
+
+    // @DataMember
+    public paymentUrl: string;
+
+    // @DataMember
+    public method: string;
+
+    // @DataMember
+    public startedOnUtc: string;
+
+    // @DataMember
+    public expiresAtUtc: string;
+
+    public constructor(init?: Partial<PaymentOrderCheckoutDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class PaymentOrderDto
+{
+    // @DataMember
+    public id: string;
+
+    // @DataMember
+    public env: string;
+
+    // @DataMember
+    public buyerUserId: string;
+
+    // @DataMember
+    public merchantReference: string;
+
+    // @DataMember
+    public currency: string;
+
+    // @DataMember
+    public priceVersion: string;
+
+    // @DataMember
+    public lines: PaymentOrderLineDto[] = [];
+
+    // @DataMember
+    public totalMinor: number;
+
+    // @DataMember
+    public metadata: { [index:string]: string; } = {};
+
+    // @DataMember
+    public status: string;
+
+    // @DataMember
+    public createdOnUtc: string;
+
+    // @DataMember
+    public updatedOnUtc: string;
+
+    // @DataMember
+    public checkouts: PaymentOrderCheckoutDto[] = [];
+
+    // @DataMember
+    public settledMinor?: number;
+
+    // @DataMember
+    public refundedMinor: number;
+
+    // @DataMember
+    public paidOnUtc?: string;
+
+    // @DataMember
+    public providerPaymentId?: string;
+
+    // @DataMember
+    public mismatches: string[] = [];
+
+    public constructor(init?: Partial<PaymentOrderDto>) { (Object as any).assign(this, init); }
+}
+
+export class PaymentEventDto
+{
+    public integrationId: string;
+    public provider: string;
+    public providerEventId: string;
+    public orderId?: string;
+    public eventName: string;
+    public status: string;
+    public amountMinor?: number;
+    public currency?: string;
+    public externalIds?: { [index:string]: string; };
+    public occurredOn?: string;
+    public receivedOn: string;
+
+    public constructor(init?: Partial<PaymentEventDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class PaymentOrderEventDto
+{
+    // @DataMember
+    public orderEventId: string;
+
+    // @DataMember
+    public event: string;
+
+    // @DataMember
+    public from: string;
+
+    // @DataMember
+    public to: string;
+
+    // @DataMember
+    public reason: string;
+
+    // @DataMember
+    public order: PaymentOrderDto;
+
+    // @DataMember
+    public payment: PaymentEventDto;
+
+    public constructor(init?: Partial<PaymentOrderEventDto>) { (Object as any).assign(this, init); }
 }
 
 export class MembershipIntegrationDto extends IntegrationDto
@@ -3191,6 +3454,12 @@ export class SchedulerTaskDto
     public updatedAtUnix?: number;
 
     // @DataMember
+    public endsAtUnix?: number;
+
+    // @DataMember
+    public hasEnded: boolean;
+
+    // @DataMember
     public isFailing: boolean;
 
     // @DataMember
@@ -3226,6 +3495,9 @@ export class IdResponse extends ResponseBase
 
     // @DataMember
     public status?: string;
+
+    // @DataMember
+    public warnings?: string[];
 
     public constructor(init?: Partial<IdResponse>) { super(init); (Object as any).assign(this, init); }
 }
@@ -4023,6 +4295,394 @@ export class ConversationSnapshotEntryWireDto extends AiChatEntryWireDto
     public constructor(init?: Partial<ConversationSnapshotEntryWireDto>) { super(init); (Object as any).assign(this, init); }
 }
 
+export enum CodeFunctionSource
+{
+    Database = 'Database',
+    Membership = 'Membership',
+    Files = 'Files',
+    Payments = 'Payments',
+    Ai = 'Ai',
+    Scheduler = 'Scheduler',
+    Manual = 'Manual',
+}
+
+export enum CodeFunctionCallerKind
+{
+    User = 'User',
+    ApiKey = 'ApiKey',
+    System = 'System',
+}
+
+// @DataContract
+export class CodeFunctionCallerDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public email?: string;
+
+    // @DataMember
+    public kind: CodeFunctionCallerKind;
+
+    public constructor(init?: Partial<CodeFunctionCallerDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionRunAsDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public accessToken?: string;
+
+    // @DataMember
+    public expiresAt?: string;
+
+    public constructor(init?: Partial<CodeFunctionRunAsDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionContextDto
+{
+    // @DataMember
+    public accountId: string;
+
+    // @DataMember
+    public projectId: string;
+
+    // @DataMember
+    public environment: string;
+
+    // @DataMember
+    public region?: string;
+
+    // @DataMember
+    public hubUrl: string;
+
+    // @DataMember
+    public apiUrl: string;
+
+    // @DataMember
+    public echoUrl: string;
+
+    // @DataMember
+    public triggerId?: string;
+
+    // @DataMember
+    public taskId?: string;
+
+    // @DataMember
+    public correlationId?: string;
+
+    // @DataMember
+    public caller?: CodeFunctionCallerDto;
+
+    // @DataMember
+    public runAs?: CodeFunctionRunAsDto;
+
+    public constructor(init?: Partial<CodeFunctionContextDto>) { (Object as any).assign(this, init); }
+}
+
+export enum ResourceKindDto
+{
+    Contact = 'contact',
+    Document = 'document',
+    File = 'file',
+    PaymentCustomer = 'paymentCustomer',
+    Order = 'order',
+    Payment = 'payment',
+    Product = 'product',
+    Integration = 'integration',
+}
+
+export class ResourceRefDto
+{
+    public projectId: string;
+    public integrationId?: string;
+    public kind: ResourceKindDto;
+
+    public constructor(init?: Partial<ResourceRefDto>) { (Object as any).assign(this, init); }
+}
+
+export class DocumentRefDto extends ResourceRefDto
+{
+    public kind: ResourceKindDto;
+    public databaseIntegrationId: string;
+    public schemaId: string;
+    public externalId: string;
+
+    public constructor(init?: Partial<DocumentRefDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class DatabaseRecordsBatchDto
+{
+    // @DataMember
+    public ids: string[] = [];
+
+    // @DataMember
+    public count: number;
+
+    // @DataMember
+    public truncated: boolean;
+
+    // @DataMember
+    public documents?: { [index:string]: Object; }[];
+
+    public constructor(init?: Partial<DatabaseRecordsBatchDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class DatabaseRecordChangeDto
+{
+    // @DataMember
+    public collection: string;
+
+    // @DataMember
+    public schemaId: string;
+
+    // @DataMember
+    public schemaVersion?: number;
+
+    // @DataMember
+    public recordId?: string;
+
+    // @DataMember
+    public old?: { [index:string]: Object; };
+
+    // @DataMember
+    public new?: { [index:string]: Object; };
+
+    // @DataMember
+    public truncated: boolean;
+
+    // @DataMember
+    public oldRef?: DocumentRefDto;
+
+    // @DataMember
+    public newRef?: DocumentRefDto;
+
+    // @DataMember
+    public records?: DatabaseRecordsBatchDto;
+
+    public constructor(init?: Partial<DatabaseRecordChangeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class UserChangeDto
+{
+    // @DataMember
+    public userId: string;
+
+    // @DataMember
+    public old?: { [index:string]: Object; };
+
+    // @DataMember
+    public new?: { [index:string]: Object; };
+
+    public constructor(init?: Partial<UserChangeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class FileChangeDto
+{
+    // @DataMember
+    public old?: { [index:string]: Object; };
+
+    // @DataMember
+    public new?: { [index:string]: Object; };
+
+    // @DataMember
+    public path?: string;
+
+    public constructor(init?: Partial<FileChangeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class PaymentFactDto
+{
+    // @DataMember
+    public integrationId: string;
+
+    // @DataMember
+    public provider: string;
+
+    // @DataMember
+    public providerEventId: string;
+
+    // @DataMember
+    public orderId?: string;
+
+    // @DataMember
+    public eventName: string;
+
+    // @DataMember
+    public status: string;
+
+    // @DataMember
+    public amountMinor?: number;
+
+    // @DataMember
+    public currency?: string;
+
+    // @DataMember
+    public externalIds?: { [index:string]: string; };
+
+    // @DataMember
+    public occurredOn?: string;
+
+    // @DataMember
+    public receivedOn: string;
+
+    public constructor(init?: Partial<PaymentFactDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class AiUsageEventDto
+{
+    // @DataMember
+    public payload: { [index:string]: Object; } = {};
+
+    // @DataMember
+    public targetUserId?: string;
+
+    public constructor(init?: Partial<AiUsageEventDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ScheduledTaskInfoDto
+{
+    // @DataMember
+    public taskId: string;
+
+    // @DataMember
+    public name: string;
+
+    // @DataMember
+    public firedAt: string;
+
+    public constructor(init?: Partial<ScheduledTaskInfoDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class MarketplaceFunctionCallDto
+{
+    // @DataMember
+    public functionId: string;
+
+    // @DataMember
+    public functionKey: string;
+
+    // @DataMember
+    public integrationId: string;
+
+    // @DataMember
+    public payload: { [index:string]: Object; } = {};
+
+    public constructor(init?: Partial<MarketplaceFunctionCallDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionDataDto
+{
+    // @DataMember
+    public database?: DatabaseRecordChangeDto;
+
+    // @DataMember
+    public user?: UserChangeDto;
+
+    // @DataMember
+    public file?: FileChangeDto;
+
+    // @DataMember
+    public payment?: PaymentFactDto;
+
+    // @DataMember
+    public order?: PaymentOrderEventDto;
+
+    // @DataMember
+    public ai?: AiUsageEventDto;
+
+    // @DataMember
+    public task?: ScheduledTaskInfoDto;
+
+    // @DataMember
+    public payload?: { [index:string]: Object; };
+
+    // @DataMember
+    public marketplace?: MarketplaceFunctionCallDto;
+
+    public constructor(init?: Partial<CodeFunctionDataDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class CodeFunctionEventDto
+{
+    // @DataMember
+    public specVersion: string;
+
+    // @DataMember
+    public id: string;
+
+    // @DataMember
+    public eventId: string;
+
+    // @DataMember
+    public event: string;
+
+    // @DataMember
+    public source: CodeFunctionSource;
+
+    // @DataMember
+    public createdOn: string;
+
+    // @DataMember
+    public context: CodeFunctionContextDto;
+
+    // @DataMember
+    public data: CodeFunctionDataDto;
+
+    // @DataMember
+    public config?: { [index:string]: Object; };
+
+    public constructor(init?: Partial<CodeFunctionEventDto>) { (Object as any).assign(this, init); }
+}
+
+export class FakeCodeIntegrationDto extends CodeIntegrationDto
+{
+
+    public constructor(init?: Partial<FakeCodeIntegrationDto>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class FakeCodeIntegrationRequest extends CodeIntegrationRequest
+{
+    public provider: CodeProvider;
+
+    public constructor(init?: Partial<FakeCodeIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class CodeFunctionSchedulerTaskRequest extends SchedulerTaskRequest
+{
+    public type: SchedulerTaskType;
+    public functionRef?: FunctionRefDto;
+    public invocationType: CodeInvocationType;
+    public config?: string;
+    public mappedTokens?: TokenMappingDto[];
+
+    public constructor(init?: Partial<CodeFunctionSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class MarketplaceFunctionSchedulerTaskRequest extends SchedulerTaskRequest
+{
+    public type: SchedulerTaskType;
+    public functionId?: string;
+    public payload?: { [index:string]: string; };
+
+    public constructor(init?: Partial<MarketplaceFunctionSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class JsonSchemaFieldDto
 {
     // @DataMember
@@ -4289,367 +4949,6 @@ export class JsonFieldDto extends JsonSchemaFieldDto
     public constructor(init?: Partial<JsonFieldDto>) { super(init); (Object as any).assign(this, init); }
 }
 
-export enum CodeFunctionSource
-{
-    Database = 'Database',
-    Membership = 'Membership',
-    Files = 'Files',
-    Payments = 'Payments',
-    Ai = 'Ai',
-    Scheduler = 'Scheduler',
-    Manual = 'Manual',
-}
-
-export enum CodeFunctionCallerKind
-{
-    User = 'User',
-    ApiKey = 'ApiKey',
-    System = 'System',
-}
-
-// @DataContract
-export class CodeFunctionCallerDto
-{
-    // @DataMember
-    public userId: string;
-
-    // @DataMember
-    public email?: string;
-
-    // @DataMember
-    public kind: CodeFunctionCallerKind;
-
-    public constructor(init?: Partial<CodeFunctionCallerDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class CodeFunctionRunAsDto
-{
-    // @DataMember
-    public userId: string;
-
-    // @DataMember
-    public accessToken?: string;
-
-    // @DataMember
-    public expiresAt?: string;
-
-    public constructor(init?: Partial<CodeFunctionRunAsDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class CodeFunctionContextDto
-{
-    // @DataMember
-    public accountId: string;
-
-    // @DataMember
-    public projectId: string;
-
-    // @DataMember
-    public environment: string;
-
-    // @DataMember
-    public region?: string;
-
-    // @DataMember
-    public hubUrl: string;
-
-    // @DataMember
-    public apiUrl: string;
-
-    // @DataMember
-    public echoUrl: string;
-
-    // @DataMember
-    public triggerId?: string;
-
-    // @DataMember
-    public taskId?: string;
-
-    // @DataMember
-    public correlationId?: string;
-
-    // @DataMember
-    public caller?: CodeFunctionCallerDto;
-
-    // @DataMember
-    public runAs?: CodeFunctionRunAsDto;
-
-    public constructor(init?: Partial<CodeFunctionContextDto>) { (Object as any).assign(this, init); }
-}
-
-export enum ResourceKindDto
-{
-    Contact = 'contact',
-    Document = 'document',
-    File = 'file',
-    PaymentCustomer = 'paymentCustomer',
-    Order = 'order',
-    Payment = 'payment',
-    Product = 'product',
-    Integration = 'integration',
-}
-
-export class ResourceRefDto
-{
-    public projectId: string;
-    public integrationId?: string;
-    public kind: ResourceKindDto;
-
-    public constructor(init?: Partial<ResourceRefDto>) { (Object as any).assign(this, init); }
-}
-
-export class DocumentRefDto extends ResourceRefDto
-{
-    public kind: ResourceKindDto;
-    public databaseIntegrationId: string;
-    public schemaId: string;
-    public externalId: string;
-
-    public constructor(init?: Partial<DocumentRefDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class DatabaseRecordChangeDto
-{
-    // @DataMember
-    public collection: string;
-
-    // @DataMember
-    public schemaId: string;
-
-    // @DataMember
-    public schemaVersion?: number;
-
-    // @DataMember
-    public recordId?: string;
-
-    // @DataMember
-    public old?: { [index:string]: Object; };
-
-    // @DataMember
-    public new?: { [index:string]: Object; };
-
-    // @DataMember
-    public truncated: boolean;
-
-    // @DataMember
-    public oldRef?: DocumentRefDto;
-
-    // @DataMember
-    public newRef?: DocumentRefDto;
-
-    public constructor(init?: Partial<DatabaseRecordChangeDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class UserChangeDto
-{
-    // @DataMember
-    public userId: string;
-
-    // @DataMember
-    public old?: { [index:string]: Object; };
-
-    // @DataMember
-    public new?: { [index:string]: Object; };
-
-    public constructor(init?: Partial<UserChangeDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class FileChangeDto
-{
-    // @DataMember
-    public old?: { [index:string]: Object; };
-
-    // @DataMember
-    public new?: { [index:string]: Object; };
-
-    // @DataMember
-    public path?: string;
-
-    public constructor(init?: Partial<FileChangeDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class PaymentFactDto
-{
-    // @DataMember
-    public integrationId: string;
-
-    // @DataMember
-    public provider: string;
-
-    // @DataMember
-    public providerEventId: string;
-
-    // @DataMember
-    public eventName: string;
-
-    // @DataMember
-    public status: string;
-
-    // @DataMember
-    public amountMinor?: number;
-
-    // @DataMember
-    public currency?: string;
-
-    // @DataMember
-    public externalIds?: { [index:string]: string; };
-
-    // @DataMember
-    public occurredOn?: string;
-
-    // @DataMember
-    public receivedOn: string;
-
-    public constructor(init?: Partial<PaymentFactDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class AiUsageEventDto
-{
-    // @DataMember
-    public payload: { [index:string]: Object; } = {};
-
-    // @DataMember
-    public targetUserId?: string;
-
-    public constructor(init?: Partial<AiUsageEventDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class ScheduledTaskInfoDto
-{
-    // @DataMember
-    public taskId: string;
-
-    // @DataMember
-    public name: string;
-
-    // @DataMember
-    public firedAt: string;
-
-    public constructor(init?: Partial<ScheduledTaskInfoDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class MarketplaceFunctionCallDto
-{
-    // @DataMember
-    public functionId: string;
-
-    // @DataMember
-    public functionKey: string;
-
-    // @DataMember
-    public integrationId: string;
-
-    // @DataMember
-    public payload: { [index:string]: Object; } = {};
-
-    public constructor(init?: Partial<MarketplaceFunctionCallDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class CodeFunctionDataDto
-{
-    // @DataMember
-    public database?: DatabaseRecordChangeDto;
-
-    // @DataMember
-    public user?: UserChangeDto;
-
-    // @DataMember
-    public file?: FileChangeDto;
-
-    // @DataMember
-    public payment?: PaymentFactDto;
-
-    // @DataMember
-    public ai?: AiUsageEventDto;
-
-    // @DataMember
-    public task?: ScheduledTaskInfoDto;
-
-    // @DataMember
-    public payload?: { [index:string]: Object; };
-
-    // @DataMember
-    public marketplace?: MarketplaceFunctionCallDto;
-
-    public constructor(init?: Partial<CodeFunctionDataDto>) { (Object as any).assign(this, init); }
-}
-
-// @DataContract
-export class CodeFunctionEventDto
-{
-    // @DataMember
-    public specVersion: string;
-
-    // @DataMember
-    public id: string;
-
-    // @DataMember
-    public eventId: string;
-
-    // @DataMember
-    public event: string;
-
-    // @DataMember
-    public source: CodeFunctionSource;
-
-    // @DataMember
-    public createdOn: string;
-
-    // @DataMember
-    public context: CodeFunctionContextDto;
-
-    // @DataMember
-    public data: CodeFunctionDataDto;
-
-    // @DataMember
-    public config?: { [index:string]: Object; };
-
-    public constructor(init?: Partial<CodeFunctionEventDto>) { (Object as any).assign(this, init); }
-}
-
-export class FakeCodeIntegrationDto extends CodeIntegrationDto
-{
-
-    public constructor(init?: Partial<FakeCodeIntegrationDto>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class FakeCodeIntegrationRequest extends CodeIntegrationRequest
-{
-    public provider: CodeProvider;
-
-    public constructor(init?: Partial<FakeCodeIntegrationRequest>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class CodeFunctionSchedulerTaskRequest extends SchedulerTaskRequest
-{
-    public type: SchedulerTaskType;
-    public functionRef?: FunctionRefDto;
-    public invocationType: CodeInvocationType;
-    public config?: string;
-    public mappedTokens?: TokenMappingDto[];
-
-    public constructor(init?: Partial<CodeFunctionSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
-}
-
-export class MarketplaceFunctionSchedulerTaskRequest extends SchedulerTaskRequest
-{
-    public type: SchedulerTaskType;
-    public functionId?: string;
-    public payload?: { [index:string]: string; };
-
-    public constructor(init?: Partial<MarketplaceFunctionSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
-}
-
 export interface IVersionBasedRequest
 {
     version: string;
@@ -4881,6 +5180,81 @@ export class AiProjectRoleIdsDto
     public constructor(init?: Partial<AiProjectRoleIdsDto>) { (Object as any).assign(this, init); }
 }
 
+export enum Gender
+{
+    Male = 'Male',
+    Female = 'Female',
+    Other = 'Other',
+}
+
+export enum MarketingBlockReason
+{
+    Unspecified = 'Unspecified',
+    Unsubscribed = 'Unsubscribed',
+    Complaint = 'Complaint',
+    HardBounce = 'HardBounce',
+    InvalidEmail = 'InvalidEmail',
+    AdminBlock = 'AdminBlock',
+}
+
+export class UserGeneralInfoDto
+{
+    public phone?: string;
+    public primaryEmail?: string;
+    public displayName?: string;
+    public firstName?: string;
+    public lastName?: string;
+    public fullName?: string;
+    public addressLine1?: string;
+    public addressLine2?: string;
+    public country?: string;
+    public city?: string;
+    public state?: string;
+    public postalCode?: string;
+    public company?: string;
+    public gender?: Gender;
+    public birthDate?: number;
+    public timeZone?: string;
+    public language?: string;
+    public blockAllMarketingMessages: boolean;
+    public blockedTags?: { [index:string]: HashSet<string>; };
+    public blockReasons?: MarketingBlockReason[];
+    public extraMetadata?: string;
+    public notes?: string;
+
+    public constructor(init?: Partial<UserGeneralInfoDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ImportUserRowDto
+{
+    // @DataMember(Name="email")
+    public email?: string;
+
+    // @DataMember(Name="userName")
+    public userName?: string;
+
+    // @DataMember(Name="userGeneralInfo")
+    public userGeneralInfo?: UserGeneralInfoDto;
+
+    // @DataMember(Name="roles")
+    public roles?: string[];
+
+    // @DataMember(Name="createdOn")
+    public createdOn?: number;
+
+    // @DataMember(Name="hashFormat")
+    public hashFormat?: string;
+
+    // @DataMember(Name="passwordHash")
+    public passwordHash?: string;
+
+    // @DataMember(Name="passwordSalt")
+    public passwordSalt?: string;
+
+    public constructor(init?: Partial<ImportUserRowDto>) { (Object as any).assign(this, init); }
+}
+
 // @DataContract
 export class DeleteTrigger extends CodeMashRequestBase
 {
@@ -4969,6 +5343,14 @@ export class PagingArgs
     public constructor(init?: Partial<PagingArgs>) { (Object as any).assign(this, init); }
 }
 
+export class SchemaUniqueIndexDto
+{
+    // @DataMember
+    public fields: string[] = [];
+
+    public constructor(init?: Partial<SchemaUniqueIndexDto>) { (Object as any).assign(this, init); }
+}
+
 export class SchemaSettingsDto
 {
     // @DataMember
@@ -4979,6 +5361,9 @@ export class SchemaSettingsDto
 
     // @DataMember
     public description?: string;
+
+    // @DataMember
+    public uniqueIndexes?: SchemaUniqueIndexDto[];
 
     public constructor(init?: Partial<SchemaSettingsDto>) { (Object as any).assign(this, init); }
 }
@@ -5005,6 +5390,12 @@ export class SchemaListColumnDto
     // @DataMember
     public field: string;
 
+    // @DataMember
+    public primary: boolean;
+
+    // @DataMember
+    public linkReference: boolean;
+
     public constructor(init?: Partial<SchemaListColumnDto>) { (Object as any).assign(this, init); }
 }
 
@@ -5026,6 +5417,9 @@ export class SchemaListSettingsDto
 
     // @DataMember
     public defaultSort?: SchemaListSortDto;
+
+    // @DataMember
+    public filters: string[] = [];
 
     public constructor(init?: Partial<SchemaListSettingsDto>) { (Object as any).assign(this, init); }
 }
@@ -5234,6 +5628,10 @@ export class ChatScreenContextDto
     public constructor(init?: Partial<ChatScreenContextDto>) { (Object as any).assign(this, init); }
 }
 
+export interface INoSessionCookies
+{
+}
+
 export enum EmbeddingProvider
 {
     Voyage = 'Voyage',
@@ -5418,6 +5816,16 @@ export class TriggerAttentionDto
     public constructor(init?: Partial<TriggerAttentionDto>) { (Object as any).assign(this, init); }
 }
 
+export class TriggerActivationTestProblem
+{
+    public code: string;
+    public message: string;
+    public line: number;
+    public column: number;
+
+    public constructor(init?: Partial<TriggerActivationTestProblem>) { (Object as any).assign(this, init); }
+}
+
 // @DataContract
 export class AccountOwnerDto
 {
@@ -5595,6 +6003,24 @@ export class PromotionBlockerDto
 }
 
 // @DataContract
+export class PromotionTermChangeDto
+{
+    // @DataMember
+    public taxonomyId: string;
+
+    // @DataMember
+    public termId: string;
+
+    // @DataMember
+    public slug?: string;
+
+    // @DataMember
+    public change: string;
+
+    public constructor(init?: Partial<PromotionTermChangeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
 export class PromotionResultDto
 {
     // @DataMember
@@ -5614,6 +6040,12 @@ export class PromotionResultDto
 
     // @DataMember
     public blockers: PromotionBlockerDto[] = [];
+
+    // @DataMember
+    public termChanges: PromotionTermChangeDto[] = [];
+
+    // @DataMember
+    public warnings: PromotionBlockerDto[] = [];
 
     // @DataMember
     public fromVersion?: number;
@@ -5997,6 +6429,9 @@ export class MembershipDto
     public customPolicies?: PolicyItemDto[];
 
     // @DataMember
+    public systemRoleAttachments?: RoleItemDto[];
+
+    // @DataMember
     public authorization?: AuthorizationDto;
 
     // @DataMember
@@ -6329,6 +6764,12 @@ export class ProjectListItemDto
     // @DataMember
     public additionalRegions?: ProjectRegionDto[];
 
+    // @DataMember
+    public modulesCount: number;
+
+    // @DataMember
+    public usersCount: number;
+
     public constructor(init?: Partial<ProjectListItemDto>) { (Object as any).assign(this, init); }
 }
 
@@ -6599,55 +7040,11 @@ export class LoginDto
     public constructor(init?: Partial<LoginDto>) { (Object as any).assign(this, init); }
 }
 
-export enum Gender
-{
-    Male = 'Male',
-    Female = 'Female',
-    Other = 'Other',
-}
-
-export enum MarketingBlockReason
-{
-    Unspecified = 'Unspecified',
-    Unsubscribed = 'Unsubscribed',
-    Complaint = 'Complaint',
-    HardBounce = 'HardBounce',
-    InvalidEmail = 'InvalidEmail',
-    AdminBlock = 'AdminBlock',
-}
-
-export class UserGeneralInfoDto
-{
-    public phone?: string;
-    public primaryEmail?: string;
-    public displayName?: string;
-    public firstName?: string;
-    public lastName?: string;
-    public fullName?: string;
-    public addressLine1?: string;
-    public addressLine2?: string;
-    public country?: string;
-    public city?: string;
-    public state?: string;
-    public postalCode?: string;
-    public company?: string;
-    public gender?: Gender;
-    public birthDate?: number;
-    public timeZone?: string;
-    public language?: string;
-    public blockAllMarketingMessages: boolean;
-    public blockedTags?: { [index:string]: HashSet<string>; };
-    public blockReasons?: MarketingBlockReason[];
-    public extraMetadata?: string;
-    public notes?: string;
-
-    public constructor(init?: Partial<UserGeneralInfoDto>) { (Object as any).assign(this, init); }
-}
-
 export enum AuthStatus
 {
     Registered = 0,
     PendingValidation = 2,
+    Invited = 4,
     Active = 8,
     Unregistered = 16,
     Suspended = 32,
@@ -7018,6 +7415,96 @@ export class AiServiceUserDto
     public constructor(init?: Partial<AiServiceUserDto>) { (Object as any).assign(this, init); }
 }
 
+// @DataContract
+export class ImportUserErrorDto
+{
+    // @DataMember(Name="code")
+    public code?: string;
+
+    // @DataMember(Name="message")
+    public message: string;
+
+    public constructor(init?: Partial<ImportUserErrorDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class ImportUserOutcomeDto
+{
+    // @DataMember(Name="row")
+    public row: number;
+
+    // @DataMember(Name="login")
+    public login?: string;
+
+    // @DataMember(Name="outcome")
+    public outcome: string;
+
+    // @DataMember(Name="userId")
+    public userId?: string;
+
+    // @DataMember(Name="errors")
+    public errors: ImportUserErrorDto[] = [];
+
+    public constructor(init?: Partial<ImportUserOutcomeDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class UsersImportDto
+{
+    // @DataMember(Name="dryRun")
+    public dryRun: boolean;
+
+    // @DataMember(Name="received")
+    public received: number;
+
+    // @DataMember(Name="imported")
+    public imported: number;
+
+    // @DataMember(Name="valid")
+    public valid: number;
+
+    // @DataMember(Name="existing")
+    public existing: number;
+
+    // @DataMember(Name="invalid")
+    public invalid: number;
+
+    // @DataMember(Name="failed")
+    public failed: number;
+
+    // @DataMember(Name="rows")
+    public rows: ImportUserOutcomeDto[] = [];
+
+    public constructor(init?: Partial<UsersImportDto>) { (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class LoginProjectRepairDto
+{
+    // @DataMember(Name="dryRun")
+    public dryRun: boolean;
+
+    // @DataMember(Name="loginsWithoutProject")
+    public loginsWithoutProject: number;
+
+    // @DataMember(Name="loginsToRepair")
+    public loginsToRepair: number;
+
+    // @DataMember(Name="loginsRepaired")
+    public loginsRepaired: number;
+
+    // @DataMember(Name="accountLoginsSkipped")
+    public accountLoginsSkipped: number;
+
+    // @DataMember(Name="otherProjectLoginsSkipped")
+    public otherProjectLoginsSkipped: number;
+
+    // @DataMember(Name="loginsWithoutEvidence")
+    public loginsWithoutEvidence: number;
+
+    public constructor(init?: Partial<LoginProjectRepairDto>) { (Object as any).assign(this, init); }
+}
+
 export class ServiceUserApiKeyDto
 {
     public id: number;
@@ -7246,6 +7733,30 @@ export class MembershipAuthorizationViewDto
     // @DataMember
     public passwordComplexity?: PasswordComplexityDto;
 
+    // @DataMember
+    public defaultRoles?: string[];
+
+    // @DataMember
+    public allowedRegistrationRoles?: string[];
+
+    // @DataMember
+    public allowGuestUsers: boolean;
+
+    // @DataMember
+    public guestCleanupPeriodDays?: number;
+
+    // @DataMember
+    public allowEmailRegistration: boolean;
+
+    // @DataMember
+    public allowUsernameRegistration: boolean;
+
+    // @DataMember
+    public inviteOnly: boolean;
+
+    // @DataMember
+    public allowAnyoneToSignUp: boolean;
+
     public constructor(init?: Partial<MembershipAuthorizationViewDto>) { (Object as any).assign(this, init); }
 }
 
@@ -7337,6 +7848,9 @@ export class TaxonomyDto implements IHasViewId
     public description?: string;
 
     // @DataMember
+    public env?: string;
+
+    // @DataMember
     public termsMetaDataSchema?: DataSchemaDto;
 
     // @DataMember
@@ -7384,6 +7898,9 @@ export class TaxonomyListProjection implements IHasViewId
 
     // @DataMember
     public dependencyRefs?: TaxonomyRef[];
+
+    // @DataMember
+    public env?: string;
 
     public constructor(init?: Partial<TaxonomyListProjection>) { (Object as any).assign(this, init); }
 }
@@ -7509,6 +8026,9 @@ export class TermDto
 
     // @DataMember
     public meta?: Object;
+
+    // @DataMember
+    public origin?: string;
 
     public constructor(init?: Partial<TermDto>) { (Object as any).assign(this, init); }
 }
@@ -8501,6 +9021,9 @@ export class EmailCampaignBatchNotificationDto extends CampaignBatchNotification
     // @DataMember
     public content?: EmailMessageContentDto;
 
+    // @DataMember
+    public transactionalKind?: string;
+
     public constructor(init?: Partial<EmailCampaignBatchNotificationDto>) { super(init); (Object as any).assign(this, init); }
 }
 
@@ -9122,6 +9645,21 @@ export class PushDeviceListProjection
 }
 
 // @DataContract
+export class TeamPushDeviceListProjection extends PushDeviceListProjection
+{
+    // @DataMember
+    public ownerKind: string;
+
+    // @DataMember
+    public ownerName?: string;
+
+    // @DataMember
+    public ownerEmail?: string;
+
+    public constructor(init?: Partial<TeamPushDeviceListProjection>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
 export class PushAudienceCountDto
 {
     // @DataMember
@@ -9229,6 +9767,22 @@ export class PushCampaignBatchNotificationDto extends CampaignBatchNotificationD
     public constructor(init?: Partial<PushCampaignBatchNotificationDto>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class InAppNotificationDto
+{
+    public id: string;
+    public projectId: string;
+    public userId: string;
+    public channel: string;
+    public eventName: string;
+    public payloadJson?: string;
+    public isRead: boolean;
+    public seenAtUtc?: string;
+    public readAtUtc?: string;
+    public createdAtUtc: string;
+
+    public constructor(init?: Partial<InAppNotificationDto>) { (Object as any).assign(this, init); }
+}
+
 export class PaymentsWebhookLogEntry
 {
     public integrationId: string;
@@ -9325,6 +9879,68 @@ export class AgentOnboardingSnippet
     public recommended: boolean;
 
     public constructor(init?: Partial<AgentOnboardingSnippet>) { (Object as any).assign(this, init); }
+}
+
+export class AiProjectContextCallerWireDto
+{
+    public kind: string;
+    public name?: string;
+    public accountId?: string;
+
+    public constructor(init?: Partial<AiProjectContextCallerWireDto>) { (Object as any).assign(this, init); }
+}
+
+export class AiProjectContextIntegrationWireDto
+{
+    public id: string;
+    public name?: string;
+    public kind?: string;
+    public enabled?: boolean;
+    public defaultIn: string[] = [];
+    public env?: string;
+
+    public constructor(init?: Partial<AiProjectContextIntegrationWireDto>) { (Object as any).assign(this, init); }
+}
+
+export class AiProjectContextModuleWireDto
+{
+    public name: string;
+    public integrationsReadable?: boolean;
+    public integrations?: AiProjectContextIntegrationWireDto[];
+
+    public constructor(init?: Partial<AiProjectContextModuleWireDto>) { (Object as any).assign(this, init); }
+}
+
+export class AiProjectContextProjectWireDto
+{
+    public id: string;
+    public name: string;
+    public uniqueName?: string;
+    public access: string;
+    public description?: string;
+    public defaultLanguage?: string;
+    public languages: string[] = [];
+    public environments?: string[];
+    public primaryRegion?: string;
+    public additionalRegions?: string[];
+    public corsOrigins?: string[];
+    public apiHost?: string;
+    public adminUrl?: string;
+    public marketingUrl?: string;
+    public adminPortalEnabled?: boolean;
+    public modules?: AiProjectContextModuleWireDto[];
+
+    public constructor(init?: Partial<AiProjectContextProjectWireDto>) { (Object as any).assign(this, init); }
+}
+
+export class AiProjectContextWireDto
+{
+    public version: string;
+    public caller: AiProjectContextCallerWireDto;
+    public projects: AiProjectContextProjectWireDto[] = [];
+    public hints: string[] = [];
+
+    public constructor(init?: Partial<AiProjectContextWireDto>) { (Object as any).assign(this, init); }
 }
 
 export class AiToolManifestParameter
@@ -9890,6 +10506,12 @@ export class SchedulerTaskListProjection implements IHasViewId
 
     // @DataMember
     public lastFailedAtUnix?: number;
+
+    // @DataMember
+    public endsAtUnix?: number;
+
+    // @DataMember
+    public hasEnded: boolean;
 
     // @DataMember
     public viewId: string;
@@ -10704,12 +11326,36 @@ export class PublicLegalDocumentDto
 }
 
 // @DataContract
+export class GetTriggerDefinitionResponse extends ResponseBase
+{
+    // @DataMember
+    public trigger?: SaveTriggerRequest;
+
+    public constructor(init?: Partial<GetTriggerDefinitionResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
 export class GetTriggersNeedingAttentionResponse extends ResponseBase
 {
     // @DataMember
     public items: TriggerAttentionDto[] = [];
 
     public constructor(init?: Partial<GetTriggersNeedingAttentionResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+// @DataContract
+export class TestTriggerPreExecuteCodeResponse extends ResponseBase
+{
+    // @DataMember
+    public outcome: string;
+
+    // @DataMember
+    public triggerRuns: boolean;
+
+    // @DataMember
+    public problems: TriggerActivationTestProblem[] = [];
+
+    public constructor(init?: Partial<TestTriggerPreExecuteCodeResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetAccountProfileResponse extends ResponseBase
@@ -11052,6 +11698,20 @@ export class RotateAiServiceUserKeyResponse extends ResponseBase
     public key: string;
 
     public constructor(init?: Partial<RotateAiServiceUserKeyResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class ImportUsersResponse extends ResponseBase
+{
+    public result?: UsersImportDto;
+
+    public constructor(init?: Partial<ImportUsersResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class RepairLoginProjectIdsResponse extends ResponseBase
+{
+    public result?: LoginProjectRepairDto;
+
+    public constructor(init?: Partial<RepairLoginProjectIdsResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class IssueServiceUserApiKeyResponse
@@ -12104,6 +12764,7 @@ export class GetPushDeviceResponse extends ResponseBase
 export class GetPushDevicesResponse extends ResponseBase
 {
     public list?: PaginatedResponse<PushDeviceListProjection>;
+    public teamDevices: TeamPushDeviceListProjection[] = [];
 
     public constructor(init?: Partial<GetPushDevicesResponse>) { super(init); (Object as any).assign(this, init); }
 }
@@ -12172,6 +12833,32 @@ export class GetPushCampaignMessagesResponse extends ResponseBase
     public list?: PaginatedResponse<PushCampaignBatchNotificationDto>;
 
     public constructor(init?: Partial<GetPushCampaignMessagesResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetNotificationInboxResponse extends ResponseBase
+{
+    public list?: PaginatedResponse<InAppNotificationDto>;
+
+    public constructor(init?: Partial<GetNotificationInboxResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class GetUnreadCountResponse extends ResponseBase
+{
+    public count: number;
+
+    public constructor(init?: Partial<GetUnreadCountResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class MarkNotificationReadResponse extends ResponseBase
+{
+
+    public constructor(init?: Partial<MarkNotificationReadResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
+export class MarkAllNotificationsReadResponse extends ResponseBase
+{
+
+    public constructor(init?: Partial<MarkAllNotificationsReadResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
 export class GetPaymentsWebhookLogResponse extends ResponseBase
@@ -12290,6 +12977,16 @@ export class GetAgentOnboardingResponse extends ResponseBase
     public constructor(init?: Partial<GetAgentOnboardingResponse>) { super(init); (Object as any).assign(this, init); }
 }
 
+export class GetAiContextResponse extends ResponseBase
+{
+    public version?: string;
+    public unchanged: boolean;
+    public context?: AiProjectContextWireDto;
+    public markdown?: string;
+
+    public constructor(init?: Partial<GetAiContextResponse>) { super(init); (Object as any).assign(this, init); }
+}
+
 export class GetAiToolsResponse extends ResponseBase
 {
     public tools?: AiToolManifestItem[];
@@ -12377,6 +13074,7 @@ export class ValidateSchemaResponse extends ResponseBase
     public valid: boolean;
     public issues?: ScaffoldIssue[];
     public collections?: string[];
+    public warnings?: ScaffoldIssue[];
 
     public constructor(init?: Partial<ValidateSchemaResponse>) { super(init); (Object as any).assign(this, init); }
 }
@@ -13312,6 +14010,14 @@ export class InternalsTypeGen
     public typegen_53_StripePaymentIntegrationRequest?: StripePaymentIntegrationRequest;
     public typegen_54_AppleInAppPaymentIntegrationRequest?: AppleInAppPaymentIntegrationRequest;
     public typegen_55_GoogleInAppPaymentIntegrationRequest?: GoogleInAppPaymentIntegrationRequest;
+    public typegen_285_MontonioPaymentIntegrationRequest?: MontonioPaymentIntegrationRequest;
+    public typegen_287_ShopifyPaymentIntegrationRequest?: ShopifyPaymentIntegrationRequest;
+    public typegen_288_WooCommercePaymentIntegrationRequest?: WooCommercePaymentIntegrationRequest;
+    public typegen_289_MagentoPaymentIntegrationRequest?: MagentoPaymentIntegrationRequest;
+    public typegen_290_BraintreePaymentIntegrationRequest?: BraintreePaymentIntegrationRequest;
+    public typegen_291_AuthorizeNetPaymentIntegrationRequest?: AuthorizeNetPaymentIntegrationRequest;
+    public typegen_292_CheckOutComPaymentIntegrationRequest?: CheckOutComPaymentIntegrationRequest;
+    public typegen_293_WorldpayPaymentIntegrationRequest?: WorldpayPaymentIntegrationRequest;
     public typegen_56_EdgeWebPushIntegrationRequest?: EdgeWebPushIntegrationRequest;
     public typegen_57_ChromePluginPushIntegrationRequest?: ChromePluginPushIntegrationRequest;
     public typegen_58_SafariPushIntegrationRequest?: SafariPushIntegrationRequest;
@@ -13395,6 +14101,8 @@ export class InternalsTypeGen
     public typegen_188_AuthorizeNetPaymentIntegrationDto?: AuthorizeNetPaymentIntegrationDto;
     public typegen_189_CheckOutComPaymentIntegrationDto?: CheckOutComPaymentIntegrationDto;
     public typegen_190_WorldpayPaymentIntegrationDto?: WorldpayPaymentIntegrationDto;
+    public typegen_286_MontonioPaymentIntegrationDto?: MontonioPaymentIntegrationDto;
+    public typegen_294_PaymentOrderEventDto?: PaymentOrderEventDto;
     public typegen_128_AppleSignInMembershipIntegrationDto?: AppleSignInMembershipIntegrationDto;
     public typegen_129_GitHubMembershipIntegrationDto?: GitHubMembershipIntegrationDto;
     public typegen_130_GoogleMembershipIntegrationDto?: GoogleMembershipIntegrationDto;
@@ -13504,23 +14212,6 @@ export class InternalsTypeGen
     public typegen_243_ActionPendingEntryWireDto?: ActionPendingEntryWireDto;
     public typegen_244_NoticeEntryWireDto?: NoticeEntryWireDto;
     public typegen_245_ConversationSnapshotEntryWireDto?: ConversationSnapshotEntryWireDto;
-    public typegen_252_StringFieldDto?: StringFieldDto;
-    public typegen_253_DecimalFieldDto?: DecimalFieldDto;
-    public typegen_254_CurrencyFieldDto?: CurrencyFieldDto;
-    public typegen_255_BooleanFieldDto?: BooleanFieldDto;
-    public typegen_256_DateFieldDto?: DateFieldDto;
-    public typegen_257_IntegerFieldDto?: IntegerFieldDto;
-    public typegen_258_GeolocationFieldDto?: GeolocationFieldDto;
-    public typegen_259_TagsFieldDto?: TagsFieldDto;
-    public typegen_260_FileFieldDto?: FileFieldDto;
-    public typegen_261_TaxonomySelectionFieldDto?: TaxonomySelectionFieldDto;
-    public typegen_262_CollectionSelectionFieldDto?: CollectionSelectionFieldDto;
-    public typegen_263_UserSelectionFieldDto?: UserSelectionFieldDto;
-    public typegen_264_RoleSelectionFieldDto?: RoleSelectionFieldDto;
-    public typegen_265_EnumSelectionFieldDto?: EnumSelectionFieldDto;
-    public typegen_266_ObjectFieldDto?: ObjectFieldDto;
-    public typegen_267_ArrayFieldDto?: ArrayFieldDto;
-    public typegen_268_JsonFieldDto?: JsonFieldDto;
     public typegen_269_FunctionRefDto?: FunctionRefDto;
     public typegen_270_CodeFunctionEventDto?: CodeFunctionEventDto;
     public typegen_271_CodeFunctionContextDto?: CodeFunctionContextDto;
@@ -13541,6 +14232,32 @@ export class InternalsTypeGen
     public constructor(init?: Partial<InternalsTypeGen>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'InternalsTypeGen'; }
     public getMethod() { return 'GET'; }
+    public createResponse() {}
+}
+
+export class SharedTypeGen
+{
+    public typegen_StringFieldDto?: StringFieldDto;
+    public typegen_DecimalFieldDto?: DecimalFieldDto;
+    public typegen_CurrencyFieldDto?: CurrencyFieldDto;
+    public typegen_BooleanFieldDto?: BooleanFieldDto;
+    public typegen_DateFieldDto?: DateFieldDto;
+    public typegen_IntegerFieldDto?: IntegerFieldDto;
+    public typegen_GeolocationFieldDto?: GeolocationFieldDto;
+    public typegen_TagsFieldDto?: TagsFieldDto;
+    public typegen_FileFieldDto?: FileFieldDto;
+    public typegen_TaxonomySelectionFieldDto?: TaxonomySelectionFieldDto;
+    public typegen_CollectionSelectionFieldDto?: CollectionSelectionFieldDto;
+    public typegen_UserSelectionFieldDto?: UserSelectionFieldDto;
+    public typegen_RoleSelectionFieldDto?: RoleSelectionFieldDto;
+    public typegen_EnumSelectionFieldDto?: EnumSelectionFieldDto;
+    public typegen_ObjectFieldDto?: ObjectFieldDto;
+    public typegen_ArrayFieldDto?: ArrayFieldDto;
+    public typegen_JsonFieldDto?: JsonFieldDto;
+
+    public constructor(init?: Partial<SharedTypeGen>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'SharedTypeGen'; }
+    public getMethod() { return 'POST'; }
     public createResponse() {}
 }
 
@@ -13590,6 +14307,33 @@ export class GetPublicProjectLegal extends RequestBase implements IReturn<Public
     public createResponse() { return new PublicLegalDocumentDto(); }
 }
 
+/** @description Get one trigger in the shape its save takes (read → change → save) */
+// @Route("/{version}/triggers/{id}/definition", "GET")
+// @Api(Description="Get one trigger in the shape its save takes (read → change → save)")
+// @DataContract
+export class GetTriggerDefinition extends CodeMashRequestBase implements IReturn<GetTriggerDefinitionResponse>
+{
+    /** @description The trigger id (trg_…). */
+    // @DataMember
+    // @ApiMember(Description="The trigger id (trg_…).", IsRequired=true)
+    public id: string;
+
+    /** @description Which module the trigger belongs to: Schema, Membership, Files, Payments or Ai. */
+    // @DataMember
+    // @ApiMember(Description="Which module the trigger belongs to: Schema, Membership, Files, Payments or Ai.", IsRequired=true)
+    public triggerType: TriggerType;
+
+    /** @description The collection (schema) id the trigger watches. Required for Schema triggers. */
+    // @DataMember
+    // @ApiMember(Description="The collection (schema) id the trigger watches. Required for Schema triggers.")
+    public schemaId?: string;
+
+    public constructor(init?: Partial<GetTriggerDefinition>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetTriggerDefinition'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetTriggerDefinitionResponse(); }
+}
+
 /** @description Get triggers that need attention */
 // @Route("/{version}/triggers/attention", "GET")
 // @Api(Description="Get triggers that need attention")
@@ -13605,6 +14349,48 @@ export class GetTriggersNeedingAttention extends CodeMashRequestBase implements 
     public getTypeName() { return 'GetTriggersNeedingAttention'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetTriggersNeedingAttentionResponse(); }
+}
+
+/** @description Test a trigger's pre-action code against a sample record */
+// @Route("/{version}/triggers/pre-execute-code/test", "POST")
+// @Api(Description="Test a trigger's pre-action code against a sample record")
+// @DataContract
+export class TestTriggerPreExecuteCode extends CodeMashRequestBase implements IReturn<TestTriggerPreExecuteCodeResponse>
+{
+    /** @description The code to test, as saved in preExecuteCode: C# statements ending in 'return true;' or 'return false;', e.g. 'return New.status == "published";'. */
+    // @DataMember
+    // @ApiMember(Description="The code to test, as saved in preExecuteCode: C# statements ending in 'return true;' or 'return false;', e.g. 'return New.status == \"published\";'.", IsRequired=true)
+    public code: string;
+
+    /** @description Which kind of trigger the code is for: Schema, Membership, Files, Payments or Ai. */
+    // @DataMember
+    // @ApiMember(Description="Which kind of trigger the code is for: Schema, Membership, Files, Payments or Ai.", IsRequired=true)
+    public triggerType: TriggerType;
+
+    /** @description The sample record AFTER the change (the code's New), as a JSON object. Omit = empty (a delete). */
+    // @DataMember
+    // @ApiMember(Description="The sample record AFTER the change (the code's New), as a JSON object. Omit = empty (a delete).")
+    public newRecord?: string;
+
+    /** @description The sample record BEFORE the change (the code's Old), as a JSON object. Omit = empty (an insert). */
+    // @DataMember
+    // @ApiMember(Description="The sample record BEFORE the change (the code's Old), as a JSON object. Omit = empty (an insert).")
+    public oldRecord?: string;
+
+    /** @description What the code sees as Event.Kind: Inserted, Updated, Deleted or Other. Omit = Updated when both records are given, Inserted when only newRecord, Deleted when only oldRecord. */
+    // @DataMember
+    // @ApiMember(Description="What the code sees as Event.Kind: Inserted, Updated, Deleted or Other. Omit = Updated when both records are given, Inserted when only newRecord, Deleted when only oldRecord.")
+    public eventKind?: string;
+
+    /** @description What the code sees as Event.Name, e.g. database.record.updated. Optional. */
+    // @DataMember
+    // @ApiMember(Description="What the code sees as Event.Name, e.g. database.record.updated. Optional.")
+    public eventName?: string;
+
+    public constructor(init?: Partial<TestTriggerPreExecuteCode>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'TestTriggerPreExecuteCode'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new TestTriggerPreExecuteCodeResponse(); }
 }
 
 // @Route("/{version}/account/profile", "GET")
@@ -14141,8 +14927,8 @@ export class GetAdminPortalStructure extends CodeMashRequestBase implements IRet
 // @Api(Description="Updates the project's admin-portal URL override")
 export class UpdateProjectAdminUrl extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
-    /** @description Custom admin-portal URL to use instead of the canonical address. Null/empty restores the canonical pr_{id}.admin.{host} address. */
-    // @ApiMember(Description="Custom admin-portal URL to use instead of the canonical address. Null/empty restores the canonical pr_{id}.admin.{host} address.")
+    /** @description Custom admin-portal URL to use instead of the canonical address. Null/empty restores the canonical pr-{project hex}.admin.{host} address. */
+    // @ApiMember(Description="Custom admin-portal URL to use instead of the canonical address. Null/empty restores the canonical pr-{project hex}.admin.{host} address.")
     public url?: string;
 
     public constructor(init?: Partial<UpdateProjectAdminUrl>) { super(init); (Object as any).assign(this, init); }
@@ -14400,8 +15186,8 @@ export class UpdateProjectAllowedOrigins extends CodeMashRequestBase implements 
     // @ApiMember(Description="The complete new list of allowed origin URLs, e.g. [\"https://app.example.com\", \"https://example.com\"]. An entry with no scheme (e.g. \"example.com\") defaults to https. Whatever is not in this list stops being allowed.")
     public origins?: string[];
 
-    /** @description Optional. true removes the project's own Admin Portal origin (pr_{projectId}.{admin host}) on purpose. Without it, a list that drops that origin is rejected with CM-ERRORS-PROJECTS-037, because the Norbix-generated end-user portal could no longer call the project's API. */
-    // @ApiMember(Description="Optional. true removes the project's own Admin Portal origin (pr_{projectId}.{admin host}) on purpose. Without it, a list that drops that origin is rejected with CM-ERRORS-PROJECTS-037, because the Norbix-generated end-user portal could no longer call the project's API.")
+    /** @description Optional. true removes the project's own Admin Portal origin (pr-{project hex}.{admin host}) on purpose. Without it, a list that drops that origin is rejected with CM-ERRORS-PROJECTS-037, because the Norbix-generated end-user portal could no longer call the project's API. */
+    // @ApiMember(Description="Optional. true removes the project's own Admin Portal origin (pr-{project hex}.{admin host}) on purpose. Without it, a list that drops that origin is rejected with CM-ERRORS-PROJECTS-037, because the Norbix-generated end-user portal could no longer call the project's API.")
     public removeAdminPortalOrigin?: boolean;
 
     public constructor(init?: Partial<UpdateProjectAllowedOrigins>) { super(init); (Object as any).assign(this, init); }
@@ -15192,6 +15978,23 @@ export class RevokeAiServiceUserKeyRequest extends RequestBase implements IRetur
     public createResponse() { return new EmptyResponse(); }
 }
 
+// @Route("/{version}/account/ai/service-users/{Id}", "PUT")
+export class UpdateAiServiceUserRequest extends RequestBase implements IReturn<EmptyResponse>
+{
+    /** @description The service user id (aisu_…). */
+    // @ApiMember(Description="The service user id (aisu_…).", IsRequired=true)
+    public id: string;
+
+    /** @description The new name, unique in the account, e.g. "Claude Code on my laptop". */
+    // @ApiMember(Description="The new name, unique in the account, e.g. \"Claude Code on my laptop\".", IsRequired=true)
+    public name: string;
+
+    public constructor(init?: Partial<UpdateAiServiceUserRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateAiServiceUserRequest'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new EmptyResponse(); }
+}
+
 // @Route("/{version}/account/ai/service-users/{Id}", "DELETE")
 export class DeleteAiServiceUserRequest extends RequestBase implements IReturn<EmptyResponse>
 {
@@ -15223,6 +16026,44 @@ export class EnableMembership extends CodeMashRequestBase implements IReturn<Emp
     public getTypeName() { return 'EnableMembership'; }
     public getMethod() { return 'PUT'; }
     public createResponse() { return new EmptyResponse(); }
+}
+
+/** @description Import users with their existing password hashes */
+// @Route("/{version}/membership/users/import", "POST")
+// @Api(Description="Import users with their existing password hashes")
+export class ImportUsersRequest extends CodeMashRequestBase implements IReturn<ImportUsersResponse>
+{
+    /** @description True (default) = check every row and write nothing. False = write. */
+    // @ApiMember(Description="True (default) = check every row and write nothing. False = write.")
+    public dryRun: boolean;
+
+    /** @description True = do not add the project's default roles (as 'ignoreUserRegistersAsRole' on registration). */
+    // @ApiMember(Description="True = do not add the project's default roles (as 'ignoreUserRegistersAsRole' on registration).")
+    public ignoreDefaultRoles: boolean;
+
+    /** @description The users to import, 1 to 1000 per request. */
+    // @ApiMember(Description="The users to import, 1 to 1000 per request.", IsRequired=true)
+    public users: ImportUserRowDto[] = [];
+
+    public constructor(init?: Partial<ImportUsersRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'ImportUsersRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new ImportUsersResponse(); }
+}
+
+/** @description Repair project logins stored without a project id */
+// @Route("/{version}/membership/users/repair-logins", "POST")
+// @Api(Description="Repair project logins stored without a project id")
+export class RepairLoginProjectIdsRequest extends CodeMashRequestBase implements IReturn<RepairLoginProjectIdsResponse>
+{
+    /** @description True (default) = only count what would change. False = write. */
+    // @ApiMember(Description="True (default) = only count what would change. False = write.")
+    public dryRun: boolean;
+
+    public constructor(init?: Partial<RepairLoginProjectIdsRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'RepairLoginProjectIdsRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new RepairLoginProjectIdsResponse(); }
 }
 
 /** @description Membership */
@@ -15704,11 +16545,26 @@ export class GetAuthorizationSettings extends CodeMashRequestBase implements IRe
 // @Api(Description="Updates the project's membership authorization settings.")
 export class UpdateAuthorizationSettings extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
+    /** @description Single-setting change (dashboard tabs), e.g. 'DefaultRegisterRole' with userRegistersAsRole, or 'PasswordComplexity'. Unknown values are refused. Leave empty to change defaultRoles / allowedRegistrationRoles / allowGuestUsers / guestCleanupPeriodDays — only the fields you send change. */
+    // @ApiMember(Description="Single-setting change (dashboard tabs), e.g. 'DefaultRegisterRole' with userRegistersAsRole, or 'PasswordComplexity'. Unknown values are refused. Leave empty to change defaultRoles / allowedRegistrationRoles / allowGuestUsers / guestCleanupPeriodDays — only the fields you send change.")
     public setting?: string;
+
+    /** @description Role names given to a user who registers without naming roles. Omit = keep; [] = none. */
+    // @ApiMember(Description="Role names given to a user who registers without naming roles. Omit = keep; [] = none.")
     public defaultRoles?: string[];
+
+    /** @description Role names a user may pick when registering. Omit = keep; [] = none. */
+    // @ApiMember(Description="Role names a user may pick when registering. Omit = keep; [] = none.")
     public allowedRegistrationRoles?: string[];
-    public allowGuestUsers: boolean;
+
+    /** @description Whether guest (anonymous) users may be created. Omit = keep. When sent, guestCleanupPeriodDays is taken with it (null = never clean up). */
+    // @ApiMember(Description="Whether guest (anonymous) users may be created. Omit = keep. When sent, guestCleanupPeriodDays is taken with it (null = never clean up).")
+    public allowGuestUsers?: boolean;
+
+    /** @description Days after which inactive guests are removed; null or 0 = never. Omit both guest fields = keep. */
+    // @ApiMember(Description="Days after which inactive guests are removed; null or 0 = never. Omit both guest fields = keep.")
     public guestCleanupPeriodDays?: number;
+
     public userRegistersAsRole?: string;
     public guestRegistersAsRole?: string;
     public allowedRegisterRoles?: string[];
@@ -15722,6 +16578,18 @@ export class UpdateAuthorizationSettings extends CodeMashRequestBase implements 
     public emailVerificationExpiration?: number;
     public deactivationExpiration?: number;
     public defaultSubscribeToNews: boolean;
+    /** @description "Email registration": the public register/email route accepts sign-ups. Omit = keep. */
+    // @ApiMember(Description="\"Email registration\": the public register/email route accepts sign-ups. Omit = keep.")
+    public allowEmailRegistration?: boolean;
+
+    /** @description "Invite-only": public sign-up (email and username) is refused; only invitations create users. Omit = keep. */
+    // @ApiMember(Description="\"Invite-only\": public sign-up (email and username) is refused; only invitations create users. Omit = keep.")
+    public inviteOnly?: boolean;
+
+    /** @description "Allow anyone to sign up": grants (true) / revokes (false) membership:register on the project's Guest role. Omit = keep. */
+    // @ApiMember(Description="\"Allow anyone to sign up\": grants (true) / revokes (false) membership:register on the project's Guest role. Omit = keep.")
+    public allowAnyoneToSignUp?: boolean;
+
     public minLength: number;
     public maxLength?: number;
     public minNumbers?: number;
@@ -16049,9 +16917,9 @@ export class SaveDatabaseTaxonomyRequest extends CodeMashRequestBase implements 
 // @DataContract
 export class DeleteDatabaseTaxonomyTermRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
-    /** @description Taxonomy id that owns the term, from get_database_taxonomies. */
+    /** @description Taxonomy id that owns the term, from get_database_taxonomies — or the taxonomy name (slug or title). */
     // @DataMember
-    // @ApiMember(Description="Taxonomy id that owns the term, from get_database_taxonomies.", IsRequired=true)
+    // @ApiMember(Description="Taxonomy id that owns the term, from get_database_taxonomies — or the taxonomy name (slug or title).", IsRequired=true)
     public taxonomyId: string;
 
     /** @description Term id to delete, from get_database_taxonomy_term_tree. */
@@ -16076,9 +16944,9 @@ export class DeleteDatabaseTaxonomyTermRequest extends CodeMashRequestBase imple
 // @DataContract
 export class DeleteManyDatabaseTaxonomyTermsRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
-    /** @description Taxonomy id whose terms to delete, from get_database_taxonomies. */
+    /** @description Taxonomy id whose terms to delete, from get_database_taxonomies — or the taxonomy name (slug or title). */
     // @DataMember
-    // @ApiMember(Description="Taxonomy id whose terms to delete, from get_database_taxonomies.", IsRequired=true)
+    // @ApiMember(Description="Taxonomy id whose terms to delete, from get_database_taxonomies — or the taxonomy name (slug or title).", IsRequired=true)
     public taxonomyId: string;
 
     /** @description Optional database integration id. When omitted, the project's default database integration is used. */
@@ -16108,9 +16976,9 @@ export class GetDatabaseTaxonomyTermRequest extends CodeMashRequestBase implemen
     // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
     public allLanguages: boolean;
 
-    /** @description Taxonomy id from get_database_taxonomies. */
+    /** @description Taxonomy id from get_database_taxonomies — or the taxonomy name (slug or title). */
     // @DataMember
-    // @ApiMember(Description="Taxonomy id from get_database_taxonomies.", IsRequired=true)
+    // @ApiMember(Description="Taxonomy id from get_database_taxonomies — or the taxonomy name (slug or title).", IsRequired=true)
     public taxonomyId: string;
 
     /** @description Term id from get_database_taxonomy_term_tree. */
@@ -16140,9 +17008,9 @@ export class GetDatabaseMergedTermTreeRequest extends CodeMashRequestBase implem
     // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
     public allLanguages: boolean;
 
-    /** @description Root taxonomy slug/name (from get_database_taxonomies). Its terms are the roots; child-taxonomy terms nest under them. */
+    /** @description Root taxonomy slug/name or id, txn_… (from get_database_taxonomies). Its terms are the roots; child-taxonomy terms nest under them. */
     // @DataMember
-    // @ApiMember(Description="Root taxonomy slug/name (from get_database_taxonomies). Its terms are the roots; child-taxonomy terms nest under them.", IsRequired=true)
+    // @ApiMember(Description="Root taxonomy slug/name or id, txn_… (from get_database_taxonomies). Its terms are the roots; child-taxonomy terms nest under them.", IsRequired=true)
     public taxonomyName: string;
 
     /** @description Optional database integration id. When omitted, the project's default database integration is used. */
@@ -16167,9 +17035,9 @@ export class GetDatabaseTaxonomyTermTreeRequest extends CodeMashRequestBase impl
     // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
     public allLanguages: boolean;
 
-    /** @description Taxonomy slug/name to fetch the term tree for, from get_database_taxonomies. */
+    /** @description Taxonomy slug/name (or its id, txn_…) to fetch the term tree for, from get_database_taxonomies. */
     // @DataMember
-    // @ApiMember(Description="Taxonomy slug/name to fetch the term tree for, from get_database_taxonomies.", IsRequired=true)
+    // @ApiMember(Description="Taxonomy slug/name (or its id, txn_…) to fetch the term tree for, from get_database_taxonomies.", IsRequired=true)
     public taxonomyName: string;
 
     /** @description Optional term id to root the returned tree at a sub-tree instead of the whole taxonomy. */
@@ -16199,9 +17067,9 @@ export class GetDatabaseTaxonomyTermTreeRequest extends CodeMashRequestBase impl
 // @DataContract
 export class SaveDatabaseTaxonomyTermRequest extends CodeMashRequestBase implements IReturn<IdResponse>
 {
-    /** @description Taxonomy id to insert the term into, from get_database_taxonomies. */
+    /** @description Taxonomy id to insert the term into, from get_database_taxonomies — or the taxonomy name (slug or title). */
     // @DataMember
-    // @ApiMember(Description="Taxonomy id to insert the term into, from get_database_taxonomies.", IsRequired=true)
+    // @ApiMember(Description="Taxonomy id to insert the term into, from get_database_taxonomies — or the taxonomy name (slug or title).", IsRequired=true)
     public taxonomyId: string;
 
     /** @description Optional database integration id. When omitted, the project's default database integration is used. */
@@ -16226,9 +17094,9 @@ export class SaveDatabaseTaxonomyTermRequest extends CodeMashRequestBase impleme
 // @DataContract
 export class UpdateDatabaseTaxonomyTermRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
 {
-    /** @description Taxonomy id that owns the term, from get_database_taxonomies. */
+    /** @description Taxonomy id that owns the term, from get_database_taxonomies — or the taxonomy name (slug or title). */
     // @DataMember
-    // @ApiMember(Description="Taxonomy id that owns the term, from get_database_taxonomies.", IsRequired=true)
+    // @ApiMember(Description="Taxonomy id that owns the term, from get_database_taxonomies — or the taxonomy name (slug or title).", IsRequired=true)
     public taxonomyId: string;
 
     /** @description Term id to update, from get_database_taxonomy_term_tree. */
@@ -19831,9 +20699,9 @@ export class TestPushIntegration extends CodeMashRequestBase implements IReturn<
     // @ApiMember(Description="The push integration id to test. Get it from get_push_integrations.", IsRequired=true)
     public integrationId: string;
 
-    /** @description The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Fake integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily. */
+    /** @description The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Sandbox integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily. */
     // @DataMember
-    // @ApiMember(Description="The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Fake integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily.")
+    // @ApiMember(Description="The device token the test is sent to — a device registered for the person receiving the test (get it from get_push_devices). Required for every real provider (only the Sandbox integration tests without one). For a web device it is the browser subscription JSON. Requires DeliveryFamily.")
     public testToken?: string;
 
     /** @description The delivery family of TestToken: ios, android, chrome (any browser web push) or safari. Requires TestToken. */
@@ -20199,6 +21067,49 @@ export class GetPushCampaignMessagesRequest extends CodeMashListPaginationReques
     public getTypeName() { return 'GetPushCampaignMessagesRequest'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetPushCampaignMessagesResponse(); }
+}
+
+// @Route("/{version}/notifications/inbox", "GET")
+export class GetNotificationInboxRequest extends CodeMashListPaginationRequestBase implements IReturn<GetNotificationInboxResponse>
+{
+    public unreadOnly: boolean;
+    public channel?: string;
+
+    public constructor(init?: Partial<GetNotificationInboxRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetNotificationInboxRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetNotificationInboxResponse(); }
+}
+
+// @Route("/{version}/notifications/inbox/unread-count", "GET")
+export class GetUnreadCountRequest extends CodeMashRequestBase implements IReturn<GetUnreadCountResponse>
+{
+
+    public constructor(init?: Partial<GetUnreadCountRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetUnreadCountRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetUnreadCountResponse(); }
+}
+
+// @Route("/{version}/notifications/inbox/{notificationId}/read", "POST")
+export class MarkNotificationReadRequest extends CodeMashRequestBase implements IReturn<MarkNotificationReadResponse>
+{
+    public notificationId: string;
+
+    public constructor(init?: Partial<MarkNotificationReadRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'MarkNotificationReadRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new MarkNotificationReadResponse(); }
+}
+
+// @Route("/{version}/notifications/inbox/read-all", "POST")
+export class MarkAllNotificationsReadRequest extends CodeMashRequestBase implements IReturn<MarkAllNotificationsReadResponse>
+{
+
+    public constructor(init?: Partial<MarkAllNotificationsReadRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'MarkAllNotificationsReadRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new MarkAllNotificationsReadResponse(); }
 }
 
 /** @description Disable payments service */
@@ -20687,6 +21598,21 @@ export class GetAgentOnboardingRequest extends RequestBase implements IReturn<Ge
     public getTypeName() { return 'GetAgentOnboardingRequest'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetAgentOnboardingResponse(); }
+}
+
+/** @description The AI project-context summary: the projects the caller may work on, with their settings — never a secret. */
+// @Route("/{version}/account/ai/context", "GET")
+// @Api(Description="The AI project-context summary: the projects the caller may work on, with their settings — never a secret.")
+export class GetAiContextRequest extends RequestBase implements IReturn<GetAiContextResponse>
+{
+    public projectId?: string;
+    public format?: string;
+    public knownVersion?: string;
+
+    public constructor(init?: Partial<GetAiContextRequest>) { super(init); (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetAiContextRequest'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetAiContextResponse(); }
 }
 
 /** @description Lists the AI tools this host exposes (external-agent bridge). */
@@ -21181,7 +22107,7 @@ export class DeleteAiProjectTrigger extends DeleteTrigger implements IReturn<Emp
 /** @description Starts a browser sign-in for the Norbix CLI (OAuth device authorization, RFC 8628): a device code for polling and a user code the person confirms on the dashboard. */
 // @Route("/{version}/auth/device/start", "POST")
 // @Api(Description="Starts a browser sign-in for the Norbix CLI (OAuth device authorization, RFC 8628): a device code for polling and a user code the person confirms on the dashboard.")
-export class AuthDeviceStartRequest extends RequestBase implements IReturn<AuthDeviceStartResponse>
+export class AuthDeviceStartRequest extends RequestBase implements IReturn<AuthDeviceStartResponse>, INoSessionCookies
 {
     /** @description Who asks, shown on the dashboard, e.g. "norbix-cli". 1–80 printable characters. */
     // @ApiMember(Description="Who asks, shown on the dashboard, e.g. \"norbix-cli\". 1–80 printable characters.", IsRequired=true)
@@ -21204,7 +22130,7 @@ export class AuthDeviceStartRequest extends RequestBase implements IReturn<AuthD
 /** @description Polls a CLI browser sign-in (RFC 8628). Always HTTP 200: an error name (authorization_pending, slow_down, access_denied, expired_token, invalid_grant, invalid_request) or the tokens, once. */
 // @Route("/{version}/auth/device/token", "POST")
 // @Api(Description="Polls a CLI browser sign-in (RFC 8628). Always HTTP 200: an error name (authorization_pending, slow_down, access_denied, expired_token, invalid_grant, invalid_request) or the tokens, once.")
-export class AuthDeviceTokenRequest extends RequestBase implements IReturn<AuthDeviceTokenResponse>
+export class AuthDeviceTokenRequest extends RequestBase implements IReturn<AuthDeviceTokenResponse>, INoSessionCookies
 {
     /** @description The deviceCode from POST /auth/device/start. */
     // @ApiMember(Description="The deviceCode from POST /auth/device/start.", IsRequired=true)
@@ -21262,7 +22188,7 @@ export class AuthDeviceConsentDecisionRequest extends RequestBase implements IRe
 // @Route("/.well-known/oauth-protected-resource", "GET")
 // @Route("/.well-known/oauth-protected-resource/{Path*}", "GET")
 // @Api(Description="OAuth protected-resource metadata (RFC 9728) for the Hub MCP endpoint.")
-export class OAuthProtectedResourceMetadataRequest implements IReturn<string>
+export class OAuthProtectedResourceMetadataRequest implements IReturn<string>, INoSessionCookies
 {
     public path?: string;
 
@@ -21276,7 +22202,7 @@ export class OAuthProtectedResourceMetadataRequest implements IReturn<string>
 // @Route("/.well-known/oauth-authorization-server", "GET")
 // @Route("/.well-known/oauth-authorization-server/{Path*}", "GET")
 // @Api(Description="OAuth authorization-server metadata (RFC 8414).")
-export class OAuthAuthorizationServerMetadataRequest implements IReturn<string>
+export class OAuthAuthorizationServerMetadataRequest implements IReturn<string>, INoSessionCookies
 {
     public path?: string;
 
@@ -21289,7 +22215,7 @@ export class OAuthAuthorizationServerMetadataRequest implements IReturn<string>
 /** @description Registers an MCP client for OAuth (RFC 7591). Public clients only: PKCE, no secret. */
 // @Route("/{version}/oauth/register", "POST")
 // @Api(Description="Registers an MCP client for OAuth (RFC 7591). Public clients only: PKCE, no secret.")
-export class OAuthRegisterRequest implements IReturn<string>
+export class OAuthRegisterRequest implements IReturn<string>, INoSessionCookies
 {
     public version?: string;
     public requestStream: string;
@@ -21303,7 +22229,7 @@ export class OAuthRegisterRequest implements IReturn<string>
 /** @description OAuth authorization endpoint: checks the request and redirects to the dashboard consent screen. */
 // @Route("/{version}/oauth/authorize", "GET")
 // @Api(Description="OAuth authorization endpoint: checks the request and redirects to the dashboard consent screen.")
-export class OAuthAuthorizeRequest implements IReturn<string>
+export class OAuthAuthorizeRequest implements IReturn<string>, INoSessionCookies
 {
     public version?: string;
 
@@ -21418,7 +22344,7 @@ export class OAuthConsentDecisionRequest extends RequestBase implements IReturn<
 /** @description OAuth token endpoint: authorization code (PKCE S256) or refresh token → access token. */
 // @Route("/{version}/oauth/token", "POST")
 // @Api(Description="OAuth token endpoint: authorization code (PKCE S256) or refresh token → access token.")
-export class OAuthTokenRequest implements IReturn<string>
+export class OAuthTokenRequest implements IReturn<string>, INoSessionCookies
 {
     public version?: string;
 
@@ -21431,7 +22357,7 @@ export class OAuthTokenRequest implements IReturn<string>
 /** @description OAuth token revocation (RFC 7009): revokes the grant behind a refresh or access token. */
 // @Route("/{version}/oauth/revoke", "POST")
 // @Api(Description="OAuth token revocation (RFC 7009): revokes the grant behind a refresh or access token.")
-export class OAuthRevokeRequest implements IReturn<string>
+export class OAuthRevokeRequest implements IReturn<string>, INoSessionCookies
 {
     public version?: string;
 
@@ -21952,6 +22878,9 @@ export class SaveSchedulerTaskRequest extends CodeMashRequestBase implements IRe
     public stopOnError: boolean;
 
     // @DataMember
+    public endsAtUnix?: number;
+
+    // @DataMember
     public task: SchedulerTaskRequest;
 
     public constructor(init?: Partial<SaveSchedulerTaskRequest>) { super(init); (Object as any).assign(this, init); }
@@ -22045,8 +22974,8 @@ export class DeleteContact extends CodeMashRequestBase implements IReturn<EmptyR
 // @Api(Description="Get a contact")
 export class GetContact extends CodeMashRequestBase implements IReturn<GetContactResponse>
 {
-    /** @description The contact id (ct_…) to fetch. Get it from get_all_contacts. */
-    // @ApiMember(Description="The contact id (ct_…) to fetch. Get it from get_all_contacts.", IsRequired=true)
+    /** @description The contact id (ct_…) to fetch, or a login id (usr_…) — then the contact that owns that login is returned. Get it from get_all_contacts. */
+    // @ApiMember(Description="The contact id (ct_…) to fetch, or a login id (usr_…) — then the contact that owns that login is returned. Get it from get_all_contacts.", IsRequired=true)
     public contactId: string;
 
     public constructor(init?: Partial<GetContact>) { super(init); (Object as any).assign(this, init); }
@@ -22067,6 +22996,30 @@ export class GetAllContacts extends CodeMashRequestBase implements IReturn<GetAl
     /** @description How many contacts to return per page (default 50). */
     // @ApiMember(Description="How many contacts to return per page (default 50).")
     public pageSize?: number;
+
+    /** @description Free text, case-insensitive: matches the email, phone, display / first / last / full name, or any login's user name or email. */
+    // @ApiMember(Description="Free text, case-insensitive: matches the email, phone, display / first / last / full name, or any login's user name or email.")
+    public search?: string;
+
+    /** @description Case-insensitive part of the email (primary email or any login's email). */
+    // @ApiMember(Description="Case-insensitive part of the email (primary email or any login's email).")
+    public email?: string;
+
+    /** @description Case-insensitive part of any login's user name. */
+    // @ApiMember(Description="Case-insensitive part of any login's user name.")
+    public userName?: string;
+
+    /** @description Login status names, any of: Registered, PendingValidation, Active, Unregistered, Suspended, InActive, Blocked. */
+    // @ApiMember(Description="Login status names, any of: Registered, PendingValidation, Active, Unregistered, Suspended, InActive, Blocked.")
+    public statuses?: string[];
+
+    /** @description Login type names, any of: Service, Email, UserName, Phone, Guest, Social. */
+    // @ApiMember(Description="Login type names, any of: Service, Email, UserName, Phone, Guest, Social.")
+    public types?: string[];
+
+    /** @description Composite project-role ids (pr_{project}_nr_{role}); the contact holds any of them. */
+    // @ApiMember(Description="Composite project-role ids (pr_{project}_nr_{role}); the contact holds any of them.")
+    public roleNames?: string[];
 
     public constructor(init?: Partial<GetAllContacts>) { super(init); (Object as any).assign(this, init); }
     public getTypeName() { return 'GetAllContacts'; }

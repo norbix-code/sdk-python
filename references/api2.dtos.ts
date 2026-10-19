@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-10-14 08:01:40
+Date: 2026-10-19 11:26:13
 Version: 10.20
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: http://localhost:5002
@@ -42,6 +42,272 @@ export module CodeMashApi2
 
     export interface IPost
     {
+    }
+
+    export class JsonSchemaFieldDto
+    {
+        // @DataMember
+        public fieldName: string;
+
+        public constructor(init?: Partial<JsonSchemaFieldDto>) { (Object as any).assign(this, init); }
+    }
+
+    export class StringFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public format?: string;
+
+        // @DataMember
+        public pattern?: string;
+
+        // @DataMember
+        public minLength?: number;
+
+        // @DataMember
+        public maxLength?: number;
+
+        // @DataMember
+        public translateOptions?: IReadOnlyDictionary<string, string>;
+
+        // @DataMember
+        public default?: string;
+
+        // @DataMember
+        public unique?: boolean;
+
+        public constructor(init?: Partial<StringFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class DecimalFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public minimum?: number;
+
+        // @DataMember
+        public maximum?: number;
+
+        // @DataMember
+        public multipleOf?: number;
+
+        // @DataMember
+        public default?: number;
+
+        // @DataMember
+        public unique?: boolean;
+
+        public constructor(init?: Partial<DecimalFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class CurrencyDefaultDto
+    {
+        // @DataMember
+        public value: number;
+
+        // @DataMember
+        public currency: string;
+
+        public constructor(init?: Partial<CurrencyDefaultDto>) { (Object as any).assign(this, init); }
+    }
+
+    export class CurrencyFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public allowedCurrencies?: IReadOnlyList<string>;
+
+        // @DataMember
+        public multipleOf?: number;
+
+        // @DataMember
+        public minimum?: number;
+
+        // @DataMember
+        public maximum?: number;
+
+        // @DataMember
+        public default?: CurrencyDefaultDto;
+
+        public constructor(init?: Partial<CurrencyFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class BooleanFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public default?: boolean;
+
+        public constructor(init?: Partial<BooleanFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class DateFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public minimum?: number;
+
+        // @DataMember
+        public maximum?: number;
+
+        // @DataMember
+        public default?: number;
+
+        public constructor(init?: Partial<DateFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class IntegerFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public minimum?: number;
+
+        // @DataMember
+        public maximum?: number;
+
+        // @DataMember
+        public default?: number;
+
+        // @DataMember
+        public unique?: boolean;
+
+        public constructor(init?: Partial<IntegerFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class GeolocationFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public allowedTypes?: IReadOnlyList<string>;
+
+        public constructor(init?: Partial<GeolocationFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class TagsFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public minItems?: number;
+
+        // @DataMember
+        public maxItems?: number;
+
+        // @DataMember
+        public default?: IReadOnlyList<string>;
+
+        public constructor(init?: Partial<TagsFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class FileFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public storages?: IReadOnlyList<string>;
+
+        // @DataMember
+        public minItems?: number;
+
+        // @DataMember
+        public maxItems?: number;
+
+        // @DataMember
+        public allowedFileType?: string;
+
+        // @DataMember
+        public maxSizeMb?: number;
+
+        public constructor(init?: Partial<FileFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class TaxonomySelectionFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public taxonomyId?: string;
+
+        // @DataMember
+        public multiple: boolean;
+
+        // @DataMember
+        public displayField?: string;
+
+        public constructor(init?: Partial<TaxonomySelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class CollectionSelectionFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public collectionId?: string;
+
+        // @DataMember
+        public displayField?: string;
+
+        // @DataMember
+        public multiple: boolean;
+
+        public constructor(init?: Partial<CollectionSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class UserSelectionFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public multiple: boolean;
+
+        // @DataMember
+        public displayField?: string;
+
+        public constructor(init?: Partial<UserSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class RoleSelectionFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public multiple: boolean;
+
+        // @DataMember
+        public displayField?: string;
+
+        public constructor(init?: Partial<RoleSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class EnumSelectionFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public values?: IReadOnlyList<string>;
+
+        // @DataMember
+        public multiple: boolean;
+
+        // @DataMember
+        public default?: IReadOnlyList<string>;
+
+        public constructor(init?: Partial<EnumSelectionFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class ObjectFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public properties: IReadOnlyList<JsonSchemaFieldDto>;
+
+        // @DataMember
+        public required?: IReadOnlyList<string>;
+
+        public constructor(init?: Partial<ObjectFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class ArrayFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public items: JsonSchemaFieldDto;
+
+        // @DataMember
+        public minItems?: number;
+
+        // @DataMember
+        public maxItems?: number;
+
+        // @DataMember
+        public uniqueItems?: boolean;
+
+        public constructor(init?: Partial<ArrayFieldDto>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class JsonFieldDto extends JsonSchemaFieldDto
+    {
+        // @DataMember
+        public maxBytes?: number;
+
+        public constructor(init?: Partial<JsonFieldDto>) { super(init); (Object as any).assign(this, init); }
     }
 
     // @DataContract(Namespace="http://codemash.io/types/")
@@ -181,6 +447,11 @@ export module CodeMashApi2
         public constructor(init?: Partial<SaveUserWithRolesBase>) { super(init); (Object as any).assign(this, init); }
     }
 
+    export interface IPublicRegistrationRequest
+    {
+        roles?: string[];
+    }
+
     export class CodeMashListPaginationRequestBase extends RequestBase implements IHasProjectId, IHasEnv
     {
         /** @description ID of your project. Can be passed in a header as norbix-project-id. */
@@ -231,6 +502,24 @@ export module CodeMashApi2
         public endingBefore?: string;
 
         public constructor(init?: Partial<PagingArgs>) { (Object as any).assign(this, init); }
+    }
+
+    // @DataContract
+    export class PaymentOrderLineInput
+    {
+        // @DataMember
+        public sku?: string;
+
+        // @DataMember
+        public title?: string;
+
+        // @DataMember
+        public quantity: number;
+
+        // @DataMember
+        public unitAmountMinor: number;
+
+        public constructor(init?: Partial<PaymentOrderLineInput>) { (Object as any).assign(this, init); }
     }
 
     // @DataContract
@@ -512,6 +801,7 @@ export module CodeMashApi2
     {
         Registered = 0,
         PendingValidation = 2,
+        Invited = 4,
         Active = 8,
         Unregistered = 16,
         Suspended = 32,
@@ -691,15 +981,10 @@ export module CodeMashApi2
         // @DataMember
         public meta?: Object;
 
-        public constructor(init?: Partial<TermDto>) { (Object as any).assign(this, init); }
-    }
-
-    export class JsonSchemaFieldDto
-    {
         // @DataMember
-        public fieldName: string;
+        public origin?: string;
 
-        public constructor(init?: Partial<JsonSchemaFieldDto>) { (Object as any).assign(this, init); }
+        public constructor(init?: Partial<TermDto>) { (Object as any).assign(this, init); }
     }
 
     export class DataSchemaDto
@@ -721,6 +1006,14 @@ export module CodeMashApi2
         public constructor(init?: Partial<VisualSchemaDto>) { (Object as any).assign(this, init); }
     }
 
+    export class SchemaUniqueIndexDto
+    {
+        // @DataMember
+        public fields: string[] = [];
+
+        public constructor(init?: Partial<SchemaUniqueIndexDto>) { (Object as any).assign(this, init); }
+    }
+
     export class SchemaSettingsDto
     {
         // @DataMember
@@ -731,6 +1024,9 @@ export module CodeMashApi2
 
         // @DataMember
         public description?: string;
+
+        // @DataMember
+        public uniqueIndexes?: SchemaUniqueIndexDto[];
 
         public constructor(init?: Partial<SchemaSettingsDto>) { (Object as any).assign(this, init); }
     }
@@ -1068,6 +1364,136 @@ export module CodeMashApi2
     }
 
     // @DataContract
+    export class PaymentOrderLineDto
+    {
+        // @DataMember
+        public sku: string;
+
+        // @DataMember
+        public title: string;
+
+        // @DataMember
+        public quantity: number;
+
+        // @DataMember
+        public unitAmountMinor: number;
+
+        // @DataMember
+        public amountMinor: number;
+
+        public constructor(init?: Partial<PaymentOrderLineDto>) { (Object as any).assign(this, init); }
+    }
+
+    // @DataContract
+    export class PaymentOrderCheckoutDto
+    {
+        // @DataMember
+        public attempt: number;
+
+        // @DataMember
+        public integrationId: string;
+
+        // @DataMember
+        public provider: string;
+
+        // @DataMember
+        public providerOrderId: string;
+
+        // @DataMember
+        public providerReference: string;
+
+        // @DataMember
+        public paymentUrl: string;
+
+        // @DataMember
+        public method: string;
+
+        // @DataMember
+        public startedOnUtc: string;
+
+        // @DataMember
+        public expiresAtUtc: string;
+
+        public constructor(init?: Partial<PaymentOrderCheckoutDto>) { (Object as any).assign(this, init); }
+    }
+
+    // @DataContract
+    export class PaymentOrderDto
+    {
+        // @DataMember
+        public id: string;
+
+        // @DataMember
+        public env: string;
+
+        // @DataMember
+        public buyerUserId: string;
+
+        // @DataMember
+        public merchantReference: string;
+
+        // @DataMember
+        public currency: string;
+
+        // @DataMember
+        public priceVersion: string;
+
+        // @DataMember
+        public lines: PaymentOrderLineDto[] = [];
+
+        // @DataMember
+        public totalMinor: number;
+
+        // @DataMember
+        public metadata: { [index:string]: string; } = {};
+
+        // @DataMember
+        public status: string;
+
+        // @DataMember
+        public createdOnUtc: string;
+
+        // @DataMember
+        public updatedOnUtc: string;
+
+        // @DataMember
+        public checkouts: PaymentOrderCheckoutDto[] = [];
+
+        // @DataMember
+        public settledMinor?: number;
+
+        // @DataMember
+        public refundedMinor: number;
+
+        // @DataMember
+        public paidOnUtc?: string;
+
+        // @DataMember
+        public providerPaymentId?: string;
+
+        // @DataMember
+        public mismatches: string[] = [];
+
+        public constructor(init?: Partial<PaymentOrderDto>) { (Object as any).assign(this, init); }
+    }
+
+    export class InAppNotificationDto
+    {
+        public id: string;
+        public projectId: string;
+        public userId: string;
+        public channel: string;
+        public eventName: string;
+        public payloadJson?: string;
+        public isRead: boolean;
+        public seenAtUtc?: string;
+        public readAtUtc?: string;
+        public createdAtUtc: string;
+
+        public constructor(init?: Partial<InAppNotificationDto>) { (Object as any).assign(this, init); }
+    }
+
+    // @DataContract
     export class ResponseError
     {
         // @DataMember(Order=1)
@@ -1178,6 +1604,9 @@ export module CodeMashApi2
 
         // @DataMember
         public status?: string;
+
+        // @DataMember
+        public warnings?: string[];
 
         public constructor(init?: Partial<IdResponse>) { super(init); (Object as any).assign(this, init); }
     }
@@ -1485,6 +1914,55 @@ export module CodeMashApi2
         public constructor(init?: Partial<GetOwnPushMessagesResponse>) { super(init); (Object as any).assign(this, init); }
     }
 
+    export class GetPaymentOrderResponse extends ResponseBase
+    {
+        public item?: PaymentOrderDto;
+
+        public constructor(init?: Partial<GetPaymentOrderResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class GetPaymentOrdersResponse extends ResponseBase
+    {
+        public list?: PaginatedResponse<PaymentOrderDto>;
+
+        public constructor(init?: Partial<GetPaymentOrdersResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class StartPaymentCheckoutResponse extends ResponseBase
+    {
+        public checkout?: PaymentOrderCheckoutDto;
+        public reused: boolean;
+        public order?: PaymentOrderDto;
+
+        public constructor(init?: Partial<StartPaymentCheckoutResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class GetNotificationInboxResponse extends ResponseBase
+    {
+        public list?: PaginatedResponse<InAppNotificationDto>;
+
+        public constructor(init?: Partial<GetNotificationInboxResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class GetUnreadCountResponse extends ResponseBase
+    {
+        public count: number;
+
+        public constructor(init?: Partial<GetUnreadCountResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class MarkNotificationReadResponse extends ResponseBase
+    {
+
+        public constructor(init?: Partial<MarkNotificationReadResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
+    export class MarkAllNotificationsReadResponse extends ResponseBase
+    {
+
+        public constructor(init?: Partial<MarkAllNotificationsReadResponse>) { super(init); (Object as any).assign(this, init); }
+    }
+
     // @DataContract
     export class AuthenticateResponse implements IHasSessionId, IHasBearerToken
     {
@@ -1546,6 +2024,32 @@ export module CodeMashApi2
         public responseStatus?: ResponseStatus;
 
         public constructor(init?: Partial<GetAccessTokenResponse>) { (Object as any).assign(this, init); }
+    }
+
+    export class SharedTypeGen
+    {
+        public typegen_StringFieldDto?: StringFieldDto;
+        public typegen_DecimalFieldDto?: DecimalFieldDto;
+        public typegen_CurrencyFieldDto?: CurrencyFieldDto;
+        public typegen_BooleanFieldDto?: BooleanFieldDto;
+        public typegen_DateFieldDto?: DateFieldDto;
+        public typegen_IntegerFieldDto?: IntegerFieldDto;
+        public typegen_GeolocationFieldDto?: GeolocationFieldDto;
+        public typegen_TagsFieldDto?: TagsFieldDto;
+        public typegen_FileFieldDto?: FileFieldDto;
+        public typegen_TaxonomySelectionFieldDto?: TaxonomySelectionFieldDto;
+        public typegen_CollectionSelectionFieldDto?: CollectionSelectionFieldDto;
+        public typegen_UserSelectionFieldDto?: UserSelectionFieldDto;
+        public typegen_RoleSelectionFieldDto?: RoleSelectionFieldDto;
+        public typegen_EnumSelectionFieldDto?: EnumSelectionFieldDto;
+        public typegen_ObjectFieldDto?: ObjectFieldDto;
+        public typegen_ArrayFieldDto?: ArrayFieldDto;
+        public typegen_JsonFieldDto?: JsonFieldDto;
+
+        public constructor(init?: Partial<SharedTypeGen>) { (Object as any).assign(this, init); }
+        public getTypeName() { return 'SharedTypeGen'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() {}
     }
 
     // @Route("/{version}/echo", "GET")
@@ -1890,42 +2394,6 @@ export module CodeMashApi2
     }
 
     /** @description Membership */
-    // @Route("/{version}/membership/auth/register/user-name", "POST")
-    // @Api(Description="Membership")
-    // @DataContract
-    export class SaveUserNameUser extends SaveUser implements IReturn<IdResponse>
-    {
-        // @DataMember
-        public password: string;
-
-        // @DataMember
-        public userName: string;
-
-        public constructor(init?: Partial<SaveUserNameUser>) { super(init); (Object as any).assign(this, init); }
-        public getTypeName() { return 'SaveUserNameUser'; }
-        public getMethod() { return 'POST'; }
-        public createResponse() { return new IdResponse(); }
-    }
-
-    /** @description Membership */
-    // @Route("/{version}/membership/auth/register/email", "POST")
-    // @Api(Description="Membership")
-    // @DataContract
-    export class SaveEmailUser extends SaveUser implements IReturn<IdResponse>
-    {
-        // @DataMember
-        public password: string;
-
-        // @DataMember
-        public email: string;
-
-        public constructor(init?: Partial<SaveEmailUser>) { super(init); (Object as any).assign(this, init); }
-        public getTypeName() { return 'SaveEmailUser'; }
-        public getMethod() { return 'POST'; }
-        public createResponse() { return new IdResponse(); }
-    }
-
-    /** @description Membership */
     // @Route("/{version}/membership/auth/register/phone", "POST")
     // @Api(Description="Membership")
     // @DataContract
@@ -1938,6 +2406,52 @@ export module CodeMashApi2
 
         public constructor(init?: Partial<SavePhoneUser>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'SavePhoneUser'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new IdResponse(); }
+    }
+
+    /** @description Membership */
+    // @Route("/{version}/membership/auth/register/user-name", "POST")
+    // @Api(Description="Membership")
+    // @DataContract
+    export class SaveUserNameUser extends SaveUser implements IReturn<IdResponse>, IPublicRegistrationRequest
+    {
+        // @DataMember
+        public password: string;
+
+        // @DataMember
+        public userName: string;
+
+        /** @description Optional roles from the project's "Permitted user registration roles". Empty = the default registration role. */
+        // @DataMember
+        // @ApiMember(Description="Optional roles from the project's \"Permitted user registration roles\". Empty = the default registration role.")
+        public roles?: string[];
+
+        public constructor(init?: Partial<SaveUserNameUser>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'SaveUserNameUser'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new IdResponse(); }
+    }
+
+    /** @description Membership */
+    // @Route("/{version}/membership/auth/register/email", "POST")
+    // @Api(Description="Membership")
+    // @DataContract
+    export class SaveEmailUser extends SaveUser implements IReturn<IdResponse>, IPublicRegistrationRequest
+    {
+        // @DataMember
+        public password: string;
+
+        // @DataMember
+        public email: string;
+
+        /** @description Optional roles from the project's "Permitted user registration roles". Empty = the default registration role. */
+        // @DataMember
+        // @ApiMember(Description="Optional roles from the project's \"Permitted user registration roles\". Empty = the default registration role.")
+        public roles?: string[];
+
+        public constructor(init?: Partial<SaveEmailUser>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'SaveEmailUser'; }
         public getMethod() { return 'POST'; }
         public createResponse() { return new IdResponse(); }
     }
@@ -2078,6 +2592,31 @@ export module CodeMashApi2
         // @ApiMember(Description="Filter to these specific user ids.")
         public userIds?: string[];
 
+        /** @description Free text, case-insensitive: matches email, user name, display / first / last name or phone. */
+        // @DataMember
+        // @ApiMember(Description="Free text, case-insensitive: matches email, user name, display / first / last name or phone.")
+        public search?: string;
+
+        /** @description Case-insensitive part of the email. */
+        // @DataMember
+        // @ApiMember(Description="Case-insensitive part of the email.")
+        public email?: string;
+
+        /** @description Case-insensitive part of the user name. */
+        // @DataMember
+        // @ApiMember(Description="Case-insensitive part of the user name.")
+        public userName?: string;
+
+        /** @description Status names, any of: Registered, PendingValidation, Active, Unregistered, Suspended, InActive, Blocked. */
+        // @DataMember
+        // @ApiMember(Description="Status names, any of: Registered, PendingValidation, Active, Unregistered, Suspended, InActive, Blocked.")
+        public statuses?: string[];
+
+        /** @description Login type names, any of: Service, Email, UserName, Phone, Guest, Social. */
+        // @DataMember
+        // @ApiMember(Description="Login type names, any of: Service, Email, UserName, Phone, Guest, Social.")
+        public types?: string[];
+
         public constructor(init?: Partial<GetUsersRequest>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'GetUsersRequest'; }
         public getMethod() { return 'GET'; }
@@ -2141,10 +2680,20 @@ export module CodeMashApi2
     // @DataContract
     export class InviteUserRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
     {
-        /** @description Email address the invitation is sent to. */
+        /** @description Email address the invitation is sent to. It cannot be changed later. */
         // @DataMember
-        // @ApiMember(Description="Email address the invitation is sent to.", IsRequired=true)
+        // @ApiMember(Description="Email address the invitation is sent to. It cannot be changed later.", IsRequired=true)
         public email: string;
+
+        /** @description The invited person's full name, e.g. "Rūta Petraitė". Stored as the full name, first name (first word) and last name (the rest). The user may change it when finishing. */
+        // @DataMember
+        // @ApiMember(Description="The invited person's full name, e.g. \"Rūta Petraitė\". Stored as the full name, first name (first word) and last name (the rest). The user may change it when finishing.")
+        public fullName?: string;
+
+        /** @description Optional. How e-mails greet the person ("Hi {salutation},"), e.g. "Rūta". Stored as the display name. When empty the full name is used. The user may change it when finishing. */
+        // @DataMember
+        // @ApiMember(Description="Optional. How e-mails greet the person (\"Hi {salutation},\"), e.g. \"Rūta\". Stored as the display name. When empty the full name is used. The user may change it when finishing.")
+        public salutation?: string;
 
         /** @description Database integration id. Optional — defaults to the request environment's default integration. */
         // @DataMember
@@ -2153,6 +2702,53 @@ export module CodeMashApi2
 
         public constructor(init?: Partial<InviteUserRequest>) { super(init); (Object as any).assign(this, init); }
         public getTypeName() { return 'InviteUserRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new EmptyResponse(); }
+    }
+
+    /** @description Membership */
+    // @Route("/{version}/membership/auth/invitation/finish", "POST")
+    // @Api(Description="Membership")
+    // @DataContract
+    export class FinishInvitationRequest extends CodeMashRequestBase implements IReturn<EmptyResponse>
+    {
+        /** @description One-time invitation token from the e-mail link (the #token= fragment). */
+        // @DataMember
+        // @ApiMember(Description="One-time invitation token from the e-mail link (the #token= fragment).", IsRequired=true)
+        public token: string;
+
+        /** @description The user's password. Validated against the project's complexity policy. */
+        // @DataMember
+        // @ApiMember(Description="The user's password. Validated against the project's complexity policy.", IsRequired=true)
+        public password: string;
+
+        /** @description Optional. The user's full name; replaces the one the admin entered (full name, first name = first word, last name = the rest). Empty = keep the admin's. */
+        // @DataMember
+        // @ApiMember(Description="Optional. The user's full name; replaces the one the admin entered (full name, first name = first word, last name = the rest). Empty = keep the admin's.")
+        public fullName?: string;
+
+        /** @description Optional. How e-mails greet the user (stored as the display name). Empty = keep the admin's, or the full name when the admin gave none. */
+        // @DataMember
+        // @ApiMember(Description="Optional. How e-mails greet the user (stored as the display name). Empty = keep the admin's, or the full name when the admin gave none.")
+        public salutation?: string;
+
+        /** @description Optional. Older form of Salutation (the display name); Salutation wins when both are sent. */
+        // @DataMember
+        // @ApiMember(Description="Optional. Older form of Salutation (the display name); Salutation wins when both are sent.")
+        public displayName?: string;
+
+        /** @description Optional first name; wins over the one taken from FullName. */
+        // @DataMember
+        // @ApiMember(Description="Optional first name; wins over the one taken from FullName.")
+        public firstName?: string;
+
+        /** @description Optional last name; wins over the one taken from FullName. */
+        // @DataMember
+        // @ApiMember(Description="Optional last name; wins over the one taken from FullName.")
+        public lastName?: string;
+
+        public constructor(init?: Partial<FinishInvitationRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'FinishInvitationRequest'; }
         public getMethod() { return 'POST'; }
         public createResponse() { return new EmptyResponse(); }
     }
@@ -2706,7 +3302,9 @@ export module CodeMashApi2
         // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
         public allLanguages: boolean;
 
+        /** @description The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…). */
         // @DataMember
+        // @ApiMember(Description="The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…).", IsRequired=true)
         public taxonomyName: string;
 
         // @DataMember
@@ -2752,7 +3350,9 @@ export module CodeMashApi2
         // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
         public allLanguages: boolean;
 
+        /** @description The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…). */
         // @DataMember
+        // @ApiMember(Description="The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…).", IsRequired=true)
         public taxonomyName: string;
 
         // @DataMember
@@ -2784,7 +3384,9 @@ export module CodeMashApi2
         // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
         public allLanguages: boolean;
 
+        /** @description The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…). */
         // @DataMember
+        // @ApiMember(Description="The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…).", IsRequired=true)
         public taxonomyName: string;
 
         // @DataMember
@@ -2816,7 +3418,9 @@ export module CodeMashApi2
         // @ApiMember(Description="Set true to keep name / description as stored even when Accept-Language is sent (editors). The full translations are always in names / descriptions.")
         public allLanguages: boolean;
 
+        /** @description The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…). */
         // @DataMember
+        // @ApiMember(Description="The taxonomy: its name (slug or title; URL-encode spaces) or its id (txn_…).", IsRequired=true)
         public taxonomyName: string;
 
         // @DataMember
@@ -3531,8 +4135,8 @@ export module CodeMashApi2
     // @Api(Description="Registers or refreshes a push device for the signed-in user.")
     export class RegisterOwnPushDeviceRequest extends CodeMashRequestBase implements IReturn<IdResponse>
     {
-        /** @description Who issued the token: expo (getExpoPushTokenAsync), fcm (Android / Firebase) or apns (iOS). */
-        // @ApiMember(Description="Who issued the token: expo (getExpoPushTokenAsync), fcm (Android / Firebase) or apns (iOS).", IsRequired=true)
+        /** @description Who issued the token: fcm (Android / Firebase) or apns (iOS). The NATIVE device token — in an Expo app use getDevicePushTokenAsync(). Expo push tokens (provider 'expo') are refused. */
+        // @ApiMember(Description="Who issued the token: fcm (Android / Firebase) or apns (iOS). The NATIVE device token — in an Expo app use getDevicePushTokenAsync(). Expo push tokens (provider 'expo') are refused.", IsRequired=true)
         public provider: string;
 
         /** @description The push token, exactly as the provider gave it. */
@@ -3665,6 +4269,161 @@ export module CodeMashApi2
         public getTypeName() { return 'MarkAllOwnPushMessagesReadRequest'; }
         public getMethod() { return 'POST'; }
         public createResponse() { return new EmptyResponse(); }
+    }
+
+    /** @description Stores a payment order with a fixed price for one of the project's users. Server only (service user API key). */
+    // @Route("/{version}/payments/orders", "POST")
+    // @Api(Description="Stores a payment order with a fixed price for one of the project's users. Server only (service user API key).")
+    export class CreatePaymentOrderRequest extends CodeMashRequestBase implements IReturn<IdResponse>
+    {
+        /** @description The user the order is for (usr_…). */
+        // @ApiMember(Description="The user the order is for (usr_…).", IsRequired=true)
+        public buyerUserId: string;
+
+        /** @description The project's own order reference, unique per project and environment (1–64 of A–Z a–z 0–9 . _ : -). */
+        // @ApiMember(Description="The project's own order reference, unique per project and environment (1–64 of A–Z a–z 0–9 . _ : -).", IsRequired=true)
+        public merchantReference: string;
+
+        /** @description 8–128 characters. Same key + same body = the stored order; same key + other body = 409. May be sent as the Idempotency-Key header instead. */
+        // @ApiMember(Description="8–128 characters. Same key + same body = the stored order; same key + other body = 409. May be sent as the Idempotency-Key header instead.")
+        public idempotencyKey?: string;
+
+        /** @description EUR. */
+        // @ApiMember(Description="EUR.", IsRequired=true)
+        public currency: string;
+
+        /** @description The version of the price list the server priced the lines with. */
+        // @ApiMember(Description="The version of the price list the server priced the lines with.", IsRequired=true)
+        public priceVersion: string;
+
+        /** @description 1–50 lines: sku, title, quantity, unitAmountMinor (cents). Norbix computes the amounts and the total. */
+        // @ApiMember(Description="1–50 lines: sku, title, quantity, unitAmountMinor (cents). Norbix computes the amounts and the total.", IsRequired=true)
+        public lines: PaymentOrderLineInput[] = [];
+
+        /** @description Up to 20 project values (e.g. adId). No personal or billing data. */
+        // @ApiMember(Description="Up to 20 project values (e.g. adId). No personal or billing data.")
+        public metadata?: { [index:string]: string; };
+
+        public constructor(init?: Partial<CreatePaymentOrderRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'CreatePaymentOrderRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new IdResponse(); }
+    }
+
+    /** @description Reads one payment order. A buyer reads only their own orders. */
+    // @Route("/{version}/payments/orders/{Id}", "GET")
+    // @Api(Description="Reads one payment order. A buyer reads only their own orders.")
+    export class GetPaymentOrderRequest extends CodeMashRequestBase implements IReturn<GetPaymentOrderResponse>
+    {
+        /** @description The order id (ord_…). */
+        // @ApiMember(Description="The order id (ord_…).", IsRequired=true)
+        public id: string;
+
+        public constructor(init?: Partial<GetPaymentOrderRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'GetPaymentOrderRequest'; }
+        public getMethod() { return 'GET'; }
+        public createResponse() { return new GetPaymentOrderResponse(); }
+    }
+
+    /** @description Lists payment orders, newest first. A buyer gets only their own orders. */
+    // @Route("/{version}/payments/orders", "GET")
+    // @Api(Description="Lists payment orders, newest first. A buyer gets only their own orders.")
+    export class GetPaymentOrdersRequest extends CodeMashListPaginationRequestBase implements IReturn<GetPaymentOrdersResponse>
+    {
+        /** @description Server only: one buyer's orders (usr_…). A buyer always gets their own. */
+        // @ApiMember(Description="Server only: one buyer's orders (usr_…). A buyer always gets their own.")
+        public buyerUserId?: string;
+
+        /** @description Only the order with this merchant reference. */
+        // @ApiMember(Description="Only the order with this merchant reference.")
+        public merchantReference?: string;
+
+        /** @description Only orders in this status (Created, CheckoutStarted, Paid, …). */
+        // @ApiMember(Description="Only orders in this status (Created, CheckoutStarted, Paid, …).")
+        public status?: string;
+
+        public constructor(init?: Partial<GetPaymentOrdersRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'GetPaymentOrdersRequest'; }
+        public getMethod() { return 'GET'; }
+        public createResponse() { return new GetPaymentOrdersResponse(); }
+    }
+
+    /** @description Opens a Montonio checkout for a stored order and answers where the buyer pays. The buyer (own order) or the server. */
+    // @Route("/{version}/payments/orders/{Id}/checkout", "POST")
+    // @Api(Description="Opens a Montonio checkout for a stored order and answers where the buyer pays. The buyer (own order) or the server.")
+    export class StartPaymentCheckoutRequest extends CodeMashRequestBase implements IReturn<StartPaymentCheckoutResponse>
+    {
+        /** @description The order id (ord_…). */
+        // @ApiMember(Description="The order id (ord_…).", IsRequired=true)
+        public id: string;
+
+        /** @description The Montonio integration (int_…) of the project in the request's environment. */
+        // @ApiMember(Description="The Montonio integration (int_…) of the project in the request's environment.", IsRequired=true)
+        public integrationId: string;
+
+        /** @description bankLink (default), card, applePay or googlePay. */
+        // @ApiMember(Description="bankLink (default), card, applePay or googlePay.")
+        public method?: string;
+
+        /** @description Where the buyer comes back after paying; its origin must be one of the project's allowed origins. */
+        // @ApiMember(Description="Where the buyer comes back after paying; its origin must be one of the project's allowed origins.", IsRequired=true)
+        public returnUrl: string;
+
+        /** @description Bank links only: the country whose banks are shown first (default LT). */
+        // @ApiMember(Description="Bank links only: the country whose banks are shown first (default LT).")
+        public preferredCountry?: string;
+
+        /** @description Bank links only: one bank to open directly (the provider's bank code). */
+        // @ApiMember(Description="Bank links only: one bank to open directly (the provider's bank code).")
+        public preferredProvider?: string;
+
+        public constructor(init?: Partial<StartPaymentCheckoutRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'StartPaymentCheckoutRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new StartPaymentCheckoutResponse(); }
+    }
+
+    // @Route("/{version}/notifications/inbox", "GET")
+    export class GetNotificationInboxRequest extends CodeMashListPaginationRequestBase implements IReturn<GetNotificationInboxResponse>
+    {
+        public unreadOnly: boolean;
+        public channel?: string;
+
+        public constructor(init?: Partial<GetNotificationInboxRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'GetNotificationInboxRequest'; }
+        public getMethod() { return 'GET'; }
+        public createResponse() { return new GetNotificationInboxResponse(); }
+    }
+
+    // @Route("/{version}/notifications/inbox/unread-count", "GET")
+    export class GetUnreadCountRequest extends CodeMashRequestBase implements IReturn<GetUnreadCountResponse>
+    {
+
+        public constructor(init?: Partial<GetUnreadCountRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'GetUnreadCountRequest'; }
+        public getMethod() { return 'GET'; }
+        public createResponse() { return new GetUnreadCountResponse(); }
+    }
+
+    // @Route("/{version}/notifications/inbox/{notificationId}/read", "POST")
+    export class MarkNotificationReadRequest extends CodeMashRequestBase implements IReturn<MarkNotificationReadResponse>
+    {
+        public notificationId: string;
+
+        public constructor(init?: Partial<MarkNotificationReadRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'MarkNotificationReadRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new MarkNotificationReadResponse(); }
+    }
+
+    // @Route("/{version}/notifications/inbox/read-all", "POST")
+    export class MarkAllNotificationsReadRequest extends CodeMashRequestBase implements IReturn<MarkAllNotificationsReadResponse>
+    {
+
+        public constructor(init?: Partial<MarkAllNotificationsReadRequest>) { super(init); (Object as any).assign(this, init); }
+        public getTypeName() { return 'MarkAllNotificationsReadRequest'; }
+        public getMethod() { return 'POST'; }
+        public createResponse() { return new MarkAllNotificationsReadResponse(); }
     }
 
     /** @description Sign In */
