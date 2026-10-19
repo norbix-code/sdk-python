@@ -54,7 +54,7 @@ def _check(request: httpx.Request, verb: str, path: str, body: dict[str, Any] | 
     assert request.method == verb
     assert request.url.path == "/v3" + path
     assert request.headers["authorization"] == "Bearer test-token"
-    assert request.headers["x-cm-projectid"] == "test-project"
+    assert request.headers["norbix-project-id"] == "test-project"
     if body is None:
         assert request.content == b""
     else:

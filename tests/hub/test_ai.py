@@ -139,7 +139,7 @@ def test_hub_ai_get_embedding_integrations_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/integrations/embeddings')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_ai_save_embedding_integration_request_shape() -> None:
@@ -149,7 +149,7 @@ def test_hub_ai_save_embedding_integration_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request['url'].endswith('/v3/ai/integrations/embeddings')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_ai_get_embedding_integration_request_shape() -> None:
@@ -159,7 +159,7 @@ def test_hub_ai_get_embedding_integration_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/integrations/embeddings/stub-Id')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_ai_delete_embedding_integration_request_shape() -> None:
@@ -169,7 +169,7 @@ def test_hub_ai_delete_embedding_integration_request_shape() -> None:
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request['url'].endswith('/v3/ai/integrations/embeddings/stub-Id')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_ai_test_embedding_integration_request_shape() -> None:
@@ -179,7 +179,7 @@ def test_hub_ai_test_embedding_integration_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request['url'].endswith('/v3/ai/integrations/embeddings/stub-Id/test')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_ai_set_llm_integration_as_default_request_shape() -> None:
@@ -189,5 +189,5 @@ def test_hub_ai_set_llm_integration_as_default_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/ai/integrations/llms/stub-Id/default')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 

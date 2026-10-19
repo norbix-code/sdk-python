@@ -2,7 +2,7 @@
 
 The gateway takes the account from the signed-in session on each route below
 (``UserSession.UserAuth.AccountId``), or from the project id in the path, or
-needs no account at all — and it never reads the ``X-CM-AccountId`` header.
+needs no account at all — and it never reads the ``norbix-account-id`` header.
 So each method must work on a client WITHOUT ``account_id``, like the
 TypeScript, .NET, Go, Kotlin and Swift SDKs. One test per method, for the
 sync and the async client: verb, resolved path, Bearer header and no account
@@ -83,7 +83,7 @@ def _handler(seen: list[httpx.Request]) -> Any:
 def _assert_token_only(seen: list[httpx.Request], verb: str, path: str) -> None:
     assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [(verb, path)]
     assert seen[0].headers["authorization"] == "Bearer test-token"
-    assert "x-cm-accountid" not in seen[0].headers
+    assert "norbix-account-id" not in seen[0].headers
 
 
 @pytest.mark.parametrize(("module", "method", "verb", "path", "ids"), CASES, ids=IDS)
@@ -139,7 +139,7 @@ PUBLIC_IDS = [f"{module}.{method}" for module, method, *_ in PUBLIC_CASES]
 def _assert_public(seen: list[httpx.Request], verb: str, path: str, fields: dict[str, str]) -> None:
     assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [(verb, path)]
     assert "authorization" not in seen[0].headers
-    assert "x-cm-accountid" not in seen[0].headers
+    assert "norbix-account-id" not in seen[0].headers
     if verb == "GET":
         assert dict(parse_qsl(urlparse(str(seen[0].url)).query)) == fields
     else:

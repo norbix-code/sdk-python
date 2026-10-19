@@ -493,7 +493,7 @@ def test_hub_database_record_call_sends_auth_and_project_headers() -> None:
     assert transport.last_request is not None
     headers = transport.last_request["headers"]
     assert headers["authorization"] == "Bearer test-token"
-    assert headers["x-cm-projectid"] == "test-project"
+    assert headers["norbix-project-id"] == "test-project"
 
 
 def test_hub_database_audit_methods_exist_on_the_async_module() -> None:
