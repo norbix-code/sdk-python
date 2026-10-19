@@ -229,7 +229,7 @@ def test_sms_call_sends_auth_and_project_headers() -> None:
     assert transport.last_request is not None
     headers = transport.last_request["headers"]
     assert headers["authorization"] == "Bearer test-token"
-    assert headers["x-cm-projectid"] == "test-project"
+    assert headers["norbix-project-id"] == "test-project"
 
 
 # The four campaign audiences the gateway accepts, each with the settings

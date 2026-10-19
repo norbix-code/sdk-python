@@ -4,7 +4,7 @@ Access with `norbix.hub.account`.
 
 Every method here needs only a key or a bearer token (scope `project`): the
 gateway takes the account from the signed-in session, or from the project id
-in the path, and never reads the `X-CM-AccountId` header. Four routes are
+in the path, and never reads the `norbix-account-id` header. Four routes are
 public on the gateway and need no token and no `account_id` at all (scope
 `unauthenticated`, no `Authorization` header is sent): sign-up
 (`create_account`), accepting an invitation

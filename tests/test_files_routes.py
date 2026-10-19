@@ -285,7 +285,7 @@ def test_api_test_files_integration_sends_project_scope_headers() -> None:
     client.api.files.test_files_integration(INTEGRATION_ID)
     headers = transport.last_request["headers"]
     assert headers["authorization"] == "Bearer test-token"
-    assert headers["x-cm-projectid"] == "test-project"
+    assert headers["norbix-project-id"] == "test-project"
 
 
 def test_api_test_files_integration_gives_back_the_parsed_items() -> None:
@@ -346,5 +346,5 @@ def test_api_test_files_integration_async() -> None:
     assert request is not None
     assert request["method"] == "POST"
     assert urlparse(request["url"]).path == f"/v3/files/{INTEGRATION_ID}/test"
-    assert request["headers"]["x-cm-projectid"] == "test-project"
+    assert request["headers"]["norbix-project-id"] == "test-project"
     assert result["items"][2]["operation"] == "GetAllFiles"

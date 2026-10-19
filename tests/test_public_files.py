@@ -54,7 +54,7 @@ def test_hub_method_hits_its_own_route(method_name: str, expected_path: str) -> 
     assert (verb, path) == ("POST", expected_path)
     assert body == {"filesIntegrationId": INTEGRATION_ID, "path": "invoices/invoice.pdf"}
     assert headers["authorization"] == "Bearer test-token"
-    assert headers["x-cm-projectid"] == "test-project"
+    assert headers["norbix-project-id"] == "test-project"
 
 
 def test_make_file_public_gives_back_the_minted_id() -> None:

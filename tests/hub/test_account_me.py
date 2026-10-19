@@ -48,7 +48,7 @@ def test_get_my_account_user_profile_reads_the_profile_and_phone() -> None:
     profile = _sync_client(seen, PROFILE).hub.account.get_my_account_user_profile()
 
     assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [("GET", "/v3/account/me")]
-    assert "x-cm-accountid" not in seen[0].headers
+    assert "norbix-account-id" not in seen[0].headers
     assert profile["item"]["email"] == "ada@example.test"
     assert profile["item"]["generalInfo"]["phone"] == "+37060000000"
 
@@ -72,7 +72,7 @@ def test_get_account_collaborators_sends_flat_paging_and_the_project_filter() ->
     url = urlparse(str(seen[0].url))
     assert (seen[0].method, url.path) == ("GET", "/v3/account/collaborators")
     assert parse_qs(url.query) == {"projectId": ["proj_2"], "pageSize": ["50"], "startingAfter": ["member_20"]}
-    assert "x-cm-accountid" not in seen[0].headers
+    assert "norbix-account-id" not in seen[0].headers
 
 
 def test_async_account_me_and_team_list_need_only_a_token() -> None:

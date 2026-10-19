@@ -58,7 +58,7 @@ def test_optional_scope_sends_auth_only_when_present(
     assert len(seen) == 1
     assert seen[0].headers.get("Authorization") == want_auth
     assert seen[0].url.params.get("hash") == "h1"
-    assert seen[0].headers.get("X-CM-ProjectId") == "proj_1"
+    assert seen[0].headers.get("norbix-project-id") == "proj_1"
 
 
 @pytest.mark.parametrize(

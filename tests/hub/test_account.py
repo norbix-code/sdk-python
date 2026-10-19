@@ -292,7 +292,7 @@ def test_hub_account_get_account_collaborators_needs_only_a_token() -> None:
     client.hub.account.get_account_collaborators()
     assert transport.last_request is not None
     assert transport.last_request['method'] == 'GET'
-    assert 'x-cm-accountid' not in transport.last_request['headers']
+    assert 'norbix-account-id' not in transport.last_request['headers']
 
 def test_hub_account_send_invite_to_team_member_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
@@ -327,7 +327,7 @@ def test_hub_account_get_project_ai_settings_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/account/projects/stub-projectId/ai/settings')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_account_update_project_ai_settings_request_shape() -> None:
@@ -337,7 +337,7 @@ def test_hub_account_update_project_ai_settings_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/account/projects/stub-projectId/ai/settings')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_account_create_project_ai_assistant_request_shape() -> None:
@@ -347,7 +347,7 @@ def test_hub_account_create_project_ai_assistant_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request['url'].endswith('/v3/account/projects/stub-projectId/ai/assistants')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_account_update_project_ai_assistant_request_shape() -> None:
@@ -357,7 +357,7 @@ def test_hub_account_update_project_ai_assistant_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/account/projects/stub-projectId/ai/assistants/stub-assistantId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_account_delete_project_ai_assistant_request_shape() -> None:
@@ -367,7 +367,7 @@ def test_hub_account_delete_project_ai_assistant_request_shape() -> None:
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request['url'].endswith('/v3/account/projects/stub-projectId/ai/assistants/stub-assistantId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_account_get_project_ai_usage_request_shape() -> None:
@@ -377,7 +377,7 @@ def test_hub_account_get_project_ai_usage_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/account/projects/stub-projectId/ai/usage')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_account_set_admin_portal_enabled_request_shape() -> None:
@@ -387,7 +387,7 @@ def test_hub_account_set_admin_portal_enabled_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/account/projects/stub-projectId/admin-portal/enabled')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_hub_account_check_project_languages_request_shape() -> None:
@@ -402,7 +402,7 @@ def test_hub_account_check_project_languages_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert urlparse(transport.last_request['url']).path == '/v3/account/projects/proj-1/settings/languages/check'
     assert json.loads(transport.last_request['body']) == {"defaultLanguage": "en", "languages": ["en", "de"]}
-    assert transport.last_request['headers']['x-cm-accountid'] == 'acc-1'
+    assert transport.last_request['headers']['norbix-account-id'] == 'acc-1'
 
 def test_async_hub_account_check_project_languages_hits_the_route() -> None:
     import asyncio

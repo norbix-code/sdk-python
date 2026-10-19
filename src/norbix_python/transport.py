@@ -109,9 +109,9 @@ class Transport:
             if token:
                 headers["Authorization"] = f"Bearer {token}"
 
-        headers["X-CM-ProjectId"] = self._cfg.project_id
+        headers["norbix-project-id"] = self._cfg.project_id
         if self._cfg.account_id:
-            headers["X-CM-AccountId"] = self._cfg.account_id
+            headers["norbix-account-id"] = self._cfg.account_id
         # Environment selector: per-call override wins over the client default.
         # "PROD" is the backend default, so the header is omitted for it.
         resolved_env = env if env is not None else self._cfg.env
@@ -275,9 +275,9 @@ class AsyncTransport:
             if token:
                 headers["Authorization"] = f"Bearer {token}"
 
-        headers["X-CM-ProjectId"] = self._cfg.project_id
+        headers["norbix-project-id"] = self._cfg.project_id
         if self._cfg.account_id:
-            headers["X-CM-AccountId"] = self._cfg.account_id
+            headers["norbix-account-id"] = self._cfg.account_id
         # Environment selector: per-call override wins over the client default.
         # "PROD" is the backend default, so the header is omitted for it.
         resolved_env = env if env is not None else self._cfg.env

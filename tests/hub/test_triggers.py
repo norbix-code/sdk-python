@@ -42,7 +42,7 @@ def test_get_triggers_needing_attention_hits_the_route_with_query_values() -> No
     assert url.path == "/v3/triggers/attention"
     assert parse_qs(url.query) == {"triggerType": ["Schema"]}
     assert transport.last_request["body"] == ""
-    assert transport.last_request["headers"]["x-cm-projectid"] == "test-project"
+    assert transport.last_request["headers"]["norbix-project-id"] == "test-project"
 
 
 def test_async_get_triggers_needing_attention_hits_the_route() -> None:

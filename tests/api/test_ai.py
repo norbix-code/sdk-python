@@ -29,7 +29,7 @@ def test_api_ai_get_end_user_chat_availability_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/chat/availability')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_list_end_user_chat_sessions_request_shape() -> None:
@@ -39,7 +39,7 @@ def test_api_ai_list_end_user_chat_sessions_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_create_end_user_chat_session_request_shape() -> None:
@@ -49,7 +49,7 @@ def test_api_ai_create_end_user_chat_session_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_get_end_user_chat_session_request_shape() -> None:
@@ -59,7 +59,7 @@ def test_api_ai_get_end_user_chat_session_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_rename_end_user_chat_session_request_shape() -> None:
@@ -69,7 +69,7 @@ def test_api_ai_rename_end_user_chat_session_request_shape() -> None:
     assert transport.last_request['method'] == 'PATCH'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_delete_end_user_chat_session_request_shape() -> None:
@@ -79,7 +79,7 @@ def test_api_ai_delete_end_user_chat_session_request_shape() -> None:
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_pin_end_user_chat_session_request_shape() -> None:
@@ -89,7 +89,7 @@ def test_api_ai_pin_end_user_chat_session_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/pin')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_archive_end_user_chat_session_request_shape() -> None:
@@ -99,7 +99,7 @@ def test_api_ai_archive_end_user_chat_session_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/archive')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_get_end_user_chat_entries_request_shape() -> None:
@@ -109,7 +109,7 @@ def test_api_ai_get_end_user_chat_entries_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/entries')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_set_end_user_chat_entry_feedback_request_shape() -> None:
@@ -119,7 +119,7 @@ def test_api_ai_set_end_user_chat_entry_feedback_request_shape() -> None:
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/entries/stub-EntryId/feedback')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_list_end_user_chat_attachments_request_shape() -> None:
@@ -129,7 +129,7 @@ def test_api_ai_list_end_user_chat_attachments_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/attachments')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_upload_end_user_chat_attachment_request_shape() -> None:
@@ -139,7 +139,7 @@ def test_api_ai_upload_end_user_chat_attachment_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/attachments')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_delete_end_user_chat_attachment_request_shape() -> None:
@@ -149,7 +149,7 @@ def test_api_ai_delete_end_user_chat_attachment_request_shape() -> None:
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request['url'].endswith('/v3/ai/chat/attachments/stub-AttachmentId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_list_end_user_chat_memory_request_shape() -> None:
@@ -159,7 +159,7 @@ def test_api_ai_list_end_user_chat_memory_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request['url'].endswith('/v3/ai/chat/memory')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_forget_end_user_chat_memory_request_shape() -> None:
@@ -169,7 +169,7 @@ def test_api_ai_forget_end_user_chat_memory_request_shape() -> None:
     assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request['url'].endswith('/v3/ai/chat/memory/stub-NoteId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
 
 def test_api_ai_start_end_user_chat_turn_request_shape() -> None:
@@ -179,5 +179,5 @@ def test_api_ai_start_end_user_chat_turn_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request['url'].endswith('/v3/ai/chat/turn')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
-    assert transport.last_request['headers']['x-cm-projectid'] == 'test-project'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
