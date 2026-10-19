@@ -81,6 +81,18 @@ class WebhookPaymentRef(_Model):
     event_name: str = Field(alias="eventName")
 
 
+class WebhookOrderRef(_Model):
+    """The stored order of a payments.order.* delivery.
+
+    ``order_event_id`` is the de-duplication key: the same on every retry of
+    the same order change.
+    """
+
+    id: str
+    order_event_id: str = Field(alias="orderEventId")
+    status: str
+
+
 class WebhookRecordIds(_Model):
     """Batch record ids."""
 
@@ -104,6 +116,9 @@ with warnings.catch_warnings():
         #: payments.* events: the provider and its own event id / name
         #: (e.g. ``Stripe``, ``evt_…``, ``payment_intent.succeeded``).
         payment: WebhookPaymentRef | None = None
+        #: payments.order.* events: the order id, its status after the change
+        #: and ``order_event_id`` — the de-duplication key.
+        order: WebhookOrderRef | None = None
 
 
 class WebhookEnvelope(_Model):

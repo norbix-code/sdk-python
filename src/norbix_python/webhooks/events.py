@@ -23,6 +23,11 @@ NORBIX_WEBHOOK_EVENT_NAMES: Final[tuple[str, ...]] = (
     "files.file.uploaded",
     "files.file.deleted",
     "payments.webhook.received",
+    "payments.order.paid",
+    "payments.order.partially_refunded",
+    "payments.order.refunded",
+    "payments.order.reversed",
+    "payments.order.expired",
 )
 
 
@@ -61,3 +66,17 @@ class NorbixWebhookEvents:
         #: project's payments webhook. The payload is the normalized payment fact
         #: (``PaymentFact``); the provider's own event name is ``payload.event_name``.
         WEBHOOK_RECEIVED: Final = "payments.webhook.received"
+        #: A verified provider callback made a stored payment order Paid. The
+        #: payload is the order event (``PaymentOrderEvent``): ``payload.order``
+        #: is the order as stored after the change, ``payload.payment`` the
+        #: callback. De-duplicate on ``payload.order_event_id`` (also
+        #: ``event.metadata.order.order_event_id``) — it is the same on every retry.
+        ORDER_PAID: Final = "payments.order.paid"
+        #: Part of a paid order was refunded (``payload.order.refunded_minor``).
+        ORDER_PARTIALLY_REFUNDED: Final = "payments.order.partially_refunded"
+        #: The whole order was refunded.
+        ORDER_REFUNDED: Final = "payments.order.refunded"
+        #: The provider reversed (voided) the payment.
+        ORDER_REVERSED: Final = "payments.order.reversed"
+        #: The checkout ran out without a payment.
+        ORDER_EXPIRED: Final = "payments.order.expired"

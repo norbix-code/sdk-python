@@ -70,6 +70,7 @@ flips give the **entity directly**; only an arbitrary mutation gives a
 | `database.records.inserted` | batch | `list` of documents |
 | `files.file.uploaded` | entity | `FileResourceRef` |
 | `payments.webhook.received` | entity | `PaymentFact` — the normalized payment fact (`event_name` = the provider's own name, `status`, `raw["amountMinor"]`, …); `event.metadata.payment` = provider ids |
+| `payments.order.paid` / `partially_refunded` / `refunded` / `reversed` / `expired` | entity | `PaymentOrderEvent` — `order` (the order as stored after the change: `status`, `settled_minor`, `refunded_minor`, `metadata`, …), `payment` (the callback, a `PaymentFact`), `from_` / `to`; de-duplicate on `order_event_id` (the same on every retry). `event.metadata.order` = `{id, order_event_id, status}`, `event.metadata.payment` / `integration_id` from `data.payment` |
 
 Wrapper identifiers (entity id, schema, record ids) are lifted onto
 `event.metadata` (`event.metadata.user`, `.schema`, `.record`, `.records`).
