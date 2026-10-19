@@ -235,6 +235,11 @@ class PaymentFact(_View):
         return self.raw.get("eventName")
 
     @property
+    def order_id(self) -> str | None:
+        """The payment order (``ord_…``) the callback is about, when it is about one."""
+        return self.raw.get("orderId")
+
+    @property
     def status(self) -> str | None:
         return self.raw.get("status")
 
@@ -257,6 +262,137 @@ class PaymentFact(_View):
     @property
     def received_on(self) -> str | None:
         return self.raw.get("receivedOn")
+
+
+class PaymentOrder(_View):
+    """A stored payment order (``PaymentOrderDto``): lines, totals and status.
+
+    ``lines`` and ``checkouts`` are the raw dicts (``sku``, ``title``,
+    ``quantity``, ``unitAmountMinor``, ``amountMinor`` / ``attempt``,
+    ``integrationId``, ``provider``, ``paymentUrl``, ``expiresAtUtc``, …).
+    """
+
+    @property
+    def id(self) -> str | None:
+        return self.raw.get("id")
+
+    @property
+    def env(self) -> str | None:
+        return self.raw.get("env")
+
+    @property
+    def buyer_user_id(self) -> str | None:
+        return self.raw.get("buyerUserId")
+
+    @property
+    def merchant_reference(self) -> str | None:
+        return self.raw.get("merchantReference")
+
+    @property
+    def currency(self) -> str | None:
+        return self.raw.get("currency")
+
+    @property
+    def price_version(self) -> str | None:
+        return self.raw.get("priceVersion")
+
+    @property
+    def lines(self) -> list[dict[str, Any]]:
+        value = self.raw.get("lines")
+        return [line for line in value if isinstance(line, dict)] if isinstance(value, list) else []
+
+    @property
+    def total_minor(self) -> int | None:
+        return self.raw.get("totalMinor")
+
+    @property
+    def metadata(self) -> dict[str, str]:
+        return _as_dict(self.raw.get("metadata"))
+
+    @property
+    def status(self) -> str | None:
+        """The order status after the last change.
+
+        ``Created``, ``CheckoutStarted``, ``Paid``, ``PartiallyRefunded``,
+        ``Refunded``, ``Reversed``, ``Expired``, …
+        """
+        return self.raw.get("status")
+
+    @property
+    def created_on_utc(self) -> str | None:
+        return self.raw.get("createdOnUtc")
+
+    @property
+    def updated_on_utc(self) -> str | None:
+        return self.raw.get("updatedOnUtc")
+
+    @property
+    def checkouts(self) -> list[dict[str, Any]]:
+        value = self.raw.get("checkouts")
+        return [c for c in value if isinstance(c, dict)] if isinstance(value, list) else []
+
+    @property
+    def settled_minor(self) -> int | None:
+        return self.raw.get("settledMinor")
+
+    @property
+    def refunded_minor(self) -> int | None:
+        return self.raw.get("refundedMinor")
+
+    @property
+    def paid_on_utc(self) -> str | None:
+        return self.raw.get("paidOnUtc")
+
+    @property
+    def provider_payment_id(self) -> str | None:
+        return self.raw.get("providerPaymentId")
+
+    @property
+    def mismatches(self) -> list[str]:
+        value = self.raw.get("mismatches")
+        return list(value) if isinstance(value, list) else []
+
+
+class PaymentOrderEvent(_View):
+    """`data.order` — a stored payment order changed (``payments.order.*``).
+
+    ``order`` is the order as stored after the change; ``payment`` is the
+    provider callback that changed it. ``order_event_id`` is the
+    de-duplication key: it is the same on every retry of the same change.
+    """
+
+    @property
+    def order_event_id(self) -> str | None:
+        """The de-duplication key — the same on every retry of this change."""
+        return self.raw.get("orderEventId")
+
+    @property
+    def event(self) -> str | None:
+        """The event name: ``payments.order.paid``, ``…refunded``, ``…expired``, …"""
+        return self.raw.get("event")
+
+    @property
+    def from_(self) -> str | None:
+        """The order status before the change (``from`` on the wire)."""
+        return self.raw.get("from")
+
+    @property
+    def to(self) -> str | None:
+        """The order status after the change."""
+        return self.raw.get("to")
+
+    @property
+    def reason(self) -> str | None:
+        return self.raw.get("reason")
+
+    @property
+    def order(self) -> PaymentOrder:
+        return PaymentOrder(self.raw.get("order"))
+
+    @property
+    def payment(self) -> PaymentFact | None:
+        value = self.raw.get("payment")
+        return PaymentFact(value) if isinstance(value, dict) else None
 
 
 class ScheduledTaskInfo(_View):
@@ -373,8 +509,19 @@ class FunctionEvent:
         return FileChange(self._slot("file"))
 
     def as_payment(self) -> PaymentFact:
-        """`data.payment` — Payments triggers."""
+        """`data.payment` — Payments triggers.
+
+        On ``payments.order.*`` it is the provider callback that changed the order.
+        """
         return PaymentFact(self._slot("payment"))
+
+    def as_payment_order(self) -> PaymentOrderEvent:
+        """`data.order` — Payments order triggers (``payments.order.*``).
+
+        The order as stored after the change; de-duplicate on
+        ``order_event_id``. :meth:`as_payment` still returns the callback.
+        """
+        return PaymentOrderEvent(self._slot("order"))
 
     def as_scheduled_task(self) -> ScheduledTaskInfo:
         """`data.task` — a scheduler task fire."""
@@ -452,6 +599,8 @@ __all__ = [
     "FunctionEvent",
     "NorbixFunctionEventError",
     "PaymentFact",
+    "PaymentOrder",
+    "PaymentOrderEvent",
     "RunAs",
     "ScheduledTaskInfo",
     "UserChange",

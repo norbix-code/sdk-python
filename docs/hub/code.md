@@ -167,7 +167,8 @@ def handler(raw, _context):                       # AWS Lambda; Azure / Google p
 | `as_database_record_change()` | `collection`, `schema_id`, `schema_version`, `record_id`, `old`, `new`, `truncated`, `old_ref` / `new_ref` (over 200 KB the documents are left out and the refs say where to fetch them) |
 | `as_user_change()` | `user_id`, `old`, `new` |
 | `as_file_change()` | `old` (delete), `new` (upload), `path` |
-| `as_payment()` | `integration_id`, `provider`, `provider_event_id`, `event_name`, `status`, `amount_minor`, `currency`, `external_ids`, `occurred_on`, `received_on` |
+| `as_payment()` | `integration_id`, `provider`, `provider_event_id`, `event_name`, `order_id`, `status`, `amount_minor`, `currency`, `external_ids`, `occurred_on`, `received_on`; on `payments.order.*` it is the callback that changed the order |
+| `as_payment_order()` | `payments.order.*` (`data.order`): `order_event_id` (the de-duplication key, the same on every retry), `event`, `from_`, `to`, `reason`, `order` (`id`, `status`, `lines`, `total_minor`, `settled_minor`, `refunded_minor`, `metadata`, `checkouts`, …), `payment` |
 | `as_scheduled_task()` | `task_id`, `name`, `fired_at` |
 | `as_ai_usage()` | `payload`, `target_user_id` |
 | `payload()` | the caller's JSON on a manual invoke, or a scheduler task's static payload; `None` when there is none |

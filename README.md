@@ -243,7 +243,7 @@ From your backend: `norbix.hub.code.get_code_functions(integrationId=...)`,
 `get_code_function_qualifiers(...)`, `invoke_code_function(functionRef=..., payload=..., invocationType="Sync")`,
 `get_code_function_event_sample(source="database")` and
 `get_code_function_runs(triggerId=...)`. Details and the typed views
-(`as_user_change`, `as_file_change`, `as_payment`, `as_scheduled_task`, `payload()`):
+(`as_user_change`, `as_file_change`, `as_payment`, `as_payment_order`, `as_scheduled_task`, `payload()`):
 [docs/hub/code.md](./docs/hub/code.md).
 
 ## Errors
