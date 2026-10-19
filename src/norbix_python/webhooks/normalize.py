@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..functions import PaymentFact
+from ..functions import PaymentFact, PaymentOrderEvent
 from .models import (
     FileDeleted,
     FileResourceRef,
@@ -12,6 +12,7 @@ from .models import (
     WebhookEntityRef,
     WebhookEnvelope,
     WebhookEventMetadata,
+    WebhookOrderRef,
     WebhookPaymentRef,
     WebhookRecordIds,
     WebhookSchemaInfo,
@@ -88,17 +89,31 @@ def normalize_webhook(envelope: WebhookEnvelope) -> tuple[Any, WebhookEventMetad
         return envelope.data, metadata
 
     if event.startswith("payments."):
-        # The whole data object IS the normalized payment fact (the same shape
-        # as a Code function's ``data.payment``); the provider ids are lifted
-        # onto metadata so a handler can de-duplicate on them.
-        if isinstance(data.get("integrationId"), str):
-            metadata.integration_id = data["integrationId"]
-        if all(isinstance(data.get(k), str) for k in ("provider", "providerEventId", "eventName")):
+        # payments.webhook.received: the whole data object IS the normalized
+        # payment fact (the same shape as a Code function's ``data.payment``).
+        # payments.order.*: the data is the order event; its ``payment`` is the
+        # fact. Either way the provider ids are lifted onto metadata so a
+        # handler can de-duplicate on them.
+        is_order_event = event.startswith("payments.order.")
+        fact = _as_dict(data.get("payment")) if is_order_event else data
+        if isinstance(fact.get("integrationId"), str):
+            metadata.integration_id = fact["integrationId"]
+        if all(isinstance(fact.get(k), str) for k in ("provider", "providerEventId", "eventName")):
             metadata.payment = WebhookPaymentRef(
-                provider=data["provider"],
-                providerEventId=data["providerEventId"],
-                eventName=data["eventName"],
+                provider=fact["provider"],
+                providerEventId=fact["providerEventId"],
+                eventName=fact["eventName"],
             )
-        return PaymentFact(_as_dict(data)), metadata
+        if is_order_event:
+            order = _as_dict(data.get("order"))
+            ids = (order.get("id"), data.get("orderEventId"), order.get("status"))
+            if all(isinstance(v, str) for v in ids):
+                metadata.order = WebhookOrderRef(
+                    id=order["id"],
+                    orderEventId=data["orderEventId"],
+                    status=order["status"],
+                )
+            return PaymentOrderEvent(data), metadata
+        return PaymentFact(data), metadata
 
     return envelope.data, metadata

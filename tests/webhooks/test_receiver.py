@@ -350,3 +350,82 @@ def test_payments_payload_is_the_payment_fact_with_provider_ids_on_metadata() ->
     assert event.metadata.payment.provider == "Stripe"  # type: ignore[attr-defined]
     assert event.metadata.payment.provider_event_id == "evt_1"  # type: ignore[attr-defined]
     assert "payments.webhook.received" in NORBIX_WEBHOOK_EVENT_NAMES
+
+
+def test_payments_order_paid_hands_over_the_stored_order_and_lifts_its_ids_onto_metadata() -> None:
+    # gateway campaign audit/payments-checkout: a verified callback that changes a
+    # stored order fires payments.order.*; data is the order event, data.payment the fact.
+    order_event = {
+        "orderEventId": "ord_2ToIiRM03X63TZaJ2dJdv2:2",
+        "event": "payments.order.paid",
+        "from": "CheckoutStarted",
+        "to": "Paid",
+        "reason": "paid in attempt 1",
+        "order": {
+            "id": "ord_2ToIiRM03X63TZaJ2dJdv2",
+            "env": "PROD",
+            "buyerUserId": "usr_1szWVIyZFBV8HfvC4SfVw",
+            "merchantReference": "ad-1042-promo-1",
+            "currency": "EUR",
+            "priceVersion": "2026-10-01",
+            "lines": [{"sku": "star-day", "title": "Star × day", "quantity": 21, "unitAmountMinor": 30, "amountMinor": 630}],
+            "totalMinor": 630,
+            "metadata": {"adId": "ad_1042"},
+            "status": "Paid",
+            "checkouts": [],
+            "settledMinor": 630,
+            "refundedMinor": 0,
+            "providerPaymentId": "mnt-1",
+            "mismatches": [],
+        },
+        "payment": {
+            "integrationId": "int_montonio",
+            "provider": "Montonio",
+            "providerEventId": "order:mnt-1:PAID",
+            "orderId": "ord_2ToIiRM03X63TZaJ2dJdv2",
+            "eventName": "order.paid",
+            "status": "Succeeded",
+            "amountMinor": 630,
+            "currency": "EUR",
+            "receivedOn": "2026-10-19T09:54:43Z",
+        },
+    }
+    receiver = NorbixWebhookReceiver()
+    captured: dict[str, object] = {}
+    receiver.on(
+        NorbixWebhookEvents.Payments.ORDER_PAID,
+        lambda payload, event: captured.update(payload=payload, event=event),
+    )
+    receiver.handle(raw_body=_body("payments.order.paid", order_event, eventId="evt_order_1"), headers={})
+
+    payload = captured["payload"]
+    assert payload.order_event_id == "ord_2ToIiRM03X63TZaJ2dJdv2:2"  # type: ignore[attr-defined]
+    assert payload.to == "Paid"  # type: ignore[attr-defined]
+    assert payload.order.status == "Paid"  # type: ignore[attr-defined]
+    assert payload.order.settled_minor == 630  # type: ignore[attr-defined]
+    assert payload.payment.provider_event_id == "order:mnt-1:PAID"  # type: ignore[attr-defined]
+    event = captured["event"]
+    assert event.metadata.integration_id == "int_montonio"  # type: ignore[attr-defined]
+    assert event.metadata.payment.provider == "Montonio"  # type: ignore[attr-defined]
+    assert event.metadata.payment.event_name == "order.paid"  # type: ignore[attr-defined]
+    assert event.metadata.order.id == "ord_2ToIiRM03X63TZaJ2dJdv2"  # type: ignore[attr-defined]
+    assert event.metadata.order.order_event_id == "ord_2ToIiRM03X63TZaJ2dJdv2:2"  # type: ignore[attr-defined]
+    assert event.metadata.order.status == "Paid"  # type: ignore[attr-defined]
+
+
+def test_every_payments_order_event_is_in_the_catalog() -> None:
+    names = [
+        NorbixWebhookEvents.Payments.ORDER_PAID,
+        NorbixWebhookEvents.Payments.ORDER_PARTIALLY_REFUNDED,
+        NorbixWebhookEvents.Payments.ORDER_REFUNDED,
+        NorbixWebhookEvents.Payments.ORDER_REVERSED,
+        NorbixWebhookEvents.Payments.ORDER_EXPIRED,
+    ]
+    assert names == [
+        "payments.order.paid",
+        "payments.order.partially_refunded",
+        "payments.order.refunded",
+        "payments.order.reversed",
+        "payments.order.expired",
+    ]
+    assert all(name in NORBIX_WEBHOOK_EVENT_NAMES for name in names)
