@@ -264,11 +264,13 @@ class NorbixApi(_AuthMixin):
         self.membership = api.membership
         self.echo = api.echo
         self.files = api.files
+        self.payments = api.payments
         self.public = api.public
         self.Database = self.database
         self.Membership = self.membership
         self.Echo = self.echo
         self.Files = self.files
+        self.Payments = self.payments
         self.Public = self.public
 
     def close(self) -> None:
