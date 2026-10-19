@@ -217,6 +217,75 @@ def test_payment_fact() -> None:
     assert payment.received_on == "2026-10-12T08:00:00Z"
 
 
+ORDER_EVENT: dict[str, Any] = {
+    "orderEventId": "ord_2ToIiRM03X63TZaJ2dJdv2:2",
+    "event": "payments.order.paid",
+    "from": "CheckoutStarted",
+    "to": "Paid",
+    "reason": "paid in attempt 1",
+    "order": {
+        "id": "ord_2ToIiRM03X63TZaJ2dJdv2",
+        "env": "PROD",
+        "buyerUserId": "usr_1szWVIyZFBV8HfvC4SfVw",
+        "merchantReference": "ad-1042-promo-1",
+        "currency": "EUR",
+        "priceVersion": "2026-10-01",
+        "lines": [{"sku": "star-day", "title": "Star × day", "quantity": 21, "unitAmountMinor": 30, "amountMinor": 630}],
+        "totalMinor": 630,
+        "metadata": {"adId": "ad_1042"},
+        "status": "Paid",
+        "checkouts": [],
+        "settledMinor": 630,
+        "refundedMinor": 0,
+        "providerPaymentId": "mnt-1",
+        "mismatches": [],
+    },
+    "payment": {
+        "integrationId": "int_montonio",
+        "provider": "Montonio",
+        "providerEventId": "order:mnt-1:PAID",
+        "orderId": "ord_2ToIiRM03X63TZaJ2dJdv2",
+        "eventName": "order.paid",
+        "status": "Succeeded",
+        "amountMinor": 630,
+        "currency": "EUR",
+        "receivedOn": "2026-10-19T09:54:43Z",
+    },
+}
+
+
+def test_payment_order_event_and_as_payment_is_its_callback() -> None:
+    raw = envelope("payments", "payments.order.paid", {"order": ORDER_EVENT, "payment": ORDER_EVENT["payment"]})
+    event = parse_function_event(raw)
+    order_event = event.as_payment_order()
+    assert order_event.order_event_id == "ord_2ToIiRM03X63TZaJ2dJdv2:2"
+    assert (order_event.event, order_event.from_, order_event.to) == ("payments.order.paid", "CheckoutStarted", "Paid")
+    assert order_event.reason == "paid in attempt 1"
+    order = order_event.order
+    assert order.id == "ord_2ToIiRM03X63TZaJ2dJdv2"
+    assert order.status == "Paid"
+    assert order.settled_minor == 630
+    assert order.total_minor == 630
+    assert order.refunded_minor == 0
+    assert order.metadata == {"adId": "ad_1042"}
+    assert order.lines[0]["quantity"] == 21
+    assert order.checkouts == []
+    assert order_event.payment is not None
+    assert order_event.payment.provider == "Montonio"
+    payment = event.as_payment()
+    assert payment.provider_event_id == "order:mnt-1:PAID"
+    assert payment.order_id == "ord_2ToIiRM03X63TZaJ2dJdv2"
+
+
+def test_as_payment_order_is_refused_for_a_plain_payment_event() -> None:
+    event = parse_function_event(
+        envelope("payments", "payments.webhook.received", {"payment": ORDER_EVENT["payment"]})
+    )
+    with pytest.raises(NorbixFunctionEventError) as exc:
+        event.as_payment_order()
+    assert "data.order" in str(exc.value)
+
+
 def test_ai_usage() -> None:
     raw = envelope("ai", "ai.credits.warning", {"ai": {"payload": {"used": 90, "limit": 100}, "targetUserId": "usr_9"}})
     usage = parse_function_event(raw).as_ai_usage()
