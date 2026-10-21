@@ -101,7 +101,12 @@ class LogsModule:
         )
 
     def save_logging_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/logs/integrations"""
+        """POST /{version}/logs/integrations
+
+        Save (create or update) a logging integration — Datadog, AWS
+        CloudWatch or MongoDB. Gives back ``{"id": ...}``. Then call
+        ``test_logging_integration``: nothing is delivered until a test passed.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/logs/integrations",
@@ -114,7 +119,12 @@ class LogsModule:
         )
 
     def test_logging_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/logs/integrations/test"""
+        """POST /{version}/logs/integrations/test
+
+        Test a logging integration: ``integrationId``. Call it after every
+        ``save_logging_integration`` — nothing is delivered to an integration
+        until its last test passed.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/logs/integrations/test",
@@ -132,6 +142,92 @@ class LogsModule:
             target="hub",
             path="/{version}/logs/audit",
             method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_logs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs
+
+        The project's log entries, filtered by the optional
+        ``level``, ``module``, ``logCorrelationId``, ``eventCode``, ``search``,
+        ``metaKey`` / ``metaValue``, ``fromUtc`` / ``toUtc`` and the cursor
+        paging fields ``pageSize``, ``startingAfter``, ``endingBefore`` (query). Gives back ``{"list": {"items": [...], ...}}``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/logs",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_log(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs/{Id}
+
+        One log entry by its id. Gives back ``{"item": entry}``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/logs/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def clean_logs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/logs/clean
+
+        Delete every log entry stored in the project's Norbix Logging integration.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/logs/clean",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_log_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs/settings
+
+        The project's log flags: ``skipCloudDashboardLogs``, ``skipHttpBodyMeta``,
+        ``aiChatLoggingEnabled`` and ``hasNorbixLogging``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/logs/settings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_log_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/logs/settings
+
+        Change the project's log flags: ``skipCloudDashboardLogs``,
+        ``skipHttpBodyMeta``, ``aiChatLoggingEnabled`` (each optional; a flag
+        left out keeps its value).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/logs/settings",
+            method="POST",
             path_params={},
             request=request,
             scope="project",
@@ -236,7 +332,12 @@ class AsyncLogsModule:
         )
 
     async def save_logging_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/logs/integrations"""
+        """POST /{version}/logs/integrations
+
+        Save (create or update) a logging integration — Datadog, AWS
+        CloudWatch or MongoDB. Gives back ``{"id": ...}``. Then call
+        ``test_logging_integration``: nothing is delivered until a test passed.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/logs/integrations",
@@ -249,7 +350,12 @@ class AsyncLogsModule:
         )
 
     async def test_logging_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/logs/integrations/test"""
+        """POST /{version}/logs/integrations/test
+
+        Test a logging integration: ``integrationId``. Call it after every
+        ``save_logging_integration`` — nothing is delivered to an integration
+        until its last test passed.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/logs/integrations/test",
@@ -267,6 +373,92 @@ class AsyncLogsModule:
             target="hub",
             path="/{version}/logs/audit",
             method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_logs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs
+
+        The project's log entries, filtered by the optional
+        ``level``, ``module``, ``logCorrelationId``, ``eventCode``, ``search``,
+        ``metaKey`` / ``metaValue``, ``fromUtc`` / ``toUtc`` and the cursor
+        paging fields ``pageSize``, ``startingAfter``, ``endingBefore`` (query). Gives back ``{"list": {"items": [...], ...}}``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/logs",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_log(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs/{Id}
+
+        One log entry by its id. Gives back ``{"item": entry}``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/logs/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def clean_logs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/logs/clean
+
+        Delete every log entry stored in the project's Norbix Logging integration.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/logs/clean",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_log_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/logs/settings
+
+        The project's log flags: ``skipCloudDashboardLogs``, ``skipHttpBodyMeta``,
+        ``aiChatLoggingEnabled`` and ``hasNorbixLogging``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/logs/settings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_log_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/logs/settings
+
+        Change the project's log flags: ``skipCloudDashboardLogs``,
+        ``skipHttpBodyMeta``, ``aiChatLoggingEnabled`` (each optional; a flag
+        left out keeps its value).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/logs/settings",
+            method="POST",
             path_params={},
             request=request,
             scope="project",
