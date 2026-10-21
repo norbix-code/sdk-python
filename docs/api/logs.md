@@ -53,5 +53,14 @@ itself.
 | 429 | `RateLimitError`, `CM-ERRORS-LOGGING-003` | the project's per-minute quota is used up |
 
 The SDK does not retry `write_logs` (it is a POST). On a 429 the gateway sends
-a `Retry-After` header with the seconds to wait; the SDK does not expose
-response headers on errors yet, so wait about a minute before you send again.
+a `Retry-After` header with the seconds to wait; the SDK puts it on the error as
+`retry_after_seconds` (`None` when the header is absent or unreadable):
+
+```python
+from norbix_python import RateLimitError
+
+try:
+    norbix.api.logs.write_logs(entries=entries)
+except RateLimitError as exc:
+    time.sleep(exc.retry_after_seconds or 60)  # then send the entries again
+```
