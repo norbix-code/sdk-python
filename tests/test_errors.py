@@ -342,3 +342,50 @@ def test_an_empty_errors_list_falls_back_to_the_top_of_the_body() -> None:
 
     assert caught.value.error_code == "CM-ERRORS-INFRA-NORBIX-001"
     assert caught.value.context == {"ReferenceId": "ref_1"}
+
+
+# Retry-After is delta seconds or an HTTP date; anything else is no value.
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("37", 37),
+        (" 0 ", 0),
+        ("1.2", 2),
+        ("Wed, 21 Oct 2026 08:01:30 GMT", 90),
+        ("Wed, 21 Oct 2026 07:00:00 GMT", 0),
+        (None, None),
+        ("", None),
+        ("soon", None),
+        ("-1", None),
+        ("nan", None),
+    ],
+)
+def test_retry_after_seconds_of(value: str | None, expected: int | None) -> None:
+    from datetime import datetime, timezone
+
+    from norbix_python.errors import retry_after_seconds_of
+
+    now = datetime(2026, 10, 21, 8, 0, 0, tzinfo=timezone.utc).timestamp()
+    assert retry_after_seconds_of(value, now=now) == expected
+
+
+def test_a_429_with_an_http_date_gives_the_seconds_until_it() -> None:
+    from email.utils import format_datetime
+    from datetime import datetime, timedelta, timezone
+
+    from norbix_python import RateLimitError
+
+    at = format_datetime(datetime.now(timezone.utc) + timedelta(seconds=120), usegmt=True)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(429, headers={"Retry-After": at}, json={})
+
+    client = Norbix(
+        project_id="test-project",
+        bearer_token="test-token",
+        http_client=httpx.Client(transport=httpx.MockTransport(handler)),
+    )
+    with pytest.raises(RateLimitError) as info:
+        client.api.logs.write_logs(entries=[{"title": "t"}])
+    assert info.value.retry_after_seconds is not None
+    assert 115 <= info.value.retry_after_seconds <= 121
