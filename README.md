@@ -275,6 +275,21 @@ when the body has no `responseStatus` are the top-level `message` and
 `HTTP_<status>` is the last fallback, used when the body says nothing — a 500
 page that is not JSON, say.
 
+`retry_after_seconds` (`int | None`) is the answer's `Retry-After` header in
+whole seconds — the number itself, or the seconds until the HTTP date it names
+(never below 0); `None` when the header is absent or unreadable. A 429
+`RateLimitError` carries it, for example `CM-ERRORS-LOGGING-003` from
+`api.logs.write_logs` when the project's per-minute log quota is used up:
+
+```python
+from norbix_python import RateLimitError
+
+try:
+    norbix.api.logs.write_logs(entries=[{"title": "Order paid"}])
+except RateLimitError as exc:
+    time.sleep(exc.retry_after_seconds or 60)  # then send the entries again
+```
+
 ### Breaking change — a refused call now raises
 
 The gateway answers a business refusal (an unknown id, a rule that says no)
