@@ -5,6 +5,7 @@ from .ai import AiModule, AsyncAiModule
 from .database import AsyncDatabaseModule, DatabaseModule
 from .echo import AsyncEchoModule, EchoModule
 from .files import AsyncFilesModule, FilesModule
+from .logs import AsyncLogsModule, LogsModule
 from .membership import AsyncMembershipModule, MembershipModule
 from .payments import AsyncPaymentsModule, PaymentsModule
 from .public import AsyncPublicModule, PublicModule
@@ -16,6 +17,7 @@ class ApiNamespace:
         self.database = DatabaseModule(transport)
         self.echo = EchoModule(transport)
         self.files = FilesModule(transport)
+        self.logs = LogsModule(transport)
         self.membership = MembershipModule(transport)
         self.payments = PaymentsModule(transport)
         self.public = PublicModule(transport)
@@ -27,6 +29,7 @@ class AsyncApiNamespace:
         self.database = AsyncDatabaseModule(transport)
         self.echo = AsyncEchoModule(transport)
         self.files = AsyncFilesModule(transport)
+        self.logs = AsyncLogsModule(transport)
         self.membership = AsyncMembershipModule(transport)
         self.payments = AsyncPaymentsModule(transport)
         self.public = AsyncPublicModule(transport)
