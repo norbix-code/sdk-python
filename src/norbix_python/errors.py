@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import math
+import time
+from email.utils import parsedate_to_datetime
 from typing import Any
 
 
@@ -39,6 +42,7 @@ class NorbixError(Exception):
         errors: list[ErrorItem] | None = None,
         body: Any = None,
         context: dict[str, Any] | None = None,
+        retry_after_seconds: int | None = None,
     ) -> None:
         super().__init__(message)
         self.message = message
@@ -52,6 +56,12 @@ class NorbixError(Exception):
         #: Extra facts about the error the message came from — the missing
         #: permission, the reference id of an internal error. Empty when none.
         self.context = context or {}
+        #: Seconds to wait before sending again, from the answer's
+        #: ``Retry-After`` header: the number itself, or the seconds until the
+        #: HTTP date it names (never below 0). ``None`` when the header is
+        #: absent or unreadable. A 429 ``CM-ERRORS-LOGGING-003`` from
+        #: ``write_logs`` carries it.
+        self.retry_after_seconds = retry_after_seconds
 
     @property
     def http_status(self) -> int:
@@ -80,6 +90,7 @@ class AuthenticationError(NorbixError):
         errors: list[ErrorItem] | None = None,
         body: Any = None,
         context: dict[str, Any] | None = None,
+        retry_after_seconds: int | None = None,
     ) -> None:
         super().__init__(
             message,
@@ -89,6 +100,7 @@ class AuthenticationError(NorbixError):
             errors=errors,
             body=body,
             context=context,
+            retry_after_seconds=retry_after_seconds,
         )
 
 
@@ -105,6 +117,7 @@ class NotFoundError(NorbixError):
         errors: list[ErrorItem] | None = None,
         body: Any = None,
         context: dict[str, Any] | None = None,
+        retry_after_seconds: int | None = None,
     ) -> None:
         super().__init__(
             message,
@@ -114,6 +127,7 @@ class NotFoundError(NorbixError):
             errors=errors,
             body=body,
             context=context,
+            retry_after_seconds=retry_after_seconds,
         )
 
 
@@ -130,6 +144,7 @@ class RateLimitError(NorbixError):
         errors: list[ErrorItem] | None = None,
         body: Any = None,
         context: dict[str, Any] | None = None,
+        retry_after_seconds: int | None = None,
     ) -> None:
         super().__init__(
             message,
@@ -139,6 +154,7 @@ class RateLimitError(NorbixError):
             errors=errors,
             body=body,
             context=context,
+            retry_after_seconds=retry_after_seconds,
         )
 
 
@@ -155,6 +171,7 @@ class ValidationError(NorbixError):
         errors: list[ErrorItem] | None = None,
         body: Any = None,
         context: dict[str, Any] | None = None,
+        retry_after_seconds: int | None = None,
     ) -> None:
         super().__init__(
             message,
@@ -164,6 +181,7 @@ class ValidationError(NorbixError):
             errors=errors,
             body=body,
             context=context,
+            retry_after_seconds=retry_after_seconds,
         )
 
 
@@ -176,6 +194,7 @@ def error_from_http(
     errors: list[ErrorItem] | None = None,
     body: Any = None,
     context: dict[str, Any] | None = None,
+    retry_after_seconds: int | None = None,
 ) -> NorbixError:
     kwargs: dict[str, Any] = {
         "status": status,
@@ -184,6 +203,7 @@ def error_from_http(
         "errors": errors,
         "body": body,
         "context": context,
+        "retry_after_seconds": retry_after_seconds,
     }
     if status == 404:
         return NotFoundError(message, **kwargs)
@@ -251,7 +271,41 @@ def _context_of(value: Any) -> dict[str, Any] | None:
     return value if isinstance(value, dict) and value else None
 
 
-def error_from_body(*, body: Any, status: int, text: str = "") -> NorbixError:
+def retry_after_seconds_of(value: str | None, *, now: float | None = None) -> int | None:
+    """A ``Retry-After`` header value as whole seconds.
+
+    The number itself, or the seconds from ``now`` (default: the current time)
+    until the HTTP date it names, never below 0. ``None`` when the value is
+    absent or unreadable.
+    """
+    if value is None or not value.strip():
+        return None
+    value = value.strip()
+    try:
+        seconds: float | None = float(value)
+    except ValueError:
+        seconds = None
+    if seconds is not None:
+        if not math.isfinite(seconds) or seconds < 0:
+            return None
+        return math.ceil(seconds)
+    try:
+        at = parsedate_to_datetime(value)
+    except (TypeError, ValueError, IndexError):
+        return None
+    if at.tzinfo is None:
+        return None
+    current = time.time() if now is None else now
+    return max(0, math.ceil(at.timestamp() - current))
+
+
+def error_from_body(
+    *,
+    body: Any,
+    status: int,
+    text: str = "",
+    retry_after_seconds: int | None = None,
+) -> NorbixError:
     """Build the error a gateway answer describes.
 
     Each of message, code and context is taken from the first place that has
@@ -266,7 +320,8 @@ def error_from_body(*, body: Any, status: int, text: str = "") -> NorbixError:
     ``Request failed (HTTP <status>)`` and ``HTTP_<status>`` are the last
     fallback, used when the body says nothing at all — a 502 page that is not
     JSON, say. Every entry of ``errors[]`` is kept in :attr:`NorbixError.errors`
-    and the body as it arrived in :attr:`NorbixError.body`.
+    and the body as it arrived in :attr:`NorbixError.body`. The transport passes
+    the answer's ``Retry-After`` as ``retry_after_seconds``.
     """
     details: dict[str, Any] = body if isinstance(body, dict) else {}
     response_status = _response_status_of(body) or {}
@@ -305,4 +360,5 @@ def error_from_body(*, body: Any, status: int, text: str = "") -> NorbixError:
         errors=items,
         body=body if body is not None else (text or None),
         context=context,
+        retry_after_seconds=retry_after_seconds,
     )

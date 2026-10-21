@@ -9,7 +9,7 @@ from urllib.parse import urlencode
 
 import httpx
 
-from .errors import NorbixError, error_from_body, says_it_failed
+from .errors import NorbixError, error_from_body, retry_after_seconds_of, says_it_failed
 
 HttpVerb = Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
 # "optional": auth is sent when the client has a token, never required — used
@@ -157,6 +157,7 @@ class Transport:
                 body=parsed,
                 status=response.status_code,
                 text=response.text,
+                retry_after_seconds=retry_after_seconds_of(response.headers.get("retry-after")),
             )
 
         # An endpoint that answers with a file, not a document. Those answers
@@ -176,7 +177,11 @@ class Transport:
         # refusal with HTTP 200 and responseStatus.isSuccess = False, and that
         # is a failure the caller must see (10b-files, issue #67).
         if says_it_failed(parsed_ok):
-            raise error_from_body(body=parsed_ok, status=response.status_code)
+            raise error_from_body(
+                body=parsed_ok,
+                status=response.status_code,
+                retry_after_seconds=retry_after_seconds_of(response.headers.get("retry-after")),
+            )
         return parsed_ok
 
     def _request_with_retries(
@@ -323,6 +328,7 @@ class AsyncTransport:
                 body=parsed,
                 status=response.status_code,
                 text=response.text,
+                retry_after_seconds=retry_after_seconds_of(response.headers.get("retry-after")),
             )
 
         # An endpoint that answers with a file, not a document. Those answers
@@ -342,7 +348,11 @@ class AsyncTransport:
         # refusal with HTTP 200 and responseStatus.isSuccess = False, and that
         # is a failure the caller must see (10b-files, issue #67).
         if says_it_failed(parsed_ok):
-            raise error_from_body(body=parsed_ok, status=response.status_code)
+            raise error_from_body(
+                body=parsed_ok,
+                status=response.status_code,
+                retry_after_seconds=retry_after_seconds_of(response.headers.get("retry-after")),
+            )
         return parsed_ok
 
     async def _request_with_retries(
