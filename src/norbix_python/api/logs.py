@@ -38,7 +38,8 @@ class LogsModule:
         Raises ``ValidationError`` (400) for a broken entry or
         ``CM-ERRORS-LOGGING-002`` when the Logs module is off, and
         ``RateLimitError`` (429, ``CM-ERRORS-LOGGING-003``) when the project's
-        per-minute quota is used up. The call is not retried.
+        per-minute quota is used up — its ``retry_after_seconds`` says how many
+        seconds to wait. The call is not retried.
         """
         return self._transport.send(
             target="api",
