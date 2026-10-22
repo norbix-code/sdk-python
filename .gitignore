@@ -8,7 +8,7 @@ build/
 *.pyc
 
 # Generation scripts are dev-only — not shipped with the SDK. Generated
-# outputs (src/norbix_python/api/, hub/, references/*.dtos.ts) ARE
+# outputs (src/norbix_python/api/, hub/) ARE
 # committed and used by CI and consumers.
 scripts/sync_types.py
 scripts/generate_endpoints.py

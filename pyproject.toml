@@ -45,7 +45,7 @@ addopts = "-q"
 target-version = "py310"
 line-length = 100
 src = ["src", "tests", "scripts"]
-exclude = [".venv", "references"]
+exclude = [".venv"]
 force-exclude = true
 
 [tool.ruff.lint]

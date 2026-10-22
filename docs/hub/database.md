@@ -267,8 +267,8 @@ norbix.hub.database.delete_collection_import(created["id"])
 ```
 
 The request fields are listed under `RequestImportUploadUrlRequest`,
-`AnalyzeImportFileRequest` and `CreateCollectionImport` in
-`references/hub_dtos.py`.
+`AnalyzeImportFileRequest` and `CreateCollectionImport` in the
+[API reference](https://docs.norbix.ai/api-reference/).
 
 ## Trees, list settings, embed and bundles
 

@@ -133,8 +133,8 @@ except NorbixError as err:
 ## Schema fields
 
 `get_database_schema` returns the fields typed per kind (`$fieldType`). The
-SDK hands the JSON back as it arrives; the reference DTOs are in
-`references/api_dtos.py` (`JsonSchemaFieldDto` and its subclasses). New in this
+SDK hands the JSON back as it arrives; the field shapes are in the
+[API reference](https://docs.norbix.ai/api-reference/) (`JsonSchemaFieldDto` and its subclasses). New in this
 contract:
 
 - `ObjectFieldDto` (`$fieldType: object`) — a nested form: `properties`
