@@ -9,7 +9,6 @@
 | [`echo`](./echo.md) | 1 |
 | [`email`](./email.md) | 1 |
 | [`files`](./files.md) | 23 |
-| [`internal`](./internal.md) | 1 |
 | [`logs`](./logs.md) | 15 |
 | [`membership`](./membership.md) | 25 |
 | [`notifications`](./notifications.md) | 117 |

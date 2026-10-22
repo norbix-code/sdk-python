@@ -324,7 +324,6 @@ class NorbixHub(_AuthMixin):
         self.email = hub.email
         self.environments = hub.environments
         self.files = hub.files
-        self.internal = hub.internal
         self.logs = hub.logs
         self.membership = hub.membership
         self.notifications = hub.notifications
@@ -341,7 +340,6 @@ class NorbixHub(_AuthMixin):
         self.Email = self.email
         self.Environments = self.environments
         self.Files = self.files
-        self.Internal = self.internal
         self.Logs = self.logs
         self.Membership = self.membership
         self.Notifications = self.notifications
