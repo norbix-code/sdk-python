@@ -131,6 +131,20 @@ def test_hub_payments_save_payments_integration_request_shape() -> None:
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
+def test_hub_payments_save_montonio_integration_leaves_out_unset_is_sandbox() -> None:
+    # Owner 2026-10-22: isSandbox is optional; empty = true (sandbox) on the gateway.
+    # The SDK must not fill in a default, or an unset field would become live mode.
+    import json
+
+    client, transport = make_client(account_id=None)
+    client.hub.payments.save_payments_integration(
+        integration={"provider": "Montonio", "accessKey": "ak_test", "secretKey": "sk_test"},
+    )
+    assert transport.last_request is not None
+    body = json.loads(transport.last_request['body'])
+    assert body == {"integration": {"provider": "Montonio", "accessKey": "ak_test", "secretKey": "sk_test"}}
+    assert "isSandbox" not in body["integration"]
+
 def test_hub_payments_test_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.test_payments_integration()
