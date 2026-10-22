@@ -9,7 +9,6 @@ from .echo import AsyncEchoModule, EchoModule
 from .email import AsyncEmailModule, EmailModule
 from .environments import AsyncEnvironmentsModule, EnvironmentsModule
 from .files import AsyncFilesModule, FilesModule
-from .internal import AsyncInternalModule, InternalModule
 from .logs import AsyncLogsModule, LogsModule
 from .membership import AsyncMembershipModule, MembershipModule
 from .notifications import AsyncNotificationsModule, NotificationsModule
@@ -31,7 +30,6 @@ class HubNamespace:
         self.email = EmailModule(transport)
         self.environments = EnvironmentsModule(transport)
         self.files = FilesModule(transport)
-        self.internal = InternalModule(transport)
         self.logs = LogsModule(transport)
         self.membership = MembershipModule(transport)
         self.notifications = NotificationsModule(transport)
@@ -53,7 +51,6 @@ class AsyncHubNamespace:
         self.email = AsyncEmailModule(transport)
         self.environments = AsyncEnvironmentsModule(transport)
         self.files = AsyncFilesModule(transport)
-        self.internal = AsyncInternalModule(transport)
         self.logs = AsyncLogsModule(transport)
         self.membership = AsyncMembershipModule(transport)
         self.notifications = AsyncNotificationsModule(transport)
