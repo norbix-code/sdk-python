@@ -2,8 +2,8 @@
 
 When a trigger, a scheduler task or a manual call (`hub.code.invoke_code_function`)
 runs one of your functions on AWS Lambda, Azure Functions or Google Cloud
-Functions, the function gets one JSON envelope (`CodeFunctionEventDto` in
-`references/hub_dtos.py`). :func:`parse_function_event` turns it into a
+Functions, the function gets one JSON envelope (`CodeFunctionEventDto` in the
+Norbix API reference). :func:`parse_function_event` turns it into a
 :class:`FunctionEvent`: a thin wrapper over the decoded dict with typed views
 of the slots in `data` and the constructor options of a client that acts as
 the run-as user. Nothing here re-declares the DTO; every field is read from
