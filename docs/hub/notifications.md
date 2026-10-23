@@ -126,3 +126,14 @@ Every method above has an async twin on `client.hub.notifications` when the
 client is an `AsyncNorbix`. See [push.md](./push.md) for how to pick a push
 campaign audience and a push provider, and [sms.md](./sms.md) for the same two
 choices on an SMS campaign.
+
+## Cloning a template
+
+`clone_email_template`, `clone_sms_template` and `clone_push_template` copy a
+template and answer the new copy's id, so you can open or edit the copy
+without listing the templates again:
+
+```python
+copy = client.hub.notifications.clone_email_template(id="tpl_welcome")
+client.hub.notifications.get_email_template(id=copy["id"])
+```

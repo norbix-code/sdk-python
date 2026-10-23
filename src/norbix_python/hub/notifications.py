@@ -420,7 +420,10 @@ class NotificationsModule:
         )
 
     def clone_email_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/email/templates/{Id}/clone"""
+        """POST /{version}/notifications/email/templates/{Id}/clone
+
+        Answers the new copy's id: ``{"id": "..."}``.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/email/templates/{Id}/clone",
@@ -700,7 +703,10 @@ class NotificationsModule:
         )
 
     def clone_push_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/templates/{Id}/clone"""
+        """POST /{version}/notifications/push/templates/{Id}/clone
+
+        Answers the new copy's id: ``{"id": "..."}``.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/push/templates/{Id}/clone",
@@ -1700,7 +1706,10 @@ class NotificationsModule:
         )
 
     def clone_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/sms/templates/{Id}/clone"""
+        """POST /{version}/notifications/sms/templates/{Id}/clone
+
+        Answers the new copy's id: ``{"id": "..."}``.
+        """
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/templates/{Id}/clone",
@@ -2167,7 +2176,10 @@ class AsyncNotificationsModule:
         )
 
     async def clone_email_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/email/templates/{Id}/clone"""
+        """POST /{version}/notifications/email/templates/{Id}/clone
+
+        Answers the new copy's id: ``{"id": "..."}``.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/email/templates/{Id}/clone",
@@ -2447,7 +2459,10 @@ class AsyncNotificationsModule:
         )
 
     async def clone_push_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/push/templates/{Id}/clone"""
+        """POST /{version}/notifications/push/templates/{Id}/clone
+
+        Answers the new copy's id: ``{"id": "..."}``.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/push/templates/{Id}/clone",
@@ -3447,7 +3462,10 @@ class AsyncNotificationsModule:
         )
 
     async def clone_sms_template(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/sms/templates/{Id}/clone"""
+        """POST /{version}/notifications/sms/templates/{Id}/clone
+
+        Answers the new copy's id: ``{"id": "..."}``.
+        """
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/sms/templates/{Id}/clone",
