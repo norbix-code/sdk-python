@@ -542,6 +542,50 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def retry_failed_email_notifications(
+        self,
+        campaign_id: str,
+        *,
+        idempotency_key: str,
+        notification_ids: list[str] | None = None,
+        include_ambiguous: bool | None = None,
+        categories: list[str] | None = None,
+        database_integration_id: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/email/campaigns/{Id}/retry-failed
+
+        Sends the campaign's failed recipients again. Only recipients whose last
+        attempt failed are selected; ``notification_ids`` narrows them to those
+        rows, ``categories`` (``Transient`` | ``Permanent`` | ``Unknown``) to those
+        failure kinds, and ``include_ambiguous=True`` also takes the rows whose
+        provider answer never said whether the message went out — the answer then
+        carries a ``warning`` that a duplicate may be sent. ``idempotency_key``
+        (at most 64 characters) de-duplicates the request: the same key on the
+        same campaign replays the first answer instead of selecting again.
+        Answers ``{"retryRequestId", "selected", "skipped": {reason: count},
+        "replayed", "warning"?}``. Unset options are not sent.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/campaigns/{Id}/retry-failed",
+            method="POST",
+            path_params={"Id": campaign_id},
+            request={
+                "idempotencyKey": idempotency_key,
+                "notificationIds": notification_ids,
+                "includeAmbiguous": include_ambiguous,
+                "categories": categories,
+                "databaseIntegrationId": database_integration_id,
+                **request,
+            },
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/campaigns/{id}"""
         return self._transport.send(
@@ -1203,6 +1247,50 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def retry_failed_push_notifications(
+        self,
+        campaign_id: str,
+        *,
+        idempotency_key: str,
+        notification_ids: list[str] | None = None,
+        include_ambiguous: bool | None = None,
+        categories: list[str] | None = None,
+        database_integration_id: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/push/campaigns/{Id}/retry-failed
+
+        Sends the campaign's failed recipients again. Only recipients whose last
+        attempt failed are selected; ``notification_ids`` narrows them to those
+        rows, ``categories`` (``Transient`` | ``Permanent`` | ``Unknown``) to those
+        failure kinds, and ``include_ambiguous=True`` also takes the rows whose
+        provider answer never said whether the message went out — the answer then
+        carries a ``warning`` that a duplicate may be sent. ``idempotency_key``
+        (at most 64 characters) de-duplicates the request: the same key on the
+        same campaign replays the first answer instead of selecting again.
+        Answers ``{"retryRequestId", "selected", "skipped": {reason: count},
+        "replayed", "warning"?}``. Unset options are not sent.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{Id}/retry-failed",
+            method="POST",
+            path_params={"Id": campaign_id},
+            request={
+                "idempotencyKey": idempotency_key,
+                "notificationIds": notification_ids,
+                "includeAmbiguous": include_ambiguous,
+                "categories": categories,
+                "databaseIntegrationId": database_integration_id,
+                **request,
+            },
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_push_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{campaignId}/messages"""
         return self._transport.send(
@@ -1345,6 +1433,50 @@ class NotificationsModule:
             method="POST",
             path_params={"Id": id},
             request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def retry_failed_sms_notifications(
+        self,
+        campaign_id: str,
+        *,
+        idempotency_key: str,
+        notification_ids: list[str] | None = None,
+        include_ambiguous: bool | None = None,
+        categories: list[str] | None = None,
+        database_integration_id: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/sms/campaigns/{Id}/retry-failed
+
+        Sends the campaign's failed recipients again. Only recipients whose last
+        attempt failed are selected; ``notification_ids`` narrows them to those
+        rows, ``categories`` (``Transient`` | ``Permanent`` | ``Unknown``) to those
+        failure kinds, and ``include_ambiguous=True`` also takes the rows whose
+        provider answer never said whether the message went out — the answer then
+        carries a ``warning`` that a duplicate may be sent. ``idempotency_key``
+        (at most 64 characters) de-duplicates the request: the same key on the
+        same campaign replays the first answer instead of selecting again.
+        Answers ``{"retryRequestId", "selected", "skipped": {reason: count},
+        "replayed", "warning"?}``. Unset options are not sent.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{Id}/retry-failed",
+            method="POST",
+            path_params={"Id": campaign_id},
+            request={
+                "idempotencyKey": idempotency_key,
+                "notificationIds": notification_ids,
+                "includeAmbiguous": include_ambiguous,
+                "categories": categories,
+                "databaseIntegrationId": database_integration_id,
+                **request,
+            },
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
@@ -2298,6 +2430,50 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def retry_failed_email_notifications(
+        self,
+        campaign_id: str,
+        *,
+        idempotency_key: str,
+        notification_ids: list[str] | None = None,
+        include_ambiguous: bool | None = None,
+        categories: list[str] | None = None,
+        database_integration_id: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/email/campaigns/{Id}/retry-failed
+
+        Sends the campaign's failed recipients again. Only recipients whose last
+        attempt failed are selected; ``notification_ids`` narrows them to those
+        rows, ``categories`` (``Transient`` | ``Permanent`` | ``Unknown``) to those
+        failure kinds, and ``include_ambiguous=True`` also takes the rows whose
+        provider answer never said whether the message went out — the answer then
+        carries a ``warning`` that a duplicate may be sent. ``idempotency_key``
+        (at most 64 characters) de-duplicates the request: the same key on the
+        same campaign replays the first answer instead of selecting again.
+        Answers ``{"retryRequestId", "selected", "skipped": {reason: count},
+        "replayed", "warning"?}``. Unset options are not sent.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/campaigns/{Id}/retry-failed",
+            method="POST",
+            path_params={"Id": campaign_id},
+            request={
+                "idempotencyKey": idempotency_key,
+                "notificationIds": notification_ids,
+                "includeAmbiguous": include_ambiguous,
+                "categories": categories,
+                "databaseIntegrationId": database_integration_id,
+                **request,
+            },
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_email_campaign(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/campaigns/{id}"""
         return await self._transport.send(
@@ -2959,6 +3135,50 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def retry_failed_push_notifications(
+        self,
+        campaign_id: str,
+        *,
+        idempotency_key: str,
+        notification_ids: list[str] | None = None,
+        include_ambiguous: bool | None = None,
+        categories: list[str] | None = None,
+        database_integration_id: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/push/campaigns/{Id}/retry-failed
+
+        Sends the campaign's failed recipients again. Only recipients whose last
+        attempt failed are selected; ``notification_ids`` narrows them to those
+        rows, ``categories`` (``Transient`` | ``Permanent`` | ``Unknown``) to those
+        failure kinds, and ``include_ambiguous=True`` also takes the rows whose
+        provider answer never said whether the message went out — the answer then
+        carries a ``warning`` that a duplicate may be sent. ``idempotency_key``
+        (at most 64 characters) de-duplicates the request: the same key on the
+        same campaign replays the first answer instead of selecting again.
+        Answers ``{"retryRequestId", "selected", "skipped": {reason: count},
+        "replayed", "warning"?}``. Unset options are not sent.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/{Id}/retry-failed",
+            method="POST",
+            path_params={"Id": campaign_id},
+            request={
+                "idempotencyKey": idempotency_key,
+                "notificationIds": notification_ids,
+                "includeAmbiguous": include_ambiguous,
+                "categories": categories,
+                "databaseIntegrationId": database_integration_id,
+                **request,
+            },
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_push_campaign_messages(self, campaign_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns/{campaignId}/messages"""
         return await self._transport.send(
@@ -3101,6 +3321,50 @@ class AsyncNotificationsModule:
             method="POST",
             path_params={"Id": id},
             request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def retry_failed_sms_notifications(
+        self,
+        campaign_id: str,
+        *,
+        idempotency_key: str,
+        notification_ids: list[str] | None = None,
+        include_ambiguous: bool | None = None,
+        categories: list[str] | None = None,
+        database_integration_id: str | None = None,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/sms/campaigns/{Id}/retry-failed
+
+        Sends the campaign's failed recipients again. Only recipients whose last
+        attempt failed are selected; ``notification_ids`` narrows them to those
+        rows, ``categories`` (``Transient`` | ``Permanent`` | ``Unknown``) to those
+        failure kinds, and ``include_ambiguous=True`` also takes the rows whose
+        provider answer never said whether the message went out — the answer then
+        carries a ``warning`` that a duplicate may be sent. ``idempotency_key``
+        (at most 64 characters) de-duplicates the request: the same key on the
+        same campaign replays the first answer instead of selecting again.
+        Answers ``{"retryRequestId", "selected", "skipped": {reason: count},
+        "replayed", "warning"?}``. Unset options are not sent.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/sms/campaigns/{Id}/retry-failed",
+            method="POST",
+            path_params={"Id": campaign_id},
+            request={
+                "idempotencyKey": idempotency_key,
+                "notificationIds": notification_ids,
+                "includeAmbiguous": include_ambiguous,
+                "categories": categories,
+                "databaseIntegrationId": database_integration_id,
+                **request,
+            },
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,

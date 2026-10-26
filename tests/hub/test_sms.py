@@ -157,6 +157,12 @@ SMS_CASES: list[SmsCase] = [
         lambda m: m.stop_sms_campaign(id=CAMPAIGN_ID),
     ),
     (
+        "retry_failed_sms_notifications",
+        "POST",
+        f"{BASE}/campaigns/{CAMPAIGN_ID}/retry-failed",
+        lambda m: m.retry_failed_sms_notifications(CAMPAIGN_ID, idempotency_key="k1"),
+    ),
+    (
         "get_sms_campaign_batches",
         "GET",
         f"{BASE}/campaigns/{CAMPAIGN_ID}/batches",
@@ -217,9 +223,9 @@ def test_sms_endpoint_hits_the_expected_route(
 
 
 def test_sms_surface_size() -> None:
-    """34 live SMS routes in the gateway. A new one changes this count, so it cannot arrive untested."""
-    assert len(SMS_CASES) == 34
-    assert len({case[0] for case in SMS_CASES}) == 34
+    """35 live SMS routes in the gateway. A new one changes this count, so it cannot arrive untested."""
+    assert len(SMS_CASES) == 35
+    assert len({case[0] for case in SMS_CASES}) == 35
 
 
 def test_sms_call_sends_auth_and_project_headers() -> None:
@@ -470,6 +476,37 @@ def test_stop_sms_campaign_fills_the_route_token_and_sends_no_body() -> None:
     assert transport.last_request["body"] == ""
 
 
+def test_retry_failed_sms_notifications_sends_only_the_key_when_nothing_else_is_set() -> None:
+    client, transport = make_client()
+    client.hub.notifications.retry_failed_sms_notifications(CAMPAIGN_ID, idempotency_key="retry-1")
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == f"{BASE}/campaigns/{CAMPAIGN_ID}/retry-failed"
+    assert json.loads(transport.last_request["body"]) == {"idempotencyKey": "retry-1"}
+
+
+def test_retry_failed_sms_notifications_sends_every_option_under_its_wire_name() -> None:
+    client, transport = make_client()
+    client.hub.notifications.retry_failed_sms_notifications(
+        CAMPAIGN_ID,
+        idempotency_key="retry-1",
+        notification_ids=["notif_1"],
+        include_ambiguous=False,
+        categories=["Transient"],
+        database_integration_id="db_1",
+    )
+
+    assert transport.last_request is not None
+    assert json.loads(transport.last_request["body"]) == {
+        "idempotencyKey": "retry-1",
+        "notificationIds": ["notif_1"],
+        "includeAmbiguous": False,
+        "categories": ["Transient"],
+        "databaseIntegrationId": "db_1",
+    }
+
+
 def test_get_sms_campaigns_sends_its_filters_as_query_values() -> None:
     client, transport = make_client()
     client.hub.notifications.get_sms_campaigns(templateId=TEMPLATE_ID, pageSize=10, pageNumber=0)
@@ -513,6 +550,7 @@ def test_async_module_exposes_the_same_sms_surface() -> None:
             for name, _, _, _ in SMS_CASES:
                 assert inspect.iscoroutinefunction(getattr(module, name)), name
             await module.stop_sms_campaign(id=CAMPAIGN_ID)
+            await module.retry_failed_sms_notifications(CAMPAIGN_ID, idempotency_key="retry-1")
         finally:
             await client.aclose()
 
@@ -520,4 +558,6 @@ def test_async_module_exposes_the_same_sms_surface() -> None:
 
     assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
         ("POST", f"{BASE}/campaigns/{CAMPAIGN_ID}/stop"),
+        ("POST", f"{BASE}/campaigns/{CAMPAIGN_ID}/retry-failed"),
     ]
+    assert json.loads(seen[1].content) == {"idempotencyKey": "retry-1"}

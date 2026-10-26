@@ -69,6 +69,11 @@ client.hub.notifications.save_push_integration(
 Use `Fake` in tests and local development. It accepts a send and contacts no
 push service, so nothing reaches a real device.
 
+Failed recipients of a sent campaign are sent again with
+`retry_failed_push_notifications("camp_1", idempotency_key=...)` — see
+[notifications.md](./notifications.md#retrying-failed-recipients) for the
+options and for the delivery state each notification row carries.
+
 ## Registering a device
 
 A device is registered for one user. Send the device under `pushDeviceDto`
