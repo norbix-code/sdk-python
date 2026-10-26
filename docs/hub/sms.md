@@ -78,7 +78,10 @@ one = client.hub.notifications.get_sms_campaigns(campaignId="camp_1")
 ```
 
 A scheduled campaign can be cancelled with `stop_sms_campaign(id=...)`; it posts
-to `…/campaigns/{id}/stop` with no body.
+to `…/campaigns/{id}/stop` with no body. Failed recipients of a sent campaign
+are sent again with `retry_failed_sms_notifications("camp_1", idempotency_key=...)`
+— see [notifications.md](./notifications.md#retrying-failed-recipients) for
+the options and for the delivery state each notification row carries.
 
 ## Choosing an SMS provider
 
@@ -87,7 +90,7 @@ to `…/campaigns/{id}/stop` with no body.
 | provider | `provider` value | own fields |
 |---|---|---|
 | Fake (sandbox, never sends) | `Fake` | none |
-| Twilio | `Twilio` | `accountSid`, `fromPhoneNumber`, `authToken` |
+| Twilio | `Twilio` | `accountSid`, `fromPhoneNumber`, `authToken`, optional `deliveryEventsEnabled`, `statusCallbackUrl` (delivery reports) |
 | Vonage | `Vonage` | `apiKey`, `fromSender`, `apiSecret` |
 | Plivo | `Plivo` | `authId`, `fromPhoneNumber`, `authToken` |
 | Telnyx | `Telnyx` | `messagingProfileId`, `fromPhoneNumber`, `apiKey` |

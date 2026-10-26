@@ -44,6 +44,7 @@ Access with `norbix.hub.notifications`.
 | `create_email_campaign` | `POST` | `/{version}/notifications/email/campaigns` | `project` |
 | `delete_email_campaign` | `DELETE` | `/{version}/notifications/email/campaigns/{Id}` | `project` |
 | `stop_email_campaign` | `POST` | `/{version}/notifications/email/campaigns/{Id}/stop` | `project` |
+| `retry_failed_email_notifications` | `POST` | `/{version}/notifications/email/campaigns/{Id}/retry-failed` | `project` |
 | `get_email_campaign` | `GET` | `/{version}/notifications/email/campaigns/{id}` | `project` |
 | `get_email_campaigns` | `GET` | `/{version}/notifications/email/campaigns` | `project` |
 | `get_email_campaign_batches` | `GET` | `/{version}/notifications/email/campaigns/{id}/batches` | `project` |
@@ -80,6 +81,7 @@ Access with `norbix.hub.notifications`.
 | `get_sms_campaign` | `GET` | `/{version}/notifications/sms/campaigns/{id}` | `project` |
 | `delete_sms_campaign` | `DELETE` | `/{version}/notifications/sms/campaigns/{id}` | `project` |
 | `stop_sms_campaign` | `POST` | `/{version}/notifications/sms/campaigns/{Id}/stop` | `project` |
+| `retry_failed_sms_notifications` | `POST` | `/{version}/notifications/sms/campaigns/{Id}/retry-failed` | `project` |
 | `get_sms_campaign_batches` | `GET` | `/{version}/notifications/sms/campaigns/{id}/batches` | `project` |
 | `get_sms_campaign_batch_notifications` | `GET` | `/{version}/notifications/sms/campaigns/{id}/batches/{batchId}` | `project` |
 | `get_sms_campaign_batch_notification` | `GET` | `/{version}/notifications/sms/campaigns/{id}/batches/{batchId}/{notificationId}` | `project` |
@@ -115,6 +117,7 @@ Access with `norbix.hub.notifications`.
 | `get_push_campaign` | `GET` | `/{version}/notifications/push/campaigns/{id}` | `project` |
 | `delete_push_campaign` | `DELETE` | `/{version}/notifications/push/campaigns/{Id}` | `project` |
 | `stop_push_campaign` | `POST` | `/{version}/notifications/push/campaigns/{Id}/stop` | `project` |
+| `retry_failed_push_notifications` | `POST` | `/{version}/notifications/push/campaigns/{Id}/retry-failed` | `project` |
 | `get_push_campaign_batches` | `GET` | `/{version}/notifications/push/campaigns/{id}/batches` | `project` |
 | `get_push_campaign_batch_notifications` | `GET` | `/{version}/notifications/push/campaigns/{id}/batches/{batchId}` | `project` |
 | `get_push_campaign_batch_notification` | `GET` | `/{version}/notifications/push/campaigns/{id}/batches/{batchId}/{notificationId}` | `project` |
@@ -137,3 +140,75 @@ without listing the templates again:
 copy = client.hub.notifications.clone_email_template(id="tpl_welcome")
 client.hub.notifications.get_email_template(id=copy["id"])
 ```
+
+## Retrying failed recipients
+
+`retry_failed_email_notifications`, `retry_failed_sms_notifications` and
+`retry_failed_push_notifications` send a campaign's failed recipients again
+(route `…/campaigns/{id}/retry-failed`). Only recipients whose last attempt
+failed are sent; the ones that were accepted stay untouched. The campaign id
+is positional and `idempotency_key` (at most 64 characters) is required — the
+same key on the same campaign replays the first answer instead of selecting
+again, so a retried call after a timeout never sends twice:
+
+```python
+answer = client.hub.notifications.retry_failed_email_notifications(
+    "camp_1",
+    idempotency_key="camp_1-retry-2026-10-26",
+    categories=["Transient"],
+)
+answer["selected"]   # recipients queued again
+answer["skipped"]    # {reason: count} — why the others were left out
+answer["replayed"]   # True when this key was already used: the first answer, nothing new sent
+```
+
+The optional narrowing values travel under their wire names and are not sent
+when unset:
+
+| keyword | wire name | what it does |
+|---|---|---|
+| `notification_ids` | `notificationIds` | only these rows of the campaign |
+| `categories` | `categories` | only these failure kinds: `Transient`, `Permanent`, `Unknown` |
+| `include_ambiguous` | `includeAmbiguous` | also take rows whose provider answer never said whether the message went out; the answer then carries `warning`, the text that a duplicate may be sent |
+| `database_integration_id` | `databaseIntegrationId` | the database integration id, the same value `create_sms_campaign` takes (different from the provider `integrationId`) |
+
+The answer is `{"retryRequestId", "selected", "skipped": {reason: count},
+"replayed", "warning"?}`.
+
+## Delivery state on a notification row
+
+The rows of `get_*_campaign_batch_notifications`,
+`get_*_campaign_batch_notification` and `get_*_campaign_messages` carry the
+delivery state of each recipient (dicts, as everything in this SDK):
+
+- `state` — `Pending`, `Sending`, `Retrying`, `Accepted`, `Failed`, `Blocked`
+  or `Cancelled`, and `stateChangedAt`.
+- `attempts[]` — one per send: `attemptId`, `number`, `startedAt`,
+  `finishedAt`, `outcome` (`Accepted` | `Failed`), `category` (`Unknown` |
+  `Transient` | `Permanent` | `Ambiguous`), `statusCode`, `errorCode`,
+  `message`, `providerRef`, `retryAfterSeconds`, `exhausted`, `nextRetryAt`,
+  `correlationId`, `trigger` (`Initial` | `AutoRetry` | `ManualRetry`) and, for
+  a manual retry, the `retryRequestId` the retry call answered.
+- `deliveryEvents[]` — what the provider reported after acceptance:
+  `eventId`, `outcome` (`Delivered` | `Bounced` | `Complained` | `Rejected` |
+  `Deferred`), `at`, `provider`, `providerRef`, `reason`; the row's
+  `deliveryOutcome` and `deliveryOutcomeRank` summarise them.
+
+`get_*_campaign_statistics` also counts `failedRetryable` (failed rows a retry
+would select) and `cancelled`.
+
+## Delivery events from the provider
+
+`deliveryEvents[]` fills only when the provider integration reports back.
+`save_email_integration` / `save_sms_integration` take, inside `integration`:
+
+| provider | `provider` value | delivery-event fields |
+|---|---|---|
+| Amazon SES | `AwsSes` | `deliveryEventsEnabled`, `snsTopicArn` |
+| SendGrid | `SendGrid` | `deliveryEventsEnabled`, `eventWebhookPublicKey` |
+| Azure Communication Services (email) | `azureCommunication` | `endpoint`, `accessKey`, optional `deliveryEventsEnabled`, `eventGridKey` |
+| Twilio (SMS) | `Twilio` | `deliveryEventsEnabled`, `statusCallbackUrl` |
+
+`get_email_integration` / `get_sms_integration` read the same fields back. The
+provider's callback routes are the gateway's own public webhooks, not SDK
+methods.

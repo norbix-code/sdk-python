@@ -2,7 +2,7 @@
 
 The generated test files assert each method's verb and that the URL is https.
 This file adds what they cannot see: the fully-resolved path of every one of
-the 50 Email routes — the project routes under /notifications/email (and the
+the 51 Email routes — the project routes under /notifications/email (and the
 older /notifications/emails/campaigns/{campaignId}/messages) and the public
 link routes under /email/ — with the routes and verbs taken from the gateway's
 endpoint manifest, not from this SDK. Every call goes to a capture transport,
@@ -12,6 +12,7 @@ so nothing leaves the process and no email provider is contacted.
 from __future__ import annotations
 
 import asyncio
+import json
 from collections.abc import Callable
 from typing import Any
 from urllib.parse import parse_qs, urlparse
@@ -68,6 +69,12 @@ EMAIL_CASES: list[EmailCase] = [
         "POST",
         f"/v3/notifications/email/campaigns/{ITEM_ID}/stop",
         lambda c: c.hub.notifications.stop_email_campaign(id=ITEM_ID),
+    ),
+    (
+        "retry_failed_email_notifications",
+        "POST",
+        f"/v3/notifications/email/campaigns/{ITEM_ID}/retry-failed",
+        lambda c: c.hub.notifications.retry_failed_email_notifications(ITEM_ID, idempotency_key="k1"),
     ),
     (
         "get_email_campaign",
@@ -355,8 +362,8 @@ def test_email_endpoint_hits_the_expected_route(
 
 
 def test_email_surface_size() -> None:
-    """50 live Email routes. A new or removed one changes this count, so it cannot pass untested."""
-    assert len(EMAIL_CASES) == 50
+    """51 live Email routes. A new or removed one changes this count, so it cannot pass untested."""
+    assert len(EMAIL_CASES) == 51
 
 
 def test_email_call_sends_auth_and_project_headers() -> None:
@@ -495,3 +502,61 @@ def test_create_email_campaign_sends_the_provider_integration_id_nested() -> Non
     assert json.loads(transport.last_request["body"]) == {
         "campaign": {"templateId": "tpl_1", "integrationId": "int_1", "source": "allUsers"}
     }
+
+
+def test_retry_failed_email_notifications_sends_only_the_key_when_nothing_else_is_set() -> None:
+    client, transport = make_client()
+    client.hub.notifications.retry_failed_email_notifications(CAMPAIGN_ID, idempotency_key="retry-2026-10-26")
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert (
+        urlparse(transport.last_request["url"]).path
+        == f"/v3/notifications/email/campaigns/{CAMPAIGN_ID}/retry-failed"
+    )
+    assert json.loads(transport.last_request["body"]) == {"idempotencyKey": "retry-2026-10-26"}
+
+
+def test_retry_failed_email_notifications_sends_every_option_under_its_wire_name() -> None:
+    client, transport = make_client()
+    client.hub.notifications.retry_failed_email_notifications(
+        CAMPAIGN_ID,
+        idempotency_key="retry-1",
+        notification_ids=["notif_1", "notif_2"],
+        include_ambiguous=True,
+        categories=["Transient", "Unknown"],
+        database_integration_id="db_1",
+    )
+
+    assert transport.last_request is not None
+    assert json.loads(transport.last_request["body"]) == {
+        "idempotencyKey": "retry-1",
+        "notificationIds": ["notif_1", "notif_2"],
+        "includeAmbiguous": True,
+        "categories": ["Transient", "Unknown"],
+        "databaseIntegrationId": "db_1",
+    }
+
+
+def test_async_retry_failed_email_notifications_posts_the_same_body() -> None:
+    seen: list[httpx.Request] = []
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(_capture(seen))),
+        )
+        try:
+            await client.hub.notifications.retry_failed_email_notifications(
+                CAMPAIGN_ID, idempotency_key="retry-1", categories=["Permanent"]
+            )
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
+        ("POST", f"/v3/notifications/email/campaigns/{CAMPAIGN_ID}/retry-failed"),
+    ]
+    assert json.loads(seen[0].content) == {"idempotencyKey": "retry-1", "categories": ["Permanent"]}

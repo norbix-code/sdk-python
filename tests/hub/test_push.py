@@ -13,7 +13,7 @@ from ..helpers import make_client
 
 The generated test file asserts each push method's verb and that the URL is
 https. This file adds the two things it cannot see: the fully-resolved path of
-every one of the 37 push routes, and the polymorphic bodies that the server
+every one of the 38 push routes, and the polymorphic bodies that the server
 routes on.
 
 Only the Fake provider is used for a send path — it is the sandbox that accepts
@@ -152,6 +152,12 @@ PUSH_CASES: list[PushCase] = [
         lambda m: m.stop_push_campaign(id=CAMPAIGN_ID),
     ),
     (
+        "retry_failed_push_notifications",
+        "POST",
+        f"{BASE}/campaigns/{CAMPAIGN_ID}/retry-failed",
+        lambda m: m.retry_failed_push_notifications(CAMPAIGN_ID, idempotency_key="k1"),
+    ),
+    (
         "get_push_campaign_batches",
         "GET",
         f"{BASE}/campaigns/{CAMPAIGN_ID}/batches",
@@ -221,8 +227,8 @@ def test_push_endpoint_hits_the_expected_route(
 
 
 def test_push_surface_size() -> None:
-    """37 live push routes. A new one changes this count, so it cannot arrive untested."""
-    assert len(PUSH_CASES) == 37
+    """38 live push routes. A new one changes this count, so it cannot arrive untested."""
+    assert len(PUSH_CASES) == 38
 
 
 def test_push_call_sends_auth_and_project_headers() -> None:
@@ -418,6 +424,71 @@ def test_get_push_device_fills_the_route_token() -> None:
     assert transport.last_request is not None
     assert transport.last_request["method"] == "GET"
     assert urlparse(transport.last_request["url"]).path == f"{BASE}/devices/{DEVICE_ID}"
+
+
+def test_retry_failed_push_notifications_sends_only_the_key_when_nothing_else_is_set() -> None:
+    client, transport = make_client()
+    client.hub.notifications.retry_failed_push_notifications(CAMPAIGN_ID, idempotency_key="retry-1")
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == f"{BASE}/campaigns/{CAMPAIGN_ID}/retry-failed"
+    assert json.loads(transport.last_request["body"]) == {"idempotencyKey": "retry-1"}
+
+
+def test_retry_failed_push_notifications_sends_every_option_under_its_wire_name() -> None:
+    client, transport = make_client()
+    client.hub.notifications.retry_failed_push_notifications(
+        CAMPAIGN_ID,
+        idempotency_key="retry-1",
+        notification_ids=["notif_1"],
+        include_ambiguous=True,
+        categories=["Unknown"],
+        database_integration_id="db_1",
+    )
+
+    assert transport.last_request is not None
+    assert json.loads(transport.last_request["body"]) == {
+        "idempotencyKey": "retry-1",
+        "notificationIds": ["notif_1"],
+        "includeAmbiguous": True,
+        "categories": ["Unknown"],
+        "databaseIntegrationId": "db_1",
+    }
+
+
+def test_async_retry_failed_push_notifications_posts_the_same_body() -> None:
+    import asyncio
+
+    import httpx
+
+    from norbix_python import AsyncNorbix
+
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        try:
+            await client.hub.notifications.retry_failed_push_notifications(
+                CAMPAIGN_ID, idempotency_key="retry-1", notification_ids=["notif_1"]
+            )
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
+        ("POST", f"{BASE}/campaigns/{CAMPAIGN_ID}/retry-failed"),
+    ]
+    assert json.loads(seen[0].content) == {"idempotencyKey": "retry-1", "notificationIds": ["notif_1"]}
 
 
 def test_async_module_exposes_the_same_push_surface() -> None:
