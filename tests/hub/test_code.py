@@ -417,3 +417,132 @@ def test_async_marketplace_function_runs_by_function_id() -> None:
         None,
     )
     assert result == {"runs": [{"functionId": "func_1p4R3gTobGZpD6fXvHT4rd", "status": "ok", "hasDetails": True}]}
+
+
+# --- workflows (beta) --------------------------------------------------------
+#
+# The 26 Hub routes of Code.Workflows.md §7: the verb, the resolved path and
+# where each parameter goes — GET / DELETE in the query string, POST / PUT in
+# the JSON body. Sync and async against a capture transport, never a gateway.
+
+WF = "wf_6Qp1dW2kRm8NsT4vYc0Hb"
+WFR = "wfr_4hT2b9QkLm3XcT1yRfGh7a"
+WF_TOKEN = "eyJydW4iOiJ3ZnJfNGhUMmI5In0.sig"
+WF_DEFINITION: dict[str, Any] = {
+    "name": "Order approval",
+    "start": "approve",
+    "steps": [{"id": "approve", "kind": "wait.approval", "assignees": ["usr_1"]}],
+}
+
+WORKFLOW_CASES: list[FunctionCase] = [
+    ("get_code_workflows", "GET", "/v3/code/workflows", {"isEnabled": ["true"], "pageSize": ["20"]}, None, lambda m: m.get_code_workflows(isEnabled=True, pageSize=20)),
+    ("save_code_workflow", "PUT", "/v3/code/workflows", None, {"definition": WF_DEFINITION}, lambda m: m.save_code_workflow(definition=WF_DEFINITION)),
+    ("get_code_workflow", "GET", f"/v3/code/workflows/{WF}", {"pinnedVersion": ["2"]}, None, lambda m: m.get_code_workflow(WF, pinnedVersion=2)),
+    ("delete_code_workflow", "DELETE", f"/v3/code/workflows/{WF}", None, None, lambda m: m.delete_code_workflow(WF)),
+    ("publish_code_workflow", "POST", f"/v3/code/workflows/{WF}/publish", None, None, lambda m: m.publish_code_workflow(WF)),
+    ("get_code_workflow_draft", "GET", f"/v3/code/workflows/{WF}/draft", None, None, lambda m: m.get_code_workflow_draft(WF)),
+    ("discard_code_workflow_draft", "DELETE", f"/v3/code/workflows/{WF}/draft", None, None, lambda m: m.discard_code_workflow_draft(WF)),
+    ("get_code_workflow_versions", "GET", f"/v3/code/workflows/{WF}/versions", None, None, lambda m: m.get_code_workflow_versions(WF)),
+    ("get_code_workflow_version_diff", "GET", f"/v3/code/workflows/{WF}/versions/diff", {"fromVersion": ["1"], "toVersion": ["2"]}, None, lambda m: m.get_code_workflow_version_diff(WF, fromVersion=1, toVersion=2)),
+    ("enable_code_workflow", "PUT", f"/v3/code/workflows/{WF}/enable", None, None, lambda m: m.enable_code_workflow(WF)),
+    ("disable_code_workflow", "PUT", f"/v3/code/workflows/{WF}/disable", None, None, lambda m: m.disable_code_workflow(WF)),
+    ("invoke_code_workflow", "POST", f"/v3/code/workflows/{WF}/invoke", None, {"payload": {"orderId": "ord_1"}, "waitSeconds": 10, "runVersion": "draft"}, lambda m: m.invoke_code_workflow(WF, payload={"orderId": "ord_1"}, waitSeconds=10, runVersion="draft")),
+    ("get_code_workflow_runs", "GET", f"/v3/code/workflows/{WF}/runs", {"status": ["failed"], "from": ["2026-10-01T00:00:00Z"], "pageSize": ["50"]}, None, lambda m: m.get_code_workflow_runs(WF, status="failed", **{"from": "2026-10-01T00:00:00Z"}, pageSize=50)),
+    ("resume_code_workflow_run_by_key", "POST", f"/v3/code/workflows/{WF}/resume", None, {"key": "order-ord_1", "decision": "approved", "payload": {"note": "ok"}}, lambda m: m.resume_code_workflow_run_by_key(WF, key="order-ord_1", decision="approved", payload={"note": "ok"})),
+    ("validate_code_workflow", "POST", "/v3/code/workflows/validate", None, {"definition": WF_DEFINITION}, lambda m: m.validate_code_workflow(definition=WF_DEFINITION)),
+    ("get_code_workflow_schema", "GET", "/v3/code/workflows/schema", None, None, lambda m: m.get_code_workflow_schema()),
+    ("enable_code_workflows", "PUT", "/v3/code/workflows/enable", None, None, lambda m: m.enable_code_workflows()),
+    ("disable_code_workflows", "PUT", "/v3/code/workflows/disable", None, None, lambda m: m.disable_code_workflows()),
+    ("get_code_workflow_waiting_runs", "GET", "/v3/code/workflows/runs", {"waitingKind": ["approval"], "assignee": ["me"], "workflowId": [WF]}, None, lambda m: m.get_code_workflow_waiting_runs(waitingKind="approval", assignee="me", workflowId=WF)),
+    ("get_code_workflow_run", "GET", f"/v3/code/workflows/runs/{WFR}", None, None, lambda m: m.get_code_workflow_run(WFR)),
+    ("get_code_workflow_run_logs", "GET", f"/v3/code/workflows/runs/{WFR}/logs", {"stepId": ["approve"], "level": ["error"]}, None, lambda m: m.get_code_workflow_run_logs(WFR, stepId="approve", level="error")),
+    ("resume_code_workflow_run", "POST", f"/v3/code/workflows/runs/{WFR}/resume", None, {"stepId": "approve", "decision": "rejected"}, lambda m: m.resume_code_workflow_run(WFR, stepId="approve", decision="rejected")),
+    ("retry_code_workflow_run_step", "POST", f"/v3/code/workflows/runs/{WFR}/retry", None, {"stepId": "charge"}, lambda m: m.retry_code_workflow_run_step(WFR, stepId="charge")),
+    ("cancel_code_workflow_run", "POST", f"/v3/code/workflows/runs/{WFR}/cancel", None, {"reason": "duplicate order"}, lambda m: m.cancel_code_workflow_run(WFR, reason="duplicate order")),
+    ("open_code_workflow_resume_link", "GET", f"/v3/code/workflows/resume/{WF_TOKEN}", None, None, lambda m: m.open_code_workflow_resume_link(WF_TOKEN)),
+    ("use_code_workflow_resume_link", "POST", f"/v3/code/workflows/resume/{WF_TOKEN}", None, None, lambda m: m.use_code_workflow_resume_link(WF_TOKEN)),
+]
+
+
+@pytest.mark.parametrize(("name", "verb", "path", "query", "body", "call"), WORKFLOW_CASES, ids=[c[0] for c in WORKFLOW_CASES])
+def test_workflow_request_shape(
+    name: str,
+    verb: str,
+    path: str,
+    query: dict[str, list[str]] | None,
+    body: dict[str, Any] | None,
+    call: Callable[[Any], Any],
+) -> None:
+    client, transport = make_client()
+    call(client.hub.code)
+    assert transport.last_request is not None
+    _assert_function_request(
+        name,
+        transport.last_request["method"],
+        transport.last_request["url"],
+        transport.last_request["body"],
+        verb,
+        path,
+        query,
+        body,
+    )
+    assert transport.last_request["headers"]["authorization"] == "Bearer test-token"
+
+
+def test_async_workflow_endpoints_hit_the_same_routes() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        try:
+            for _, _, _, _, _, call in WORKFLOW_CASES:
+                await call(client.hub.code)
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert len(seen) == len(WORKFLOW_CASES)
+    for request, (name, verb, path, query, body, _) in zip(seen, WORKFLOW_CASES, strict=True):
+        _assert_function_request(name, request.method, str(request.url), request.content.decode("utf-8"), verb, path, query, body)
+
+
+def test_workflow_surface_size() -> None:
+    """26 Hub workflow routes in the gateway (Code.Workflows.md §7). A new one changes this count."""
+    assert len(WORKFLOW_CASES) == 26
+    assert len({case[0] for case in WORKFLOW_CASES}) == 26
+    assert len({(case[1], case[2]) for case in WORKFLOW_CASES}) == 26
+    client, _ = make_client()
+    for name, *_ in WORKFLOW_CASES:
+        assert callable(getattr(client.hub.code, name)), name
+
+
+def test_workflow_resume_links_need_no_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The signed link is the key: a client with no token sends no Authorization header."""
+    monkeypatch.delenv("NORBIX_API_KEY", raising=False)
+    monkeypatch.delenv("NORBIX_BEARER_TOKEN", raising=False)
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    from norbix_python import Norbix
+
+    client = Norbix(project_id="test-project", http_client=httpx.Client(transport=httpx.MockTransport(handler)))
+    client.hub.code.open_code_workflow_resume_link(WF_TOKEN)
+    client.hub.code.use_code_workflow_resume_link(WF_TOKEN)
+
+    assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
+        ("GET", f"/v3/code/workflows/resume/{WF_TOKEN}"),
+        ("POST", f"/v3/code/workflows/resume/{WF_TOKEN}"),
+    ]
+    assert all("authorization" not in r.headers for r in seen)

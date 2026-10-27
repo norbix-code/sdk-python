@@ -4,7 +4,7 @@
 | --- | ---: |
 | [`account`](./account.md) | 61 |
 | [`ai`](./ai.md) | 14 |
-| [`code`](./code.md) | 33 |
+| [`code`](./code.md) | 71 |
 | [`database`](./database.md) | 67 |
 | [`echo`](./echo.md) | 1 |
 | [`email`](./email.md) | 1 |

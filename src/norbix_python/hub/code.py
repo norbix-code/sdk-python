@@ -581,6 +581,428 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    # --- Workflows (beta) ---------------------------------------------------
+    # The routes of the gateway contract Code.Workflows.md §7. Workflows are in
+    # beta; bugs may occur.
+
+    def get_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows
+
+        List the workflows; query `isEnabled?`, `pageSize`, `startingAfter`, `endingBefore`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_code_workflow(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows
+
+        Save the draft (create when `definition.workflowId` is absent); body `definition`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}
+
+        One workflow (latest published, or the draft when never published); query `pinnedVersion?`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: DELETE /{version}/code/workflows/{Id}
+
+        Delete a workflow; waiting runs are cancelled.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def publish_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/publish
+
+        The draft becomes the next published version.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/publish",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_draft(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/draft
+
+        The workflow with its draft as `definition`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/draft",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def discard_code_workflow_draft(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: DELETE /{version}/code/workflows/{Id}/draft
+
+        Discard the draft.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/draft",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_versions(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/versions
+
+        The published versions of a workflow.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/versions",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_version_diff(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/versions/diff
+
+        What changed between two versions; query `fromVersion`, `toVersion`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/versions/diff",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def enable_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/enable
+
+        Enable a workflow (resets the runaway counters).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def disable_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/disable
+
+        Disable a workflow: no new runs; runs in flight continue.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def invoke_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/invoke
+
+        Start a run; body `payload?`, `waitSeconds?` (0–30), `runVersion?` ("draft" or a version).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/invoke",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/runs
+
+        Runs of a workflow, newest first; query `status?`, `from?`, `to?` and paging.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/runs",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def resume_code_workflow_run_by_key(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/resume
+
+        Resume the run waiting on `key`; body `key`, `stepId?`, `decision?`, `payload?`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/resume",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def validate_code_workflow(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/validate
+
+        Run every save check, write nothing; body `definition`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/validate",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_schema(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/schema
+
+        The definition JSON Schema, the step kinds and the binding families.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/schema",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def enable_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/enable
+
+        Turn the Workflows beta switch on for the Code module.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/enable",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def disable_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/disable
+
+        Turn the Workflows beta switch off for the Code module.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/disable",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_waiting_runs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/runs
+
+        The inbox of waiting runs; query `status?`, `waitingKind?`, `assignee?`, `workflowId?`, `key?`, paging.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_run(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/runs/{RunId}
+
+        One run with its steps (`{"run": {...}}`).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}",
+            method="GET",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_code_workflow_run_logs(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/runs/{RunId}/logs
+
+        The run's log lines, newest first; query `stepId?`, `level?` and paging.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/logs",
+            method="GET",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def resume_code_workflow_run(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/runs/{RunId}/resume
+
+        Resume a waiting run; body `stepId?`, `decision?` ("approved" / "rejected"), `payload?`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/resume",
+            method="POST",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def retry_code_workflow_run_step(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/runs/{RunId}/retry
+
+        Retry the failed step of a failed run; body `stepId?`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/retry",
+            method="POST",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def cancel_code_workflow_run(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/runs/{RunId}/cancel
+
+        Stop a running or waiting run; body `reason?`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/cancel",
+            method="POST",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def open_code_workflow_resume_link(self, token: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/resume/{Token}
+
+        Check a signed resume link (changes nothing). No session needed: the link is the key;
+        auth is still sent when the client has a token.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/resume/{Token}",
+            method="GET",
+            path_params={"Token": token},
+            request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def use_code_workflow_resume_link(self, token: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/resume/{Token}
+
+        Answer a signed resume link. No session needed: the link is the key; auth is still
+        sent when the client has a token.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/resume/{Token}",
+            method="POST",
+            path_params={"Token": token},
+            request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncCodeModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1154,6 +1576,428 @@ class AsyncCodeModule:
             path_params={},
             request=request,
             scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    # --- Workflows (beta) ---------------------------------------------------
+    # The routes of the gateway contract Code.Workflows.md §7. Workflows are in
+    # beta; bugs may occur.
+
+    async def get_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows
+
+        List the workflows; query `isEnabled?`, `pageSize`, `startingAfter`, `endingBefore`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_code_workflow(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows
+
+        Save the draft (create when `definition.workflowId` is absent); body `definition`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}
+
+        One workflow (latest published, or the draft when never published); query `pinnedVersion?`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: DELETE /{version}/code/workflows/{Id}
+
+        Delete a workflow; waiting runs are cancelled.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def publish_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/publish
+
+        The draft becomes the next published version.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/publish",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_draft(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/draft
+
+        The workflow with its draft as `definition`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/draft",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def discard_code_workflow_draft(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: DELETE /{version}/code/workflows/{Id}/draft
+
+        Discard the draft.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/draft",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_versions(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/versions
+
+        The published versions of a workflow.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/versions",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_version_diff(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/versions/diff
+
+        What changed between two versions; query `fromVersion`, `toVersion`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/versions/diff",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/enable
+
+        Enable a workflow (resets the runaway counters).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/enable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/disable
+
+        Disable a workflow: no new runs; runs in flight continue.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/disable",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def invoke_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/invoke
+
+        Start a run; body `payload?`, `waitSeconds?` (0–30), `runVersion?` ("draft" or a version).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/invoke",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/{Id}/runs
+
+        Runs of a workflow, newest first; query `status?`, `from?`, `to?` and paging.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/runs",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def resume_code_workflow_run_by_key(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/resume
+
+        Resume the run waiting on `key`; body `key`, `stepId?`, `decision?`, `payload?`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/resume",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def validate_code_workflow(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/validate
+
+        Run every save check, write nothing; body `definition`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/validate",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_schema(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/schema
+
+        The definition JSON Schema, the step kinds and the binding families.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/schema",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/enable
+
+        Turn the Workflows beta switch on for the Code module.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/enable",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/disable
+
+        Turn the Workflows beta switch off for the Code module.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/disable",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_waiting_runs(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/runs
+
+        The inbox of waiting runs; query `status?`, `waitingKind?`, `assignee?`, `workflowId?`, `key?`, paging.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_run(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/runs/{RunId}
+
+        One run with its steps (`{"run": {...}}`).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}",
+            method="GET",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_code_workflow_run_logs(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/runs/{RunId}/logs
+
+        The run's log lines, newest first; query `stepId?`, `level?` and paging.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/logs",
+            method="GET",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def resume_code_workflow_run(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/runs/{RunId}/resume
+
+        Resume a waiting run; body `stepId?`, `decision?` ("approved" / "rejected"), `payload?`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/resume",
+            method="POST",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def retry_code_workflow_run_step(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/runs/{RunId}/retry
+
+        Retry the failed step of a failed run; body `stepId?`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/retry",
+            method="POST",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def cancel_code_workflow_run(self, run_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/runs/{RunId}/cancel
+
+        Stop a running or waiting run; body `reason?`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/runs/{RunId}/cancel",
+            method="POST",
+            path_params={"RunId": run_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def open_code_workflow_resume_link(self, token: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: GET /{version}/code/workflows/resume/{Token}
+
+        Check a signed resume link (changes nothing). No session needed: the link is the key;
+        auth is still sent when the client has a token.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/resume/{Token}",
+            method="GET",
+            path_params={"Token": token},
+            request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def use_code_workflow_resume_link(self, token: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/resume/{Token}
+
+        Answer a signed resume link. No session needed: the link is the key; auth is still
+        sent when the client has a token.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/resume/{Token}",
+            method="POST",
+            path_params={"Token": token},
+            request=request,
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
