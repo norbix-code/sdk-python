@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..transport import AsyncTransport, Transport
+from ..workflows import WorkflowRun, wait_for_run, wait_for_run_async
 
 
 class CodeModule:
@@ -1003,6 +1004,21 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def wait_for_run(self, run_id: str, *, timeout_ms: int = 60000, poll_ms: int = 1000, timeout: float | None = None, bearer_token: str | None = None) -> WorkflowRun:
+        """Beta: poll ``get_code_workflow_run`` until the run is settled.
+
+        Gives back the run (a :class:`~norbix_python.WorkflowRun`) as soon as its
+        ``status`` is ``succeeded``, ``failed``, ``cancelled`` or ``waiting``.
+        Raises :class:`~norbix_python.WorkflowRunTimeoutError` (``.run`` = the
+        last run read) after ``timeout_ms``, and ``NorbixError`` when an answer
+        carries no run. ``timeout`` and ``bearer_token`` apply to each poll.
+        """
+        return wait_for_run(
+            lambda: self.get_code_workflow_run(run_id, timeout=timeout, bearer_token=bearer_token),
+            timeout_ms=timeout_ms,
+            poll_ms=poll_ms,
+        )
+
 
 class AsyncCodeModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -2000,4 +2016,19 @@ class AsyncCodeModule:
             scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
+        )
+
+    async def wait_for_run(self, run_id: str, *, timeout_ms: int = 60000, poll_ms: int = 1000, timeout: float | None = None, bearer_token: str | None = None) -> WorkflowRun:
+        """Beta: poll ``get_code_workflow_run`` until the run is settled.
+
+        Gives back the run (a :class:`~norbix_python.WorkflowRun`) as soon as its
+        ``status`` is ``succeeded``, ``failed``, ``cancelled`` or ``waiting``.
+        Raises :class:`~norbix_python.WorkflowRunTimeoutError` (``.run`` = the
+        last run read) after ``timeout_ms``, and ``NorbixError`` when an answer
+        carries no run. ``timeout`` and ``bearer_token`` apply to each poll.
+        """
+        return await wait_for_run_async(
+            lambda: self.get_code_workflow_run(run_id, timeout=timeout, bearer_token=bearer_token),
+            timeout_ms=timeout_ms,
+            poll_ms=poll_ms,
         )

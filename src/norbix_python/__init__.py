@@ -8,6 +8,7 @@ from .errors import (
     NotFoundError,
     RateLimitError,
     ValidationError,
+    WorkflowRunTimeoutError,
 )
 from .functions import FunctionEvent, NorbixFunctionEventError, parse_function_event
 from .models import AuthLoginResult, DatabaseFindResult, ReferenceDisplay
@@ -15,6 +16,7 @@ from .webhooks import (
     AsyncNorbixWebhookReceiver,
     NorbixWebhookReceiver,
 )
+from .workflows import WorkflowRun, step_output
 
 __all__ = [
     "AsyncNorbix",
@@ -35,6 +37,9 @@ __all__ = [
     "RateLimitError",
     "ReferenceDisplay",
     "ValidationError",
+    "WorkflowRun",
+    "WorkflowRunTimeoutError",
     "parse_function_event",
+    "step_output",
 ]
 __version__ = "1.1.1"
