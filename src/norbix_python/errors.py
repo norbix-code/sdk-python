@@ -185,6 +185,25 @@ class ValidationError(NorbixError):
         )
 
 
+class WorkflowRunTimeoutError(NorbixError):
+    """``wait_for_run`` gave up: the run was still running when the time ran out.
+
+    :attr:`run` is the last run read (a :class:`~norbix_python.WorkflowRun`), so
+    the caller can see its ``status`` and steps and keep waiting if it wants to.
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        run: dict[str, Any],
+        code: str = "NORBIX_WORKFLOW_RUN_TIMEOUT",
+    ) -> None:
+        super().__init__(message, code=code, context={"runId": run.get("runId")})
+        #: The last run read before the time ran out.
+        self.run = run
+
+
 def error_from_http(
     *,
     message: str,

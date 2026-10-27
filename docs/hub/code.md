@@ -148,6 +148,38 @@ started = norbix.hub.code.invoke_code_workflow(workflow_id, payload={"orderId": 
 inbox = norbix.hub.code.get_code_workflow_waiting_runs(assignee="me")
 ```
 
+### Waiting for a run — `wait_for_run` and `step_output`
+
+Two hand-written helpers (Code.Workflows.md §15):
+
+- `norbix.hub.code.wait_for_run(run_id, *, timeout_ms=60000, poll_ms=1000)`
+  (awaited on `AsyncNorbix`) polls `get_code_workflow_run` and gives back the
+  run as a `WorkflowRun` (a plain `dict` of the `WorkflowRunDto`) as soon as
+  its `status` is `succeeded`, `failed`, `cancelled` or `waiting`. After
+  `timeout_ms` it raises `WorkflowRunTimeoutError` (a `NorbixError`, code
+  `NORBIX_WORKFLOW_RUN_TIMEOUT`) whose `.run` is the last run read; an answer
+  with no run raises `NorbixError` (`NORBIX_WORKFLOW_RUN_MISSING`).
+- `step_output(run, step_id)` (also `run.step_output(step_id)`) is the
+  `output` of the step's latest execution with status `succeeded` — the
+  highest `pass`, then the highest `attempt` — or `None` when there is none.
+
+```python
+from norbix_python import WorkflowRunTimeoutError, step_output
+
+started = norbix.hub.code.invoke_code_workflow("wf_…", payload={"orderId": "ord_1"}, waitSeconds=0)
+try:
+    run = norbix.hub.code.wait_for_run(started["runId"], timeout_ms=30_000)
+except WorkflowRunTimeoutError as exc:
+    print("still", exc.run["status"])
+else:
+    if run["status"] == "succeeded":
+        charge = run.step_output("charge")      # or step_output(run, "charge")
+    elif run["status"] == "waiting":
+        print(run["waitingOn"])                  # parked on an approval, an event or a delay
+```
+
+Both are asserted in `tests/test_workflows.py`.
+
 ## Cloud functions
 
 The five routes of the gateway contract `Code.Functions.md` (§3.3, §3.4,
