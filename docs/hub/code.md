@@ -97,6 +97,57 @@ for run in runs.get("runs", []):
     # details["items"]: marketplace:run:started → marketplace:run:step … → completed | failed | skipped
 ```
 
+## Workflows (beta)
+
+Workflows are in beta; bugs may occur. The 26 Hub routes of the gateway
+contract `Code.Workflows.md` §7: a workflow definition (draft → published
+versions), its runs, the inbox of runs waiting on a person, and the beta
+switch. Workflow ids look like `wf_…`, run ids `wfr_…`. Every method, its
+verb, path, query and body are asserted in `tests/hub/test_code.py`, for the
+sync and the async client. Paging fields are `pageSize`, `startingAfter`,
+`endingBefore`. The app-user twins (inbox, resume, signed links) are on
+[`api.code`](../api/code.md).
+
+| Method | Verb | Path | Scope | Parameters go in |
+| --- | --- | --- | --- | --- |
+| `get_code_workflows` | `GET` | `/{version}/code/workflows` | `project` | query: `isEnabled?`, paging |
+| `save_code_workflow` | `PUT` | `/{version}/code/workflows` | `project` | JSON body: `definition` (saves the draft; creates when `definition.workflowId` is absent) |
+| `get_code_workflow` | `GET` | `/{version}/code/workflows/{Id}` | `project` | path: `id`; query: `pinnedVersion?` |
+| `delete_code_workflow` | `DELETE` | `/{version}/code/workflows/{Id}` | `project` | path: `id` (waiting runs are cancelled) |
+| `publish_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/publish` | `project` | path: `id` |
+| `get_code_workflow_draft` | `GET` | `/{version}/code/workflows/{Id}/draft` | `project` | path: `id` |
+| `discard_code_workflow_draft` | `DELETE` | `/{version}/code/workflows/{Id}/draft` | `project` | path: `id` |
+| `get_code_workflow_versions` | `GET` | `/{version}/code/workflows/{Id}/versions` | `project` | path: `id` |
+| `get_code_workflow_version_diff` | `GET` | `/{version}/code/workflows/{Id}/versions/diff` | `project` | path: `id`; query: `fromVersion`, `toVersion` |
+| `enable_code_workflow` | `PUT` | `/{version}/code/workflows/{Id}/enable` | `project` | path: `id` |
+| `disable_code_workflow` | `PUT` | `/{version}/code/workflows/{Id}/disable` | `project` | path: `id` |
+| `invoke_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/invoke` | `project` | path: `id`; JSON body: `payload?`, `waitSeconds?` (0–30), `runVersion?` (`"draft"` or a version number as a string) |
+| `get_code_workflow_runs` | `GET` | `/{version}/code/workflows/{Id}/runs` | `project` | path: `id`; query: `status?`, `from?`, `to?`, paging; newest first |
+| `resume_code_workflow_run_by_key` | `POST` | `/{version}/code/workflows/{Id}/resume` | `project` | path: `id`; JSON body: `key`, `stepId?`, `decision?`, `payload?` |
+| `validate_code_workflow` | `POST` | `/{version}/code/workflows/validate` | `project` | JSON body: `definition`; answers `isValid`, `errors`, `warnings` |
+| `get_code_workflow_schema` | `GET` | `/{version}/code/workflows/schema` | `project` | — |
+| `enable_code_workflows` | `PUT` | `/{version}/code/workflows/enable` | `project` | — (the beta switch) |
+| `disable_code_workflows` | `PUT` | `/{version}/code/workflows/disable` | `project` | — (the beta switch) |
+| `get_code_workflow_waiting_runs` | `GET` | `/{version}/code/workflows/runs` | `project` | query: `status?` (default `waiting`), `waitingKind?` (`approval` / `event` / `delay`), `assignee?` (`me` or `usr_…`), `workflowId?`, `key?`, paging |
+| `get_code_workflow_run` | `GET` | `/{version}/code/workflows/runs/{RunId}` | `project` | path: `run_id`; answers `{"run": {...}}` with `steps[]` |
+| `get_code_workflow_run_logs` | `GET` | `/{version}/code/workflows/runs/{RunId}/logs` | `project` | path: `run_id`; query: `stepId?`, `level?`, paging |
+| `resume_code_workflow_run` | `POST` | `/{version}/code/workflows/runs/{RunId}/resume` | `project` | path: `run_id`; JSON body: `stepId?`, `decision?` (`"approved"` / `"rejected"`), `payload?` |
+| `retry_code_workflow_run_step` | `POST` | `/{version}/code/workflows/runs/{RunId}/retry` | `project` | path: `run_id`; JSON body: `stepId?` |
+| `cancel_code_workflow_run` | `POST` | `/{version}/code/workflows/runs/{RunId}/cancel` | `project` | path: `run_id`; JSON body: `reason?` |
+| `open_code_workflow_resume_link` | `GET` | `/{version}/code/workflows/resume/{Token}` | `optional` | path: `token` (checks the link, changes nothing) |
+| `use_code_workflow_resume_link` | `POST` | `/{version}/code/workflows/resume/{Token}` | `optional` | path: `token` (answers the link) |
+
+The two resume-link routes need no session: the signed token in the link is
+the key. Auth is still sent when the client has a token.
+
+```python
+saved = norbix.hub.code.save_code_workflow(definition=definition)
+workflow_id = saved["workflow"]["definition"]["workflowId"]
+norbix.hub.code.publish_code_workflow(workflow_id)
+started = norbix.hub.code.invoke_code_workflow(workflow_id, payload={"orderId": "ord_1"}, waitSeconds=0)
+inbox = norbix.hub.code.get_code_workflow_waiting_runs(assignee="me")
+```
+
 ## Cloud functions
 
 The five routes of the gateway contract `Code.Functions.md` (§3.3, §3.4,

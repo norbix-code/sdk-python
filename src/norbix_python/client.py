@@ -260,6 +260,7 @@ class NorbixApi(_AuthMixin):
         )
         self._transport = Transport(cfg=cfg, client=http_client)
         api = ApiNamespace(self._transport)
+        self.code = api.code
         self.database = api.database
         self.membership = api.membership
         self.echo = api.echo
@@ -267,6 +268,7 @@ class NorbixApi(_AuthMixin):
         self.logs = api.logs
         self.payments = api.payments
         self.public = api.public
+        self.Code = self.code
         self.Database = self.database
         self.Membership = self.membership
         self.Echo = self.echo
