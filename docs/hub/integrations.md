@@ -38,5 +38,7 @@ norbix.hub.files.save_files_integration(
 
 The answer carries `integrationId`, `env`, `module`, `cloud`, `issuer`,
 `subject`, `audience`, `available`, `unavailableReason` (when `available` is
-false) and `script`. Pass `integrationId` to get the setup of an integration
+false), `script` and `templates` — templates: ready CloudFormation / Bicep /
+Terraform files for this integration (`[{"kind", "fileName", "content"}]`,
+`kind` = `cloudformation` | `bicep` | `terraform`). Pass `integrationId` to get the setup of an integration
 that already exists.

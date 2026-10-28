@@ -24,6 +24,9 @@ SETUP = {
     "subject": "p/test-project/e/PROD/files/i/int_1",
     "audience": "sts.amazonaws.com",
     "script": "aws iam create-role ...",
+    "templates": [
+        {"kind": "terraform", "fileName": "norbix-files-aws.tf", "content": 'resource "aws_iam_role" ...'},
+    ],
 }
 
 
@@ -71,6 +74,8 @@ def test_keyless_setup_sends_module_cloud_and_id_in_the_query() -> None:
     assert sent.content == b""
     assert sent.headers["norbix-project-id"] == "test-project"
     assert result == SETUP
+    assert result["templates"][0]["kind"] == "terraform"
+    assert result["templates"][0]["fileName"] == "norbix-files-aws.tf"
 
 
 def test_keyless_setup_passes_the_reason_when_unavailable() -> None:
