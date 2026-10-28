@@ -22,6 +22,8 @@ class IntegrationsModule:
         Answer: ``integrationId`` (save with it), ``env``, ``module``, ``cloud``,
         ``issuer``, ``subject``, ``audience``, ``available`` (with
         ``unavailableReason`` when false) and the cloud setup ``script``.
+        ``templates``: ready CloudFormation / Bicep / Terraform files for this
+        integration (a list of ``{"kind", "fileName", "content"}``).
         """
         return self._transport.send(
             target="hub",
