@@ -101,3 +101,23 @@ def test_trigger_save_sends_integration_language_and_initiator(
     assert urlparse(transport.last_request["url"]).path == path
     body = json.loads(transport.last_request["body"])
     assert body == {"trigger": {"name": "welcome", "isEnabled": True, "action": action}}
+
+
+@pytest.mark.parametrize("action_type", ["Email", "Push", "Sms"])
+def test_membership_trigger_save_sends_the_trigger_subject_audience(action_type: str) -> None:
+    # A saved trigger names no person: only the audience goes out, and the SDK
+    # passes it through as-is. The gateway fills the subject fields when it fires.
+    action = {
+        "type": action_type,
+        "integrationId": INTEGRATION_ID,
+        "templateId": TEMPLATE_ID,
+        "deliverySettings": {"recipientsSourceType": "TriggerSubject"},
+    }
+    client, transport = make_client()
+    client.hub.membership.save_membership_trigger(
+        trigger={"type": "Membership", "name": "welcome", "when": "OnRegistered", "action": action}
+    )
+
+    assert transport.last_request is not None
+    assert urlparse(transport.last_request["url"]).path == "/v3/membership/triggers"
+    assert json.loads(transport.last_request["body"])["trigger"]["action"] == action

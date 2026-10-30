@@ -42,6 +42,40 @@ norbix.hub.database.save_schema_trigger(
 
 Everything here is asserted in `tests/hub/test_triggers.py`.
 
+## Send to the person the event is about
+
+A Membership trigger's Email, Push or SMS action can send to the person the
+event is about (the new user, the invited address, the deleted login): set
+`deliverySettings` to `{"recipientsSourceType": "TriggerSubject"}`. One
+recipient per firing.
+
+```python
+norbix.hub.membership.save_membership_trigger(
+    trigger={
+        "type": "Membership",
+        "name": "welcome the new user",
+        "when": "OnRegistered",
+        "isEnabled": True,
+        "action": {
+            "type": "Email",
+            "integrationId": "int_email",
+            "templateId": "tpl_123",
+            "deliverySettings": {"recipientsSourceType": "TriggerSubject"},
+        },
+    }
+)
+```
+
+- Send only `recipientsSourceType`. The subject fields (`subjectAuthId`,
+  `subjectEmail`, `subjectPhone`, `subjectLanguage`) are read-only: the gateway
+  fills them on the campaign the trigger starts and ignores them on a save.
+- The audience exists on Membership triggers only. Any other trigger type or a
+  workflow step is refused with `CM-ERRORS-TRIGGERS-020`, and a hand-made
+  campaign or a scheduled task cannot use it.
+- With no address, phone or device for the channel nothing is sent: the run is
+  logged as skipped and the trigger shows up in
+  `get_triggers_needing_attention`.
+
 ## Order and "break on failure"
 
 When several triggers fire for the same event, they run one after the other.
