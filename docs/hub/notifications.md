@@ -173,7 +173,9 @@ when unset:
 | `database_integration_id` | `databaseIntegrationId` | the database integration id, the same value `create_sms_campaign` takes (different from the provider `integrationId`) |
 
 The answer is `{"retryRequestId", "selected", "skipped": {reason: count},
-"replayed", "warning"?}`.
+"replayed", "warning"?}`. Besides the reasons for rows left out, `skipped` can
+carry `optedOut`, `compliance`, `undeliverable`: the people the send gates stopped during the
+retry. Those keys are added to the stored answer later and are part of `selected`.
 
 ## Delivery state on a notification row
 
@@ -184,7 +186,7 @@ delivery state of each recipient (dicts, as everything in this SDK):
 - `state` — `Pending`, `Sending`, `Retrying`, `Accepted`, `Failed`, `Blocked`
   or `Cancelled`, and `stateChangedAt`.
 - `attempts[]` — one per send: `attemptId`, `number`, `startedAt`,
-  `finishedAt`, `outcome` (`Accepted` | `Failed`), `category` (`Unknown` |
+  `finishedAt`, `outcome` (`Accepted` | `Failed` | `Blocked`), `category` (`Unknown` |
   `Transient` | `Permanent` | `Ambiguous`), `statusCode`, `errorCode`,
   `message`, `providerRef`, `retryAfterSeconds`, `exhausted`, `nextRetryAt`,
   `correlationId`, `trigger` (`Initial` | `AutoRetry` | `ManualRetry`) and, for

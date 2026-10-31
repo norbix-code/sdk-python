@@ -254,7 +254,8 @@ CAMPAIGN_TARGETS: list[tuple[str, dict[str, Any]]] = [
     ("devices", {"devices": [{"token": "device_1", "deliveryFamily": "Ios"}]}),
 ]
 
-# PushCampaignRecipientsSourceTypes in the gateway — exactly these five.
+# The audiences a hand-made campaign can use — exactly these five. The gateway
+# enum also lists `TriggerSubject`, but only a Membership trigger takes that one.
 GATEWAY_TARGETS = {"allusers", "specifiedusers", "accountusers", "collection", "devices"}
 
 

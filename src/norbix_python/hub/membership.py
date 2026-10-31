@@ -100,6 +100,41 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
+    def get_execution_identities(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/execution-identities
+
+        Lists the service users of the environment that a trigger, a scheduled task
+        or a workflow can run as, the default identity first. ``canAssign`` says
+        whether the caller may name one.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/execution-identities",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_execution_identity(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/execution-identities
+
+        Creates a service user (``name=...``) and gives it roles (``roleIds=[...]``:
+        role ids or role names) in one call. Returns the new id.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/execution-identities",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def save_membership_trigger(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/membership/triggers"""
         return self._transport.send(
@@ -596,6 +631,41 @@ class AsyncMembershipModule:
             target="hub",
             path="/{version}/membership/triggers",
             method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_execution_identities(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/execution-identities
+
+        Lists the service users of the environment that a trigger, a scheduled task
+        or a workflow can run as, the default identity first. ``canAssign`` says
+        whether the caller may name one.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/execution-identities",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_execution_identity(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/execution-identities
+
+        Creates a service user (``name=...``) and gives it roles (``roleIds=[...]``:
+        role ids or role names) in one call. Returns the new id.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/execution-identities",
+            method="POST",
             path_params={},
             request=request,
             scope="project",

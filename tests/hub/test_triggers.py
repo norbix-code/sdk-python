@@ -101,3 +101,99 @@ def test_trigger_save_sends_integration_language_and_initiator(
     assert urlparse(transport.last_request["url"]).path == path
     body = json.loads(transport.last_request["body"])
     assert body == {"trigger": {"name": "welcome", "isEnabled": True, "action": action}}
+
+
+@pytest.mark.parametrize("action_type", ["Email", "Push", "Sms"])
+def test_membership_trigger_save_sends_the_trigger_subject_audience(action_type: str) -> None:
+    # A saved trigger names no person: only the audience goes out, and the SDK
+    # passes it through as-is. The gateway fills the subject fields when it fires.
+    action = {
+        "type": action_type,
+        "integrationId": INTEGRATION_ID,
+        "templateId": TEMPLATE_ID,
+        "deliverySettings": {"recipientsSourceType": "TriggerSubject"},
+    }
+    client, transport = make_client()
+    client.hub.membership.save_membership_trigger(
+        trigger={"type": "Membership", "name": "welcome", "when": "OnRegistered", "action": action}
+    )
+
+    assert transport.last_request is not None
+    assert urlparse(transport.last_request["url"]).path == "/v3/membership/triggers"
+    assert json.loads(transport.last_request["body"])["trigger"]["action"] == action
+
+
+def test_get_trigger_runs_sends_the_filters_on_the_query() -> None:
+    client, transport = make_client()
+    client.hub.triggers.get_trigger_runs(triggerType="Schema", triggerId="trg_1", status="failed")
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+    url = urlparse(transport.last_request["url"])
+    assert url.path == "/v3/triggers/runs"
+    assert parse_qs(url.query) == {"triggerType": ["Schema"], "triggerId": ["trg_1"], "status": ["failed"]}
+
+
+def test_get_trigger_run_puts_the_id_in_the_path_and_keeps_the_type() -> None:
+    client, transport = make_client()
+    client.hub.triggers.get_trigger_run("trr_1", triggerType="Membership")
+
+    assert transport.last_request is not None
+    url = urlparse(transport.last_request["url"])
+    assert url.path == "/v3/triggers/runs/trr_1"
+    assert parse_qs(url.query) == {"triggerType": ["Membership"]}
+
+
+def test_check_trigger_execution_identity_posts_the_action() -> None:
+    client, transport = make_client()
+    client.hub.triggers.check_trigger_execution_identity(triggerType="Schema", action={"type": "Email"})
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == "/v3/triggers/execution-identity/check"
+    body = json.loads(transport.last_request["body"])
+    assert body["triggerType"] == "Schema"
+    assert body["action"] == {"type": "Email"}
+
+
+def test_execution_identities_list_and_create() -> None:
+    client, transport = make_client()
+    client.hub.membership.get_execution_identities()
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+    assert urlparse(transport.last_request["url"]).path == "/v3/membership/execution-identities"
+
+    client.hub.membership.create_execution_identity(name="Orders bot", roleIds=["Editor"])
+    assert transport.last_request["method"] == "POST"
+    body = json.loads(transport.last_request["body"])
+    assert body["name"] == "Orders bot"
+    assert body["roleIds"] == ["Editor"]
+
+
+def test_async_trigger_runs_and_identities_hit_their_routes() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        )
+        await client.hub.triggers.get_trigger_runs(triggerType="Schema", triggerId="trg_1")
+        await client.hub.triggers.get_trigger_run("trr_1", triggerType="Schema")
+        await client.hub.triggers.check_trigger_execution_identity(triggerType="Schema", action={"type": "Email"})
+        await client.hub.membership.get_execution_identities()
+        await client.hub.membership.create_execution_identity(name="Orders bot", roleIds=[])
+
+    asyncio.run(run())
+    assert [(r.method, r.url.path) for r in seen] == [
+        ("GET", "/v3/triggers/runs"),
+        ("GET", "/v3/triggers/runs/trr_1"),
+        ("POST", "/v3/triggers/execution-identity/check"),
+        ("GET", "/v3/membership/execution-identities"),
+        ("POST", "/v3/membership/execution-identities"),
+    ]
