@@ -103,3 +103,19 @@ norbix.hub.membership.save_membership_trigger(
 Both come back on `get_*_trigger` and on every row of `get_*_triggers`. A
 negative `order` is refused with `CM-ERRORS-TRIGGERS-008`.
 
+
+## Who a trigger runs as, and what it did
+
+A trigger save and a scheduler task save take `executionIdentityId`: an id from
+`client.hub.membership.get_execution_identities()`, or nothing for the
+environment's default identity. `create_execution_identity(name=..., roleIds=[...])`
+makes one. `client.hub.triggers.check_trigger_execution_identity(triggerType=...,
+action=...)` answers what an identity lacks for an action and saves nothing. A
+Code or Marketplace action no longer takes its own `runAsUserId`.
+
+`client.hub.triggers.get_trigger_runs(triggerType=..., triggerId=..., status=...)`
+lists one trigger's runs, newest first, for 30 days.
+`get_trigger_run(run_id, triggerType=...)` reads one; the type is required.
+
+`update_email_template`, `update_sms_template` and `update_push_template` answer
+`{"id": ..., "warnings": [...]}`. A warning never stops the save.
