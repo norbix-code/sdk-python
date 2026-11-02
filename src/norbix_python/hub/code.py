@@ -153,6 +153,25 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def install_marketplace_workflow(self, listing_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/marketplace/listings/{ListingViewId}/install-workflow
+
+        Fill a workflow listing's references and save a new workflow's draft: nothing runs and
+        nothing is published. Body `references` (a value for every key the listing declares),
+        `name?`, `executionIdentityId?`. A connector listing is CM-ERRORS-MARKETPLACE-035; a
+        reference missing or undeclared is CM-ERRORS-MARKETPLACE-036, one error per key.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings/{ListingViewId}/install-workflow",
+            method="POST",
+            path_params={"ListingViewId": listing_view_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_marketplace_listing_function_tokens(self, listing_view_id: str, function_key: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens"""
         return self._transport.send(
@@ -1161,6 +1180,25 @@ class AsyncCodeModule:
             path="/{version}/code/marketplace/listings",
             method="GET",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def install_marketplace_workflow(self, listing_view_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/marketplace/listings/{ListingViewId}/install-workflow
+
+        Fill a workflow listing's references and save a new workflow's draft: nothing runs and
+        nothing is published. Body `references` (a value for every key the listing declares),
+        `name?`, `executionIdentityId?`. A connector listing is CM-ERRORS-MARKETPLACE-035; a
+        reference missing or undeclared is CM-ERRORS-MARKETPLACE-036, one error per key.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/marketplace/listings/{ListingViewId}/install-workflow",
+            method="POST",
+            path_params={"ListingViewId": listing_view_id},
             request=request,
             scope="project",
             timeout=timeout,
