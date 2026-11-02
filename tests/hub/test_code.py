@@ -273,6 +273,7 @@ def test_invoke_code_function_sends_the_function_ref_in_the_body() -> None:
 # name, verb, expected path, expected query (None: none), expected body (None: none), call
 MARKETPLACE_CASES: list[FunctionCase] = [
     ("get_marketplace_listings", "GET", "/v3/code/marketplace/listings", {'search': ['slack']}, None, lambda m: m.get_marketplace_listings(search='slack')),
+    ("install_marketplace_workflow", "POST", "/v3/code/marketplace/listings/ml_workflow_order_thanks_v1/install-workflow", None, {'name': 'Thanks', 'references': {'orders': 'orders', 'emailIntegration': 'int_1'}}, lambda m: m.install_marketplace_workflow("ml_workflow_order_thanks_v1", name='Thanks', references={'orders': 'orders', 'emailIntegration': 'int_1'})),
     ("get_marketplace_listing_function_tokens", "GET", "/v3/code/marketplace/listings/ml_slack_v1/functions/slack.post-message/tokens", None, None, lambda m: m.get_marketplace_listing_function_tokens("ml_slack_v1", "slack.post-message")),
     ("get_marketplace_integrations", "GET", "/v3/code/marketplace/integrations", None, None, lambda m: m.get_marketplace_integrations()),
     ("get_marketplace_integration", "GET", "/v3/code/marketplace/integrations/int_6Qp1dW2kRm8NsT4vYc0Hb", None, None, lambda m: m.get_marketplace_integration("int_6Qp1dW2kRm8NsT4vYc0Hb")),
@@ -355,10 +356,17 @@ def test_async_marketplace_endpoints_hit_the_same_routes() -> None:
         _assert_function_request(name, request.method, str(request.url), request.content.decode("utf-8"), verb, path, query, body)
 
 
+def test_marketplace_listings_sends_kind_in_the_query() -> None:
+    client, transport = make_client()
+    client.hub.code.get_marketplace_listings(kind="Workflow")
+    assert transport.last_request is not None
+    assert parse_qs(urlparse(transport.last_request["url"]).query) == {"kind": ["Workflow"]}
+
+
 def test_marketplace_surface_size() -> None:
-    """29 marketplace routes in the gateway (Code.Marketplace.md §14; 24 = MCP tool catalog, 25–27 = connection access, 28 = OAuth sign-in start, 30 = OAuth sign-out; 29, the callback, is not in the metadata). A new one changes this count."""
-    assert len(MARKETPLACE_CASES) == 29
-    assert len({case[0] for case in MARKETPLACE_CASES}) == 29
+    """30 marketplace routes in the gateway (Code.Marketplace.md §14; 24 = MCP tool catalog, 25–27 = connection access, 28 = OAuth sign-in start, 30 = OAuth sign-out; 29, the callback, is not in the metadata). A new one changes this count."""
+    assert len(MARKETPLACE_CASES) == 30
+    assert len({case[0] for case in MARKETPLACE_CASES}) == 30
     client, _ = make_client()
     for name, *_ in MARKETPLACE_CASES:
         assert callable(getattr(client.hub.code, name)), name

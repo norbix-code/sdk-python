@@ -37,7 +37,8 @@ their secrets and token mappings, and the functions added on a connection
 
 | Method | Verb | Path | Scope | Parameters go in |
 | --- | --- | --- | --- | --- |
-| `get_marketplace_listings` | `GET` | `/{version}/code/marketplace/listings` | `project` | query: `categories`, `transports`, `search`, `officialOnly`, `tags` |
+| `get_marketplace_listings` | `GET` | `/{version}/code/marketplace/listings` | `project` | query: `categories`, `transports`, `search`, `officialOnly`, `tags`, `kind` (`Connector` default, `Workflow`) |
+| `install_marketplace_workflow` | `POST` | `/{version}/code/marketplace/listings/{ListingViewId}/install-workflow` | `project` | Beta: saves a draft, nothing runs. path: `listing_view_id`; body: `references`, `name`, `executionIdentityId` |
 | `get_marketplace_listing_function_tokens` | `GET` | `/{version}/code/marketplace/listings/{ListingViewId}/functions/{FunctionKey}/tokens` | `project` | path: `listing_view_id`, `function_key` |
 | `get_marketplace_integrations` | `GET` | `/{version}/code/marketplace/integrations` | `project` | — |
 | `get_marketplace_integration` | `GET` | `/{version}/code/marketplace/integrations/{IntegrationViewId}` | `project` | path: `integration_view_id` |
