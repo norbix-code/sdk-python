@@ -40,6 +40,18 @@ client.hub.notifications.create_push_campaign(
 
 Send `source` as the name, not a number — the server reads it as a string.
 
+`get_push_campaign_audience_count` takes the same `campaign` body and answers
+how many devices and recipients the audience would reach, without creating or
+sending anything (the template and send options are ignored). The answer's
+`result` carries `devices`, `recipients`, `skippedUserIds` (users with no
+device) and `isCapped` (the count stopped at the server's limit).
+
+```python
+count = client.hub.notifications.get_push_campaign_audience_count(
+    campaign={"source": "allUsers", "userTags": ["beta"]}
+)
+```
+
 ## Choosing a push provider
 
 `save_push_integration` works the same way, with `integration["provider"]`:
@@ -107,4 +119,13 @@ owner:
 
 ```python
 device = client.hub.notifications.get_push_device("pnd_123")
+```
+
+`delete_push_device` removes one device from whichever user holds it (an admin
+route: the caller needs `push:delete` on `push:device:all`). The device then
+gets no more push notifications; a user removes their own device from the app
+instead.
+
+```python
+client.hub.notifications.delete_push_device("pnd_123")
 ```

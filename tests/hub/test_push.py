@@ -13,7 +13,7 @@ from ..helpers import make_client
 
 The generated test file asserts each push method's verb and that the URL is
 https. This file adds the two things it cannot see: the fully-resolved path of
-every one of the 38 push routes, and the polymorphic bodies that the server
+every one of the 40 push routes, and the polymorphic bodies that the server
 routes on.
 
 Only the Fake provider is used for a send path — it is the sandbox that accepts
@@ -134,6 +134,12 @@ PUSH_CASES: list[PushCase] = [
     ("get_push_campaigns", "GET", f"{BASE}/campaigns", lambda m: m.get_push_campaigns()),
     ("create_push_campaign", "POST", f"{BASE}/campaigns", lambda m: m.create_push_campaign()),
     (
+        "get_push_campaign_audience_count",
+        "POST",
+        f"{BASE}/campaigns/audience-count",
+        lambda m: m.get_push_campaign_audience_count(campaign={"source": "allUsers"}),
+    ),
+    (
         "get_push_campaign",
         "GET",
         f"{BASE}/campaigns/{CAMPAIGN_ID}",
@@ -204,6 +210,12 @@ PUSH_CASES: list[PushCase] = [
         f"{BASE}/devices/{DEVICE_ID}",
         lambda m: m.get_push_device(DEVICE_ID),
     ),
+    (
+        "delete_push_device",
+        "DELETE",
+        f"{BASE}/devices/{DEVICE_ID}",
+        lambda m: m.delete_push_device(DEVICE_ID),
+    ),
 ]
 
 
@@ -221,14 +233,15 @@ def test_push_endpoint_hits_the_expected_route(
 
     assert transport.last_request is not None
     assert transport.last_request["method"] == verb
-    assert transport.last_request["url"].endswith(path), (
-        f"{name}: got {transport.last_request['url']}, expected it to end with {path}"
+    assert urlparse(transport.last_request["url"]).path == path, (
+        f"{name}: got {transport.last_request['url']}, expected the path {path}"
     )
 
 
 def test_push_surface_size() -> None:
-    """38 live push routes. A new one changes this count, so it cannot arrive untested."""
-    assert len(PUSH_CASES) == 38
+    """40 live push routes. A new one changes this count, so it cannot arrive untested."""
+    assert len(PUSH_CASES) == 40
+    assert len({case[0] for case in PUSH_CASES}) == 40
 
 
 def test_push_call_sends_auth_and_project_headers() -> None:
@@ -424,6 +437,32 @@ def test_get_push_device_fills_the_route_token() -> None:
 
     assert transport.last_request is not None
     assert transport.last_request["method"] == "GET"
+    assert urlparse(transport.last_request["url"]).path == f"{BASE}/devices/{DEVICE_ID}"
+
+
+def test_get_push_campaign_audience_count_posts_the_audience_and_sends_nothing_else() -> None:
+    """Gateway Hub.Push.Campaigns/AudienceCount.cs: same `campaign` body as create, only the audience is read."""
+    client, transport = make_client()
+    client.hub.notifications.get_push_campaign_audience_count(
+        campaign={"source": "allUsers", "userTags": ["beta"]}, databaseIntegrationId="db_1"
+    )
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == f"{BASE}/campaigns/audience-count"
+    assert json.loads(transport.last_request["body"]) == {
+        "campaign": {"source": "allUsers", "userTags": ["beta"]},
+        "databaseIntegrationId": "db_1",
+    }
+
+
+def test_delete_push_device_fills_the_capitalised_route_token() -> None:
+    """The gateway spells the delete token `{Id}` (the read is `{id}`); the transport fills it by exact name."""
+    client, transport = make_client()
+    client.hub.notifications.delete_push_device(DEVICE_ID)
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "DELETE"
     assert urlparse(transport.last_request["url"]).path == f"{BASE}/devices/{DEVICE_ID}"
 
 
