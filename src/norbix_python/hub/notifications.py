@@ -1027,10 +1027,14 @@ class NotificationsModule:
         )
 
     def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/contacts"""
+        """GET /{version}/membership/users
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.get_all_contacts``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts",
+            path="/{version}/membership/users",
             method="GET",
             path_params={},
             request=request,
@@ -1040,10 +1044,14 @@ class NotificationsModule:
         )
 
     def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts"""
+        """POST /{version}/membership/users
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.create_contact``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts",
+            path="/{version}/membership/users",
             method="POST",
             path_params={},
             request=request,
@@ -1053,10 +1061,14 @@ class NotificationsModule:
         )
 
     def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/merge"""
+        """POST /{version}/membership/users/merge
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.merge_contacts``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/merge",
+            path="/{version}/membership/users/merge",
             method="POST",
             path_params={},
             request=request,
@@ -1066,10 +1078,14 @@ class NotificationsModule:
         )
 
     def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/notifications/contacts/{contactId}"""
+        """DELETE /{version}/membership/users/{contactId}
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.delete_contact``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}",
+            path="/{version}/membership/users/{contactId}",
             method="DELETE",
             path_params={"contactId": contact_id},
             request=request,
@@ -1079,10 +1095,14 @@ class NotificationsModule:
         )
 
     def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/contacts/{contactId}"""
+        """GET /{version}/membership/users/{contactId}
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.get_contact``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}",
+            path="/{version}/membership/users/{contactId}",
             method="GET",
             path_params={"contactId": contact_id},
             request=request,
@@ -1092,10 +1112,14 @@ class NotificationsModule:
         )
 
     def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/identities"""
+        """POST /{version}/membership/users/{contactId}/identities
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.add_contact_identity``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}/identities",
+            path="/{version}/membership/users/{contactId}/identities",
             method="POST",
             path_params={"contactId": contact_id},
             request=request,
@@ -1105,12 +1129,16 @@ class NotificationsModule:
         )
 
     def remove_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/notifications/contacts/{contactId}/identities/{identityId}"""
+        """DELETE /{version}/membership/users/{contactId}/identities/{authId}
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.remove_contact_identity``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}",
+            path="/{version}/membership/users/{contactId}/identities/{authId}",
             method="DELETE",
-            path_params={"contactId": contact_id, "identityId": identity_id},
+            path_params={"contactId": contact_id, "authId": identity_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -1118,12 +1146,16 @@ class NotificationsModule:
         )
 
     def promote_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/identities/{identityId}/promote"""
+        """POST /{version}/membership/users/{contactId}/identities/{authId}/promote
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.promote_contact_identity``.
+        """
         return self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}/promote",
+            path="/{version}/membership/users/{contactId}/identities/{authId}/promote",
             method="POST",
-            path_params={"contactId": contact_id, "identityId": identity_id},
+            path_params={"contactId": contact_id, "authId": identity_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -1131,10 +1163,14 @@ class NotificationsModule:
         )
 
     def grant_contact_consent(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent"""
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/consent
+
+        Deprecated: served by the API, not the Hub. This method now calls the
+        API route; prefer ``client.api.membership.grant_contact_consent``.
+        """
         return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent",
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/consent",
             method="POST",
             path_params={"contactId": contact_id, "channel": channel},
             request=request,
@@ -1144,10 +1180,14 @@ class NotificationsModule:
         )
 
     def unsubscribe_contact(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe"""
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe
+
+        Deprecated: served by the API, not the Hub. This method now calls the
+        API route; prefer ``client.api.membership.unsubscribe_contact``.
+        """
         return self._transport.send(
-            target="hub",
-            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe",
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe",
             method="POST",
             path_params={"contactId": contact_id, "channel": channel},
             request=request,
@@ -2915,10 +2955,14 @@ class AsyncNotificationsModule:
         )
 
     async def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/contacts"""
+        """GET /{version}/membership/users
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.get_all_contacts``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts",
+            path="/{version}/membership/users",
             method="GET",
             path_params={},
             request=request,
@@ -2928,10 +2972,14 @@ class AsyncNotificationsModule:
         )
 
     async def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts"""
+        """POST /{version}/membership/users
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.create_contact``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts",
+            path="/{version}/membership/users",
             method="POST",
             path_params={},
             request=request,
@@ -2941,10 +2989,14 @@ class AsyncNotificationsModule:
         )
 
     async def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/merge"""
+        """POST /{version}/membership/users/merge
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.merge_contacts``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/merge",
+            path="/{version}/membership/users/merge",
             method="POST",
             path_params={},
             request=request,
@@ -2954,10 +3006,14 @@ class AsyncNotificationsModule:
         )
 
     async def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/notifications/contacts/{contactId}"""
+        """DELETE /{version}/membership/users/{contactId}
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.delete_contact``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}",
+            path="/{version}/membership/users/{contactId}",
             method="DELETE",
             path_params={"contactId": contact_id},
             request=request,
@@ -2967,10 +3023,14 @@ class AsyncNotificationsModule:
         )
 
     async def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/notifications/contacts/{contactId}"""
+        """GET /{version}/membership/users/{contactId}
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.get_contact``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}",
+            path="/{version}/membership/users/{contactId}",
             method="GET",
             path_params={"contactId": contact_id},
             request=request,
@@ -2980,10 +3040,14 @@ class AsyncNotificationsModule:
         )
 
     async def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/identities"""
+        """POST /{version}/membership/users/{contactId}/identities
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.add_contact_identity``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}/identities",
+            path="/{version}/membership/users/{contactId}/identities",
             method="POST",
             path_params={"contactId": contact_id},
             request=request,
@@ -2993,12 +3057,16 @@ class AsyncNotificationsModule:
         )
 
     async def remove_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """DELETE /{version}/notifications/contacts/{contactId}/identities/{identityId}"""
+        """DELETE /{version}/membership/users/{contactId}/identities/{authId}
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.remove_contact_identity``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}",
+            path="/{version}/membership/users/{contactId}/identities/{authId}",
             method="DELETE",
-            path_params={"contactId": contact_id, "identityId": identity_id},
+            path_params={"contactId": contact_id, "authId": identity_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -3006,12 +3074,16 @@ class AsyncNotificationsModule:
         )
 
     async def promote_contact_identity(self, contact_id: str, identity_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/identities/{identityId}/promote"""
+        """POST /{version}/membership/users/{contactId}/identities/{authId}/promote
+
+        Deprecated: contacts moved to the membership routes. This method now
+        calls the same route as ``client.hub.membership.promote_contact_identity``.
+        """
         return await self._transport.send(
             target="hub",
-            path="/{version}/notifications/contacts/{contactId}/identities/{identityId}/promote",
+            path="/{version}/membership/users/{contactId}/identities/{authId}/promote",
             method="POST",
-            path_params={"contactId": contact_id, "identityId": identity_id},
+            path_params={"contactId": contact_id, "authId": identity_id},
             request=request,
             scope="project",
             timeout=timeout,
@@ -3019,10 +3091,14 @@ class AsyncNotificationsModule:
         )
 
     async def grant_contact_consent(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent"""
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/consent
+
+        Deprecated: served by the API, not the Hub. This method now calls the
+        API route; prefer ``client.api.membership.grant_contact_consent``.
+        """
         return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/consent",
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/consent",
             method="POST",
             path_params={"contactId": contact_id, "channel": channel},
             request=request,
@@ -3032,10 +3108,14 @@ class AsyncNotificationsModule:
         )
 
     async def unsubscribe_contact(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe"""
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe
+
+        Deprecated: served by the API, not the Hub. This method now calls the
+        API route; prefer ``client.api.membership.unsubscribe_contact``.
+        """
         return await self._transport.send(
-            target="hub",
-            path="/{version}/notifications/contacts/{contactId}/marketing-state/{channel}/unsubscribe",
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/unsubscribe",
             method="POST",
             path_params={"contactId": contact_id, "channel": channel},
             request=request,
