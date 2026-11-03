@@ -29,8 +29,8 @@ Every audience also takes `templateId` and `integrationId` (both required —
 `integrationId` is the email provider, from the Hub's
 `get_email_integrations`), and the optional `validationIntegrationId`,
 `language`, `initiatorId`, `notes`, `campaignTime` (Unix seconds) and
-`mappedTokens`. `singleEmailStrategy=True` puts every recipient on one
-message instead of one message per recipient. Note the spelling:
+`mappedTokens`. `singleEmailStrategy=True` sends each recipient a separate
+message; left `False`, the recipients (To) share one message. Note the spelling:
 `rolesNames` on `allUsers`, but `roleNames` on `collection` — the gateway
 names them differently.
 

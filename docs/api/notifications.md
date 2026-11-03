@@ -79,8 +79,9 @@ Every route below is asserted by verb and path in
   `get_push_campaign_messages("camp_1", campaignBatchId="batch_1")`. Every
   other value is a keyword under its wire name and travels as the body (POST)
   or the query (GET, DELETE).
-- **`get_*_campaigns`** filters: `campaignId`, `templateId`, `pageSize`,
-  `pageNumber`, optional `databaseIntegrationId`.
+- **`get_*_campaigns`** filters (all optional): `templateId`, `from` / `to`
+  (Unix seconds), `pageSize`, `pageNumber`, `databaseIntegrationId`; Email and
+  SMS also take `campaignId`, Email also `emailAddress`.
 - **`get_*_campaign_messages`** needs `campaignBatchId` (from
   `get_*_campaign_batches`); the gateway refuses the call without it. Email's
   route sits under the plural `/notifications/emails/`; SMS and Push are
