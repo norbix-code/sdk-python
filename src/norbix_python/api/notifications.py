@@ -69,7 +69,7 @@ class NotificationsModule:
     def get_email_campaigns(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/email/campaigns
 
-        Query: ``campaignId``, ``templateId``, ``pageSize``, ``pageNumber``, ``databaseIntegrationId`` (all optional).
+        Query (all optional): ``campaignId``, ``emailAddress``, ``templateId``, ``from`` / ``to`` (Unix seconds), ``pageSize``, ``pageNumber``, ``databaseIntegrationId``.
         """
         return self._transport.send(
             target="api",
@@ -279,7 +279,7 @@ class NotificationsModule:
     def get_sms_campaigns(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/sms/campaigns
 
-        Query: ``campaignId``, ``templateId``, ``pageSize``, ``pageNumber``, ``databaseIntegrationId`` (all optional).
+        Query (all optional): ``campaignId``, ``templateId``, ``from`` / ``to`` (Unix seconds), ``pageSize``, ``pageNumber``, ``databaseIntegrationId``.
         """
         return self._transport.send(
             target="api",
@@ -488,7 +488,7 @@ class NotificationsModule:
     def get_push_campaigns(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/notifications/push/campaigns
 
-        Query: ``campaignId``, ``templateId``, ``pageSize``, ``pageNumber``, ``databaseIntegrationId`` (all optional).
+        Query (all optional): ``templateId``, ``from`` / ``to`` (Unix seconds), ``pageSize``, ``pageNumber``, ``databaseIntegrationId``.
         """
         return self._transport.send(
             target="api",
