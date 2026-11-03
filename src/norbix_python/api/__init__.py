@@ -8,6 +8,7 @@ from .echo import AsyncEchoModule, EchoModule
 from .files import AsyncFilesModule, FilesModule
 from .logs import AsyncLogsModule, LogsModule
 from .membership import AsyncMembershipModule, MembershipModule
+from .notifications import AsyncNotificationsModule, NotificationsModule
 from .payments import AsyncPaymentsModule, PaymentsModule
 from .public import AsyncPublicModule, PublicModule
 
@@ -21,6 +22,7 @@ class ApiNamespace:
         self.files = FilesModule(transport)
         self.logs = LogsModule(transport)
         self.membership = MembershipModule(transport)
+        self.notifications = NotificationsModule(transport)
         self.payments = PaymentsModule(transport)
         self.public = PublicModule(transport)
 
@@ -34,5 +36,6 @@ class AsyncApiNamespace:
         self.files = AsyncFilesModule(transport)
         self.logs = AsyncLogsModule(transport)
         self.membership = AsyncMembershipModule(transport)
+        self.notifications = AsyncNotificationsModule(transport)
         self.payments = AsyncPaymentsModule(transport)
         self.public = AsyncPublicModule(transport)
