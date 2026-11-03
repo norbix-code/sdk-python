@@ -1026,6 +1026,25 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def delete_push_device(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/push/devices/{Id}
+
+        Removes one registered device from whichever user holds it, so it gets
+        no more push notifications (an admin route: the caller needs
+        ``push:delete`` on ``push:device:all``). ``databaseIntegrationId`` is
+        optional; the answer is empty.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/devices/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/membership/users
 
@@ -1253,6 +1272,27 @@ class NotificationsModule:
         return self._transport.send(
             target="hub",
             path="/{version}/notifications/push/campaigns",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_push_campaign_audience_count(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/campaigns/audience-count
+
+        Counts the devices a campaign audience would reach before the campaign
+        is created; nothing is sent. Pass the audience under ``campaign`` in the
+        same shape ``create_push_campaign`` reads (``source`` plus that
+        audience's own fields — the template and send options are ignored) and
+        an optional ``databaseIntegrationId``. Answers ``{"result": {"devices",
+        "recipients", "skippedUserIds", "isCapped"}}``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/audience-count",
             method="POST",
             path_params={},
             request=request,
@@ -2954,6 +2994,25 @@ class AsyncNotificationsModule:
             bearer_token=bearer_token,
         )
 
+    async def delete_push_device(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/notifications/push/devices/{Id}
+
+        Removes one registered device from whichever user holds it, so it gets
+        no more push notifications (an admin route: the caller needs
+        ``push:delete`` on ``push:device:all``). ``databaseIntegrationId`` is
+        optional; the answer is empty.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/devices/{Id}",
+            method="DELETE",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/membership/users
 
@@ -3181,6 +3240,27 @@ class AsyncNotificationsModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/notifications/push/campaigns",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_push_campaign_audience_count(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/notifications/push/campaigns/audience-count
+
+        Counts the devices a campaign audience would reach before the campaign
+        is created; nothing is sent. Pass the audience under ``campaign`` in the
+        same shape ``create_push_campaign`` reads (``source`` plus that
+        audience's own fields — the template and send options are ignored) and
+        an optional ``databaseIntegrationId``. Answers ``{"result": {"devices",
+        "recipients", "skippedUserIds", "isCapped"}}``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/push/campaigns/audience-count",
             method="POST",
             path_params={},
             request=request,
