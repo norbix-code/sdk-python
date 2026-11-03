@@ -266,6 +266,7 @@ class NorbixApi(_AuthMixin):
         self.echo = api.echo
         self.files = api.files
         self.logs = api.logs
+        self.notifications = api.notifications
         self.payments = api.payments
         self.public = api.public
         self.Code = self.code
@@ -274,6 +275,7 @@ class NorbixApi(_AuthMixin):
         self.Echo = self.echo
         self.Files = self.files
         self.Logs = self.logs
+        self.Notifications = self.notifications
         self.Payments = self.payments
         self.Public = self.public
 
