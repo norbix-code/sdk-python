@@ -5,6 +5,11 @@ Access with `norbix.hub.triggers`. This module is hand-written (not generated).
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
 | `get_triggers_needing_attention` | `GET` | `/{version}/triggers/attention` | `project` |
+| `check_trigger_execution_identity` | `POST` | `/{version}/triggers/execution-identity/check` | `project` |
+| `get_trigger_runs` | `GET` | `/{version}/triggers/runs` | `project` |
+| `get_trigger_run(id)` | `GET` | `/{version}/triggers/runs/{Id}` | `project` |
+| `get_trigger_definition(id)` | `GET` | `/{version}/triggers/{id}/definition` | `project` |
+| `test_trigger_pre_execute_code` | `POST` | `/{version}/triggers/pre-execute-code/test` | `project` |
 
 Pass `triggerType` — one of `Membership`, `Schema`, `Files`, `Payments`, `Ai`.
 The answer is `{"items": [{"triggerId", "triggerType", "reason", "atUtc"}, ...]}`:
@@ -119,3 +124,38 @@ lists one trigger's runs, newest first, for 30 days.
 
 `update_email_template`, `update_sms_template` and `update_push_template` answer
 `{"id": ..., "warnings": [...]}`. A warning never stops the save.
+
+## Read a trigger in its save shape, test its pre-action code
+
+`get_trigger_definition("trg_…", triggerType="Files")` answers the trigger under
+`"trigger"` exactly as the module's `save_*_trigger` takes it (read → change →
+save back with its `triggerId`); a Schema trigger also needs `schemaId=...`.
+`test_trigger_pre_execute_code(code='return New.status == "published";',
+triggerType="Schema", newRecord='{"status":"published"}')` runs a trigger's
+`preExecuteCode` on a sample record (JSON text; `oldRecord` for the record
+before the change) without saving or firing anything, and answers `outcome`,
+`triggerRuns` and `problems`.
+
+## Code and Workflow actions
+
+Besides the message actions, every host's save takes a Code action — run a
+cloud function through a Code integration — and a Workflow action — start a
+workflow. Who runs is the trigger's `executionIdentityId`, never a
+`runAsUserId` on the action (asserted for every host, the AI one included, in
+`tests/hub/test_triggers.py`):
+
+```python
+norbix.hub.files.save_files_trigger(
+    trigger={
+        "type": "Files", "name": "Invoice stored", "when": "OnFileUploaded", "folder": "invoices",
+        "executionIdentityId": "usr_1",
+        "action": {"type": "Code", "functionRef": {"integrationId": "int_lambda", "functionId": "notify-sales"}, "invocationType": "Async"},
+    }
+)
+norbix.hub.membership.save_membership_trigger(
+    trigger={
+        "type": "Membership", "name": "Onboard", "when": "OnRegistered",
+        "action": {"type": "Workflow", "workflowRef": "wf_onboard", "payload": {"source": "python"}},
+    }
+)
+```
