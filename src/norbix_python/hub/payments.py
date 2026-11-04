@@ -230,6 +230,58 @@ class PaymentsModule:
             bearer_token=bearer_token,
         )
 
+    def start_payments_integration_connect(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/connect/start — start the quick connect (one-click OAuth) of a payments integration.
+
+        Request: ``provider`` (a key from ``integrations.get_quick_connect_providers``, e.g. ``woocommerce``),
+        ``integrationName``, optional ``mode`` (test / live), ``input`` (the inputs the provider needs before
+        its page opens, e.g. ``{"storeUrl": "https://shop.example.com"}``) and ``integrationId`` to reconnect
+        an existing integration. Answer: ``authorizeUrl`` (open it in a browser within 10 minutes),
+        ``connectId``, ``redirectUrl``, ``expiresAt``."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/connect/start",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def complete_payments_integration_connect(self, connect_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/connect/{ConnectId}/complete — finish a quick connect with the picked account.
+
+        Request: ``targetId`` (from ``integrations.get_integration_connect_targets``) and ``isEnabled``.
+        The integration is saved like the manual form saves it; the answer carries its ``id``."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/connect/{ConnectId}/complete",
+            method="POST",
+            path_params={"ConnectId": connect_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def disconnect_payments_integration_connect(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/{Id}/connect/disconnect — end the quick connection of a payments integration.
+
+        The provider's webhooks are removed (best effort), the stored key is forgotten and the integration is
+        switched off; its connection record stays, so a start with ``integrationId`` can reconnect it.
+        Answer: ``wasConnected``, ``providerAnswered`` (False: remove the webhooks in the provider's admin)."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/{Id}/connect/disconnect",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncPaymentsModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -450,6 +502,58 @@ class AsyncPaymentsModule:
             path="/{version}/payments/integrations/test",
             method="POST",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def start_payments_integration_connect(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/connect/start — start the quick connect (one-click OAuth) of a payments integration.
+
+        Request: ``provider`` (a key from ``integrations.get_quick_connect_providers``, e.g. ``woocommerce``),
+        ``integrationName``, optional ``mode`` (test / live), ``input`` (the inputs the provider needs before
+        its page opens, e.g. ``{"storeUrl": "https://shop.example.com"}``) and ``integrationId`` to reconnect
+        an existing integration. Answer: ``authorizeUrl`` (open it in a browser within 10 minutes),
+        ``connectId``, ``redirectUrl``, ``expiresAt``."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/connect/start",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def complete_payments_integration_connect(self, connect_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/connect/{ConnectId}/complete — finish a quick connect with the picked account.
+
+        Request: ``targetId`` (from ``integrations.get_integration_connect_targets``) and ``isEnabled``.
+        The integration is saved like the manual form saves it; the answer carries its ``id``."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/connect/{ConnectId}/complete",
+            method="POST",
+            path_params={"ConnectId": connect_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disconnect_payments_integration_connect(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/{Id}/connect/disconnect — end the quick connection of a payments integration.
+
+        The provider's webhooks are removed (best effort), the stored key is forgotten and the integration is
+        switched off; its connection record stays, so a start with ``integrationId`` can reconnect it.
+        Answer: ``wasConnected``, ``providerAnswered`` (False: remove the webhooks in the provider's admin)."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/{Id}/connect/disconnect",
+            method="POST",
+            path_params={"Id": id},
             request=request,
             scope="project",
             timeout=timeout,
