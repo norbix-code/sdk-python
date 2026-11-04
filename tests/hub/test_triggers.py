@@ -30,6 +30,11 @@ INITIATOR_ID = "user_1"
 def test_hub_triggers_module_surface() -> None:
     client, _ = make_client()
     assert callable(client.hub.triggers.get_triggers_needing_attention)
+    assert callable(client.hub.triggers.check_trigger_execution_identity)
+    assert callable(client.hub.triggers.get_trigger_runs)
+    assert callable(client.hub.triggers.get_trigger_run)
+    assert callable(client.hub.triggers.get_trigger_definition)
+    assert callable(client.hub.triggers.test_trigger_pre_execute_code)
 
 
 def test_get_triggers_needing_attention_hits_the_route_with_query_values() -> None:
@@ -78,7 +83,36 @@ TRIGGER_SAVES: list[SaveCase] = [
     ("save_files_trigger", "/v3/files/triggers", lambda c, b: c.hub.files.save_files_trigger(**b)),
     ("save_membership_trigger", "/v3/membership/triggers", lambda c, b: c.hub.membership.save_membership_trigger(**b)),
     ("save_payments_trigger", "/v3/payments/triggers", lambda c, b: c.hub.payments.save_payments_trigger(**b)),
+    ("save_ai_project_trigger", "/v3/ai/triggers", lambda c, b: c.hub.ai.save_ai_project_trigger(**b)),
 ]
+
+CODE_ACTION = {
+    "type": "Code",
+    "functionRef": {"integrationId": "int_lambda", "functionId": "notify-sales", "qualifier": "live"},
+    "invocationType": "Async",
+    "config": '{"source": "python"}',
+}
+WORKFLOW_ACTION = {"type": "Workflow", "workflowRef": "wf_onboard", "payload": {"source": "python"}}
+
+
+@pytest.mark.parametrize(("name", "path", "call"), TRIGGER_SAVES, ids=[c[0] for c in TRIGGER_SAVES])
+@pytest.mark.parametrize("action", [CODE_ACTION, WORKFLOW_ACTION], ids=["Code", "Workflow"])
+def test_trigger_save_sends_code_and_workflow_actions_as_they_are(
+    name: str, path: str, call: Callable[[Any, dict[str, Any]], Any], action: dict[str, Any]
+) -> None:
+    # A Code action names the function (functionRef) and how to call it; a
+    # Workflow action names the workflow (workflowRef) and its payload. Who runs
+    # is the trigger's executionIdentityId, never a runAsUserId on the action.
+    client, transport = make_client()
+    call(client, {"trigger": {"name": "run " + action["type"], "executionIdentityId": "usr_1", "action": action}})
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == path
+    body = json.loads(transport.last_request["body"])
+    assert body["trigger"]["action"] == action
+    assert "runAsUserId" not in body["trigger"]["action"]
+    assert body["trigger"]["executionIdentityId"] == "usr_1"
 
 
 @pytest.mark.parametrize(("name", "path", "call"), TRIGGER_SAVES, ids=[c[0] for c in TRIGGER_SAVES])
@@ -156,6 +190,42 @@ def test_check_trigger_execution_identity_posts_the_action() -> None:
     assert body["action"] == {"type": "Email"}
 
 
+def test_get_trigger_definition_puts_the_id_in_the_path_and_the_type_and_schema_on_the_query() -> None:
+    client, transport = make_client()
+    client.hub.triggers.get_trigger_definition("trg_1", triggerType="Schema", schemaId="sch_1")
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "GET"
+    url = urlparse(transport.last_request["url"])
+    assert url.path == "/v3/triggers/trg_1/definition"
+    assert parse_qs(url.query) == {"triggerType": ["Schema"], "schemaId": ["sch_1"]}
+    assert transport.last_request["body"] == ""
+
+
+def test_test_trigger_pre_execute_code_posts_the_code_and_the_records_as_text() -> None:
+    client, transport = make_client()
+    client.hub.triggers.test_trigger_pre_execute_code(
+        code='return New.status == "published";',
+        triggerType="Schema",
+        newRecord='{"status":"published"}',
+        oldRecord='{"status":"draft"}',
+        eventKind="Updated",
+        eventName="database.record.updated",
+    )
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == "/v3/triggers/pre-execute-code/test"
+    assert json.loads(transport.last_request["body"]) == {
+        "code": 'return New.status == "published";',
+        "triggerType": "Schema",
+        "newRecord": '{"status":"published"}',
+        "oldRecord": '{"status":"draft"}',
+        "eventKind": "Updated",
+        "eventName": "database.record.updated",
+    }
+
+
 def test_execution_identities_list_and_create() -> None:
     client, transport = make_client()
     client.hub.membership.get_execution_identities()
@@ -186,14 +256,30 @@ def test_async_trigger_runs_and_identities_hit_their_routes() -> None:
         await client.hub.triggers.get_trigger_runs(triggerType="Schema", triggerId="trg_1")
         await client.hub.triggers.get_trigger_run("trr_1", triggerType="Schema")
         await client.hub.triggers.check_trigger_execution_identity(triggerType="Schema", action={"type": "Email"})
+        await client.hub.triggers.get_trigger_definition("trg_1", triggerType="Files")
+        await client.hub.triggers.test_trigger_pre_execute_code(code="return true;", triggerType="Files")
         await client.hub.membership.get_execution_identities()
         await client.hub.membership.create_execution_identity(name="Orders bot", roleIds=[])
+        await client.hub.ai.save_ai_project_trigger(trigger={"type": "Ai", "when": "OnQuotaExhausted", "name": "q", "action": {"type": "Email"}})
+        await client.hub.ai.get_ai_project_triggers()
+        await client.hub.ai.get_ai_project_trigger("trg_1")
+        await client.hub.ai.enable_ai_project_trigger("trg_1")
+        await client.hub.ai.disable_ai_project_trigger("trg_1")
+        await client.hub.ai.delete_ai_project_trigger("trg_1")
 
     asyncio.run(run())
     assert [(r.method, r.url.path) for r in seen] == [
         ("GET", "/v3/triggers/runs"),
         ("GET", "/v3/triggers/runs/trr_1"),
         ("POST", "/v3/triggers/execution-identity/check"),
+        ("GET", "/v3/triggers/trg_1/definition"),
+        ("POST", "/v3/triggers/pre-execute-code/test"),
         ("GET", "/v3/membership/execution-identities"),
         ("POST", "/v3/membership/execution-identities"),
+        ("POST", "/v3/ai/triggers"),
+        ("GET", "/v3/ai/triggers"),
+        ("GET", "/v3/ai/triggers/trg_1"),
+        ("PATCH", "/v3/ai/triggers/trg_1/enable"),
+        ("PATCH", "/v3/ai/triggers/trg_1/disable"),
+        ("DELETE", "/v3/ai/triggers/trg_1"),
     ]

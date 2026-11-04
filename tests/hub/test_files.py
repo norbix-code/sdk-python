@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import json
+
+from urllib.parse import urlparse
+
 from norbix_python import Norbix, NorbixError
 from ..helpers import make_client
 
@@ -51,45 +55,51 @@ def test_hub_files_enable_files_request_shape() -> None:
 
 def test_hub_files_delete_files_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.delete_files_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'DELETE'
+    client.hub.files.delete_files_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'DELETE'
+    assert urlparse(transport.last_request['url']).path == '/v3/files/triggers/trg_1'
+    assert transport.last_request['body'] == ''
 
 def test_hub_files_disable_files_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.disable_files_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'PATCH'
+    client.hub.files.disable_files_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/files/triggers/trg_1/disable'
+    assert transport.last_request['body'] == ''
 
 def test_hub_files_enable_files_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.enable_files_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'PATCH'
+    client.hub.files.enable_files_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/files/triggers/trg_1/enable'
+    assert transport.last_request['body'] == ''
 
 def test_hub_files_get_files_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.get_files_trigger(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
+    client.hub.files.get_files_trigger(id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/files/triggers/trg_1'
+    assert transport.last_request['body'] == ''
 
 def test_hub_files_get_files_triggers_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.files.get_files_triggers()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/files/triggers'
+    assert transport.last_request['body'] == ''
 
 def test_hub_files_save_files_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.files.save_files_trigger()
-    assert transport.last_request['method'] == 'POST'
+    client.hub.files.save_files_trigger(trigger={"type": "Files", "name": "On event", "action": {"type": "Email", "integrationId": "int_1"}})
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/files/triggers'
+    assert json.loads(transport.last_request['body']) == {"trigger": {"type": "Files", "name": "On event", "action": {"type": "Email", "integrationId": "int_1"}}}
 
 def test_hub_files_delete_files_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from urllib.parse import urlparse
 
 from norbix_python import Norbix, NorbixError
@@ -52,45 +54,51 @@ def test_hub_membership_enable_membership_request_shape() -> None:
 
 def test_hub_membership_delete_membership_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.delete_membership_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'DELETE'
+    client.hub.membership.delete_membership_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'DELETE'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers/trg_1'
+    assert transport.last_request['body'] == ''
 
 def test_hub_membership_disable_membership_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.disable_membership_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'PATCH'
+    client.hub.membership.disable_membership_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers/trg_1/disable'
+    assert transport.last_request['body'] == ''
 
 def test_hub_membership_enable_membership_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.enable_membership_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'PATCH'
+    client.hub.membership.enable_membership_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers/trg_1/enable'
+    assert transport.last_request['body'] == ''
 
 def test_hub_membership_get_membership_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.get_membership_trigger(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
+    client.hub.membership.get_membership_trigger(id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers/trg_1'
+    assert transport.last_request['body'] == ''
 
 def test_hub_membership_get_membership_triggers_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.get_membership_triggers()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers'
+    assert transport.last_request['body'] == ''
 
 def test_hub_membership_save_membership_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.membership.save_membership_trigger()
-    assert transport.last_request['method'] == 'POST'
+    client.hub.membership.save_membership_trigger(trigger={"type": "Membership", "name": "On event", "action": {"type": "Email", "integrationId": "int_1"}})
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers'
+    assert json.loads(transport.last_request['body']) == {"trigger": {"type": "Membership", "name": "On event", "action": {"type": "Email", "integrationId": "int_1"}}}
 
 def test_hub_membership_create_role_request_shape() -> None:
     client, transport = make_client(account_id=None)
