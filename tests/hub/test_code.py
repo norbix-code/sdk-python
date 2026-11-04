@@ -54,65 +54,65 @@ def test_hub_code_enable_code_request_shape() -> None:
 def test_hub_code_get_code_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.get_code_integrations()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations'
 
 
 def test_hub_code_save_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.save_code_integration()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations'
 
 
 def test_hub_code_confirm_code_integration_human_delivery_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.confirm_code_integration_human_delivery()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations/confirm-human-delivery'
 
 
 def test_hub_code_test_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.test_code_integration()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations/test'
 
 
 def test_hub_code_delete_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.delete_code_integration(id="stub-id")
-    assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'DELETE'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations/stub-id'
 
 
 def test_hub_code_disable_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.disable_code_integration(id="stub-id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PUT'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations/stub-id/disable'
 
 
 def test_hub_code_enable_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.enable_code_integration(id="stub-id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PUT'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations/stub-id/enable'
 
 
 def test_hub_code_get_code_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.code.get_code_integration(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/code/integrations/stub-id'
 
 
 # --- cloud functions ---------------------------------------------------------

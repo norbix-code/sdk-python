@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import urlparse
+
 from norbix_python import Norbix, NorbixError
 from ..helpers import make_client
 
@@ -163,51 +165,51 @@ def test_hub_membership_update_policy_request_shape() -> None:
 def test_hub_membership_delete_membership_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.delete_membership_integration(id="stub-Id")
-    assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'DELETE'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations/stub-Id'
 
 def test_hub_membership_disable_membership_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.disable_membership_integration(id="stub-Id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PUT'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations/stub-Id/disable'
 
 def test_hub_membership_enable_membership_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.enable_membership_integration(id="stub-Id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PUT'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations/stub-Id/enable'
 
 def test_hub_membership_get_membership_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.get_membership_integration(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations/stub-id'
 
 def test_hub_membership_get_membership_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.get_membership_integrations()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations'
 
 def test_hub_membership_save_membership_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.save_membership_integration()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations'
 
 def test_hub_membership_set_membership_integration_as_default_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.set_membership_integration_as_default(id="stub-Id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PUT'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations/stub-Id/default'
 
 
 def test_hub_membership_new_endpoints_surface() -> None:
