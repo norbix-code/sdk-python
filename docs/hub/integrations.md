@@ -1,11 +1,13 @@
 # HUB · Integrations
 
 Access with `norbix.hub.integrations`. Helpers shared by the integrations of
-every module (files, email, code).
+every module: keyless cloud setup and quick connect.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
 | `get_keyless_integration_setup` | `GET` | `/{version}/integrations/keyless/setup` | `project` |
+| `get_quick_connect_providers` | `GET` | `/{version}/integrations/connect/providers` | `project` |
+| `get_integration_connect_targets` | `GET` | `/{version}/integrations/connect/{ConnectId}/targets` | `project` |
 
 ## Keyless cloud connections
 
@@ -42,3 +44,19 @@ false), `script` and `templates` — templates: ready CloudFormation / Bicep /
 Terraform files for this integration (`[{"kind", "fileName", "content"}]`,
 `kind` = `cloudformation` | `bicep` | `terraform`). Pass `integrationId` to get the setup of an integration
 that already exists.
+
+Keyless setup is served for every module the gateway serves it for: `files`,
+`email` and `code` on `aws`, `azure`, `google`; `logs` on `aws`, `azure`; `push`
+and `payments` on `google`; `database` on `atlas` (MongoDB Atlas M10+). The
+gateway answers `available: False` with the reason for a pair it does not serve.
+
+## Quick connect (one-click OAuth)
+
+`get_quick_connect_providers(module="payments")` lists which providers can
+quick-connect on this install — available or not, the `requiredInputs` to ask
+for before the provider's page opens (e.g. `storeUrl`), the `modes` (test /
+live) and the `redirectUrl` Norbix registered. Once a person approved on the
+provider's page, `get_integration_connect_targets(connect_id)` lists the
+accounts (`targets`: `id`, `name`, `detail`) the connect may finish with. The
+start / complete / disconnect calls are on the module:
+[payments](./payments.md#quick-connect-one-click-oauth).
