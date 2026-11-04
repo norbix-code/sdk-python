@@ -269,6 +269,90 @@ class AiModule:
             bearer_token=bearer_token,
         )
 
+    def delete_ai_project_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/ai/triggers/{triggerId}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{triggerId}",
+            method="DELETE",
+            path_params={"triggerId": trigger_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def disable_ai_project_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/ai/triggers/{triggerId}/disable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{triggerId}/disable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def enable_ai_project_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/ai/triggers/{triggerId}/enable"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{triggerId}/enable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_ai_project_trigger(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/triggers/{id}"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_ai_project_triggers(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/triggers"""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_ai_project_trigger(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/triggers
+
+        Create or update a trigger on an AI project event: ``trigger={"type": "Ai",
+        "when": ..., "name": ..., "action": {...}}``; ``when`` is one of
+        OnCreditsWarning, OnCreditsExhausted, OnQuotaWarning, OnQuotaExhausted.
+        Omit ``triggerId`` to create.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncAiModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -528,6 +612,90 @@ class AsyncAiModule:
             path="/{version}/ai/integrations/llms/{Id}/default",
             method="PUT",
             path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_ai_project_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/ai/triggers/{triggerId}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{triggerId}",
+            method="DELETE",
+            path_params={"triggerId": trigger_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def disable_ai_project_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/ai/triggers/{triggerId}/disable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{triggerId}/disable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def enable_ai_project_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/ai/triggers/{triggerId}/enable"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{triggerId}/enable",
+            method="PATCH",
+            path_params={"triggerId": trigger_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_ai_project_trigger(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/triggers/{id}"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers/{id}",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_ai_project_triggers(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/triggers"""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_ai_project_trigger(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/triggers
+
+        Create or update a trigger on an AI project event: ``trigger={"type": "Ai",
+        "when": ..., "name": ..., "action": {...}}``; ``when`` is one of
+        OnCreditsWarning, OnCreditsExhausted, OnQuotaWarning, OnQuotaExhausted.
+        Omit ``triggerId`` to create.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/ai/triggers",
+            method="POST",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,

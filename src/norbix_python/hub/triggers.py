@@ -84,6 +84,44 @@ class TriggersModule:
             bearer_token=bearer_token,
         )
 
+    def get_trigger_definition(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/triggers/{id}/definition
+
+        One trigger (``trg_...``) in the shape its save takes: read, change, save
+        it back through the module's ``save_*_trigger``. ``triggerType=...`` is
+        required; a Schema trigger also needs ``schemaId=...``. The answer holds
+        the trigger under ``"trigger"``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/triggers/{id}/definition",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_trigger_pre_execute_code(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/triggers/pre-execute-code/test
+
+        Runs a trigger's ``code`` (the preExecuteCode: C# ending in ``return true;``
+        or ``return false;``) for ``triggerType`` against the sample ``newRecord``
+        and ``oldRecord`` (JSON text), without saving or firing anything. The
+        answer says whether the trigger would run and lists the code's problems.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/triggers/pre-execute-code/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncTriggersModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -154,6 +192,44 @@ class AsyncTriggersModule:
             path="/{version}/triggers/runs/{Id}",
             method="GET",
             path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_trigger_definition(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/triggers/{id}/definition
+
+        One trigger (``trg_...``) in the shape its save takes: read, change, save
+        it back through the module's ``save_*_trigger``. ``triggerType=...`` is
+        required; a Schema trigger also needs ``schemaId=...``. The answer holds
+        the trigger under ``"trigger"``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/triggers/{id}/definition",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_trigger_pre_execute_code(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/triggers/pre-execute-code/test
+
+        Runs a trigger's ``code`` (the preExecuteCode: C# ending in ``return true;``
+        or ``return false;``) for ``triggerType`` against the sample ``newRecord``
+        and ``oldRecord`` (JSON text), without saving or firing anything. The
+        answer says whether the trigger would run and lists the code's problems.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/triggers/pre-execute-code/test",
+            method="POST",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,
