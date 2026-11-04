@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from urllib.parse import urlparse
 
 from norbix_python import Norbix, NorbixError
@@ -23,6 +25,12 @@ def test_hub_ai_module_surface() -> None:
     assert callable(module.get_mcp_integrations)
     assert callable(module.save_mcp_integration)
     assert callable(module.test_mcp_integration)
+    assert callable(module.delete_ai_project_trigger)
+    assert callable(module.disable_ai_project_trigger)
+    assert callable(module.enable_ai_project_trigger)
+    assert callable(module.get_ai_project_trigger)
+    assert callable(module.get_ai_project_triggers)
+    assert callable(module.save_ai_project_trigger)
 
 
 def test_hub_ai_delete_llm_integration_request_shape() -> None:
@@ -193,3 +201,55 @@ def test_hub_ai_set_llm_integration_as_default_request_shape() -> None:
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
     assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 
+
+# AI triggers (credits and quota events): the six routes, verb, exact path and
+# where the request goes. Nothing leaves the process.
+
+def test_hub_ai_delete_ai_project_trigger_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.delete_ai_project_trigger(trigger_id="trg_1")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'DELETE'
+    assert urlparse(transport.last_request['url']).path == '/v3/ai/triggers/trg_1'
+    assert transport.last_request['body'] == ''
+
+def test_hub_ai_disable_ai_project_trigger_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.disable_ai_project_trigger(trigger_id="trg_1")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/ai/triggers/trg_1/disable'
+    assert transport.last_request['body'] == ''
+
+def test_hub_ai_enable_ai_project_trigger_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.enable_ai_project_trigger(trigger_id="trg_1")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/ai/triggers/trg_1/enable'
+    assert transport.last_request['body'] == ''
+
+def test_hub_ai_get_ai_project_trigger_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.get_ai_project_trigger(id="trg_1")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/ai/triggers/trg_1'
+    assert transport.last_request['body'] == ''
+
+def test_hub_ai_get_ai_project_triggers_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.ai.get_ai_project_triggers()
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/ai/triggers'
+    assert transport.last_request['body'] == ''
+
+def test_hub_ai_save_ai_project_trigger_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    trigger = {"type": "Ai", "name": "Credits running out", "when": "OnCreditsWarning", "action": {"type": "Email", "integrationId": "int_1"}}
+    client.hub.ai.save_ai_project_trigger(trigger=trigger)
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/ai/triggers'
+    assert json.loads(transport.last_request['body']) == {"trigger": trigger}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from urllib.parse import urlparse
 
 from norbix_python import Norbix, NorbixError
@@ -44,45 +45,51 @@ def test_hub_payments_enable_payments_request_shape() -> None:
 
 def test_hub_payments_delete_payments_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.delete_payments_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'DELETE'
+    client.hub.payments.delete_payments_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'DELETE'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/triggers/trg_1'
+    assert transport.last_request['body'] == ''
 
 def test_hub_payments_disable_payments_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.disable_payments_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'PATCH'
+    client.hub.payments.disable_payments_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/triggers/trg_1/disable'
+    assert transport.last_request['body'] == ''
 
 def test_hub_payments_enable_payments_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.enable_payments_trigger(trigger_id="stub-triggerId")
-    assert transport.last_request['method'] == 'PATCH'
+    client.hub.payments.enable_payments_trigger(trigger_id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PATCH'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/triggers/trg_1/enable'
+    assert transport.last_request['body'] == ''
 
 def test_hub_payments_get_payments_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.get_payments_trigger(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
+    client.hub.payments.get_payments_trigger(id="trg_1")
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/triggers/trg_1'
+    assert transport.last_request['body'] == ''
 
 def test_hub_payments_get_payments_triggers_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.get_payments_triggers()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/triggers'
+    assert transport.last_request['body'] == ''
 
 def test_hub_payments_save_payments_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
-    client.hub.payments.save_payments_trigger()
-    assert transport.last_request['method'] == 'POST'
+    client.hub.payments.save_payments_trigger(trigger={"type": "Payments", "name": "On event", "action": {"type": "Email", "integrationId": "int_1"}})
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/triggers'
+    assert json.loads(transport.last_request['body']) == {"trigger": {"type": "Payments", "name": "On event", "action": {"type": "Email", "integrationId": "int_1"}}}
 
 def test_hub_payments_confirm_payments_integration_human_delivery_request_shape() -> None:
     client, transport = make_client(account_id=None)
