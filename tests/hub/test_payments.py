@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import urlparse
+
 from norbix_python import Norbix, NorbixError
 from ..helpers import make_client
 
@@ -85,51 +87,51 @@ def test_hub_payments_save_payments_trigger_request_shape() -> None:
 def test_hub_payments_confirm_payments_integration_human_delivery_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.confirm_payments_integration_human_delivery()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations/confirm-human-delivery'
 
 def test_hub_payments_delete_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.delete_payments_integration(id="stub-Id")
-    assert transport.last_request['method'] == 'DELETE'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'DELETE'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations/stub-Id'
 
 def test_hub_payments_disable_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.disable_payments_integration(id="stub-Id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PUT'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations/stub-Id/disable'
 
 def test_hub_payments_enable_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.enable_payments_integration(id="stub-Id")
-    assert transport.last_request['method'] == 'PUT'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'PUT'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations/stub-Id/enable'
 
 def test_hub_payments_get_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.get_payments_integration(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations/stub-id'
 
 def test_hub_payments_get_payments_integrations_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.get_payments_integrations()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations'
 
 def test_hub_payments_save_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.save_payments_integration()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations'
 
 def test_hub_payments_save_montonio_integration_leaves_out_unset_is_sandbox() -> None:
     # Owner 2026-10-22: isSandbox is optional; empty = true (sandbox) on the gateway.
@@ -148,9 +150,9 @@ def test_hub_payments_save_montonio_integration_leaves_out_unset_is_sandbox() ->
 def test_hub_payments_test_payments_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.payments.test_payments_integration()
-    assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations/test'
 
 
 def test_hub_payments_get_payments_webhook_log_request_shape() -> None:
