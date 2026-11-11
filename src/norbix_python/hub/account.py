@@ -145,6 +145,76 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def get_managed_service_bundles(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/stripe/bundles
+
+        Lists the Managed Service bundles (Starter, Growth, Scale) with the
+        project limit and the monthly and annual price. Amounts are in minor
+        units (cents).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/bundles",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def change_managed_service_bundle(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/change-bundle
+
+        Moves the account to another bundle or billing period. Send ``bundle``
+        (Starter, Growth, Scale) and ``billingPeriod`` (Monthly, Annual). The
+        gateway refuses with ``CM-ERRORS-ACCOUNT-023`` when the account has more
+        enabled projects than the new bundle allows.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/change-bundle",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_flex_clusters(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/flex-clusters
+
+        Lists the account's Norbix-managed Atlas clusters with their databases
+        and usage, and says whether a new cluster can be created.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/flex-clusters",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def upgrade_flex_cluster(self, flex_cluster_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/flex-clusters/{flexClusterId}/upgrade
+
+        Queues the upgrade of a cluster to a bigger tier. Send ``tierCode="M10"``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/flex-clusters/{flexClusterId}/upgrade",
+            method="POST",
+            path_params={"flexClusterId": flex_cluster_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def create_team_member_from_invitation(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/team/member"""
         return self._transport.send(
@@ -1102,6 +1172,76 @@ class AsyncAccountModule:
             path="/{version}/account/stripe/get-portal-url",
             method="POST",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_managed_service_bundles(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/stripe/bundles
+
+        Lists the Managed Service bundles (Starter, Growth, Scale) with the
+        project limit and the monthly and annual price. Amounts are in minor
+        units (cents).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/bundles",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def change_managed_service_bundle(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/change-bundle
+
+        Moves the account to another bundle or billing period. Send ``bundle``
+        (Starter, Growth, Scale) and ``billingPeriod`` (Monthly, Annual). The
+        gateway refuses with ``CM-ERRORS-ACCOUNT-023`` when the account has more
+        enabled projects than the new bundle allows.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/change-bundle",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_flex_clusters(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/flex-clusters
+
+        Lists the account's Norbix-managed Atlas clusters with their databases
+        and usage, and says whether a new cluster can be created.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/flex-clusters",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def upgrade_flex_cluster(self, flex_cluster_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/flex-clusters/{flexClusterId}/upgrade
+
+        Queues the upgrade of a cluster to a bigger tier. Send ``tierCode="M10"``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/flex-clusters/{flexClusterId}/upgrade",
+            method="POST",
+            path_params={"flexClusterId": flex_cluster_id},
             request=request,
             scope="project",
             timeout=timeout,
