@@ -26,6 +26,8 @@ def test_hub_notifications_module_surface() -> None:
     assert callable(module.get_email_signatures)
     assert callable(module.save_email_signature)
     assert callable(module.get_email_settings)
+    assert callable(module.update_email_click_tracking)
+    assert callable(module.record_email_clicks)
     assert callable(module.confirm_email_integration_human_delivery)
     assert callable(module.delete_email_integration)
     assert callable(module.disable_email_integration)
