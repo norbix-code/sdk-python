@@ -2,7 +2,7 @@
 
 The generated test files assert each method's verb and that the URL is https.
 This file adds what they cannot see: the fully-resolved path of every one of
-the 51 Email routes — the project routes under /notifications/email (and the
+the 53 Email routes — the project routes under /notifications/email (and the
 older /notifications/emails/campaigns/{campaignId}/messages) and the public
 link routes under /email/ — with the routes and verbs taken from the gateway's
 endpoint manifest, not from this SDK. Every call goes to a capture transport,
@@ -221,6 +221,18 @@ EMAIL_CASES: list[EmailCase] = [
         lambda c: c.hub.notifications.get_email_settings(),
     ),
     (
+        "update_email_click_tracking",
+        "PATCH",
+        "/v3/notifications/email/settings/click-tracking",
+        lambda c: c.hub.notifications.update_email_click_tracking(enabled=True),
+    ),
+    (
+        "record_email_clicks",
+        "POST",
+        "/v3/notifications/email/clicks",
+        lambda c: c.hub.notifications.record_email_clicks([{"nblid": "ntf_1.3.v1.Ab12"}]),
+    ),
+    (
         "get_email_signatures",
         "GET",
         "/v3/notifications/email/signatures",
@@ -362,8 +374,8 @@ def test_email_endpoint_hits_the_expected_route(
 
 
 def test_email_surface_size() -> None:
-    """51 live Email routes. A new or removed one changes this count, so it cannot pass untested."""
-    assert len(EMAIL_CASES) == 51
+    """53 live Email routes (2026-11: click-tracking switch and clicks). A new or removed one changes this count, so it cannot pass untested."""
+    assert len(EMAIL_CASES) == 53
 
 
 def test_email_call_sends_auth_and_project_headers() -> None:
@@ -560,3 +572,91 @@ def test_async_retry_failed_email_notifications_posts_the_same_body() -> None:
         ("POST", f"/v3/notifications/email/campaigns/{CAMPAIGN_ID}/retry-failed"),
     ]
     assert json.loads(seen[0].content) == {"idempotencyKey": "retry-1", "categories": ["Permanent"]}
+
+
+CLICK = {
+    "nblid": "ntf_1.3.v1.Ab12",
+    "url": "https://shop.example.com/sale?nblid=ntf_1.3.v1.Ab12",
+    "clickedAt": "2026-11-11T10:00:00Z",
+    "userAgent": "Mozilla/5.0",
+}
+
+
+@pytest.mark.parametrize("enabled", [True, False])
+def test_update_email_click_tracking_always_sends_enabled(enabled: bool) -> None:
+    """Off is a real value: ``enabled=False`` reaches the body, it is not dropped as unset."""
+    client, transport = make_client()
+    client.hub.notifications.update_email_click_tracking(enabled=enabled)
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "PATCH"
+    assert json.loads(transport.last_request["body"]) == {"enabled": enabled}
+
+
+def test_record_email_clicks_sends_the_clicks_under_their_wire_names() -> None:
+    client, transport = make_client()
+    client.hub.notifications.record_email_clicks([CLICK, {"nblid": "ntf_2.0.v1.Cd34"}])
+
+    assert transport.last_request is not None
+    assert transport.last_request["method"] == "POST"
+    assert urlparse(transport.last_request["url"]).path == "/v3/notifications/email/clicks"
+    assert json.loads(transport.last_request["body"]) == {"clicks": [CLICK, {"nblid": "ntf_2.0.v1.Cd34"}]}
+
+
+def test_record_email_clicks_answers_one_result_per_click() -> None:
+    answer = {
+        "recorded": 1,
+        "duplicates": 0,
+        "flagged": 1,
+        "rejected": 1,
+        "clicks": [
+            {"index": 0, "status": "rejected", "reason": "not-valid"},
+            {
+                "index": 1,
+                "status": "recorded",
+                "flag": "suspected-scanner",
+                "flagReason": "too-soon",
+                "campaignId": "cmp_1",
+                "notificationId": "ntf_1",
+                "linkIndex": 3,
+                "to": ["ann@example.com"],
+            },
+        ],
+    }
+    client = Norbix(
+        project_id="test-project",
+        bearer_token="test-token",
+        http_client=httpx.Client(transport=httpx.MockTransport(lambda r: httpx.Response(200, json=answer))),
+    )
+
+    got = client.hub.notifications.record_email_clicks([CLICK, CLICK])
+
+    assert got["rejected"] == 1
+    assert got["clicks"][0]["reason"] == "not-valid"
+    assert got["clicks"][1]["flag"] == "suspected-scanner"
+    assert got["clicks"][1]["to"] == ["ann@example.com"]
+
+
+def test_async_email_click_ids_send_the_same_requests() -> None:
+    seen: list[httpx.Request] = []
+
+    async def run() -> None:
+        client = AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(_capture(seen))),
+        )
+        try:
+            await client.hub.notifications.update_email_click_tracking(enabled=False)
+            await client.hub.notifications.record_email_clicks([CLICK])
+        finally:
+            await client.aclose()
+
+    asyncio.run(run())
+
+    assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [
+        ("PATCH", "/v3/notifications/email/settings/click-tracking"),
+        ("POST", "/v3/notifications/email/clicks"),
+    ]
+    assert json.loads(seen[0].content) == {"enabled": False}
+    assert json.loads(seen[1].content) == {"clicks": [CLICK]}

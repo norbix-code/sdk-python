@@ -24,6 +24,8 @@ Access with `norbix.hub.notifications`.
 | `get_email_signatures` | `GET` | `/{version}/notifications/email/signatures` | `project` |
 | `save_email_signature` | `POST` | `/{version}/notifications/email/signatures` | `project` |
 | `get_email_settings` | `GET` | `/{version}/notifications/email/settings` | `project` |
+| `update_email_click_tracking` | `PATCH` | `/{version}/notifications/email/settings/click-tracking` | `project` |
+| `record_email_clicks` | `POST` | `/{version}/notifications/email/clicks` | `project` |
 | `confirm_email_integration_human_delivery` | `POST` | `/{version}/notifications/email/integrations/confirm-human-delivery` | `project` |
 | `check_email_integration_domain_health` | `POST` | `/{version}/notifications/email/integrations/domain-health` | `project` |
 | `delete_email_integration` | `DELETE` | `/{version}/notifications/email/integrations/{Id}` | `project` |
@@ -176,6 +178,35 @@ The answer is `{"retryRequestId", "selected", "skipped": {reason: count},
 "replayed", "warning"?}`. Besides the reasons for rows left out, `skipped` can
 carry `optedOut`, `compliance`, `undeliverable`: the people the send gates stopped during the
 retry. Those keys are added to the stored answer later and are part of `selected`.
+
+## Know who clicked (email click ids)
+
+`update_email_click_tracking(enabled=True)` switches the project's email click
+ids on (off by default; `enabled` is always sent, so `enabled=False` switches
+them off). The current value is the project's `emailClickTracking`. Every web
+link of a marketing email then carries `?nblid=<id>`. Clicks come back only from
+sites you own: your page, server logs or analytics hand the value back with
+`record_email_clicks`, 1 to 500 clicks a call:
+
+```python
+client.hub.notifications.update_email_click_tracking(enabled=True)
+
+answer = client.hub.notifications.record_email_clicks([
+    {"nblid": nblid, "url": page_url, "clickedAt": "2026-11-11T10:00:00Z", "userAgent": ua},
+])
+answer["recorded"], answer["duplicates"], answer["flagged"], answer["rejected"]
+for click in answer["clicks"]:
+    click["status"]          # recorded | duplicate | rejected
+    click.get("reason")      # not-valid | not-found | in-future (rejected only)
+    click.get("flag")        # suspected-scanner, with flagReason user-agent | too-soon | burst
+    click.get("to")          # who the email went to; also campaignId, notificationId, linkIndex
+```
+
+The same click (`nblid` + `url` + `clickedAt`) sent again answers `duplicate`.
+A click id that is not valid is a `rejected` row, not an error; 0 or more than
+500 clicks is `CM-ERRORS-EMAILS-030`. A flagged click is kept, and its status
+history entry carries `flag` and `flagReason` (null on every other entry). The
+async client has the same two methods.
 
 ## Delivery state on a notification row
 

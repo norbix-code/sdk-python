@@ -272,6 +272,65 @@ class NotificationsModule:
             bearer_token=bearer_token,
         )
 
+    def update_email_click_tracking(
+        self,
+        *,
+        enabled: bool,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """PATCH /{version}/notifications/email/settings/click-tracking
+
+        Switches the project's email click ids on or off (off by default). When on,
+        every web link of a marketing email gets ``?nblid=<id>``; clicks come back only
+        from sites the project owns, through ``record_email_clicks``. The current value
+        is the project's ``emailClickTracking``. ``enabled`` is always sent, ``False``
+        included. Answers an empty response.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/settings/click-tracking",
+            method="PATCH",
+            path_params={},
+            request={"enabled": enabled, **request},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def record_email_clicks(
+        self,
+        clicks: list[dict[str, Any]],
+        *,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/email/clicks
+
+        Records clicks handed back with their click ids. ``clicks`` is a list of 1 to
+        500 dicts ``{"nblid", "url"?, "clickedAt"?, "userAgent"?}``; 0 or more than
+        500 is ``CM-ERRORS-EMAILS-030``. Idempotent: the same click (nblid + url +
+        clickedAt) again answers ``duplicate``. Answers ``{"recorded", "duplicates",
+        "flagged", "rejected", "clicks": [{"index", "status", "reason"?, "flag"?,
+        "flagReason"?, "campaignId"?, "notificationId"?, "linkIndex"?, "to"?}]}`` —
+        status ``recorded`` | ``duplicate`` | ``rejected`` (reason ``not-valid`` |
+        ``not-found`` | ``in-future``), flag ``suspected-scanner`` (flagReason
+        ``user-agent`` | ``too-soon`` | ``burst``). A click id that is not valid is a
+        rejected row, not an error.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/clicks",
+            method="POST",
+            path_params={},
+            request={"clicks": clicks, **request},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def confirm_email_integration_human_delivery(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/notifications/email/integrations/confirm-human-delivery"""
         return self._transport.send(
@@ -2235,6 +2294,65 @@ class AsyncNotificationsModule:
             method="GET",
             path_params={},
             request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_email_click_tracking(
+        self,
+        *,
+        enabled: bool,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """PATCH /{version}/notifications/email/settings/click-tracking
+
+        Switches the project's email click ids on or off (off by default). When on,
+        every web link of a marketing email gets ``?nblid=<id>``; clicks come back only
+        from sites the project owns, through ``record_email_clicks``. The current value
+        is the project's ``emailClickTracking``. ``enabled`` is always sent, ``False``
+        included. Answers an empty response.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/settings/click-tracking",
+            method="PATCH",
+            path_params={},
+            request={"enabled": enabled, **request},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def record_email_clicks(
+        self,
+        clicks: list[dict[str, Any]],
+        *,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/notifications/email/clicks
+
+        Records clicks handed back with their click ids. ``clicks`` is a list of 1 to
+        500 dicts ``{"nblid", "url"?, "clickedAt"?, "userAgent"?}``; 0 or more than
+        500 is ``CM-ERRORS-EMAILS-030``. Idempotent: the same click (nblid + url +
+        clickedAt) again answers ``duplicate``. Answers ``{"recorded", "duplicates",
+        "flagged", "rejected", "clicks": [{"index", "status", "reason"?, "flag"?,
+        "flagReason"?, "campaignId"?, "notificationId"?, "linkIndex"?, "to"?}]}`` —
+        status ``recorded`` | ``duplicate`` | ``rejected`` (reason ``not-valid`` |
+        ``not-found`` | ``in-future``), flag ``suspected-scanner`` (flagReason
+        ``user-agent`` | ``too-soon`` | ``burst``). A click id that is not valid is a
+        rejected row, not an error.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/notifications/email/clicks",
+            method="POST",
+            path_params={},
+            request={"clicks": clicks, **request},
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
