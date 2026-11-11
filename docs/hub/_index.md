@@ -2,7 +2,7 @@
 
 | Module | Endpoints |
 | --- | ---: |
-| [`account`](./account.md) | 61 |
+| [`account`](./account.md) | 65 |
 | [`ai`](./ai.md) | 14 |
 | [`code`](./code.md) | 71 |
 | [`database`](./database.md) | 67 |

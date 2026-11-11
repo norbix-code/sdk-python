@@ -203,6 +203,13 @@ integration has `isSystemOwned` (read only). Saving into an environment the
 project does not have is refused. An integration whose secret is empty in the
 request environment answers `CM-ERRORS-DATABASE-038`.
 
+A Norbix-managed Atlas database (the managed Flex integration) takes two
+optional fields in `save_database_integration(...)`: `flexClusterId` puts the
+database on a cluster the account already has, and `clusterDisplayName` names
+a new cluster. List the clusters with `norbix.hub.account.get_flex_clusters()`
+([account.md](./account.md#subscription-bundles-and-flex-clusters)). The saved
+integration carries its `flexClusterId`.
+
 ## Schema triggers per environment
 
 Schema triggers are kept per environment. Every schema-trigger call works on

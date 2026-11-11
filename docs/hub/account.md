@@ -22,6 +22,10 @@ Sync and async clients behave the same. Tests:
 | `get_account_status` | `GET` | `/{version}/account/status` | `project` |
 | `create_stripe_checkout_session` | `POST` | `/{version}/account/stripe/create-checkout-session` | `project` |
 | `get_stripe_billing_portal_url` | `POST` | `/{version}/account/stripe/get-portal-url` | `project` |
+| `get_managed_service_bundles` | `GET` | `/{version}/account/stripe/bundles` | `project` |
+| `change_managed_service_bundle` | `POST` | `/{version}/account/stripe/change-bundle` | `project` |
+| `get_flex_clusters` | `GET` | `/{version}/account/flex-clusters` | `project` |
+| `upgrade_flex_cluster` | `POST` | `/{version}/account/flex-clusters/{flexClusterId}/upgrade` | `project` |
 | `create_team_member_from_invitation` | `POST` | `/{version}/account/team/member` | `unauthenticated` |
 | `verify_account` | `GET` | `/{version}/account/verify` | `unauthenticated` |
 | `delete_notifications_group` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/group` | `project` |
@@ -103,6 +107,54 @@ The team list pages with flat fields — `pageSize` (default 20),
 ```python
 team = norbix.hub.account.get_account_collaborators(projectId="proj_123", pageSize=50)
 ```
+
+## Subscription, bundles and Flex clusters
+
+The Managed Service is sold as three bundles — `Starter`, `Growth`, `Scale` —
+paid `Monthly` or `Annual`. Each bundle has a limit of enabled projects.
+Sync and async clients have the same methods. Tests:
+`tests/hub/test_account_bundles_flex.py`.
+
+- `get_managed_service_bundles()` lists the bundles: `bundle`, `projectCap`
+  (the project limit) and the `monthly` and `annual` price. `amount` is in
+  minor units (cents), `currency` is lower case (`"usd"`).
+- `create_stripe_checkout_session(...)` for the Managed Service needs `bundle`
+  and `billingPeriod`. The gateway no longer reads `projectCap`.
+- `change_managed_service_bundle(bundle=..., billingPeriod=...)` moves the
+  account to another bundle or billing period. The gateway refuses with
+  `CM-ERRORS-ACCOUNT-023` when the account has more enabled projects than the
+  new bundle allows.
+- `get_account_status()` also returns `bundle`, `billingPeriod`, `isTrial`,
+  `renewsOn` and `enabledProjects`.
+
+```python
+bundles = norbix.hub.account.get_managed_service_bundles()["bundles"]
+
+checkout = norbix.hub.account.create_stripe_checkout_session(
+    subscriptionType="ManagedService", bundle="Starter", billingPeriod="Monthly"
+)
+
+norbix.hub.account.change_managed_service_bundle(bundle="Growth", billingPeriod="Annual")
+```
+
+`get_flex_clusters()` lists the account's Norbix-managed Atlas clusters. Each
+cluster has `id`, `displayName`, `atlasClusterName`, `norbixRegionCode`,
+`tierCode` (`FLEX` or `M10`), `status` (`Empty`, `Provisioning`, `Active`,
+`Failed`), its `databases` (project, environment, integration), its `usage`
+and `nearLimits`. `canCreateNew` says whether the account can add a cluster;
+when it cannot, `cannotCreateReason` is `TrialOneCluster` or
+`ClusterLimitReached`. `upgrade_flex_cluster(id, tierCode="M10")` queues the
+upgrade of one cluster to M10.
+
+```python
+answer = norbix.hub.account.get_flex_clusters()
+cluster = answer["clusters"][0]
+norbix.hub.account.upgrade_flex_cluster(cluster["id"], tierCode="M10")
+```
+
+To put a new managed database on a cluster that already exists, send its id
+as `flexClusterId` when you save the integration; see
+[database.md](./database.md#database-integrations-per-environment).
 
 ## The developer MCP endpoint
 
