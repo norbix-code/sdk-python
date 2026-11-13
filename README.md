@@ -320,6 +320,8 @@ Both the sync and the async client follow the same rule.
 
 API keys and JWTs are sent as `Authorization: Bearer ...` (document your backend expectations).
 
+Social sign-in (Google, Apple, Microsoft, GitHub, Facebook, X, Okta) and linking a provider to the signed-in user: `api.membership.social_sign_in_url`, `exchange_social_sign_in_code`, `start_link_identity` and `link_identity`. See [docs/api/membership.md](docs/api/membership.md#social-sign-in-and-link-identity).
+
 ## Configuration from environment
 
 ```bash

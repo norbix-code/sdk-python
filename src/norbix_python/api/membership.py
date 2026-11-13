@@ -438,17 +438,77 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
-    def link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/auth/{userId}/link-identity"""
+    def start_link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/{UserId}/link-identity/start
+
+        Starts linking a social provider to the signed-in user (yourself only):
+        ``provider``, optional ``mode`` and ``returnUrl``. Answers ``authorizeUrl``;
+        send the browser there.
+        """
         return self._transport.send(
             target="api",
-            path="/{version}/membership/auth/{userId}/link-identity",
+            path="/{version}/membership/auth/{UserId}/link-identity/start",
             method="POST",
-            path_params={"userId": user_id},
+            path_params={"UserId": user_id},
             request=request,
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
+        )
+
+    def link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/{UserId}/link-identity
+
+        Finishes a link as the same signed-in user who started it: ``code``, the
+        one-time link code from the return page (``intent=link``).
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/auth/{UserId}/link-identity",
+            method="POST",
+            path_params={"UserId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def exchange_social_sign_in_code(self, provider: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/social/{Provider}/exchange
+
+        Trades the one-time ``code`` from the social sign-in return page (2
+        minutes, once) for the project JWT: ``bearerToken``, ``userId``,
+        ``displayName``, ``expiresAt``, ``meta.credentialVersion``.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/auth/social/{Provider}/exchange",
+            method="POST",
+            path_params={"Provider": provider},
+            request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def social_sign_in_url(self, provider: str, *, mode: str | None = None, return_url: str | None = None) -> str:
+        """The URL that starts a project social sign-in (not a call: the gateway answers a redirect).
+
+        ``GET {api}/{version}/membership/auth/social/{provider}?projectId=…[&env=…][&mode=…][&returnUrl=…]``.
+        Send the browser there (on a phone, the system browser). A navigation
+        carries no headers, so the project id and a non-PROD env travel in the
+        query. ``provider``: google, apple, microsoft, github, facebook, x or
+        okta. ``mode``: the integration's OAuth mode (default: the only one, else
+        the first by name). ``return_url``: the app page to come back to —
+        absolute https (http only on localhost), origin in the project's allowed
+        origins. The page gets ``?code=…&provider=…`` (or ``?error=…``); trade the
+        code with ``exchange_social_sign_in_code`` within 2 minutes.
+        """
+        return self._transport.navigation_url(
+            target="api",
+            path="/{version}/membership/auth/social/{provider}",
+            path_params={"provider": provider},
+            query=[("mode", mode), ("returnUrl", return_url)],
         )
 
     def change_password(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
@@ -1228,17 +1288,77 @@ class AsyncMembershipModule:
             bearer_token=bearer_token,
         )
 
-    async def link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """POST /{version}/membership/auth/{userId}/link-identity"""
+    async def start_link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/{UserId}/link-identity/start
+
+        Starts linking a social provider to the signed-in user (yourself only):
+        ``provider``, optional ``mode`` and ``returnUrl``. Answers ``authorizeUrl``;
+        send the browser there.
+        """
         return await self._transport.send(
             target="api",
-            path="/{version}/membership/auth/{userId}/link-identity",
+            path="/{version}/membership/auth/{UserId}/link-identity/start",
             method="POST",
-            path_params={"userId": user_id},
+            path_params={"UserId": user_id},
             request=request,
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
+        )
+
+    async def link_identity(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/{UserId}/link-identity
+
+        Finishes a link as the same signed-in user who started it: ``code``, the
+        one-time link code from the return page (``intent=link``).
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/auth/{UserId}/link-identity",
+            method="POST",
+            path_params={"UserId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def exchange_social_sign_in_code(self, provider: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/social/{Provider}/exchange
+
+        Trades the one-time ``code`` from the social sign-in return page (2
+        minutes, once) for the project JWT: ``bearerToken``, ``userId``,
+        ``displayName``, ``expiresAt``, ``meta.credentialVersion``.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/auth/social/{Provider}/exchange",
+            method="POST",
+            path_params={"Provider": provider},
+            request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def social_sign_in_url(self, provider: str, *, mode: str | None = None, return_url: str | None = None) -> str:
+        """The URL that starts a project social sign-in (not a call: the gateway answers a redirect).
+
+        ``GET {api}/{version}/membership/auth/social/{provider}?projectId=…[&env=…][&mode=…][&returnUrl=…]``.
+        Send the browser there (on a phone, the system browser). A navigation
+        carries no headers, so the project id and a non-PROD env travel in the
+        query. ``provider``: google, apple, microsoft, github, facebook, x or
+        okta. ``mode``: the integration's OAuth mode (default: the only one, else
+        the first by name). ``return_url``: the app page to come back to —
+        absolute https (http only on localhost), origin in the project's allowed
+        origins. The page gets ``?code=…&provider=…`` (or ``?error=…``); trade the
+        code with ``exchange_social_sign_in_code`` within 2 minutes.
+        """
+        return self._transport.navigation_url(
+            target="api",
+            path="/{version}/membership/auth/social/{provider}",
+            path_params={"provider": provider},
+            query=[("mode", mode), ("returnUrl", return_url)],
         )
 
     async def change_password(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:

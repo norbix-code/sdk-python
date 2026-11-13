@@ -37,7 +37,10 @@ Access with `norbix.api.membership`.
 | `request_magic_link` | `POST` | `/{version}/membership/userauth/recovery/magic-link/request` | `project` |
 | `use_recovery_code` | `POST` | `/{version}/membership/userauth/recovery/use-code` | `project` |
 | `refresh_passkey_token` | `POST` | `/{version}/membership/userauth/token/refresh` | `project` |
-| `link_identity` | `POST` | `/{version}/membership/auth/{userId}/link-identity` | `project` |
+| `start_link_identity` | `POST` | `/{version}/membership/auth/{UserId}/link-identity/start` | `project` |
+| `link_identity` | `POST` | `/{version}/membership/auth/{UserId}/link-identity` | `project` |
+| `exchange_social_sign_in_code` | `POST` | `/{version}/membership/auth/social/{Provider}/exchange` | `optional` |
+| `social_sign_in_url` | — | builds `GET /{version}/membership/auth/social/{provider}?projectId=…` (a URL, not a call) | — |
 | `change_password` | `POST` | `/{version}/membership/userauth/password/change` | `project` |
 | `request_password_reset` | `POST` | `/{version}/membership/userauth/password/reset/request` | `project` |
 | `confirm_password_reset` | `POST` | `/{version}/membership/userauth/password/reset/confirm` | `project` |
@@ -60,6 +63,37 @@ Access with `norbix.api.membership`.
 | `set_user_ai_plan` | `PUT` | `/{version}/membership/users/{userId}/ai-plan` | `project` |
 | `finish_invitation` | `POST` | `/{version}/membership/auth/invitation/finish` | `optional` |
 | `send_test_password_reset` | `POST` | `/{version}/membership/userauth/password/reset/test` | `project` |
+
+## Social sign-in and link identity
+
+Project users can sign in with Google, Apple, Microsoft, GitHub, Facebook, X or
+Okta. The project's enabled providers are in the public config
+(`norbix.api.public.get_public_project_config(...)` → `auth.socialSignIn`:
+`provider`, `displayName`, `startPath`).
+
+```python
+m = norbix.api.membership
+
+# 1. Send the browser (on a phone: the system browser) here. Not a call: it redirects.
+url = m.social_sign_in_url("google", return_url="https://app.example.com/oauth/callback")
+
+# 2. The return page gets ?code=…&provider=google (or ?error=…). Trade the code within 2 minutes:
+token = m.exchange_social_sign_in_code("google", code=code)
+# token["bearerToken"]: the project JWT (14 days, no refresh token)
+
+# Link another provider to the signed-in user (yourself only):
+start = m.start_link_identity("usr_…", provider="github", returnUrl="https://app.example.com/settings")
+# send the browser to start["authorizeUrl"]; it comes back with ?intent=link&code=…
+m.link_identity("usr_…", code=link_code)
+```
+
+- `social_sign_in_url(provider, mode=..., return_url=...)` puts the project id
+  and a non-PROD env in the query, because a navigation sends no headers. The
+  start and the provider callback have no call method.
+- `link_identity` now takes `code` (the link code); `provider` /
+  `providerToken` are gone.
+- Refusals: `CM-ERRORS-MEMBERSHIP-051` (code used, expired or unknown), `-055`
+  (409, the provider account belongs to another user), `-056` (403, not yourself).
 
 ## Credential version
 
