@@ -9,19 +9,6 @@ class MembershipModule:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
 
-    def enable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/enable"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/membership/enable",
-            method="PUT",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def delete_membership_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """DELETE /{version}/membership/triggers/{triggerId}"""
         return self._transport.send(
@@ -699,19 +686,6 @@ class MembershipModule:
 class AsyncMembershipModule:
     def __init__(self, transport: AsyncTransport) -> None:
         self._transport = transport
-
-    async def enable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/enable"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/membership/enable",
-            method="PUT",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
 
     async def delete_membership_trigger(self, trigger_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """DELETE /{version}/membership/triggers/{triggerId}"""

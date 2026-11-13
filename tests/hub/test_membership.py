@@ -11,7 +11,6 @@ from ..helpers import make_client
 def test_hub_membership_module_surface() -> None:
     client, _ = make_client()
     module = client.hub.membership
-    assert callable(module.enable_membership)
     assert callable(module.delete_membership_trigger)
     assert callable(module.disable_membership_trigger)
     assert callable(module.enable_membership_trigger)
@@ -35,13 +34,6 @@ def test_hub_membership_module_surface() -> None:
     assert callable(module.get_membership_integrations)
     assert callable(module.save_membership_integration)
 
-
-def test_hub_membership_enable_membership_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.membership.enable_membership()
-    assert transport.last_request['method'] == 'PUT'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_delete_membership_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)

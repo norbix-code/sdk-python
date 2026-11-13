@@ -1,7 +1,7 @@
 """Every module's enable / disable call uses PUT (gateway change on refactoringV2).
 
-The gateway moved the module switches from GET to PUT: 9 enable and 7 disable
-calls (Membership and Database are always on and cannot be disabled). GET still answers
+The gateway moved the module switches from GET to PUT: 7 modules, an enable
+and a disable call each (Membership and Database are always on and have none). GET still answers
 for a while (hidden, deprecated, logs a WARN), but the SDK must send PUT.
 Both the sync and the async client are checked.
 """
@@ -19,7 +19,6 @@ from ..helpers import make_client
 
 # (module attribute, method name, path after /v3)
 CASES = [
-    ("database", "enable_database", "/database/enable"),
     ("files", "enable_files", "/files/enable"),
     ("files", "disable_files", "/files/disable"),
     ("notifications", "enable_push", "/notifications/push/enable"),
@@ -32,7 +31,6 @@ CASES = [
     ("payments", "disable_payments", "/payments/disable"),
     ("logs", "enable_logging", "/logs/enable"),
     ("logs", "disable_logging", "/logs/disable"),
-    ("membership", "enable_membership", "/membership/enable"),
     ("code", "enable_code", "/code/enable"),
     ("code", "disable_code", "/code/disable"),
 ]
