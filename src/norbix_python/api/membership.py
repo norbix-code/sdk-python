@@ -570,6 +570,230 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
+    def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users
+
+        Lists the contacts (users) page by page: ``startingAfter``, ``pageSize``, ``search``, ``email``, ``userName``, ``statuses``, ``types``, ``roleNames``, ``tags`` go on the query. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users
+
+        Creates a contact: ``primaryEmail`` or ``primaryPhone``, ``displayName``, ``firstName``, ``lastName``, ``tags``. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/merge
+
+        Merges contacts into one: ``survivorId`` keeps, ``mergedIds`` go. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/merge",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def repair_contact_roles(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/repair-roles
+
+        Repairs the roles of every contact; ``dryRun=True`` reports without writing. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/repair-roles",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{contactId}
+
+        Reads one contact. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}",
+            method="GET",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/membership/users/{contactId}
+
+        Changes the profile fields of a contact (``displayName``, ``firstName``, ``company``, ``language`` …). Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}",
+            method="PATCH",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{contactId}
+
+        Deletes a contact. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}",
+            method="DELETE",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities
+
+        Links a sign-in identity (``authId``) to the contact. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/identities",
+            method="POST",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def remove_contact_identity(self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{contactId}/identities/{authId}
+
+        Removes a sign-in identity from the contact. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/identities/{authId}",
+            method="DELETE",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def promote_contact_identity(self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities/{authId}/promote
+
+        Makes the identity the primary one of the contact. Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/identities/{authId}/promote",
+            method="POST",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def clear_contact_bounce(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce
+
+        Clears the bounce flag of the contact on a channel (``Email``, ``Sms``, ``Push``). Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/users/{userId}/ai-plan
+
+        Gives the user an AI plan (``planId``). Served by the API host too, for project API keys.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{userId}/ai-plan",
+            method="PUT",
+            path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def finish_invitation(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/invitation/finish
+
+        Finishes an invitation: ``token`` from the invitation email, ``password``, names. Sign-in is optional.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/auth/invitation/finish",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def send_test_password_reset(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/reset/test
+
+        Sends a test password reset email to ``email``.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/reset/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncMembershipModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1130,6 +1354,230 @@ class AsyncMembershipModule:
                 "channel": channel,
                 "tag": tag,
             },
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_all_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users
+
+        Lists the contacts (users) page by page: ``startingAfter``, ``pageSize``, ``search``, ``email``, ``userName``, ``statuses``, ``types``, ``roleNames``, ``tags`` go on the query. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_contact(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users
+
+        Creates a contact: ``primaryEmail`` or ``primaryPhone``, ``displayName``, ``firstName``, ``lastName``, ``tags``. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def merge_contacts(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/merge
+
+        Merges contacts into one: ``survivorId`` keeps, ``mergedIds`` go. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/merge",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def repair_contact_roles(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/repair-roles
+
+        Repairs the roles of every contact; ``dryRun=True`` reports without writing. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/repair-roles",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{contactId}
+
+        Reads one contact. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}",
+            method="GET",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/membership/users/{contactId}
+
+        Changes the profile fields of a contact (``displayName``, ``firstName``, ``company``, ``language`` …). Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}",
+            method="PATCH",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{contactId}
+
+        Deletes a contact. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}",
+            method="DELETE",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def add_contact_identity(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities
+
+        Links a sign-in identity (``authId``) to the contact. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/identities",
+            method="POST",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def remove_contact_identity(self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{contactId}/identities/{authId}
+
+        Removes a sign-in identity from the contact. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/identities/{authId}",
+            method="DELETE",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def promote_contact_identity(self, contact_id: str, auth_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/identities/{authId}/promote
+
+        Makes the identity the primary one of the contact. Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/identities/{authId}/promote",
+            method="POST",
+            path_params={"contactId": contact_id, "authId": auth_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def clear_contact_bounce(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce
+
+        Clears the bounce flag of the contact on a channel (``Email``, ``Sms``, ``Push``). Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/users/{userId}/ai-plan
+
+        Gives the user an AI plan (``planId``). Served by the API host too, for project API keys.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/users/{userId}/ai-plan",
+            method="PUT",
+            path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def finish_invitation(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/auth/invitation/finish
+
+        Finishes an invitation: ``token`` from the invitation email, ``password``, names. Sign-in is optional.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/auth/invitation/finish",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def send_test_password_reset(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/password/reset/test
+
+        Sends a test password reset email to ``email``.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/password/reset/test",
+            method="POST",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,

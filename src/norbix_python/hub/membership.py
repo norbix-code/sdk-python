@@ -542,6 +542,198 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
+    def import_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/import
+
+        Imports users in one call: ``users`` rows, ``ignoreDefaultRoles``, ``dryRun``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/import",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def repair_login_project_ids(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/repair-logins
+
+        Repairs the project ids of the sign-in records; ``dryRun=True`` reports without writing.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/repair-logins",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_authentication_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/authentication
+
+        Reads the sign-in settings: logout URL, user names, credential modes.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/authentication",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_authorization_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/authorization
+
+        Reads the registration, invitation, verification and password settings.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/authorization",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_authorization_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/authorization
+
+        Saves the registration, invitation, verification and password settings.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/authorization",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def list_service_user_api_keys(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{Id}/api-keys
+
+        Lists the API keys of a service user.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{Id}/api-keys",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def issue_service_user_api_key(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{Id}/api-keys
+
+        Issues an API key for a service user: ``name``, ``scopes``, ``expiresInDays``, ``notes``. The key text is in the answer once.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{Id}/api-keys",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def delete_service_user_api_key(self, id: str, key_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{Id}/api-keys/{KeyId}
+
+        Deletes one API key of a service user.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{Id}/api-keys/{KeyId}",
+            method="DELETE",
+            path_params={"Id": id, "KeyId": key_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def repair_contact_roles(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/repair-roles
+
+        Repairs the roles of every contact; ``dryRun=True`` reports without writing.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/repair-roles",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/membership/users/{contactId}
+
+        Changes the profile fields of a contact (``displayName``, ``firstName``, ``company``, ``language`` …).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}",
+            method="PATCH",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def clear_contact_bounce(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce
+
+        Clears the bounce flag of the contact on a channel (``Email``, ``Sms``, ``Push``).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/users/{userId}/ai-plan
+
+        Gives the user an AI plan (``planId``).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{userId}/ai-plan",
+            method="PUT",
+            path_params={"userId": user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 
 class AsyncMembershipModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -1074,6 +1266,198 @@ class AsyncMembershipModule:
             path="/{version}/membership/authorization/password-complexity",
             method="PUT",
             path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def import_users(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/import
+
+        Imports users in one call: ``users`` rows, ``ignoreDefaultRoles``, ``dryRun``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/import",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def repair_login_project_ids(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/repair-logins
+
+        Repairs the project ids of the sign-in records; ``dryRun=True`` reports without writing.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/repair-logins",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_authentication_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/authentication
+
+        Reads the sign-in settings: logout URL, user names, credential modes.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/authentication",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_authorization_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/authorization
+
+        Reads the registration, invitation, verification and password settings.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/authorization",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_authorization_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/authorization
+
+        Saves the registration, invitation, verification and password settings.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/authorization",
+            method="PUT",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def list_service_user_api_keys(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{Id}/api-keys
+
+        Lists the API keys of a service user.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{Id}/api-keys",
+            method="GET",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def issue_service_user_api_key(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{Id}/api-keys
+
+        Issues an API key for a service user: ``name``, ``scopes``, ``expiresInDays``, ``notes``. The key text is in the answer once.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{Id}/api-keys",
+            method="POST",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def delete_service_user_api_key(self, id: str, key_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """DELETE /{version}/membership/users/{Id}/api-keys/{KeyId}
+
+        Deletes one API key of a service user.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{Id}/api-keys/{KeyId}",
+            method="DELETE",
+            path_params={"Id": id, "KeyId": key_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def repair_contact_roles(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/repair-roles
+
+        Repairs the roles of every contact; ``dryRun=True`` reports without writing.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/repair-roles",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_contact(self, contact_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/membership/users/{contactId}
+
+        Changes the profile fields of a contact (``displayName``, ``firstName``, ``company``, ``language`` …).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}",
+            method="PATCH",
+            path_params={"contactId": contact_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def clear_contact_bounce(self, contact_id: str, channel: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce
+
+        Clears the bounce flag of the contact on a channel (``Email``, ``Sms``, ``Push``).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce",
+            method="POST",
+            path_params={"contactId": contact_id, "channel": channel},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/membership/users/{userId}/ai-plan
+
+        Gives the user an AI plan (``planId``).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/users/{userId}/ai-plan",
+            method="PUT",
+            path_params={"userId": user_id},
             request=request,
             scope="project",
             timeout=timeout,
