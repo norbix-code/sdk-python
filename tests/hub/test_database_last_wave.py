@@ -56,7 +56,6 @@ HUB_DATABASE_ROUTES: list[tuple[str, str]] = [
     ("PUT", "/{version}/database/collections/{collectionName}/{id}"),
     ("PUT", "/{version}/database/collections/{collectionName}/{id}/replace"),
     ("PUT", "/{version}/database/collections/{collectionName}/{id}/responsibility"),
-    ("PUT", "/{version}/database/disable"),
     ("PUT", "/{version}/database/enable"),
     ("GET", "/{version}/database/imports"),
     ("POST", "/{version}/database/imports"),

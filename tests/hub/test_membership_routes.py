@@ -98,7 +98,6 @@ CASES: list[Case] = [
     ("delete_policy", "DELETE", "/v2/membership/policies", {"id": [POLICY]}, None, lambda m: m.delete_policy(id=POLICY)),
     # Settings — module switch, authentication, authorization, password complexity, passkeys.
     ("enable_membership", "PUT", "/v2/membership/enable", None, None, lambda m: m.enable_membership()),
-    ("disable_membership", "PUT", "/v2/membership/disable", None, None, lambda m: m.disable_membership()),
     ("get_authentication_settings", "GET", "/v2/membership/authentication", None, None,
      lambda m: m.get_authentication_settings()),
     ("update_authentication_settings", "PUT", "/v2/membership/authentication", None, AUTHN,
@@ -148,8 +147,9 @@ def _assert_request(
 
 
 def test_hub_membership_route_count() -> None:
-    # Users list 7 + user edit 7 + roles 5 + policies 5 + settings 9 + API keys 3.
-    assert len(CASES) == 7 + 7 + 5 + 5 + 9 + 3
+    # Users list 7 + user edit 7 + roles 5 + policies 5 + settings 8 + API keys 3.
+    # (Membership cannot be disabled, so settings has no disable route.)
+    assert len(CASES) == 7 + 7 + 5 + 5 + 8 + 3
 
 
 @pytest.mark.parametrize("name, verb, path, query, body, call", CASES, ids=IDS)
