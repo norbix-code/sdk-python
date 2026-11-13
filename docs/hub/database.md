@@ -4,7 +4,6 @@ Access with `norbix.hub.database`.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `disable_database` | `PUT` | `/{version}/database/disable` | `project` |
 | `enable_database` | `PUT` | `/{version}/database/enable` | `project` |
 | `delete_schema_trigger` | `DELETE` | `/{version}/database/schemas/triggers/{triggerId}` | `project` |
 | `disable_schema_trigger` | `PATCH` | `/{version}/database/schemas/triggers/{triggerId}/disable` | `project` |

@@ -9,19 +9,6 @@ class DatabaseModule:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
 
-    def disable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/database/disable"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/database/disable",
-            method="PUT",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def enable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/database/enable"""
         return self._transport.send(
@@ -975,19 +962,6 @@ class DatabaseModule:
 class AsyncDatabaseModule:
     def __init__(self, transport: AsyncTransport) -> None:
         self._transport = transport
-
-    async def disable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/database/disable"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/database/disable",
-            method="PUT",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
 
     async def enable_database(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/database/enable"""

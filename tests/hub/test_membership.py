@@ -11,7 +11,6 @@ from ..helpers import make_client
 def test_hub_membership_module_surface() -> None:
     client, _ = make_client()
     module = client.hub.membership
-    assert callable(module.disable_membership)
     assert callable(module.enable_membership)
     assert callable(module.delete_membership_trigger)
     assert callable(module.disable_membership_trigger)
@@ -35,15 +34,7 @@ def test_hub_membership_module_surface() -> None:
     assert callable(module.get_membership_integration)
     assert callable(module.get_membership_integrations)
     assert callable(module.save_membership_integration)
-    assert callable(module.set_membership_integration_as_default)
 
-
-def test_hub_membership_disable_membership_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.membership.disable_membership()
-    assert transport.last_request['method'] == 'PUT'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
 
 def test_hub_membership_enable_membership_request_shape() -> None:
     client, transport = make_client(account_id=None)
@@ -212,12 +203,6 @@ def test_hub_membership_save_membership_integration_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations'
 
-def test_hub_membership_set_membership_integration_as_default_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.membership.set_membership_integration_as_default(id="stub-Id")
-    assert transport.last_request is not None
-    assert transport.last_request['method'] == 'PUT'
-    assert urlparse(transport.last_request['url']).path == '/v3/membership/integrations/stub-Id/default'
 
 
 def test_hub_membership_new_endpoints_surface() -> None:
@@ -225,7 +210,6 @@ def test_hub_membership_new_endpoints_surface() -> None:
     module = client.hub.membership
     assert callable(module.get_passkey_settings)
     assert callable(module.save_passkey_settings)
-    assert callable(module.get_policy_options)
     assert callable(module.create_contact)
     assert callable(module.get_all_contacts)
     assert callable(module.get_contact)
@@ -250,14 +234,6 @@ def test_hub_membership_save_passkey_settings_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.membership.save_passkey_settings()
     assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_membership_get_policy_options_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.membership.get_policy_options()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 

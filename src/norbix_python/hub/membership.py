@@ -9,19 +9,6 @@ class MembershipModule:
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
 
-    def disable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/disable"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/membership/disable",
-            method="PUT",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def enable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/membership/enable"""
         return self._transport.send(
@@ -356,19 +343,6 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
-    def set_membership_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/integrations/{Id}/default"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/membership/integrations/{Id}/default",
-            method="PUT",
-            path_params={"Id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def get_passkey_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/membership/passkey/settings"""
         return self._transport.send(
@@ -388,19 +362,6 @@ class MembershipModule:
             target="hub",
             path="/{version}/membership/passkey/settings",
             method="POST",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def get_policy_options(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/policies/new/options"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/membership/policies/new/options",
-            method="GET",
             path_params={},
             request=request,
             scope="project",
@@ -739,19 +700,6 @@ class AsyncMembershipModule:
     def __init__(self, transport: AsyncTransport) -> None:
         self._transport = transport
 
-    async def disable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/disable"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/membership/disable",
-            method="PUT",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     async def enable_membership(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/membership/enable"""
         return await self._transport.send(
@@ -1086,19 +1034,6 @@ class AsyncMembershipModule:
             bearer_token=bearer_token,
         )
 
-    async def set_membership_integration_as_default(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/integrations/{Id}/default"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/membership/integrations/{Id}/default",
-            method="PUT",
-            path_params={"Id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     async def get_passkey_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/membership/passkey/settings"""
         return await self._transport.send(
@@ -1118,19 +1053,6 @@ class AsyncMembershipModule:
             target="hub",
             path="/{version}/membership/passkey/settings",
             method="POST",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_policy_options(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/membership/policies/new/options"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/membership/policies/new/options",
-            method="GET",
             path_params={},
             request=request,
             scope="project",
