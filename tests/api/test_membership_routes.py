@@ -187,6 +187,10 @@ def _capture(seen: list[httpx.Request]) -> Callable[[httpx.Request], httpx.Respo
     return handler
 
 
+# Calls that must go out with no credentials at all, though the client has a key.
+NO_CREDENTIAL_PATHS = {"/v2/membership/auth/social/google/exchange"}
+
+
 def _assert_request(
     request: httpx.Request, verb: str, path: str, query: dict[str, list[str]] | None, body: dict[str, Any] | None
 ) -> None:
@@ -198,7 +202,12 @@ def _assert_request(
         assert request.content == b""
     else:
         assert json.loads(request.content) == body
-    assert request.headers["authorization"] == "Bearer key_1"
+    if path in NO_CREDENTIAL_PATHS:
+        # The gateway judges any token it gets, even on an open route, and
+        # refuses an old one, so these calls send none.
+        assert "authorization" not in request.headers
+    else:
+        assert request.headers["authorization"] == "Bearer key_1"
     assert request.headers["norbix-project-id"] == "test-project"
 
 
