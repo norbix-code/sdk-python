@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from typing import Any
+
+import httpx
 from urllib.parse import parse_qs, urlsplit
 
 from norbix_python import AsyncNorbix, Norbix
@@ -65,3 +68,23 @@ def test_async_client_builds_the_same_url() -> None:
     assert asyncio.run(run()) == (
         "https://api.test/v3/membership/auth/social/google?projectId=pr_1&returnUrl=https%3A%2F%2Fapp.test%2Fcb"
     )
+
+
+def test_exchange_sends_no_credentials_even_with_a_jwt() -> None:
+    """The gateway refuses an old JWT on any route; the exchange is how a user signs in again."""
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={"bearerToken": "a.b.c"})
+
+    args = {**ARGS, "bearer_token": "old.jwt"}
+    client = Norbix(**args, http_client=httpx.Client(transport=httpx.MockTransport(handler)))
+    answer = client.api.membership.exchange_social_sign_in_code("google", code="c")
+
+    assert len(seen) == 1
+    assert seen[0].url.path == "/v3/membership/auth/social/google/exchange"
+    assert json.loads(seen[0].content) == {"code": "c"}
+    assert "authorization" not in seen[0].headers
+    assert seen[0].headers["norbix-project-id"] == "pr_1"
+    assert answer["bearerToken"] == "a.b.c"

@@ -478,7 +478,9 @@ class MembershipModule:
 
         Trades the one-time ``code`` from the social sign-in return page (2
         minutes, once) for the project JWT: ``bearerToken``, ``userId``,
-        ``displayName``, ``expiresAt``, ``meta.credentialVersion``.
+        ``displayName``, ``expiresAt``, ``meta.credentialVersion``. Sends no
+        credentials: the gateway judges any token it gets, even here, and
+        refuses an old one.
         """
         return self._transport.send(
             target="api",
@@ -486,7 +488,7 @@ class MembershipModule:
             method="POST",
             path_params={"Provider": provider},
             request=request,
-            scope="optional",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1328,7 +1330,9 @@ class AsyncMembershipModule:
 
         Trades the one-time ``code`` from the social sign-in return page (2
         minutes, once) for the project JWT: ``bearerToken``, ``userId``,
-        ``displayName``, ``expiresAt``, ``meta.credentialVersion``.
+        ``displayName``, ``expiresAt``, ``meta.credentialVersion``. Sends no
+        credentials: the gateway judges any token it gets, even here, and
+        refuses an old one.
         """
         return await self._transport.send(
             target="api",
@@ -1336,7 +1340,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={"Provider": provider},
             request=request,
-            scope="optional",
+            scope="unauthenticated",
             timeout=timeout,
             bearer_token=bearer_token,
         )

@@ -39,7 +39,7 @@ Access with `norbix.api.membership`.
 | `refresh_passkey_token` | `POST` | `/{version}/membership/userauth/token/refresh` | `project` |
 | `start_link_identity` | `POST` | `/{version}/membership/auth/{UserId}/link-identity/start` | `project` |
 | `link_identity` | `POST` | `/{version}/membership/auth/{UserId}/link-identity` | `project` |
-| `exchange_social_sign_in_code` | `POST` | `/{version}/membership/auth/social/{Provider}/exchange` | `optional` |
+| `exchange_social_sign_in_code` | `POST` | `/{version}/membership/auth/social/{Provider}/exchange` | `unauthenticated` |
 | `social_sign_in_url` | — | builds `GET /{version}/membership/auth/social/{provider}?projectId=…` (a URL, not a call) | — |
 | `change_password` | `POST` | `/{version}/membership/userauth/password/change` | `project` |
 | `request_password_reset` | `POST` | `/{version}/membership/userauth/password/reset/request` | `project` |
@@ -90,6 +90,9 @@ m.link_identity("usr_…", code=link_code)
 - `social_sign_in_url(provider, mode=..., return_url=...)` puts the project id
   and a non-PROD env in the query, because a navigation sends no headers. The
   start and the provider callback have no call method.
+- `exchange_social_sign_in_code` sends no credentials, even when the client
+  has a key or a JWT: the gateway refuses an old token on any route, and the
+  exchange is how a user signs in again.
 - `link_identity` now takes `code` (the link code); `provider` /
   `providerToken` are gone.
 - Refusals: `CM-ERRORS-MEMBERSHIP-051` (code used, expired or unknown), `-055`
