@@ -74,20 +74,27 @@ Okta. The project's enabled providers are in the public config
 ```python
 m = norbix.api.membership
 
-# 1. Send the browser (on a phone: the system browser) here. Not a call: it redirects.
-url = m.social_sign_in_url("google", return_url="https://app.example.com/oauth/callback")
+# 1. PKCE: keep the verifier (memory on a device, the session on a server); only the challenge travels.
+pkce = create_pkce_pair()
+# Send the browser (on a phone: the system browser) here. Not a call: it redirects.
+url = m.social_sign_in_url(
+    "google", return_url="https://app.example.com/oauth/callback", code_challenge=pkce.code_challenge
+)
 
 # 2. The return page gets ?code=…&provider=google (or ?error=…). Trade the code within 2 minutes:
-token = m.exchange_social_sign_in_code("google", code=code)
+token = m.exchange_social_sign_in_code("google", code=code, codeVerifier=pkce.code_verifier)
 # token["bearerToken"]: the project JWT (14 days, no refresh token)
 
 # Link another provider to the signed-in user (yourself only):
-start = m.start_link_identity("usr_…", provider="github", returnUrl="https://app.example.com/settings")
+link_pkce = create_pkce_pair()
+start = m.start_link_identity(
+    "usr_…", provider="github", returnUrl="https://app.example.com/settings", codeChallenge=link_pkce.code_challenge
+)
 # send the browser to start["authorizeUrl"]; it comes back with ?intent=link&code=…
-m.link_identity("usr_…", code=link_code)
+m.link_identity("usr_…", code=link_code, codeVerifier=link_pkce.code_verifier)
 ```
 
-- `social_sign_in_url(provider, mode=..., return_url=...)` puts the project id
+- `social_sign_in_url(provider, mode=..., return_url=..., code_challenge=...)` puts the project id
   and a non-PROD env in the query, because a navigation sends no headers. The
   start and the provider callback have no call method.
 - `exchange_social_sign_in_code` sends no credentials, even when the client
@@ -95,8 +102,17 @@ m.link_identity("usr_…", code=link_code)
   exchange is how a user signs in again.
 - `link_identity` now takes `code` (the link code); `provider` /
   `providerToken` are gone.
+- PKCE (S256) is optional but strongly recommended: `create_pkce_pair()` (from
+  `norbix_python`) gives `code_verifier` and `code_challenge` (32 random
+  bytes, base64url). A code started with a challenge needs its verifier; a
+  verifier for a code started without one is refused too.
 - Refusals: `CM-ERRORS-MEMBERSHIP-051` (code used, expired or unknown), `-055`
-  (409, the provider account belongs to another user), `-056` (403, not yourself).
+  (409, the provider account belongs to another user), `-056` (403, not
+  yourself), `-058` (PKCE: `context.Reason` `verifier_missing`,
+  `verifier_wrong` or `challenge_missing`; the code is used up — start
+  again), `-059` (the challenge is not a 43-character S256). A refused
+  `returnUrl` sends the browser to the mode's failure page with
+  `error=return_url_not_allowed`.
 
 ## Credential version
 

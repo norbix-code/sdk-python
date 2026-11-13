@@ -62,9 +62,12 @@ UPDATE_USER = {"id": USR, "userGeneralInfo": {"displayName": "Ana B."}}
 ASSIGN_ROLES = {"id": USR, "roles": ["Editor"]}
 BY_ID = {"id": USR}
 PREFS = {"blockAllMarketingMessages": False, "blockedTags": ["promo"]}
-LINK = {"code": "link_code"}
-LINK_START = {"provider": "google", "mode": "app", "returnUrl": "https://app.example.test/settings"}
-EXCHANGE = {"code": "one_time"}
+# PKCE: the RFC 7636 appendix B verifier and its S256 challenge.
+VERIFIER = "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk"
+CHALLENGE = "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"
+LINK = {"code": "link_code", "codeVerifier": VERIFIER}
+LINK_START = {"provider": "google", "mode": "app", "returnUrl": "https://app.example.test/settings", "codeChallenge": CHALLENGE}
+EXCHANGE = {"code": "one_time", "codeVerifier": VERIFIER}
 TAG = {"subscribed": True}
 MAP_AUTH = {"authId": AUTH, "databaseIntegrationId": DB}
 SET_ROLES = {"roles": ["Editor", "User"]}

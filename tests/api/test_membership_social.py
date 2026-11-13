@@ -7,7 +7,7 @@ from typing import Any
 import httpx
 from urllib.parse import parse_qs, urlsplit
 
-from norbix_python import AsyncNorbix, Norbix
+from norbix_python import AsyncNorbix, Norbix, create_pkce_pair, pkce_challenge
 
 """The social sign-in start URL: ``client.api.membership.social_sign_in_url``.
 
@@ -88,3 +88,30 @@ def test_exchange_sends_no_credentials_even_with_a_jwt() -> None:
     assert "authorization" not in seen[0].headers
     assert seen[0].headers["norbix-project-id"] == "pr_1"
     assert answer["bearerToken"] == "a.b.c"
+
+
+def test_pkce_matches_the_rfc_7636_appendix_b_vector() -> None:
+    assert pkce_challenge("dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk") == "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"
+
+
+def test_create_pkce_pair_makes_a_verifier_and_its_challenge() -> None:
+    a, b = create_pkce_pair(), create_pkce_pair()
+    assert len(a.code_verifier) == 43 and a.code_verifier != b.code_verifier
+    assert a.code_challenge == pkce_challenge(a.code_verifier)
+    try:
+        pkce_challenge("short")
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("a short verifier must be refused")
+
+
+def test_url_carries_the_code_challenge_last() -> None:
+    challenge = "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM"
+    url = Norbix(**ARGS).api.membership.social_sign_in_url(
+        "google", mode="app", return_url="https://app.test/cb", code_challenge=challenge
+    )
+    assert url == (
+        "https://api.test/v3/membership/auth/social/google?projectId=pr_1&mode=app"
+        f"&returnUrl=https%3A%2F%2Fapp.test%2Fcb&codeChallenge={challenge}"
+    )
