@@ -12,6 +12,7 @@ from .errors import (
 )
 from .functions import FunctionEvent, NorbixFunctionEventError, parse_function_event
 from .models import AuthLoginResult, DatabaseFindResult, ReferenceDisplay
+from .pkce import PkcePair, create_pkce_pair, pkce_challenge
 from .webhooks import (
     AsyncNorbixWebhookReceiver,
     NorbixWebhookReceiver,
@@ -19,6 +20,8 @@ from .webhooks import (
 from .workflows import WorkflowRun, step_output
 
 __all__ = [
+    "create_pkce_pair",
+    "pkce_challenge",
     "AsyncNorbix",
     "AsyncNorbixWebhookReceiver",
     "AuthLoginResult",
@@ -34,6 +37,7 @@ __all__ = [
     "NorbixFunctionEventError",
     "NorbixWebhookReceiver",
     "NotFoundError",
+    "PkcePair",
     "RateLimitError",
     "ReferenceDisplay",
     "ValidationError",

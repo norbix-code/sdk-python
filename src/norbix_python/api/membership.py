@@ -493,24 +493,29 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
-    def social_sign_in_url(self, provider: str, *, mode: str | None = None, return_url: str | None = None) -> str:
+    def social_sign_in_url(
+        self, provider: str, *, mode: str | None = None, return_url: str | None = None, code_challenge: str | None = None
+    ) -> str:
         """The URL that starts a project social sign-in (not a call: the gateway answers a redirect).
 
-        ``GET {api}/{version}/membership/auth/social/{provider}?projectId=…[&env=…][&mode=…][&returnUrl=…]``.
+        ``GET {api}/{version}/membership/auth/social/{provider}?projectId=…[&env=…][&mode=…][&returnUrl=…][&codeChallenge=…]``.
         Send the browser there (on a phone, the system browser). A navigation
         carries no headers, so the project id and a non-PROD env travel in the
         query. ``provider``: google, apple, microsoft, github, facebook, x or
         okta. ``mode``: the integration's OAuth mode (default: the only one, else
         the first by name). ``return_url``: the app page to come back to —
         absolute https (http only on localhost), origin in the project's allowed
-        origins. The page gets ``?code=…&provider=…`` (or ``?error=…``); trade the
-        code with ``exchange_social_sign_in_code`` within 2 minutes.
+        origins or the project's own hosted Admin Portal. The page gets
+        ``?code=…&provider=…`` (or ``?error=…``); trade the code with
+        ``exchange_social_sign_in_code`` within 2 minutes. ``code_challenge``:
+        PKCE S256 from ``create_pkce_pair()``; the exchange then needs
+        ``codeVerifier``.
         """
         return self._transport.navigation_url(
             target="api",
             path="/{version}/membership/auth/social/{provider}",
             path_params={"provider": provider},
-            query=[("mode", mode), ("returnUrl", return_url)],
+            query=[("mode", mode), ("returnUrl", return_url), ("codeChallenge", code_challenge)],
         )
 
     def change_password(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
@@ -1345,24 +1350,29 @@ class AsyncMembershipModule:
             bearer_token=bearer_token,
         )
 
-    def social_sign_in_url(self, provider: str, *, mode: str | None = None, return_url: str | None = None) -> str:
+    def social_sign_in_url(
+        self, provider: str, *, mode: str | None = None, return_url: str | None = None, code_challenge: str | None = None
+    ) -> str:
         """The URL that starts a project social sign-in (not a call: the gateway answers a redirect).
 
-        ``GET {api}/{version}/membership/auth/social/{provider}?projectId=…[&env=…][&mode=…][&returnUrl=…]``.
+        ``GET {api}/{version}/membership/auth/social/{provider}?projectId=…[&env=…][&mode=…][&returnUrl=…][&codeChallenge=…]``.
         Send the browser there (on a phone, the system browser). A navigation
         carries no headers, so the project id and a non-PROD env travel in the
         query. ``provider``: google, apple, microsoft, github, facebook, x or
         okta. ``mode``: the integration's OAuth mode (default: the only one, else
         the first by name). ``return_url``: the app page to come back to —
         absolute https (http only on localhost), origin in the project's allowed
-        origins. The page gets ``?code=…&provider=…`` (or ``?error=…``); trade the
-        code with ``exchange_social_sign_in_code`` within 2 minutes.
+        origins or the project's own hosted Admin Portal. The page gets
+        ``?code=…&provider=…`` (or ``?error=…``); trade the code with
+        ``exchange_social_sign_in_code`` within 2 minutes. ``code_challenge``:
+        PKCE S256 from ``create_pkce_pair()``; the exchange then needs
+        ``codeVerifier``.
         """
         return self._transport.navigation_url(
             target="api",
             path="/{version}/membership/auth/social/{provider}",
             path_params={"provider": provider},
-            query=[("mode", mode), ("returnUrl", return_url)],
+            query=[("mode", mode), ("returnUrl", return_url), ("codeChallenge", code_challenge)],
         )
 
     async def change_password(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
