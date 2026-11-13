@@ -62,7 +62,9 @@ UPDATE_USER = {"id": USR, "userGeneralInfo": {"displayName": "Ana B."}}
 ASSIGN_ROLES = {"id": USR, "roles": ["Editor"]}
 BY_ID = {"id": USR}
 PREFS = {"blockAllMarketingMessages": False, "blockedTags": ["promo"]}
-LINK = {"provider": "Google", "providerToken": "g_tok"}
+LINK = {"code": "link_code"}
+LINK_START = {"provider": "google", "mode": "app", "returnUrl": "https://app.example.test/settings"}
+EXCHANGE = {"code": "one_time"}
 TAG = {"subscribed": True}
 MAP_AUTH = {"authId": AUTH, "databaseIntegrationId": DB}
 SET_ROLES = {"roles": ["Editor", "User"]}
@@ -133,7 +135,11 @@ CASES: list[Case] = [
     ("get_user", "GET", f"{A}/{USR}", {"databaseIntegrationId": [DB]}, None, lambda m: m.get_user(USR, databaseIntegrationId=DB)),
     ("get_user_preferences", "GET", f"{A}/{USR}/preferences", None, None, lambda m: m.get_user_preferences(USR)),
     ("update_user_preferences", "PUT", f"{A}/{USR}/preferences", None, PREFS, lambda m: m.update_user_preferences(USR, **PREFS)),
+    ("start_link_identity", "POST", f"{A}/{USR}/link-identity/start", None, LINK_START,
+     lambda m: m.start_link_identity(USR, **LINK_START)),
     ("link_identity", "POST", f"{A}/{USR}/link-identity", None, LINK, lambda m: m.link_identity(USR, **LINK)),
+    ("exchange_social_sign_in_code", "POST", f"{A}/social/google/exchange", None, EXCHANGE,
+     lambda m: m.exchange_social_sign_in_code("google", **EXCHANGE)),
     ("set_contact_tag_subscription", "PUT", f"{U}/{CT}/marketing-state/Email/Marketing/tags/news", None, TAG,
      lambda m: m.set_contact_tag_subscription(CT, "Email", "Marketing", "news", **TAG)),
     ("map_auth_to_user", "POST", f"{U}/{USR}/map-auth", None, MAP_AUTH, lambda m: m.map_auth_to_user(USR, **MAP_AUTH)),
@@ -197,8 +203,9 @@ def _assert_request(
 
 
 def test_api_membership_route_count() -> None:
-    # Users list 7 + user new 10 + user edit 20 + passkey & user-auth 19.
-    assert len(CASES) == 7 + 10 + 20 + 19
+    # Users list 7 + user new 10 + user edit 20 + passkey & user-auth 19 + social
+    # sign-in and link 2 (exchange, link start; link finish is in user edit).
+    assert len(CASES) == 7 + 10 + 20 + 19 + 2
 
 
 @pytest.mark.parametrize("name, verb, path, query, body, call", CASES, ids=IDS)

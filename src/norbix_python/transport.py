@@ -5,7 +5,7 @@ import random
 import time
 from dataclasses import dataclass, field
 from typing import Any, Literal
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 
 import httpx
 
@@ -54,6 +54,17 @@ class Transport:
     def __init__(self, cfg: TransportConfig, client: httpx.Client | None = None) -> None:
         self._cfg = cfg
         self._client = client or httpx.Client(timeout=cfg.timeout)
+
+    def navigation_url(
+        self,
+        *,
+        target: Target,
+        path: str,
+        path_params: dict[str, Any],
+        query: list[tuple[str, str | None]],
+    ) -> str:
+        """URL of a GET route a browser navigates to; see ``_navigation_url``."""
+        return _navigation_url(self._cfg, target, path, path_params, query)
 
     def close(self) -> None:
         self._client.close()
@@ -226,6 +237,17 @@ class AsyncTransport:
         self._cfg = cfg
         self._client = client or httpx.AsyncClient(timeout=cfg.timeout)
 
+    def navigation_url(
+        self,
+        *,
+        target: Target,
+        path: str,
+        path_params: dict[str, Any],
+        query: list[tuple[str, str | None]],
+    ) -> str:
+        """URL of a GET route a browser navigates to; see ``_navigation_url``."""
+        return _navigation_url(self._cfg, target, path, path_params, query)
+
     async def aclose(self) -> None:
         await self._client.aclose()
 
@@ -390,6 +412,39 @@ class AsyncTransport:
             await asyncio.sleep(delay)
         assert last_response is not None
         return last_response
+
+
+def _navigation_url(
+    cfg: TransportConfig,
+    target: Target,
+    path: str,
+    path_params: dict[str, Any],
+    query: list[tuple[str, str | None]],
+) -> str:
+    """The full URL of a GET route a browser navigates to (a link or a redirect, not a call).
+
+    A navigation carries no headers, so the project id and a non-PROD env go
+    into the query (``?projectId=…&env=…``), followed by ``query`` in order;
+    ``None`` values are left out. Path values are percent-encoded.
+    """
+    base_url = cfg.base_url_api if target == "api" else cfg.base_url_hub
+    version = cfg.api_version if target == "api" else cfg.hub_version
+    url, _ = _build_url_and_body(
+        base_url=base_url,
+        path=path,
+        version=version,
+        method="GET",
+        path_params={k: quote(str(v), safe="") for k, v in path_params.items()},
+        request={},
+    )
+    pairs: list[tuple[str, str | None]] = [("projectId", cfg.project_id or None)]
+    if cfg.env and cfg.env != "PROD":
+        pairs.append(("env", cfg.env))
+    pairs.extend(query)
+    encoded = "&".join(
+        f"{quote(k, safe='')}={quote(v, safe='')}" for k, v in pairs if v is not None
+    )
+    return f"{url}?{encoded}" if encoded else url
 
 
 def _build_url_and_body(
