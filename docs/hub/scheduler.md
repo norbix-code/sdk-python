@@ -9,6 +9,7 @@ Access with `norbix.hub.scheduler` (and the same methods, awaited, on
 | `disable_scheduler` | `PUT` | `/{version}/scheduler/disable` | `project` | — |
 | `get_scheduler_tasks` | `GET` | `/{version}/scheduler/tasks` | `project` | query: `pageSize`, `startingAfter`, `endingBefore`, `type`, `enabled` |
 | `get_scheduler_task` | `GET` | `/{version}/scheduler/tasks/{id}` | `project` | path: `id` |
+| `get_scheduler_task_runs` | `GET` | `/{version}/scheduler/tasks/{id}/runs` | `project` | path: `id`; query: `take` (1–50, default 10) |
 | `save_scheduler_task` | `POST` | `/{version}/scheduler/tasks` | `project` | JSON body (see below) |
 | `enable_scheduler_task` | `PUT` | `/{version}/scheduler/tasks/{Id}/enable` | `project` | path: `id` |
 | `disable_scheduler_task` | `PUT` | `/{version}/scheduler/tasks/{Id}/disable` | `project` | path: `id` |
@@ -31,9 +32,11 @@ norbix.hub.scheduler.enable_scheduler()
 
 ## Save a task (create or update)
 
-**Only `EmailCampaign` tasks run today.** `PushCampaign`, `SmsCampaign`,
-`CodeFunctionalCall` and `WebhookCall` exist in the gateway's type list, but
-it refuses them on save.
+The gateway runs `EmailCampaign`, `SmsCampaign`, `PushCampaign`,
+`CodeFunctionalCall` (call a cloud function), `MarketplaceFunctionCall` and
+`WorkflowCall` (start a workflow) tasks; `WebhookCall` is in the type list but
+refused on save. The email task is below; the Code and Workflow bodies follow
+it.
 
 The body:
 
@@ -52,7 +55,7 @@ The body:
 
 | field | required | meaning |
 | --- | --- | --- |
-| `type` | yes | `"EmailCampaign"` — the name, as a string |
+| `type` | yes | `"EmailCampaign"` — the name, as a string (other types: below) |
 | `campaign` | yes | the email campaign to send: the same body the email campaign endpoints take — `source`, `templateId`, and the audience fields of that source |
 | `databaseIntegrationId` | no | the database integration the campaign reads from |
 
@@ -97,6 +100,35 @@ This goes on the wire as:
 
 To update, send the same body with `taskId="tsk_…"`.
 
+### Call a cloud function on a cron ("Code call")
+
+```python
+task={
+    "type": "CodeFunctionalCall",
+    "functionRef": {"integrationId": "int_lambda", "functionId": "nightly-report", "qualifier": "live"},
+    "invocationType": "Async",           # "Sync" waits for the result (default)
+    "config": '{"source":"scheduler"}',  # JSON text; map every @Model.X binding in mappedTokens
+}
+```
+
+Each fire sends the function one event envelope (`scheduler.task.fired`) as
+the task's initiator, who needs `code:execute` on the integration
+(`CM-ERRORS-SCHEDULER-012` otherwise).
+
+### Start a workflow on a cron ("Workflow call")
+
+```python
+task={
+    "type": "WorkflowCall",
+    "workflowRef": "wf_3kQ9mZ2vXc8LpR4wT7yH1n",
+    "payload": {"source": "scheduler"},  # strings only: the run's @Model.Request.* values
+}
+```
+
+The run acts as the workflow's own execution identity; the initiator needs
+`code:execute` on the workflow. Both bodies are asserted in
+`tests/hub/test_scheduler_task_bodies.py`.
+
 ## Read tasks
 
 ```python
@@ -106,6 +138,14 @@ for row in page["list"]["items"]:
 
 one = norbix.hub.scheduler.get_scheduler_task(id="tsk_123")
 # one["item"]["payloadJson"] holds the saved task body as JSON.
+```
+
+## Run history
+
+```python
+runs = norbix.hub.scheduler.get_scheduler_task_runs(id="tsk_123", take=20)
+for run in runs["runs"]:  # newest first
+    print(run["atUtc"], run["outcome"], run.get("reason"))  # "Fired" | "Failed" | "Skipped"
 ```
 
 ## Pause, resume, delete

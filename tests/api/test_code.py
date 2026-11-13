@@ -15,8 +15,11 @@ from ..helpers import make_client
 
 """Workflows (beta) on the Api host (Code.Workflows.md §7, "App users resume
 from the API host"): the inbox, the resume by run id and the signed resume
-link. Verb, resolved path and parameter placement, sync and async."""
+link, and the run routes an app's backend calls (start, runs, run, logs,
+resume by key, retry, stop — the api twins sdk-ts has). Verb, resolved path
+and parameter placement, sync and async."""
 
+WF = "wf_3kQ9mZ2vXc8LpR4wT7yH1n"
 WFR = "wfr_4hT2b9QkLm3XcT1yRfGh7a"
 WF_TOKEN = "eyJydW4iOiJ3ZnJfNGhUMmI5In0.sig"
 
@@ -28,6 +31,13 @@ API_WORKFLOW_CASES: list[ApiCase] = [
     ("resume_code_workflow_run", "POST", f"/v3/code/workflows/runs/{WFR}/resume", None, {"stepId": "approve", "decision": "approved", "payload": {"note": "ok"}}, lambda m: m.resume_code_workflow_run(WFR, stepId="approve", decision="approved", payload={"note": "ok"})),
     ("open_code_workflow_resume_link", "GET", f"/v3/code/workflows/resume/{WF_TOKEN}", None, None, lambda m: m.open_code_workflow_resume_link(WF_TOKEN)),
     ("use_code_workflow_resume_link", "POST", f"/v3/code/workflows/resume/{WF_TOKEN}", None, None, lambda m: m.use_code_workflow_resume_link(WF_TOKEN)),
+    ("invoke_code_workflow", "POST", f"/v3/code/workflows/{WF}/invoke", None, {"payload": {"orderId": "ord_1"}, "waitSeconds": 10, "runVersion": "draft"}, lambda m: m.invoke_code_workflow(WF, payload={"orderId": "ord_1"}, waitSeconds=10, runVersion="draft")),
+    ("get_code_workflow_runs", "GET", f"/v3/code/workflows/{WF}/runs", {"status": ["failed"], "pageSize": ["50"]}, None, lambda m: m.get_code_workflow_runs(WF, status="failed", pageSize=50)),
+    ("get_code_workflow_run", "GET", f"/v3/code/workflows/runs/{WFR}", None, None, lambda m: m.get_code_workflow_run(WFR)),
+    ("get_code_workflow_run_logs", "GET", f"/v3/code/workflows/runs/{WFR}/logs", {"stepId": ["approve"], "level": ["error"]}, None, lambda m: m.get_code_workflow_run_logs(WFR, stepId="approve", level="error")),
+    ("resume_code_workflow_run_by_key", "POST", f"/v3/code/workflows/{WF}/resume", None, {"key": "order-ord_1", "decision": "rejected"}, lambda m: m.resume_code_workflow_run_by_key(WF, key="order-ord_1", decision="rejected")),
+    ("retry_code_workflow_run_step", "POST", f"/v3/code/workflows/runs/{WFR}/retry", None, {"stepId": "charge"}, lambda m: m.retry_code_workflow_run_step(WFR, stepId="charge")),
+    ("cancel_code_workflow_run", "POST", f"/v3/code/workflows/runs/{WFR}/cancel", None, {"reason": "duplicate order"}, lambda m: m.cancel_code_workflow_run(WFR, reason="duplicate order")),
 ]
 
 
@@ -98,8 +108,9 @@ def test_async_api_workflow_endpoints_hit_the_same_routes() -> None:
 
 
 def test_api_workflow_surface() -> None:
-    """Four Api workflow routes (the inbox, the resume, the two link routes)."""
-    assert len(API_WORKFLOW_CASES) == 4
+    """Eleven Api workflow routes (the inbox, the resume, the two link routes and the seven run routes)."""
+    assert len(API_WORKFLOW_CASES) == 11
+    assert len({case[0] for case in API_WORKFLOW_CASES}) == 11
     client, _ = make_client()
     api_only = NorbixApi(project_id="test-project", bearer_token="test-token")
     for name, *_ in API_WORKFLOW_CASES:

@@ -29,7 +29,7 @@ EMAIL_TEMPLATE_ID = "etpl_1"
 BASE = "/v3/scheduler"
 
 # A complete save request: the initiator, the schedule, and an email campaign
-# task sent to all users. EmailCampaign is the only task type the gateway runs.
+# task sent to all users.
 SAVE_REQUEST: dict[str, Any] = {
     "initiatorUserId": INITIATOR_USER_ID,
     "name": "Weekly digest",
@@ -65,6 +65,14 @@ SCHEDULER_CASES: list[SchedulerCase] = [
         None,
         None,
         lambda m: m.get_scheduler_task(id=TASK_ID),
+    ),
+    (
+        "get_scheduler_task_runs",
+        "GET",
+        f"{BASE}/tasks/{TASK_ID}/runs",
+        {"take": ["20"]},
+        None,
+        lambda m: m.get_scheduler_task_runs(id=TASK_ID, take=20),
     ),
     (
         "save_scheduler_task",
@@ -177,9 +185,9 @@ def test_async_scheduler_endpoints_hit_the_same_routes() -> None:
 
 
 def test_scheduler_surface_size() -> None:
-    """8 scheduler routes in the gateway. A new one changes this count, so it cannot arrive untested."""
-    assert len(SCHEDULER_CASES) == 8
-    assert len({case[0] for case in SCHEDULER_CASES}) == 8
+    """9 scheduler routes in the gateway. A new one changes this count, so it cannot arrive untested."""
+    assert len(SCHEDULER_CASES) == 9
+    assert len({case[0] for case in SCHEDULER_CASES}) == 9
 
 
 def test_save_scheduler_task_sends_the_email_campaign_task() -> None:

@@ -87,6 +87,24 @@ class SchedulerModule:
             bearer_token=bearer_token,
         )
 
+    def get_scheduler_task_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/scheduler/tasks/{id}/runs
+
+        The task's latest runs, newest first; query ``take`` (1-50, default 10).
+        Each run has ``outcome`` (``"Fired"``, ``"Failed"``, ``"Skipped"``) and, on a
+        failed or skipped run, a ``reason`` code (``run-failed``, ``module-disabled``, ...).
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks/{id}/runs",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_scheduler_tasks(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/scheduler/tasks"""
         return self._transport.send(
@@ -107,10 +125,13 @@ class SchedulerModule:
         Keyword arguments become the JSON body: ``initiatorUserId`` (the caller or a
         project service user, ``usr_...``), ``name``, ``cron`` (5 fields, UTC),
         ``isEnabled``, ``stopOnError``, optional ``description`` and ``task``.
-        ``task`` is ``{"type": "EmailCampaign", "campaign": {...}, "databaseIntegrationId": ...}``
-        — ``EmailCampaign`` is the only task type the gateway runs today; ``campaign``
-        is the email campaign body (``source``, ``templateId`` and that source's
-        audience fields). See docs/hub/scheduler.md.
+        ``task`` is one task body: ``{"type": "EmailCampaign", "campaign": {...}, "databaseIntegrationId": ...}``
+        (``campaign`` is the email campaign body: ``source``, ``templateId`` and that
+        source's audience fields), ``SmsCampaign`` / ``PushCampaign`` alike,
+        ``{"type": "CodeFunctionalCall", "functionRef": {"integrationId", "functionId", "qualifier"},
+        "invocationType": "Sync" | "Async", "config": "<json>", "mappedTokens": [...]}`` (call a
+        cloud function) or ``{"type": "WorkflowCall", "workflowRef": "wf_...", "payload": {"k": "v"}}``
+        (start a workflow). See docs/hub/scheduler.md.
         """
         return self._transport.send(
             target="hub",
@@ -206,6 +227,24 @@ class AsyncSchedulerModule:
             bearer_token=bearer_token,
         )
 
+    async def get_scheduler_task_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/scheduler/tasks/{id}/runs
+
+        The task's latest runs, newest first; query ``take`` (1-50, default 10).
+        Each run has ``outcome`` (``"Fired"``, ``"Failed"``, ``"Skipped"``) and, on a
+        failed or skipped run, a ``reason`` code (``run-failed``, ``module-disabled``, ...).
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/scheduler/tasks/{id}/runs",
+            method="GET",
+            path_params={"id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_scheduler_tasks(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/scheduler/tasks"""
         return await self._transport.send(
@@ -226,10 +265,13 @@ class AsyncSchedulerModule:
         Keyword arguments become the JSON body: ``initiatorUserId`` (the caller or a
         project service user, ``usr_...``), ``name``, ``cron`` (5 fields, UTC),
         ``isEnabled``, ``stopOnError``, optional ``description`` and ``task``.
-        ``task`` is ``{"type": "EmailCampaign", "campaign": {...}, "databaseIntegrationId": ...}``
-        — ``EmailCampaign`` is the only task type the gateway runs today; ``campaign``
-        is the email campaign body (``source``, ``templateId`` and that source's
-        audience fields). See docs/hub/scheduler.md.
+        ``task`` is one task body: ``{"type": "EmailCampaign", "campaign": {...}, "databaseIntegrationId": ...}``
+        (``campaign`` is the email campaign body: ``source``, ``templateId`` and that
+        source's audience fields), ``SmsCampaign`` / ``PushCampaign`` alike,
+        ``{"type": "CodeFunctionalCall", "functionRef": {"integrationId", "functionId", "qualifier"},
+        "invocationType": "Sync" | "Async", "config": "<json>", "mappedTokens": [...]}`` (call a
+        cloud function) or ``{"type": "WorkflowCall", "workflowRef": "wf_...", "payload": {"k": "v"}}``
+        (start a workflow). See docs/hub/scheduler.md.
         """
         return await self._transport.send(
             target="hub",
