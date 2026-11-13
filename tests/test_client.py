@@ -49,7 +49,7 @@ def test_api_and_hub_split_clients_have_flat_modules() -> None:
     assert callable(api.database.find)
     assert callable(api.membership.get_users)
     assert callable(hub.database.get_database_schemas)
-    assert callable(hub.membership.enable_membership)
+    assert callable(hub.membership.get_roles)
     api.close()
     hub.close()
 

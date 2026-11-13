@@ -17,7 +17,6 @@ from ..helpers import make_client
 def test_hub_database_module_surface() -> None:
     client, _ = make_client()
     module = client.hub.database
-    assert callable(module.enable_database)
     assert callable(module.delete_schema_trigger)
     assert callable(module.disable_schema_trigger)
     assert callable(module.enable_schema_trigger)
@@ -58,13 +57,6 @@ def test_hub_database_module_surface() -> None:
     assert callable(module.save_database_aggregate)
     assert callable(module.test_database_aggregate)
 
-
-def test_hub_database_enable_database_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.database.enable_database()
-    assert transport.last_request['method'] == 'PUT'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
 
 def test_hub_database_delete_schema_trigger_request_shape() -> None:
     client, transport = make_client(account_id=None)
