@@ -58,7 +58,6 @@ Sync and async clients behave the same. Tests:
 | `get_my_account_user_profile` | `GET` | `/{version}/account/me` | `project` |
 | `update_my_account_user_phone` | `PUT` | `/{version}/account/me/phone` | `project` |
 | `send_invite_to_team_member` | `POST` | `/{version}/account/team/member/invite` | `project` |
-| `get_licenses` | `GET` | `/{version}/account/licenses` | `project` |
 | `get_project_ai_settings` | `GET` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
 | `update_project_ai_settings` | `PUT` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
 | `create_project_ai_assistant` | `POST` | `/{version}/account/projects/{projectId}/ai/assistants` | `project` |

@@ -48,7 +48,6 @@ def test_hub_account_module_surface() -> None:
     assert callable(module.get_my_account_user_profile)
     assert callable(module.update_my_account_user_phone)
     assert callable(module.send_invite_to_team_member)
-    assert callable(module.get_licenses)
 
 
 def test_hub_account_get_account_profile_request_shape() -> None:
@@ -302,13 +301,6 @@ def test_hub_account_send_invite_to_team_member_request_shape() -> None:
     client, transport = make_client(account_id='acc-1')
     client.hub.account.send_invite_to_team_member()
     assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-def test_hub_account_get_licenses_request_shape() -> None:
-    client, transport = make_client(account_id='acc-1')
-    client.hub.account.get_licenses()
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
