@@ -667,19 +667,6 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
-    def get_licenses(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/licenses"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/account/licenses",
-            method="GET",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def get_project_ai_settings(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/projects/{projectId}/ai/settings"""
         return self._transport.send(
@@ -1693,19 +1680,6 @@ class AsyncAccountModule:
             target="hub",
             path="/{version}/account/team/member/invite",
             method="POST",
-            path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def get_licenses(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/licenses"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/account/licenses",
-            method="GET",
             path_params={},
             request=request,
             scope="project",

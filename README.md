@@ -390,8 +390,8 @@ region="nb-eu-germany"  →  https://nb-eu-germany.api.norbix.ai
 ```
 
 Custom base URLs (`base_url_api=`, `base_url_hub=`, `NORBIX_API_URL`,
-`NORBIX_HUB_URL`) are **never rewritten** — self-hosted and custom
-deployments are unaffected; the `nb-region` header is still sent when a
+`NORBIX_HUB_URL`) are **never rewritten** — custom base URLs are
+unaffected; the `nb-region` header is still sent when a
 region is configured.
 
 ### Managing regions (Hub)
@@ -478,7 +478,7 @@ async def main() -> None:
 
 - `project_id` is required (set explicitly or via env).
 - `account_id` is optional, and no Hub account method needs it: the gateway takes the account from the signed-in session or the project id in the path
-- Account routes (profile, projects, project settings, team, licenses, …) need only a key or a bearer token
+- Account routes (profile, projects, project settings, team, …) need only a key or a bearer token
 - Sign-up (`hub.account.create_account`), accepting an invitation (`hub.account.create_team_member_from_invitation`), the region list (`hub.account.get_account_regions`, `hub.regions.list`) and `hub.account.verify_account(accountId=..., token=...)` need no token at all — they are public on the gateway, and no `Authorization` header is sent
 - Optional-scope methods (the signed notification preview links) send auth when the client has a token and never require one
 

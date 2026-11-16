@@ -64,7 +64,6 @@ CASES: list[tuple[str, str, str, str, dict[str, str]]] = [
     ("account", "update_project_name", "PATCH", "/v3/account/projects/project_id_1/settings/name", {'project_id': "project_id_1"}),
     ("account", "update_project_regions", "PATCH", "/v3/account/projects/project_id_1/settings/regions", {'project_id': "project_id_1"}),
     ("account", "send_invite_to_team_member", "POST", "/v3/account/team/member/invite", {}),
-    ("account", "get_licenses", "GET", "/v3/account/licenses", {}),
     ("regions", "update_project_regions", "PATCH", "/v3/account/projects/project_id_1/settings/regions", {'project_id': "project_id_1"}),
 ]
 
