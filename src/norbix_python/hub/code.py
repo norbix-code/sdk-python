@@ -880,7 +880,9 @@ class CodeModule:
     def disable_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: PUT /{version}/code/workflows/disable
 
-        Turn the Workflows beta switch off for the Code module.
+        Refused since 2026-11-17 (``CM-ERRORS-WORKFLOWS-045``): workflows are part of
+        every project and cannot be switched off. Kept so existing code still runs;
+        use ``disable_code_workflow`` to stop one workflow.
         """
         return self._transport.send(
             target="hub",
@@ -1913,7 +1915,9 @@ class AsyncCodeModule:
     async def disable_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: PUT /{version}/code/workflows/disable
 
-        Turn the Workflows beta switch off for the Code module.
+        Refused since 2026-11-17 (``CM-ERRORS-WORKFLOWS-045``): workflows are part of
+        every project and cannot be switched off. Kept so existing code still runs;
+        use ``disable_code_workflow`` to stop one workflow.
         """
         return await self._transport.send(
             target="hub",

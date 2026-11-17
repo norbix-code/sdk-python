@@ -607,6 +607,25 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def get_network_addresses(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/network-addresses
+
+        The IP addresses Norbix connects to databases from, per region. Add them to
+        your MongoDB Atlas IP access list when you connect your own database with a
+        connection string. Pass ``regionCode="nb-eu-germany"`` for one region; leave
+        it out for every region. Answers ``{"regions": [{"regionCode", "addresses"}]}``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/network-addresses",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def test_database_integration(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/database/integrations/test"""
         return self._transport.send(
@@ -1540,6 +1559,25 @@ class AsyncDatabaseModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/database/integrations/flex-tiers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_network_addresses(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/database/network-addresses
+
+        The IP addresses Norbix connects to databases from, per region. Add them to
+        your MongoDB Atlas IP access list when you connect your own database with a
+        connection string. Pass ``regionCode="nb-eu-germany"`` for one region; leave
+        it out for every region. Answers ``{"regions": [{"regionCode", "addresses"}]}``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/network-addresses",
             method="GET",
             path_params={},
             request=request,

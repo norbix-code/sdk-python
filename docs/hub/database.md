@@ -50,6 +50,7 @@ Access with `norbix.hub.database`.
 | `request_import_upload_url` | `POST` | `/{version}/database/imports/upload-url` | `project` |
 | `analyze_import_file` | `POST` | `/{version}/database/imports/analyze` | `project` |
 | `get_allowed_flex_tiers` | `GET` | `/{version}/database/integrations/flex-tiers` | `project` |
+| `get_network_addresses` | `GET` | `/{version}/database/network-addresses` | `project` |
 | `test_database_integration` | `POST` | `/{version}/database/integrations/test` | `project` |
 | `reveal_managed_flex_connection_string` | `GET` | `/{version}/database/integrations/{Id}/connection-string` | `project` |
 | `get_database_taxonomy_tree` | `GET` | `/{version}/database/taxonomies/tree` | `project` |
