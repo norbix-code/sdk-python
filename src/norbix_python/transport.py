@@ -10,6 +10,7 @@ from urllib.parse import quote, urlencode
 import httpx
 
 from .errors import NorbixError, error_from_body, retry_after_seconds_of, says_it_failed
+from .project_host import compose_project_url
 
 HttpVerb = Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
 # "optional": auth is sent when the client has a token, never required — used
@@ -47,6 +48,10 @@ class TransportConfig:
     language: str | None = None
     base_url_api_is_default: bool = False
     base_url_hub_is_default: bool = False
+    # The SDK's built-in API address, when the caller gave none (no option, no
+    # NORBIX_API_URL). Only then do API calls go to the project's own host; an
+    # address the caller wrote is used as given, also when it is this one.
+    builtin_base_url_api: str | None = None
     default_headers: dict[str, str] = field(default_factory=dict)
 
 
@@ -95,7 +100,7 @@ class Transport:
             )
         # project_id is required at construction; kept for defensive checks only.
 
-        base_url = self._cfg.base_url_api if target == "api" else self._cfg.base_url_hub
+        base_url = _api_call_base_url(self._cfg) if target == "api" else self._cfg.base_url_hub
         version = self._cfg.api_version if target == "api" else self._cfg.hub_version
         params = path_params or {}
         req = request or {}
@@ -277,7 +282,7 @@ class AsyncTransport:
             )
         # project_id is required at construction; kept for defensive checks only.
 
-        base_url = self._cfg.base_url_api if target == "api" else self._cfg.base_url_hub
+        base_url = _api_call_base_url(self._cfg) if target == "api" else self._cfg.base_url_hub
         version = self._cfg.api_version if target == "api" else self._cfg.hub_version
         params = path_params or {}
         req = request or {}
@@ -414,6 +419,22 @@ class AsyncTransport:
         return last_response
 
 
+def _api_call_base_url(cfg: TransportConfig) -> str:
+    """Where an API call goes: the project's own host on the built-in address.
+
+    ``https://pr-<32 hex>.api.norbix.ai`` — with no region label, the project's
+    DNS record already points at its region. Worked out from the project id at
+    the time of the call, so the host and the ``norbix-project-id`` header
+    always name the same project. A project id that is not a Norbix id, or an
+    address the caller supplied, keeps ``cfg.base_url_api``.
+    """
+    if cfg.builtin_base_url_api:
+        project_url = compose_project_url(cfg.project_id, cfg.builtin_base_url_api)
+        if project_url:
+            return project_url
+    return cfg.base_url_api
+
+
 def _navigation_url(
     cfg: TransportConfig,
     target: Target,
@@ -426,6 +447,10 @@ def _navigation_url(
     A navigation carries no headers, so the project id and a non-PROD env go
     into the query (``?projectId=…&env=…``), followed by ``query`` in order;
     ``None`` values are left out. Path values are percent-encoded.
+
+    The link stays on the shared API host, never the project's own one: the
+    gateway's social sign-in callback comes back to the shared host, and its
+    nonce cookie is host-only.
     """
     base_url = cfg.base_url_api if target == "api" else cfg.base_url_hub
     version = cfg.api_version if target == "api" else cfg.hub_version

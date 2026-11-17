@@ -380,14 +380,18 @@ norbix.hub.regions.list(region="nb-us-east")
 
 ### Regional base URLs
 
-When a region is set and you are using the SDK-default base URLs
-(`https://api.norbix.ai` / `https://hub.norbix.ai`), the SDK prefixes the
-region as a subdomain:
+When a region is set and you are using the SDK-default Hub base URL
+(`https://hub.norbix.ai`), the SDK prefixes the region as a subdomain:
 
 ```text
-region="nb-eu-germany"  →  https://nb-eu-germany.api.norbix.ai
-                           https://nb-eu-germany.hub.norbix.ai
+region="nb-eu-germany"  →  https://nb-eu-germany.hub.norbix.ai
 ```
+
+API calls do **not** get the region label: they go to the project's own
+host (see [Project host](#project-host)), and that host already points at
+the project's region. Only a client whose project id is not a Norbix
+project id (a test id such as `p1`) keeps the shared API host, with the
+region label when a region is set (`https://nb-eu-germany.api.norbix.ai`).
 
 Custom base URLs (`base_url_api=`, `base_url_hub=`, `NORBIX_API_URL`,
 `NORBIX_HUB_URL`) are **never rewritten** — custom base URLs are
@@ -426,6 +430,47 @@ norbix.account.create_project(
 
 With the combined client the same modules live under `client.hub`
 (`norbix.hub.regions.list()`, `norbix.hub.account.create_project(...)`).
+
+## Project host
+
+On the SDK-default API address (`https://api.norbix.ai`) every API call of a
+project goes to the project's own host:
+
+```text
+project_id="pr_5XvmrTA6JVggZdmEE5bGdm"  →  https://pr-022c4aca9f9e4df787ab0a20c83c44b6.api.norbix.ai
+```
+
+The host is worked out from the project id, with no extra call, at the time
+of each request — after `set_scope(project_id=...)` the host and the
+`norbix-project-id` header name the same project.
+
+What changes:
+
+- API calls (data, files, membership, login, notifications, payments, code,
+  logs) use `https://pr-<32 hex>.api.norbix.ai`, with no region label,
+  whatever the region setting is.
+- If your network filters outgoing traffic, allow `*.api.norbix.ai`.
+
+What does not change:
+
+- Hub calls stay on `https://hub.norbix.ai` (or `https://<region>.hub.norbix.ai`).
+- The `norbix-project-id` header is still sent, and `nb-region` too when a
+  region is set.
+- A custom base URL (`base_url_api=`, `NORBIX_API_URL`) is never rewritten,
+  also when it is `https://api.norbix.ai` written out.
+- A project id that is not a Norbix project id (for example `p1` in a test)
+  keeps the shared host.
+- The link from `social_sign_in_url(...)` stays on the shared API host: the
+  sign-in comes back there.
+
+The label is available as a function:
+
+```python
+from norbix_python import project_host_label
+
+project_host_label("pr_5XvmrTA6JVggZdmEE5bGdm")  # "pr-022c4aca9f9e4df787ab0a20c83c44b6"
+project_host_label("p1")                         # None — never raises
+```
 
 ## Response language (Accept-Language)
 
