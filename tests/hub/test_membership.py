@@ -16,6 +16,8 @@ def test_hub_membership_module_surface() -> None:
     assert callable(module.enable_membership_trigger)
     assert callable(module.get_membership_trigger)
     assert callable(module.get_membership_triggers)
+    assert callable(module.get_membership_trigger_event_values)
+    assert callable(module.get_membership_email_bindings)
     assert callable(module.save_membership_trigger)
     assert callable(module.create_role)
     assert callable(module.delete_role)
@@ -73,6 +75,14 @@ def test_hub_membership_get_membership_triggers_request_shape() -> None:
     assert transport.last_request is not None
     assert transport.last_request['method'] == 'GET'
     assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers'
+    assert transport.last_request['body'] == ''
+
+def test_hub_membership_get_membership_trigger_event_values_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.membership.get_membership_trigger_event_values()
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert urlparse(transport.last_request['url']).path == '/v3/membership/triggers/event-values'
     assert transport.last_request['body'] == ''
 
 def test_hub_membership_save_membership_trigger_request_shape() -> None:

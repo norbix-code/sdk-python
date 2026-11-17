@@ -74,6 +74,26 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
+    def get_membership_trigger_event_values(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/triggers/event-values
+
+        Lists every membership trigger event (``when``: OnRegistered, OnInvited, OnVerified,
+        OnUpdated, OnDeleted, OnBlocked, OnReactivated, OnUserCreated) and the values it carries
+        by name, e.g. "Registered user -> e-mail address" = key ``User.Email``, resolver ``New``.
+        Bind a template token to one as ``{key: <token>, value: <key>, resolver: <resolver>}`` —
+        never resolver ``Custom`` (that sends the key as fixed text). Read-only.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/triggers/event-values",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_execution_identities(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/membership/execution-identities
 
@@ -554,10 +574,36 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
+    def get_membership_email_bindings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/settings/email-bindings
+
+        For one membership e-mail (``setting``: Welcome, Verification, PasswordReset, Invitation,
+        Deactivation, LoginAlert) lists every token of its template: Auto (Norbix fills it),
+        NeedsValue (a binding must give it a value) or NotAvailable (never filled; ``reason``).
+        ``templateId`` = the template about to be chosen; omit it for the one chosen now.
+        Values are saved with ``update_authorization_settings(bindings=[...])``; the save is
+        refused with CM-ERRORS-MEMBERSHIP-060 while a token has no value.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/membership/settings/email-bindings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def update_authorization_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/membership/authorization
 
         Saves the registration, invitation, verification and password settings.
+        The welcome e-mail is ``setting="RegistrationTemplate"`` with ``welcomeEmailTemplate``
+        (``tmpl_…``; empty = no welcome e-mail in this environment). ``bindings`` gives the
+        tokens Norbix does not fill a value (``{token, kind: Fixed|Field|Empty, value,
+        translations}``, see ``get_membership_email_bindings``); alone it goes with
+        ``setting="EmailBindings"`` and ``bindingsEvent``.
         """
         return self._transport.send(
             target="hub",
@@ -744,6 +790,26 @@ class AsyncMembershipModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/membership/triggers",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_membership_trigger_event_values(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/triggers/event-values
+
+        Lists every membership trigger event (``when``: OnRegistered, OnInvited, OnVerified,
+        OnUpdated, OnDeleted, OnBlocked, OnReactivated, OnUserCreated) and the values it carries
+        by name, e.g. "Registered user -> e-mail address" = key ``User.Email``, resolver ``New``.
+        Bind a template token to one as ``{key: <token>, value: <key>, resolver: <resolver>}`` —
+        never resolver ``Custom`` (that sends the key as fixed text). Read-only.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/triggers/event-values",
             method="GET",
             path_params={},
             request=request,
@@ -1232,10 +1298,36 @@ class AsyncMembershipModule:
             bearer_token=bearer_token,
         )
 
+    async def get_membership_email_bindings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/settings/email-bindings
+
+        For one membership e-mail (``setting``: Welcome, Verification, PasswordReset, Invitation,
+        Deactivation, LoginAlert) lists every token of its template: Auto (Norbix fills it),
+        NeedsValue (a binding must give it a value) or NotAvailable (never filled; ``reason``).
+        ``templateId`` = the template about to be chosen; omit it for the one chosen now.
+        Values are saved with ``update_authorization_settings(bindings=[...])``; the save is
+        refused with CM-ERRORS-MEMBERSHIP-060 while a token has no value.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/membership/settings/email-bindings",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def update_authorization_settings(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PUT /{version}/membership/authorization
 
         Saves the registration, invitation, verification and password settings.
+        The welcome e-mail is ``setting="RegistrationTemplate"`` with ``welcomeEmailTemplate``
+        (``tmpl_…``; empty = no welcome e-mail in this environment). ``bindings`` gives the
+        tokens Norbix does not fill a value (``{token, kind: Fixed|Field|Empty, value,
+        translations}``, see ``get_membership_email_bindings``); alone it goes with
+        ``setting="EmailBindings"`` and ``bindingsEvent``.
         """
         return await self._transport.send(
             target="hub",

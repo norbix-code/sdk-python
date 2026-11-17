@@ -105,6 +105,9 @@ CASES: list[Case] = [
      lambda m: m.get_authorization_settings()),
     ("update_authorization_settings", "PUT", "/v2/membership/authorization", None, AUTHZ,
      lambda m: m.update_authorization_settings(**AUTHZ)),
+    ("get_membership_email_bindings", "GET", "/v2/membership/settings/email-bindings",
+     {"setting": ["Welcome"], "templateId": ["tmpl_1"]}, None,
+     lambda m: m.get_membership_email_bindings(setting="Welcome", templateId="tmpl_1")),
     ("update_password_complexity", "PUT", "/v2/membership/authorization/password-complexity", None, COMPLEXITY,
      lambda m: m.update_password_complexity(**COMPLEXITY)),
     ("get_passkey_settings", "GET", "/v2/membership/passkey/settings", None, None, lambda m: m.get_passkey_settings()),
@@ -146,9 +149,9 @@ def _assert_request(
 
 
 def test_hub_membership_route_count() -> None:
-    # Users list 7 + user edit 7 + roles 5 + policies 5 + settings 7 + API keys 3.
+    # Users list 7 + user edit 7 + roles 5 + policies 5 + settings 8 + API keys 3.
     # (Membership is always on, so settings has no enable or disable route.)
-    assert len(CASES) == 7 + 7 + 5 + 5 + 7 + 3
+    assert len(CASES) == 7 + 7 + 5 + 5 + 8 + 3
 
 
 @pytest.mark.parametrize("name, verb, path, query, body, call", CASES, ids=IDS)

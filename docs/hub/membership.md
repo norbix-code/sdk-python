@@ -9,6 +9,7 @@ Access with `norbix.hub.membership`.
 | `enable_membership_trigger` | `PATCH` | `/{version}/membership/triggers/{triggerId}/enable` | `project` |
 | `get_membership_trigger` | `GET` | `/{version}/membership/triggers/{id}` | `project` |
 | `get_membership_triggers` | `GET` | `/{version}/membership/triggers` | `project` |
+| `get_membership_trigger_event_values` | `GET` | `/{version}/membership/triggers/event-values` | `project` |
 | `get_execution_identities` | `GET` | `/{version}/membership/execution-identities` | `project` |
 | `create_execution_identity` | `POST` | `/{version}/membership/execution-identities` | `project` |
 | `save_membership_trigger` | `POST` | `/{version}/membership/triggers` | `project` |
@@ -44,6 +45,7 @@ Access with `norbix.hub.membership`.
 | `repair_login_project_ids` | `POST` | `/{version}/membership/users/repair-logins` | `project` |
 | `get_authentication_settings` | `GET` | `/{version}/membership/authentication` | `project` |
 | `get_authorization_settings` | `GET` | `/{version}/membership/authorization` | `project` |
+| `get_membership_email_bindings` | `GET` | `/{version}/membership/settings/email-bindings` | `project` |
 | `update_authorization_settings` | `PUT` | `/{version}/membership/authorization` | `project` |
 | `list_service_user_api_keys` | `GET` | `/{version}/membership/users/{Id}/api-keys` | `project` |
 | `issue_service_user_api_key` | `POST` | `/{version}/membership/users/{Id}/api-keys` | `project` |
