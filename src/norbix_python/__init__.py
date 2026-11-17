@@ -13,6 +13,7 @@ from .errors import (
 from .functions import FunctionEvent, NorbixFunctionEventError, parse_function_event
 from .models import AuthLoginResult, DatabaseFindResult, ReferenceDisplay
 from .pkce import PkcePair, create_pkce_pair, pkce_challenge
+from .project_host import project_host_label
 from .webhooks import (
     AsyncNorbixWebhookReceiver,
     NorbixWebhookReceiver,
@@ -44,6 +45,7 @@ __all__ = [
     "WorkflowRun",
     "WorkflowRunTimeoutError",
     "parse_function_event",
+    "project_host_label",
     "step_output",
 ]
 __version__ = "1.1.1"
