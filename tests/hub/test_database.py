@@ -336,6 +336,7 @@ def test_hub_database_new_endpoints_surface() -> None:
     client, _ = make_client()
     module = client.hub.database
     assert callable(module.get_allowed_flex_tiers)
+    assert callable(module.get_network_addresses)
     assert callable(module.test_database_integration)
     assert callable(module.reveal_managed_flex_connection_string)
 
@@ -346,6 +347,15 @@ def test_hub_database_get_allowed_flex_tiers_request_shape() -> None:
     assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+
+def test_hub_database_get_network_addresses_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.database.get_network_addresses(regionCode="nb-eu-germany")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert '/database/network-addresses' in transport.last_request['url']
+    assert 'regionCode=nb-eu-germany' in transport.last_request['url']
 
 
 def test_hub_database_test_database_integration_request_shape() -> None:

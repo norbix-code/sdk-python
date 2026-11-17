@@ -138,17 +138,21 @@ norbix.hub.account.change_managed_service_bundle(bundle="Growth", billingPeriod=
 
 `get_flex_clusters()` lists the account's Norbix-managed Atlas clusters. Each
 cluster has `id`, `displayName`, `atlasClusterName`, `norbixRegionCode`,
-`tierCode` (`FLEX` or `M10`), `status` (`Empty`, `Provisioning`, `Active`,
+`tierCode` (`FLEX`, `M10` … `M40`), `nextTierCode` (the next upgrade step,
+empty when there is none), `topTierCode` (the highest tier the plan allows), `status` (`Empty`, `Provisioning`, `Active`,
 `Failed`), its `databases` (project, environment, integration), its `usage`
 and `nearLimits`. `canCreateNew` says whether the account can add a cluster;
 when it cannot, `cannotCreateReason` is `TrialOneCluster` or
-`ClusterLimitReached`. `upgrade_flex_cluster(id, tierCode="M10")` queues the
-upgrade of one cluster to M10.
+`ClusterLimitReached`. `upgrade_flex_cluster(id, tierCode=...)` queues the
+upgrade of one cluster by one step on the ladder FLEX → M10 → M20 → M30 → M40,
+within the plan (trial: FLEX only · Starter: up to M20 · Growth: up to M30 ·
+Scale: up to M40); send the cluster's `nextTierCode`.
 
 ```python
 answer = norbix.hub.account.get_flex_clusters()
 cluster = answer["clusters"][0]
-norbix.hub.account.upgrade_flex_cluster(cluster["id"], tierCode="M10")
+if cluster.get("nextTierCode"):
+    norbix.hub.account.upgrade_flex_cluster(cluster["id"], tierCode=cluster["nextTierCode"])
 ```
 
 To put a new managed database on a cluster that already exists, send its id

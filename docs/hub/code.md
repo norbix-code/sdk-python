@@ -128,7 +128,7 @@ sync and the async client. Paging fields are `pageSize`, `startingAfter`,
 | `validate_code_workflow` | `POST` | `/{version}/code/workflows/validate` | `project` | JSON body: `definition`; answers `isValid`, `errors`, `warnings` |
 | `get_code_workflow_schema` | `GET` | `/{version}/code/workflows/schema` | `project` | — |
 | `enable_code_workflows` | `PUT` | `/{version}/code/workflows/enable` | `project` | — (the beta switch) |
-| `disable_code_workflows` | `PUT` | `/{version}/code/workflows/disable` | `project` | — (the beta switch) |
+| `disable_code_workflows` | `PUT` | `/{version}/code/workflows/disable` | `project` | — refused since 2026-11-17 (`CM-ERRORS-WORKFLOWS-045`): workflows cannot be switched off; use `disable_code_workflow` for one workflow |
 | `get_code_workflow_waiting_runs` | `GET` | `/{version}/code/workflows/runs` | `project` | query: `status?` (default `waiting`), `waitingKind?` (`approval` / `event` / `delay`), `assignee?` (`me` or `usr_…`), `workflowId?`, `key?`, paging |
 | `get_code_workflow_run` | `GET` | `/{version}/code/workflows/runs/{RunId}` | `project` | path: `run_id`; answers `{"run": {...}}` with `steps[]` |
 | `get_code_workflow_run_logs` | `GET` | `/{version}/code/workflows/runs/{RunId}/logs` | `project` | path: `run_id`; query: `stepId?`, `level?`, paging |

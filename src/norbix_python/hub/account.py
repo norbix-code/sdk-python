@@ -202,7 +202,10 @@ class AccountModule:
     def upgrade_flex_cluster(self, flex_cluster_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/flex-clusters/{flexClusterId}/upgrade
 
-        Queues the upgrade of a cluster to a bigger tier. Send ``tierCode="M10"``.
+        Queues the upgrade of a cluster by one step on the ladder FLEX → M10 → M20 →
+        M30 → M40, within the plan (trial: FLEX only, Starter: up to M20, Growth: up
+        to M30, Scale: up to M40). Send the cluster's ``nextTierCode`` (from
+        ``get_flex_clusters``) as ``tierCode``.
         """
         return self._transport.send(
             target="hub",
@@ -1222,7 +1225,10 @@ class AsyncAccountModule:
     async def upgrade_flex_cluster(self, flex_cluster_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/flex-clusters/{flexClusterId}/upgrade
 
-        Queues the upgrade of a cluster to a bigger tier. Send ``tierCode="M10"``.
+        Queues the upgrade of a cluster by one step on the ladder FLEX → M10 → M20 →
+        M30 → M40, within the plan (trial: FLEX only, Starter: up to M20, Growth: up
+        to M30, Scale: up to M40). Send the cluster's ``nextTierCode`` (from
+        ``get_flex_clusters``) as ``tierCode``.
         """
         return await self._transport.send(
             target="hub",
