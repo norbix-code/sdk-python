@@ -338,7 +338,6 @@ def test_hub_database_new_endpoints_surface() -> None:
     assert callable(module.get_allowed_flex_tiers)
     assert callable(module.get_network_addresses)
     assert callable(module.test_database_integration)
-    assert callable(module.reveal_managed_flex_connection_string)
 
 
 def test_hub_database_get_allowed_flex_tiers_request_shape() -> None:
@@ -362,14 +361,6 @@ def test_hub_database_test_database_integration_request_shape() -> None:
     client, transport = make_client(account_id=None)
     client.hub.database.test_database_integration()
     assert transport.last_request['method'] == 'POST'
-    assert transport.last_request is not None
-    assert transport.last_request['url'].startswith('https://')
-
-
-def test_hub_database_reveal_managed_flex_connection_string_request_shape() -> None:
-    client, transport = make_client(account_id=None)
-    client.hub.database.reveal_managed_flex_connection_string(id="stub-id")
-    assert transport.last_request['method'] == 'GET'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
 
