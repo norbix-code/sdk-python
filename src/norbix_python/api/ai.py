@@ -1,8 +1,39 @@
 from __future__ import annotations
 
+import json
+from collections.abc import AsyncIterator, Iterator
 from typing import Any
 
-from ..transport import AsyncTransport, Transport
+from ..errors import NorbixError
+from ..transport import AsyncTransport, SseFrame, Transport
+
+
+def ai_chat_channel(project_id: str, auth_id: str) -> str:
+    """The end-user AI chat channel of one project user, ``ai-chat:{projectId}:{authId}``.
+
+    TypeScript twin: ``aiChatChannel``.
+    """
+    return f"ai-chat:{project_id}:{auth_id}"
+
+
+def _chat_query(project_id: str, auth_id: str) -> dict[str, Any]:
+    if not project_id:
+        raise NorbixError(message="ai_chat: the client has no project id.", code="NORBIX_ERROR")
+    if not auth_id:
+        raise NorbixError(message="ai_chat: auth_id is required.", code="NORBIX_ERROR")
+    return {"channels": ai_chat_channel(project_id, auth_id)}
+
+
+def _chat_envelope(frame: SseFrame) -> dict[str, Any] | None:
+    """The realtime envelope of a frame, or None for a heartbeat / notice."""
+    try:
+        envelope = json.loads(frame.data)
+    except ValueError:
+        return None
+    if not isinstance(envelope, dict) or not isinstance(envelope.get("eventName"), str):
+        return None
+    envelope["frameId"] = frame.id
+    return envelope
 
 
 class AiModule:
@@ -227,6 +258,61 @@ class AiModule:
             bearer_token=bearer_token,
         )
 
+    def get_end_user_ai_tools(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/tools
+
+        Lists the AI tools a signed-in project user's chat may call (own-scope
+        tools only): name, description, toolsets, confirmation, parameters.
+        TypeScript twin: ``getEndUserAiTools``.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/ai/tools",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def invoke_end_user_ai_tool(self, tool_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/tools/{ToolName}
+
+        Calls one end-user AI tool by name with ``argumentsJson`` (the arguments as a
+        JSON string) and returns its result text.
+        TypeScript twin: ``invokeEndUserAiTool``.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/ai/tools/{ToolName}",
+            method="POST",
+            path_params={"ToolName": tool_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def ai_chat(self, auth_id: str, *, bearer_token: str | None = None) -> Iterator[dict[str, Any]]:
+        """Stream the end-user AI chat (TypeScript twin: ``norbix.aiChat``).
+
+        Opens ``GET /event-stream?channels=ai-chat:{projectId}:{authId}`` on the
+        API host with the client's token and project, and yields each realtime
+        envelope (``eventName`` ``ai.chat.turn.started`` / ``.token`` / ``.tool``
+        / ``.completed`` / ``.failed`` or ``ai.chat.session.*``; ``payload``
+        holds the ``turnId`` and, for a token, the ``text``; ``frameId`` is the
+        SSE id). Heartbeats and notices are skipped. Stop iterating to close
+        the stream. Another user's channel is refused with HTTP 403 and code
+        ``AiChatChannelRefused`` before the stream starts; that error is raised
+        and never retried.
+        """
+        query = _chat_query(self._transport._cfg.project_id, auth_id)
+        for frame in self._transport.stream(target="api", path="/event-stream", query=query, bearer_token=bearer_token):
+            envelope = _chat_envelope(frame)
+            if envelope is not None:
+                yield envelope
+
 
 class AsyncAiModule:
     def __init__(self, transport: AsyncTransport) -> None:
@@ -439,3 +525,58 @@ class AsyncAiModule:
             timeout=timeout,
             bearer_token=bearer_token,
         )
+
+    async def get_end_user_ai_tools(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/ai/tools
+
+        Lists the AI tools a signed-in project user's chat may call (own-scope
+        tools only): name, description, toolsets, confirmation, parameters.
+        TypeScript twin: ``getEndUserAiTools``.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/ai/tools",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def invoke_end_user_ai_tool(self, tool_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/tools/{ToolName}
+
+        Calls one end-user AI tool by name with ``argumentsJson`` (the arguments as a
+        JSON string) and returns its result text.
+        TypeScript twin: ``invokeEndUserAiTool``.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/ai/tools/{ToolName}",
+            method="POST",
+            path_params={"ToolName": tool_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def ai_chat(self, auth_id: str, *, bearer_token: str | None = None) -> AsyncIterator[dict[str, Any]]:
+        """Async twin of :meth:`AiModule.ai_chat`. Stream the end-user AI chat (TypeScript twin: ``norbix.aiChat``).
+
+        Opens ``GET /event-stream?channels=ai-chat:{projectId}:{authId}`` on the
+        API host with the client's token and project, and yields each realtime
+        envelope (``eventName`` ``ai.chat.turn.started`` / ``.token`` / ``.tool``
+        / ``.completed`` / ``.failed`` or ``ai.chat.session.*``; ``payload``
+        holds the ``turnId`` and, for a token, the ``text``; ``frameId`` is the
+        SSE id). Heartbeats and notices are skipped. Stop iterating to close
+        the stream. Another user's channel is refused with HTTP 403 and code
+        ``AiChatChannelRefused`` before the stream starts; that error is raised
+        and never retried.
+        """
+        query = _chat_query(self._transport._cfg.project_id, auth_id)
+        async for frame in self._transport.stream(target="api", path="/event-stream", query=query, bearer_token=bearer_token):
+            envelope = _chat_envelope(frame)
+            if envelope is not None:
+                yield envelope

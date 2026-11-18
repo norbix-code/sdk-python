@@ -2,6 +2,12 @@
 
 Access with `norbix.hub.ai`.
 
+The LLM and MCP integration routes are covered by
+`tests/hub/test_ai_cluster_routes.py` (host, verb, exact path, query and body,
+sync and async). The MCP routes are deprecated: the gateway still serves them,
+but `save_mcp_integration` is always refused (`CM-ERRORS-MARKETPLACE-030`) and
+stores nothing — MCP servers are connected in the Code Marketplace now.
+
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
 | `delete_llm_integration` | `DELETE` | `/{version}/ai/integrations/llms/{Id}` | `project` |
