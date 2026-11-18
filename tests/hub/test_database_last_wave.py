@@ -68,7 +68,6 @@ HUB_DATABASE_ROUTES: list[tuple[str, str]] = [
     ("GET", "/{version}/database/network-addresses"),
     ("POST", "/{version}/database/integrations/test"),
     ("DELETE", "/{version}/database/integrations/{Id}"),
-    ("GET", "/{version}/database/integrations/{Id}/connection-string"),
     ("PUT", "/{version}/database/integrations/{Id}/default"),
     ("PUT", "/{version}/database/integrations/{Id}/disable"),
     ("PUT", "/{version}/database/integrations/{Id}/enable"),

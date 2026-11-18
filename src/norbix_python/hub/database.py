@@ -639,19 +639,6 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
-    def reveal_managed_flex_connection_string(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/integrations/{Id}/connection-string"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/database/integrations/{Id}/connection-string",
-            method="GET",
-            path_params={"Id": id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def get_database_taxonomy_tree(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/database/taxonomies/tree"""
         return self._transport.send(
@@ -1612,19 +1599,6 @@ class AsyncDatabaseModule:
             path="/{version}/database/integrations/test",
             method="POST",
             path_params={},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def reveal_managed_flex_connection_string(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/database/integrations/{Id}/connection-string"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/database/integrations/{Id}/connection-string",
-            method="GET",
-            path_params={"Id": id},
             request=request,
             scope="project",
             timeout=timeout,

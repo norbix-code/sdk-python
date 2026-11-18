@@ -52,7 +52,6 @@ Access with `norbix.hub.database`.
 | `get_allowed_flex_tiers` | `GET` | `/{version}/database/integrations/flex-tiers` | `project` |
 | `get_network_addresses` | `GET` | `/{version}/database/network-addresses` | `project` |
 | `test_database_integration` | `POST` | `/{version}/database/integrations/test` | `project` |
-| `reveal_managed_flex_connection_string` | `GET` | `/{version}/database/integrations/{Id}/connection-string` | `project` |
 | `get_database_taxonomy_tree` | `GET` | `/{version}/database/taxonomies/tree` | `project` |
 | `get_database_merged_term_tree` | `GET` | `/{version}/database/taxonomies/{TaxonomyName}/merged-tree` | `project` |
 | `get_database_taxonomy_term_tree` | `GET` | `/{version}/database/taxonomies/{TaxonomyName}/terms/tree` | `project` |
