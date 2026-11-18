@@ -28,6 +28,8 @@ Sync and async clients behave the same. Tests:
 | `upgrade_flex_cluster` | `POST` | `/{version}/account/flex-clusters/{flexClusterId}/upgrade` | `project` |
 | `check_bundle_discount` | `POST` | `/{version}/account/stripe/discount/check` | `project` |
 | `apply_bundle_discount` | `POST` | `/{version}/account/stripe/discount` | `project` |
+| `get_trial_availability` | `GET` | `/{version}/account/trial-availability` | `project` |
+| `join_trial_waitlist` | `POST` | `/{version}/account/trial-waitlist` | `project` |
 | `create_team_member_from_invitation` | `POST` | `/{version}/account/team/member` | `unauthenticated` |
 | `verify_account` | `GET` | `/{version}/account/verify` | `unauthenticated` |
 | `delete_notifications_group` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/group` | `project` |
@@ -197,6 +199,60 @@ try:
 except ValidationError as err:
     if err.error_code == "CM-ERRORS-ACCOUNT-027":
         print("Code refused:", err.context.get("reason"))
+```
+
+### Trial limits
+
+Before opening a checkout, ask whether a free Managed Service trial can start
+in a region now. Sync and async clients have the same methods. Tests:
+`tests/hub/test_account_trial_limits.py`.
+
+- `get_trial_availability(region=...)` answers `limitsOn`, `region`,
+  `trialsOpen`, `waitlistOpen`, `onWaitlist` and `refusal`; `region` is
+  optional and goes in the query string.
+  - `limitsOn` false: this installation has no trial limits; start the trial
+    as before.
+  - `trialsOpen` false: the region's trials are full. Offer to buy now
+    without a trial (checkout with `withoutTrial=True`), or to join the
+    waiting list when `waitlistOpen` is true.
+  - `onWaitlist`: the owner email is already on the list.
+  - `refusal`: why this account's trial was refused after checkout
+    (`CardAlreadyHadTrial`), or empty.
+- `join_trial_waitlist(region=..., consent=True, consentVersion=...)` puts the
+  account owner's email on the trial waiting list for a region. `consent`
+  must be true; `consentVersion` names the consent text shown. When a slot
+  frees, Norbix emails an invitation link that is valid for a few days. It
+  answers `status` (`added`, `alreadyListed` or `alreadyCustomer`; an email
+  that already had a trial or pays is never added) and a `message` you can
+  show as is.
+- `create_stripe_checkout_session(...)` also takes `region`, `withoutTrial`
+  and `trialInvite`. A trial checkout in a full region fails with
+  `CM-ERRORS-ACCOUNT-040`. The invitation token from the waiting-list email
+  goes in `trialInvite` and starts the trial once even when the region is
+  full; an expired invitation, or someone else's, fails with
+  `CM-ERRORS-ACCOUNT-042`.
+
+`join_trial_waitlist` errors: `CM-ERRORS-ACCOUNT-044` when the list is
+switched off, `CM-ERRORS-ACCOUNT-043` for an unknown region, and a validation
+error when `consent` is not true.
+
+The gateway route `POST /account/trial-waitlist/intake` gets no method: only
+the Norbix website's server calls it, with a shared key header.
+
+```python
+from norbix_python import ValidationError
+
+seen = norbix.hub.account.get_trial_availability(region="nb-eu-germany")
+if not seen["limitsOn"] or seen["trialsOpen"]:
+    norbix.hub.account.create_stripe_checkout_session(
+        subscriptionType="ManagedService", bundle="Starter",
+        billingPeriod="Monthly", region="nb-eu-germany",
+    )
+elif seen["waitlistOpen"] and not seen["onWaitlist"]:
+    joined = norbix.hub.account.join_trial_waitlist(
+        region="nb-eu-germany", consent=True, consentVersion="2026-11"
+    )
+    print(joined["message"])
 ```
 
 ## The developer MCP endpoint
