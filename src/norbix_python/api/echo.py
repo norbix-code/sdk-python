@@ -17,7 +17,7 @@ class EchoModule:
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -35,7 +35,7 @@ class AsyncEchoModule:
             method="GET",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )

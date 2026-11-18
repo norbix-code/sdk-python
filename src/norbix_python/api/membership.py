@@ -56,7 +56,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -69,7 +69,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -251,7 +251,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -264,7 +264,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -277,7 +277,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -290,7 +290,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -303,7 +303,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -316,7 +316,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -329,7 +329,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -342,7 +342,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -394,7 +394,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -407,7 +407,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -420,7 +420,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -433,7 +433,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -539,7 +539,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -552,7 +552,7 @@ class MembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -913,7 +913,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -926,7 +926,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1108,7 +1108,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1121,7 +1121,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1134,7 +1134,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1147,7 +1147,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1160,7 +1160,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1173,7 +1173,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1186,7 +1186,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1199,7 +1199,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1251,7 +1251,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1264,7 +1264,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1277,7 +1277,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1290,7 +1290,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1396,7 +1396,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
@@ -1409,7 +1409,7 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
-            scope="project",
+            scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
         )
