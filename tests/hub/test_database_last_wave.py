@@ -76,6 +76,7 @@ HUB_DATABASE_ROUTES: list[tuple[str, str]] = [
     ("GET", "/{version}/database/schemas"),
     ("POST", "/{version}/database/schemas"),
     ("POST", "/{version}/database/schemas/apply-bundle"),
+    ("POST", "/{version}/database/schemas/end-user-own-records"),
     ("GET", "/{version}/database/schemas/triggers"),
     ("POST", "/{version}/database/schemas/triggers"),
     ("GET", "/{version}/database/schemas/triggers/{id}"),
