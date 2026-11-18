@@ -394,9 +394,9 @@ project id (a test id such as `p1`) keeps the shared API host, with the
 region label when a region is set (`https://nb-eu-germany.api.norbix.ai`).
 
 Custom base URLs (`base_url_api=`, `base_url_hub=`, `NORBIX_API_URL`,
-`NORBIX_HUB_URL`) are **never rewritten** — custom base URLs are
-unaffected; the `nb-region` header is still sent when a
-region is configured.
+`NORBIX_HUB_URL`) **never get a region label**; the `nb-region` header is
+still sent when a region is configured. A custom Hub URL is used as given; for
+a custom API URL see [Project host](#project-host).
 
 ### Managing regions (Hub)
 
@@ -433,8 +433,8 @@ With the combined client the same modules live under `client.hub`
 
 ## Project host
 
-On the SDK-default API address (`https://api.norbix.ai`) every API call of a
-project goes to the project's own host:
+Every API call of a project goes to the project's own host wherever the
+address serves one:
 
 ```text
 project_id="pr_5XvmrTA6JVggZdmEE5bGdm"  →  https://pr-022c4aca9f9e4df787ab0a20c83c44b6.api.norbix.ai
@@ -444,32 +444,48 @@ The host is worked out from the project id, with no extra call, at the time
 of each request — after `set_scope(project_id=...)` the host and the
 `norbix-project-id` header name the same project.
 
-What changes:
+Which address a project's API calls use, from the API base URL the client has
+(the SDK default, `base_url_api=` or `NORBIX_API_URL`):
+
+| base URL | calls go to |
+| --- | --- |
+| none (the default), `https://api.norbix.ai`, `https://nb-eu-germany.api.norbix.ai` | `https://pr-<hex>.api.norbix.ai` |
+| a template, `https://{projectHostLabel}.api.example.com` | `https://pr-<hex>.api.example.com` |
+| a project's host already, `https://pr-<hex>.api.example.com` | the same, with the current project's label |
+| anything else (`https://api.example.com`, staging, localhost, `http://`) | as given |
+
+An install on its own domain gives its template in `GET /v3/echo` →
+`apiUrlTemplate` when it serves project hosts; put that as `base_url_api=`
+(or `NORBIX_API_URL`). Without it the install's plain address is used as given.
 
 - API calls (data, files, membership, login, notifications, payments, code,
-  logs) use `https://pr-<32 hex>.api.norbix.ai`, with no region label,
-  whatever the region setting is.
-- If your network filters outgoing traffic, allow `*.api.norbix.ai`.
+  logs) on norbix.ai use `https://pr-<32 hex>.api.norbix.ai`, with no region
+  label, whatever the region setting is.
+- If your network filters outgoing traffic, allow `*.api.norbix.ai` (or
+  `*.api.<your domain>`).
 
 What does not change:
 
-- Hub calls stay on `https://hub.norbix.ai` (or `https://<region>.hub.norbix.ai`).
+- Hub calls stay on `https://hub.norbix.ai` (or `https://<region>.hub.norbix.ai`,
+  or your own Hub URL).
 - The `norbix-project-id` header is still sent, and `nb-region` too when a
   region is set.
-- A custom base URL (`base_url_api=`, `NORBIX_API_URL`) is never rewritten,
-  also when it is `https://api.norbix.ai` written out.
 - A project id that is not a Norbix project id (for example `p1` in a test)
-  keeps the shared host.
-- The link from `social_sign_in_url(...)` stays on the shared API host: the
-  sign-in comes back there.
+  keeps the shared host (a template loses its label: `https://api.example.com`).
+- The link from `social_sign_in_url(...)` stays on the shared API host (the
+  address without a project label): the sign-in comes back there.
 
-The label is available as a function:
+The label and the rule are available as functions:
 
 ```python
-from norbix_python import project_host_label
+from norbix_python import PROJECT_HOST_LABEL_PLACEHOLDER, project_api_base_url, project_host_label
 
 project_host_label("pr_5XvmrTA6JVggZdmEE5bGdm")  # "pr-022c4aca9f9e4df787ab0a20c83c44b6"
 project_host_label("p1")                         # None — never raises
+
+project_api_base_url("https://{projectHostLabel}.api.example.com", "pr_5XvmrTA6JVggZdmEE5bGdm")
+# ProjectApiBaseUrl(project='https://pr-022c….api.example.com', shared='https://api.example.com')
+PROJECT_HOST_LABEL_PLACEHOLDER                   # "{projectHostLabel}"
 ```
 
 ## Response language (Accept-Language)

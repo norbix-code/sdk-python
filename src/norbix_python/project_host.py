@@ -1,11 +1,16 @@
 """A project's own API host.
 
-Norbix serves every project on ``pr-<32 hex>.api.norbix.ai``. The label is the
-project id (``pr_`` + base62) written as the hex of the same GUID, so it is
-built here with no call. The gateway's side of this is ``ProjectId.HostLabel``.
+Norbix serves every project on ``pr-<32 hex>.api.norbix.ai`` (an install on
+its own domain on ``pr-<32 hex>.api.<domain>``). The label is the project id
+(``pr_`` + base62) written as the hex of the same GUID, so it is built here
+with no call. The gateway's side of this is ``ProjectId.HostLabel``.
 """
 
 from __future__ import annotations
+
+import re
+from typing import NamedTuple
+from urllib.parse import urlsplit
 
 _BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 _DIGITS = {ch: index for index, ch in enumerate(_BASE62)}
@@ -48,14 +53,82 @@ def project_host_label(project_id: object) -> str | None:
     return "pr-" + "".join(f"{b[i]:02x}" for i in _HEX_ORDER)
 
 
-def compose_project_url(project_id: object, default_url: str) -> str | None:
-    """The project's own base URL under a default one.
+PROJECT_HOST_LABEL_PLACEHOLDER = "{projectHostLabel}"
+"""The placeholder an install's address template carries (``/echo`` → ``apiUrlTemplate``)."""
 
-    ``https://api.norbix.ai`` + ``pr_5Xvm…`` → ``https://pr-022c….api.norbix.ai``.
-    ``None`` when the id is not a Norbix project id.
+_NORBIX_API_DOMAIN = "api.norbix.ai"
+_PROJECT_LABEL = re.compile(r"pr-[0-9a-f]{32}", re.IGNORECASE)
+
+
+class ProjectApiBaseUrl(NamedTuple):
+    """Where a project's API calls go (``project``); the address without a label (``shared``)."""
+
+    project: str
+    shared: str
+
+
+def project_api_base_url(base_url: str, project_id: object) -> ProjectApiBaseUrl:
+    """Where a project's API calls go, from the API base URL the client has.
+
+    devops docs/tasks/clients-project-host.md, round 2:
+
+    - a template with ``{projectHostLabel}`` (an install on its own domain that
+      serves project hosts) is filled with the project's label;
+    - an address that is already a project's host (``https://pr-<hex>.…``) gets
+      the current project's label, so host and ``norbix-project-id`` always
+      name the same project;
+    - a norbix.ai API address — ``https://api.norbix.ai`` or
+      ``https://<region>.api.norbix.ai``, built in or written out — becomes the
+      project's own host ``https://pr-<hex>.api.norbix.ai`` (its DNS record
+      follows the project's region);
+    - any other address is used as given.
+
+    ``shared`` is the same address without a project label (the social sign-in
+    link is built on it). With a project id that is not a Norbix id,
+    ``project`` is ``shared``. Scheme, port and path are kept; no trailing
+    slash is added. Never raises.
     """
     label = project_host_label(project_id)
-    if label is None:
-        return None
-    scheme, _, host = default_url.partition("://")
-    return f"{scheme}://{label}.{host}"
+
+    if PROJECT_HOST_LABEL_PLACEHOLDER in base_url:
+        shared = base_url.replace(f"{PROJECT_HOST_LABEL_PLACEHOLDER}.", "")
+        project = base_url.replace(PROJECT_HOST_LABEL_PLACEHOLDER, label) if label else shared
+        return ProjectApiBaseUrl(project, shared)
+
+    try:
+        parts = urlsplit(base_url)
+        hostname = parts.hostname
+    except ValueError:
+        return ProjectApiBaseUrl(base_url, base_url)
+    if not hostname:
+        return ProjectApiBaseUrl(base_url, base_url)
+    labels = hostname.lower().split(".")
+
+    if len(labels) > 1 and _PROJECT_LABEL.fullmatch(labels[0]):
+        shared = _with_host(base_url, ".".join(labels[1:]))
+        project = _with_host(base_url, ".".join([label, *labels[1:]])) if label else shared
+        return ProjectApiBaseUrl(project, shared)
+
+    host = ".".join(labels)
+    is_norbix_api = host == _NORBIX_API_DOMAIN or (
+        len(labels) == 4 and host.endswith(f".{_NORBIX_API_DOMAIN}")
+    )
+    if is_norbix_api and parts.scheme.lower() == "https":
+        project = _with_host(base_url, f"{label}.{_NORBIX_API_DOMAIN}") if label else base_url
+        return ProjectApiBaseUrl(project, base_url)
+
+    return ProjectApiBaseUrl(base_url, base_url)
+
+
+def _with_host(base_url: str, hostname: str) -> str:
+    """``base_url`` with another host name; scheme, user info, port, path and query are kept."""
+    scheme, sep, rest = base_url.partition("://")
+    authority_end = len(rest)
+    for ch in "/?#":
+        index = rest.find(ch)
+        if index != -1:
+            authority_end = min(authority_end, index)
+    authority, tail = rest[:authority_end], rest[authority_end:]
+    userinfo, at, host_port = authority.rpartition("@")
+    _, colon, port = host_port.partition(":")
+    return f"{scheme}{sep}{userinfo}{at}{hostname}{colon}{port}{tail}"

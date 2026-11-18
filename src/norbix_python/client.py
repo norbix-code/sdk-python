@@ -21,7 +21,8 @@ def _compose_regional_url(default_url: str, region: str | None) -> str:
 
     e.g. ("https://api.norbix.ai", "nb-eu-germany") →
     "https://nb-eu-germany.api.norbix.ai". Only ever applied to the SDK
-    defaults — user-supplied base URLs are never rewritten.
+    defaults — user-supplied base URLs never get a region label (API calls
+    still follow the project host rule, see ``project_api_base_url``).
     """
     if not region:
         return default_url
@@ -68,14 +69,13 @@ def _build_config(
     resolved_hub_version = hub_version or os.getenv("NORBIX_HUB_VERSION") or DEFAULT_VERSION
     # Region: explicit setting → NORBIX_REGION env var → unset (no header).
     resolved_region = region or os.getenv("NORBIX_REGION") or None
-    # The project host replaces only the built-in address: one the caller wrote
-    # (option or NORBIX_API_URL) is never rewritten, also when it is the same.
-    base_url_api_is_builtin = not (base_url_api or os.getenv("NORBIX_API_URL"))
     base_url_api_is_default = resolved_base_url_api == DEFAULT_BASE_URL_API
     base_url_hub_is_default = resolved_base_url_hub == DEFAULT_BASE_URL_HUB
     if resolved_region:
         # Regional base URL auto-compose applies only to the SDK-default
-        # base URLs; user-supplied base URLs are never rewritten.
+        # base URLs; user-supplied base URLs never get a region label. API
+        # calls then go to the project host (``project_api_base_url``) on any
+        # address that serves one, user-supplied or not.
         if base_url_api_is_default:
             resolved_base_url_api = _compose_regional_url(DEFAULT_BASE_URL_API, resolved_region)
         if base_url_hub_is_default:
@@ -97,7 +97,6 @@ def _build_config(
         language=language or os.getenv("NORBIX_LANGUAGE") or None,
         base_url_api_is_default=base_url_api_is_default,
         base_url_hub_is_default=base_url_hub_is_default,
-        builtin_base_url_api=DEFAULT_BASE_URL_API if base_url_api_is_builtin else None,
         default_headers=default_headers or {},
     )
 
@@ -150,7 +149,8 @@ class _AuthMixin:
         Pass None to clear the region (no header is sent). SDK-default base
         URLs are recomposed (e.g. https://nb-eu-germany.hub.norbix.ai; API
         calls of a Norbix project id stay on the project's own host, which
-        has no region label); user-supplied base URLs are never rewritten.
+        has no region label); user-supplied base URLs never get a region
+        label.
         """
         cfg = self._transport._cfg
         cfg.region = region or None
@@ -446,7 +446,7 @@ class AsyncNorbix:
         """Switch the Norbix region for subsequent requests (nb-region header).
 
         Pass None to clear the region (no header is sent). SDK-default base
-        URLs are recomposed; user-supplied base URLs are never rewritten.
+        URLs are recomposed; user-supplied base URLs never get a region label.
         """
         cfg = self._transport._cfg
         cfg.region = region or None

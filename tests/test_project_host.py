@@ -6,11 +6,14 @@ import httpx
 import pytest
 
 from norbix_python import (
+    PROJECT_HOST_LABEL_PLACEHOLDER,
     AsyncNorbix,
     LoginCredentials,
     Norbix,
     NorbixApi,
     NorbixHub,
+    ProjectApiBaseUrl,
+    project_api_base_url,
     project_host_label,
 )
 
@@ -256,10 +259,10 @@ def test_the_social_sign_in_link_uses_the_regional_shared_host() -> None:
     assert url.startswith("https://nb-eu-germany.api.norbix.ai/")
 
 
-# -- a custom base URL is never rewritten ------------------------------------
+# -- another address is used as given ----------------------------------------
 
 
-def test_base_url_option_is_never_rewritten() -> None:
+def test_a_staging_base_url_option_is_used_as_given() -> None:
     client, transport = _client(
         region="nb-eu-germany",
         base_url_api="https://api.norbix.io",
@@ -282,7 +285,7 @@ def test_base_url_option_is_never_rewritten() -> None:
     assert client.api.membership.social_sign_in_url("google").startswith("https://api.norbix.io/")
 
 
-def test_norbix_api_url_is_never_rewritten(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_a_staging_norbix_api_url_is_used_as_given(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("NORBIX_API_URL", "https://api.norbix.io")
     client, transport = _client()
     client.api.echo.echo()
@@ -290,21 +293,33 @@ def test_norbix_api_url_is_never_rewritten(monkeypatch: pytest.MonkeyPatch) -> N
     assert transport.last_request["url"].startswith("https://api.norbix.io/")
 
 
-def test_norbix_api_url_with_the_default_address_written_out_is_not_rewritten(
+def test_norbix_api_url_with_the_default_address_written_out_goes_to_the_project_host(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setenv("NORBIX_API_URL", "https://api.norbix.ai")
     client, transport = _client()
     client.api.echo.echo()
     assert transport.last_request is not None
-    assert transport.last_request["url"].startswith("https://api.norbix.ai/")
+    assert transport.last_request["url"].startswith(VIRGINIA_HOST)
 
 
-def test_base_url_option_with_the_default_address_written_out_is_not_rewritten() -> None:
+def test_base_url_option_with_the_default_address_written_out_goes_to_the_project_host() -> None:
     client, transport = _client(base_url_api="https://api.norbix.ai")
     client.api.echo.echo()
     assert transport.last_request is not None
-    assert transport.last_request["url"].startswith("https://api.norbix.ai/")
+    assert transport.last_request["url"].startswith(VIRGINIA_HOST)
+
+
+def test_a_regional_norbix_address_written_out_goes_to_the_project_host() -> None:
+    client, transport = _client(
+        project_id=GERMANY, base_url_api="https://nb-eu-germany.api.norbix.ai"
+    )
+    client.api.echo.echo()
+    assert transport.last_request is not None
+    assert transport.last_request["url"].startswith(GERMANY_HOST)
+    assert transport.last_request["headers"]["norbix-project-id"] == GERMANY
+    url = client.api.membership.social_sign_in_url("google")
+    assert url.startswith("https://nb-eu-germany.api.norbix.ai/v3/membership/auth/social/google?")
 
 
 def test_custom_api_url_with_the_default_hub_url_only_the_hub_follows_the_region() -> None:
@@ -314,6 +329,178 @@ def test_custom_api_url_with_the_default_hub_url_only_the_hub_follows_the_region
     assert transport.last_request["url"].startswith("http://localhost:5002/")
     client.hub.regions.list()
     assert transport.last_request["url"].startswith("https://nb-eu-germany.hub.norbix.ai/")
+
+
+# -- an install on its own domain --------------------------------------------
+
+TEMPLATE = "https://{projectHostLabel}.api.customer.com"
+CUSTOMER_VIRGINIA = "https://pr-022c4aca9f9e4df787ab0a20c83c44b6.api.customer.com"
+CUSTOMER_GERMANY = "https://pr-184336d00e2141c3be5138e8dcf52e81.api.customer.com"
+
+
+def test_the_placeholder_constant() -> None:
+    assert PROJECT_HOST_LABEL_PLACEHOLDER == "{projectHostLabel}"
+
+
+@pytest.mark.parametrize(
+    ("base_url", "project_id", "project", "shared"),
+    [
+        # norbix.ai, default or written out, with or without a region or a version path.
+        ("https://api.norbix.ai", VIRGINIA, VIRGINIA_HOST[:-1], "https://api.norbix.ai"),
+        (
+            "https://nb-eu-germany.api.norbix.ai/v3",
+            GERMANY,
+            GERMANY_HOST + "v3",
+            "https://nb-eu-germany.api.norbix.ai/v3",
+        ),
+        ("https://api.norbix.ai", "p1", "https://api.norbix.ai", "https://api.norbix.ai"),
+        # A template.
+        (TEMPLATE, VIRGINIA, CUSTOMER_VIRGINIA, "https://api.customer.com"),
+        (TEMPLATE, "p1", "https://api.customer.com", "https://api.customer.com"),
+        (
+            "http://{projectHostLabel}.api.local.norbix.test:8443/v3",
+            VIRGINIA,
+            "http://pr-022c4aca9f9e4df787ab0a20c83c44b6.api.local.norbix.test:8443/v3",
+            "http://api.local.norbix.test:8443/v3",
+        ),
+        # A pasted project host, any case.
+        (CUSTOMER_VIRGINIA, GERMANY, CUSTOMER_GERMANY, "https://api.customer.com"),
+        (
+            "https://PR-022C4ACA9F9E4DF787AB0A20C83C44B6.api.customer.com:8443/v3",
+            GERMANY,
+            "https://pr-184336d00e2141c3be5138e8dcf52e81.api.customer.com:8443/v3",
+            "https://api.customer.com:8443/v3",
+        ),
+        (CUSTOMER_VIRGINIA, "p1", "https://api.customer.com", "https://api.customer.com"),
+        # Used as given.
+        (
+            "https://api.customer.com",
+            VIRGINIA,
+            "https://api.customer.com",
+            "https://api.customer.com",
+        ),
+        ("https://api.norbix.io", VIRGINIA, "https://api.norbix.io", "https://api.norbix.io"),
+        ("http://localhost:5002", VIRGINIA, "http://localhost:5002", "http://localhost:5002"),
+        ("http://api.norbix.ai", VIRGINIA, "http://api.norbix.ai", "http://api.norbix.ai"),
+        (
+            "https://a.b.api.norbix.ai",
+            VIRGINIA,
+            "https://a.b.api.norbix.ai",
+            "https://a.b.api.norbix.ai",
+        ),
+        ("not a url", VIRGINIA, "not a url", "not a url"),
+        ("https://[::1]:bad", VIRGINIA, "https://[::1]:bad", "https://[::1]:bad"),
+    ],
+)
+def test_project_api_base_url(base_url: str, project_id: str, project: str, shared: str) -> None:
+    assert project_api_base_url(base_url, project_id) == ProjectApiBaseUrl(project, shared)
+
+
+def test_a_template_is_filled_and_follows_set_scope_hub_stays() -> None:
+    client, transport = _client(base_url_api=TEMPLATE, base_url_hub="https://hub.customer.com")
+
+    client.api.echo.echo()
+    assert transport.last_request is not None
+    assert transport.last_request["url"].startswith(CUSTOMER_VIRGINIA + "/")
+    assert transport.last_request["headers"]["norbix-project-id"] == VIRGINIA
+
+    client.set_scope(project_id=GERMANY)
+    client.api.echo.echo()
+    assert transport.last_request["url"].startswith(CUSTOMER_GERMANY + "/")
+    assert transport.last_request["headers"]["norbix-project-id"] == GERMANY
+
+    url = client.api.membership.social_sign_in_url("google")
+    assert url.startswith("https://api.customer.com/v3/membership/auth/social/google?")
+
+    client.hub.regions.list()
+    assert transport.last_request["url"].startswith("https://hub.customer.com/")
+
+
+def test_a_template_from_norbix_api_url_with_a_port(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("NORBIX_API_URL", "http://{projectHostLabel}.api.local.norbix.test:8443")
+    client, transport = _client()
+    client.api.echo.echo()
+    assert transport.last_request is not None
+    assert transport.last_request["url"].startswith(
+        "http://pr-022c4aca9f9e4df787ab0a20c83c44b6.api.local.norbix.test:8443/v3/"
+    )
+
+
+def test_a_template_with_an_id_that_is_not_a_norbix_id_drops_the_label() -> None:
+    client, transport = _client(project_id="p1", base_url_api=TEMPLATE)
+    client.api.echo.echo()
+    assert transport.last_request is not None
+    assert transport.last_request["url"].startswith("https://api.customer.com/")
+
+
+def test_a_pasted_project_host_follows_the_clients_project() -> None:
+    client, transport = _client(project_id=GERMANY, base_url_api=CUSTOMER_VIRGINIA)
+    client.api.echo.echo()
+    assert transport.last_request is not None
+    assert transport.last_request["url"].startswith(CUSTOMER_GERMANY + "/")
+    assert client.api.membership.social_sign_in_url("google").startswith(
+        "https://api.customer.com/"
+    )
+
+
+@pytest.mark.parametrize(
+    "api",
+    [
+        "https://api.customer.com",
+        "https://api.norbix.io",
+        "http://localhost:5002",
+        "http://api.norbix.ai",
+    ],
+)
+def test_a_plain_address_is_used_as_given(api: str) -> None:
+    client, transport = _client(base_url_api=api)
+    client.api.echo.echo()
+    assert transport.last_request is not None
+    assert transport.last_request["url"].startswith(f"{api}/")
+
+
+def test_async_template_follows_the_project() -> None:
+    async def run() -> None:
+        client, transport = _async_client(
+            base_url_api=TEMPLATE, base_url_hub="https://hub.customer.com"
+        )
+        await client.api.echo.echo()
+        assert transport.last_request is not None
+        assert transport.last_request["url"].startswith(CUSTOMER_VIRGINIA + "/")
+        await client.aclose()
+
+        client, transport = _async_client(
+            project_id=GERMANY, base_url_api=TEMPLATE, base_url_hub="https://hub.customer.com"
+        )
+        await client.api.echo.echo()
+        assert transport.last_request is not None
+        assert transport.last_request["url"].startswith(CUSTOMER_GERMANY + "/")
+        assert transport.last_request["headers"]["norbix-project-id"] == GERMANY
+
+        await client.hub.regions.list()
+        assert transport.last_request["url"].startswith("https://hub.customer.com/")
+        assert client.api.membership.social_sign_in_url("google").startswith(
+            "https://api.customer.com/"
+        )
+
+        await client.login(LoginCredentials(user_name="alice", password="x"))
+        assert transport.last_request["url"] == f"{CUSTOMER_GERMANY}/auth"
+        await client.aclose()
+
+    asyncio.run(run())
+
+
+def test_async_written_out_regional_norbix_address() -> None:
+    async def run() -> None:
+        client, transport = _async_client(
+            project_id=GERMANY, base_url_api="https://nb-eu-germany.api.norbix.ai"
+        )
+        await client.api.echo.echo()
+        assert transport.last_request is not None
+        assert transport.last_request["url"].startswith(GERMANY_HOST)
+        await client.aclose()
+
+    asyncio.run(run())
 
 
 # -- the async client --------------------------------------------------------
