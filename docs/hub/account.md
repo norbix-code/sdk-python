@@ -26,6 +26,8 @@ Sync and async clients behave the same. Tests:
 | `change_managed_service_bundle` | `POST` | `/{version}/account/stripe/change-bundle` | `project` |
 | `get_flex_clusters` | `GET` | `/{version}/account/flex-clusters` | `project` |
 | `upgrade_flex_cluster` | `POST` | `/{version}/account/flex-clusters/{flexClusterId}/upgrade` | `project` |
+| `check_bundle_discount` | `POST` | `/{version}/account/stripe/discount/check` | `project` |
+| `apply_bundle_discount` | `POST` | `/{version}/account/stripe/discount` | `project` |
 | `create_team_member_from_invitation` | `POST` | `/{version}/account/team/member` | `unauthenticated` |
 | `verify_account` | `GET` | `/{version}/account/verify` | `unauthenticated` |
 | `delete_notifications_group` | `DELETE` | `/{version}/account/projects/{projectId}/notifications/settings/group` | `project` |
@@ -125,6 +127,10 @@ Sync and async clients have the same methods. Tests:
   new bundle allows.
 - `get_account_status()` also returns `bundle`, `billingPeriod`, `isTrial`,
   `renewsOn` and `enabledProjects`.
+- `create_stripe_checkout_session(...)` also takes an optional `discountCode`;
+  see [Discount codes](#discount-codes).
+- `get_account_status()` also returns `discount` (the discount on the
+  subscription, empty when there is none).
 
 ```python
 bundles = norbix.hub.account.get_managed_service_bundles()["bundles"]
@@ -158,6 +164,40 @@ if cluster.get("nextTierCode"):
 To put a new managed database on a cluster that already exists, send its id
 as `flexClusterId` when you save the integration; see
 [database.md](./database.md#database-integrations-per-environment).
+
+### Discount codes
+
+A discount code lowers the price of the Managed Service bundle. Sync and async
+clients have the same methods. Tests:
+`tests/hub/test_account_bundle_discounts.py`.
+
+- `check_bundle_discount(code=..., bundle=..., billingPeriod=...)` checks a
+  code without using it; `bundle` and `billingPeriod` are optional. It answers
+  `{"discount": {...}}` with `code`, `percentOff`, `amountOff` (minor units),
+  `currency`, `months` (`None` = forever) and `endsAt`.
+- `apply_bundle_discount(code=...)` puts the code on the account's
+  subscription, which changes what the account pays. With no subscription
+  the gateway answers `CM-ERRORS-PROJECTS-039`.
+- `create_stripe_checkout_session(..., discountCode=...)` uses a code at
+  checkout.
+
+A refused code is a `ValidationError` (HTTP 400) with `error_code`
+`CM-ERRORS-ACCOUNT-027`; `context["reason"]` is one of `not_found`,
+`not_started`, `expired`, `not_for_bundle`, `monthly_only`,
+`wrong_billing_period`, `already_has_discount`, `already_used`.
+
+```python
+from norbix_python import ValidationError
+
+try:
+    offer = norbix.hub.account.check_bundle_discount(
+        code="LAUNCH20", bundle="Growth", billingPeriod="Monthly"
+    )["discount"]
+    norbix.hub.account.apply_bundle_discount(code="LAUNCH20")
+except ValidationError as err:
+    if err.error_code == "CM-ERRORS-ACCOUNT-027":
+        print("Code refused:", err.context.get("reason"))
+```
 
 ## The developer MCP endpoint
 
