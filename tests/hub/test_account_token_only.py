@@ -41,6 +41,8 @@ CASES: list[tuple[str, str, str, str, dict[str, str]]] = [
     ("account", "upgrade_flex_cluster", "POST", "/v3/account/flex-clusters/flex_cluster_id_1/upgrade", {'flex_cluster_id': "flex_cluster_id_1"}),
     ("account", "check_bundle_discount", "POST", "/v3/account/stripe/discount/check", {}),
     ("account", "apply_bundle_discount", "POST", "/v3/account/stripe/discount", {}),
+    ("account", "get_trial_availability", "GET", "/v3/account/trial-availability", {}),
+    ("account", "join_trial_waitlist", "POST", "/v3/account/trial-waitlist", {}),
     ("account", "delete_notifications_group", "DELETE", "/v3/account/projects/project_id_1/notifications/settings/group", {'project_id': "project_id_1"}),
     ("account", "delete_notifications_tag", "DELETE", "/v3/account/projects/project_id_1/notifications/settings/tag", {'project_id': "project_id_1"}),
     ("account", "remove_tag_from_notifications_group", "DELETE", "/v3/account/projects/project_id_1/notifications/settings/group/tag", {'project_id': "project_id_1"}),

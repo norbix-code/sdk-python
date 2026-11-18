@@ -257,6 +257,48 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def get_trial_availability(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/trial-availability
+
+        Asks whether a free Managed Service trial can start in a region now,
+        before opening a checkout. Send ``region`` (optional, in the query).
+        Answers ``{limitsOn, region, trialsOpen, waitlistOpen, onWaitlist,
+        refusal}``. ``trialsOpen`` false means the region's trials are full:
+        buy without a trial (checkout with ``withoutTrial`` true) or join the
+        waiting list when ``waitlistOpen`` is true.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/trial-availability",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def join_trial_waitlist(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/trial-waitlist
+
+        Puts the account owner's email on the trial waiting list for a region.
+        Send ``region``, ``consent`` (must be true) and ``consentVersion``.
+        Answers ``{status, message}``; ``status`` is ``added``,
+        ``alreadyListed`` or ``alreadyCustomer``. ``CM-ERRORS-ACCOUNT-044``
+        when the list is switched off, ``CM-ERRORS-ACCOUNT-043`` for an
+        unknown region.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/trial-waitlist",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def create_team_member_from_invitation(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/team/member"""
         return self._transport.send(
@@ -1311,6 +1353,48 @@ class AsyncAccountModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/account/stripe/discount",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_trial_availability(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/trial-availability
+
+        Asks whether a free Managed Service trial can start in a region now,
+        before opening a checkout. Send ``region`` (optional, in the query).
+        Answers ``{limitsOn, region, trialsOpen, waitlistOpen, onWaitlist,
+        refusal}``. ``trialsOpen`` false means the region's trials are full:
+        buy without a trial (checkout with ``withoutTrial`` true) or join the
+        waiting list when ``waitlistOpen`` is true.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/trial-availability",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def join_trial_waitlist(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/trial-waitlist
+
+        Puts the account owner's email on the trial waiting list for a region.
+        Send ``region``, ``consent`` (must be true) and ``consentVersion``.
+        Answers ``{status, message}``; ``status`` is ``added``,
+        ``alreadyListed`` or ``alreadyCustomer``. ``CM-ERRORS-ACCOUNT-044``
+        when the list is switched off, ``CM-ERRORS-ACCOUNT-043`` for an
+        unknown region.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/trial-waitlist",
             method="POST",
             path_params={},
             request=request,
