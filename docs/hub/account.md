@@ -103,8 +103,9 @@ Sync and async clients behave the same. Tests:
 
 ## Project health, environments and AI plans
 
-The rows above added on 2026-11-18 (project settings coverage) are tested with
-host, verb, exact path, query and body in
+Every project settings route above (the project, its settings, environments,
+admin portal, legal and expose switches, AI, termination and the billing
+routes) is tested with host, verb, exact path, query and body in
 `tests/hub/test_project_settings_routes.py`, sync and async.
 
 - `wait_for_project_active(project_id, timeoutSeconds=60)` — call it once after
