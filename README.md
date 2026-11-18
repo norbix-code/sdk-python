@@ -136,11 +136,9 @@ for event in norbix.api.ai.ai_chat(auth_id):   # the answer, as it streams
         break
 ```
 
-The developer AI chat of the Cloud dashboard is on the Hub:
-`norbix.hub.account.chat_turn` runs one turn and answers with the reply; the
-sessions, entries, plans, questions, attachments, memory and the AI tool
-inventory (`get_ai_tools`, `invoke_ai_tool`) are in
-[docs/hub/account.md](docs/hub/account.md#developer-ai-chat).
+There is no developer chat in Cloud: developers connect their own AI tool over
+MCP. The AI tool inventory an external agent can call (`get_ai_tools`,
+`invoke_ai_tool`) is in [docs/hub/account.md](docs/hub/account.md#ai-tools).
 
 Project owners configure the assistant on the Hub: `norbix.hub.account`
 (`get_project_ai_settings`, `update_project_ai_settings`,

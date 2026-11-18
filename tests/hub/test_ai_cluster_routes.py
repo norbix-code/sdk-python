@@ -14,16 +14,15 @@ from norbix_python import AsyncNorbix, Norbix
 """Matrix sections 06 AI · MCP, 07 AI · LLM integration and 08 AI chat, Hub
 side, one case per route: every LLM and MCP integration route of
 ``client.hub.ai`` (the MCP ones are deprecated — save is refused with an
-error code ending in -030 — but still served) and every developer AI chat and
-AI tool route of ``client.hub.account``. Written in the AI cluster coverage
+error code ending in -030 — but still served) and the AI tool routes of
+``client.hub.account``. The developer AI chat routes (``/account/chat/*``) were
+retired on 2026-11-18. Written in the AI cluster coverage
 campaign (2026-11-18); the older cases in ``test_ai.py`` assert the verb and
 the path but not the host, the query or the body.
 
 Called sync and async. Each case asserts the host (hub), the verb, the exact
 path, the query string and the JSON body, plus the key and project headers.
 Field names are the gateway's (Hub.AI ``Integrations/{Llms,Mcps}/*.cs``,
-``ChatTurn.cs``, ``ChatSessions.cs``, ``ChatSessionManage.cs``,
-``ChatAttachments.cs``, ``ChatAvailability.cs``, ``ChatMemory.cs``,
 ``AiToolsBridge.cs``). Every call goes to a mock transport, so nothing leaves
 the process and no LLM or MCP server is contacted.
 """
@@ -73,36 +72,6 @@ CASES: list[tuple[str, str, str, dict[str, list[str]] | None, dict[str, Any] | N
     ("delete_mcp_integration", "DELETE", "/v2/ai/integrations/mcp/int_mcp1", None, None,
      lambda c: c.ai.delete_mcp_integration("int_mcp1")),
     # Developer AI chat and the AI tool inventory (client.hub.account).
-    ("chat_turn", "POST", "/v2/account/chat/turn", None, {'message': 'Add a field', 'profile': 'orchestrator', 'projectId': 'pr_1', 'env': 'TEST', 'llmIntegrationId': 'int_llm1'},
-     lambda c: c.account.chat_turn(message='Add a field', profile='orchestrator', projectId='pr_1', env='TEST', llmIntegrationId='int_llm1')),
-    ("chat_availability", "GET", "/v2/account/chat/availability", {"projectId": ["pr_1"], "env": ["TEST"]}, None,
-     lambda c: c.account.chat_availability(projectId='pr_1', env='TEST')),
-    ("get_chat_sessions", "GET", "/v2/account/chat/sessions", {"take": ["20"], "includeArchived": ["true"]}, None,
-     lambda c: c.account.get_chat_sessions(take=20, includeArchived=True)),
-    ("get_chat_session_entries", "GET", "/v2/account/chat/sessions/aics_1/entries", {"sinceSeq": ["7"]}, None,
-     lambda c: c.account.get_chat_session_entries("aics_1", sinceSeq=7)),
-    ("delete_chat_session", "DELETE", "/v2/account/chat/sessions/aics_1", None, None,
-     lambda c: c.account.delete_chat_session("aics_1")),
-    ("set_chat_session_archived", "PATCH", "/v2/account/chat/sessions/aics_1/archive", None, {'archived': True},
-     lambda c: c.account.set_chat_session_archived("aics_1", archived=True)),
-    ("set_chat_session_pinned", "PATCH", "/v2/account/chat/sessions/aics_1/pin", None, {'pinned': False},
-     lambda c: c.account.set_chat_session_pinned("aics_1", pinned=False)),
-    ("set_chat_session_sharing", "PATCH", "/v2/account/chat/sessions/aics_1/sharing", None, {'doNotShare': True},
-     lambda c: c.account.set_chat_session_sharing("aics_1", doNotShare=True)),
-    ("set_chat_entry_feedback", "POST", "/v2/account/chat/sessions/aics_1/entries/ent_1/feedback", None, {'feedback': 'up'},
-     lambda c: c.account.set_chat_entry_feedback("aics_1", "ent_1", feedback='up')),
-    ("answer_chat_question", "POST", "/v2/account/chat/sessions/aics_1/questions/ent_1/answer", None, {'answers': {'q1': 'Yes'}},
-     lambda c: c.account.answer_chat_question("aics_1", "ent_1", answers={'q1': 'Yes'})),
-    ("decide_chat_plan", "POST", "/v2/account/chat/sessions/aics_1/plans/ent_1/decision", None, {'decision': 'reject', 'comment': 'Keep the old field'},
-     lambda c: c.account.decide_chat_plan("aics_1", "ent_1", decision='reject', comment='Keep the old field')),
-    ("stop_chat_run_step", "POST", "/v2/account/chat/sessions/aics_1/steps/ent_1/stop", None, None,
-     lambda c: c.account.stop_chat_run_step("aics_1", "ent_1")),
-    ("upload_chat_attachment", "POST", "/v2/account/chat/attachments", None, {'sessionId': 'aics_1', 'fileName': 'notes.txt', 'contentType': 'text/plain', 'base64Content': 'aGVsbG8='},
-     lambda c: c.account.upload_chat_attachment(sessionId='aics_1', fileName='notes.txt', contentType='text/plain', base64Content='aGVsbG8=')),
-    ("get_chat_memory", "GET", "/v2/account/chat/memory", {"projectId": ["pr_1"]}, None,
-     lambda c: c.account.get_chat_memory(projectId='pr_1')),
-    ("forget_chat_memory", "DELETE", "/v2/account/chat/memory/mem_1", None, None,
-     lambda c: c.account.forget_chat_memory("mem_1")),
     ("get_ai_tools", "GET", "/v2/account/ai/tools", {"toolset": ["ai:database-read"]}, None,
      lambda c: c.account.get_ai_tools(toolset='ai:database-read')),
     ("invoke_ai_tool", "POST", "/v2/account/ai/tools/get_schemas", None, {'argumentsJson': '{"take":5}'},
@@ -136,8 +105,8 @@ def _assert_request(
 
 
 def test_ai_cluster_hub_route_count() -> None:
-    # LLM 8 + MCP 7 + developer chat 15 + AI tools 2.
-    assert len(CASES) == 8 + 7 + 15 + 2
+    # LLM 8 + MCP 7 + AI tools 2.
+    assert len(CASES) == 8 + 7 + 2
     assert len(set(IDS)) == len(IDS)
 
 

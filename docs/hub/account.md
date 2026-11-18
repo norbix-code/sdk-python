@@ -323,46 +323,27 @@ An AI service user key (`nbsu_…`, from `create_ai_service_user` or
 `rotate_ai_service_user_key`) works as the client's `api_key` / `bearer_token`
 and narrows the tools the agent sees to the service user's scope.
 
-## Developer AI chat
+## AI tools
 
-The AI chat of the Cloud dashboard, for an account user or service user.
-`chat_turn` answers when the turn is done, with the session id, the reply and
-`toolTrace` (the tools the model called); the transcript entries also arrive
-live as `ai.chat.progress` server-sent events on the caller's own Hub stream and
-can be read again with `get_chat_session_entries`. A turn can take long: pass a
-larger `timeout=` than the client default. POST is never retried, so a turn
-never runs twice. Tests: `tests/hub/test_ai_cluster_routes.py`.
+The AI tool inventory on the Hub, for an account user or service user — the
+tools an external agent can call. There is no developer chat in Cloud:
+developers connect their own AI tool over MCP (see
+[The developer MCP endpoint](#the-developer-mcp-endpoint)), and the product chat is the
+end-user chat on the API host (`norbix.api.ai`). Tests:
+`tests/hub/test_ai_cluster_routes.py`.
 
-`set_chat_session_sharing(doNotShare=True)` means the chat is never traced,
-whatever the account's sharing consent says. `delete_chat_session` is a soft
-delete. `stop_chat_run_step` ends the step failed, blocks its dependants and
-makes the assistant ask whether to retry, skip or fix. `invoke_ai_tool` runs the
-tool under the caller's identity; the env comes from an `env` argument, then the
-`norbix-env` header, and a PROD write needs `"env": "PROD"` in the arguments.
+`get_ai_tools` lists the tools (shaped like MCP `tools/list`); `toolset` narrows
+it. `invoke_ai_tool` sends `argumentsJson`, the arguments as a JSON object
+string, and runs the tool under the caller's identity; the env comes from an
+`env` argument, then the `norbix-env` header, and a PROD write needs
+`"env": "PROD"` in the arguments.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
-| `chat_turn` | `POST` | `/{version}/account/chat/turn` | `project` |
-| `chat_availability` | `GET` | `/{version}/account/chat/availability` | `project` |
-| `get_chat_sessions` | `GET` | `/{version}/account/chat/sessions` | `project` |
-| `get_chat_session_entries` | `GET` | `/{version}/account/chat/sessions/{SessionId}/entries` | `project` |
-| `delete_chat_session` | `DELETE` | `/{version}/account/chat/sessions/{SessionId}` | `project` |
-| `set_chat_session_archived` | `PATCH` | `/{version}/account/chat/sessions/{SessionId}/archive` | `project` |
-| `set_chat_session_pinned` | `PATCH` | `/{version}/account/chat/sessions/{SessionId}/pin` | `project` |
-| `set_chat_session_sharing` | `PATCH` | `/{version}/account/chat/sessions/{SessionId}/sharing` | `project` |
-| `set_chat_entry_feedback` | `POST` | `/{version}/account/chat/sessions/{SessionId}/entries/{EntryId}/feedback` | `project` |
-| `answer_chat_question` | `POST` | `/{version}/account/chat/sessions/{SessionId}/questions/{EntryId}/answer` | `project` |
-| `decide_chat_plan` | `POST` | `/{version}/account/chat/sessions/{SessionId}/plans/{EntryId}/decision` | `project` |
-| `stop_chat_run_step` | `POST` | `/{version}/account/chat/sessions/{SessionId}/steps/{EntryId}/stop` | `project` |
-| `upload_chat_attachment` | `POST` | `/{version}/account/chat/attachments` | `project` |
-| `get_chat_memory` | `GET` | `/{version}/account/chat/memory` | `project` |
-| `forget_chat_memory` | `DELETE` | `/{version}/account/chat/memory/{NoteId}` | `project` |
 | `get_ai_tools` | `GET` | `/{version}/account/ai/tools` | `project` |
 | `invoke_ai_tool` | `POST` | `/{version}/account/ai/tools/{ToolName}` | `project` |
 
 ```python
-turn = norbix.hub.account.chat_turn(message="Add a phone field to customers", profile="assistant",
-                                    projectId="proj_123", timeout=300)
-entries = norbix.hub.account.get_chat_session_entries(turn["sessionId"])
 tools = norbix.hub.account.get_ai_tools(toolset="ai:database-read")
+result = norbix.hub.account.invoke_ai_tool("get_schemas", argumentsJson='{"take":5}')
 ```
