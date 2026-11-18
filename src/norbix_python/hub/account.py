@@ -1060,6 +1060,303 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def get_account_usage_billing(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/usage-billing
+
+        The account's usage-based billing: the Norbix-managed Atlas charges per
+        period and cluster, and the workflow run counts.
+        Request DTO: GetAccountUsageBilling.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/usage-billing",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_extra_regions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/extra-regions
+
+        Sets how many extra regions (``extraRegions``, 0 removes them) the Starter
+        or Growth plan carries. Stripe changes the subscription pro rata; the
+        account's region limit follows when Stripe's webhook arrives.
+        Request DTO: SetExtraRegions.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/extra-regions",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_project_health(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/health
+
+        The project's health for the request environment: the problems, each
+        with a Cloud fix path, and the user / e-mail / API call numbers of the
+        period. Computed every 6 hours and cached; ``refresh=True`` computes it
+        now, ``periodDays`` is 7, 30 (the default) or 90.
+        Request DTO: GetProjectHealth.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/health",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def wait_for_project_active(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/wait-active
+
+        Waits, server-side, for a just-created project to finish provisioning and
+        become active (``timeoutSeconds``: default 30, at most 90). A timeout is
+        not an error: read ``isActive`` in the answer.
+        Request DTO: WaitForProjectActiveRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/wait-active",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def set_environment_rank(self, environment_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/environments/{environmentName}/rank
+
+        Moves an environment on the promotion ladder (``rank``). Out-of-range
+        values are clamped and the ranks re-normalised.
+        Request DTO: SetEnvironmentRankRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/{environmentName}/rank",
+            method="PATCH",
+            path_params={"environmentName": environment_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def promote_environment(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/environments/promote
+
+        Promotes ``sourceEnv`` into ``targetEnv``. ``dryRun=True`` gives back the
+        plan only; a real run that deletes a collection holding records needs
+        ``confirmRecordLoss=True``. The answer's ``fromVersion`` is the rollback
+        anchor.
+        Request DTO: PromoteEnvironmentRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/promote",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def rollback_promotion(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/environments/promote/rollback
+
+        Rolls a promotion back: ``targetEnv`` and the promotion's ``fromVersion``.
+        ``dryRun=True`` gives back the plan only.
+        Request DTO: RollbackPromotionRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/promote/rollback",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def repair_environment_built_ins(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/environments/built-ins/repair
+
+        Creates or realigns the built-in templates (e-mail, push, SMS, the Default
+        footer and signature) of an environment under PROD's ids
+        (``environmentName``; empty = every environment except PROD).
+        ``dryRun=True`` gives back what would be done.
+        Request DTO: RepairEnvironmentBuiltInsRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/built-ins/repair",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_environment_admin_url(self, environment_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/environments/{environmentName}/admin-url
+
+        Where an environment's e-mail links point: its own admin URL, the address
+        the links really use, and where that came from.
+        Request DTO: GetEnvironmentAdminUrl.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/{environmentName}/admin-url",
+            method="GET",
+            path_params={"environmentName": environment_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_environment_admin_url(self, environment_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/environments/{environmentName}/admin-url
+
+        Sets the environment's own admin portal address (``url``); an empty url
+        clears it.
+        Request DTO: UpdateEnvironmentAdminUrl.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/{environmentName}/admin-url",
+            method="PATCH",
+            path_params={"environmentName": environment_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_ai_knowledge(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/knowledge
+
+        Turns the project's AI knowledge from uploaded text files on or off
+        (``embedFiles``).
+        Request DTO: UpdateProjectAiKnowledge.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/knowledge",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_project_ai_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/plans
+
+        The project's end-user AI plans (quotas), the role → plan rows and the
+        default plan.
+        Request DTO: GetProjectAiPlans.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_ai_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/plans
+
+        Saves the end-user AI plans. ``plans`` is the complete list: a plan left
+        out is removed (full replace). Read ``get_project_ai_plans`` first.
+        Request DTO: UpdateProjectAiPlans.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def update_project_ai_plan_assignments(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/plans/assignments
+
+        Saves which plan a user gets: ``roles`` (role → plan rows, in order; the
+        first row whose role the user has wins) and ``defaultPlanId``. Both are
+        replaced as a whole.
+        Request DTO: UpdateProjectAiPlanAssignments.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans/assignments",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def get_project_ai_user_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/plans/users
+
+        The users that have their own end-user AI plan, with the plan id.
+        Request DTO: GetProjectAiUserPlans.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans/users",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def create_ai_credit_pack_checkout(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/{projectId}/ai/credits/checkout
+
+        Starts a Stripe checkout for an AI credit pack (``pack``: ``pack-10``,
+        ``pack-50`` or ``pack-200``) and gives back the checkout address. Nothing
+        is charged until the payer completes the checkout. Optional ``returnUrl``.
+        Request DTO: CreateAiCreditPackCheckoutRequest.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/credits/checkout",
+            method="POST",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def mcp(
         self,
         message: dict[str, Any],
@@ -2158,6 +2455,303 @@ class AsyncAccountModule:
             path="/{version}/account/ai/service-users/{Id}",
             method="DELETE",
             path_params={"Id": service_user_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_account_usage_billing(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/usage-billing
+
+        The account's usage-based billing: the Norbix-managed Atlas charges per
+        period and cluster, and the workflow run counts.
+        Request DTO: GetAccountUsageBilling.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/usage-billing",
+            method="GET",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_extra_regions(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/extra-regions
+
+        Sets how many extra regions (``extraRegions``, 0 removes them) the Starter
+        or Growth plan carries. Stripe changes the subscription pro rata; the
+        account's region limit follows when Stripe's webhook arrives.
+        Request DTO: SetExtraRegions.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/extra-regions",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_project_health(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/health
+
+        The project's health for the request environment: the problems, each
+        with a Cloud fix path, and the user / e-mail / API call numbers of the
+        period. Computed every 6 hours and cached; ``refresh=True`` computes it
+        now, ``periodDays`` is 7, 30 (the default) or 90.
+        Request DTO: GetProjectHealth.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/health",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def wait_for_project_active(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/wait-active
+
+        Waits, server-side, for a just-created project to finish provisioning and
+        become active (``timeoutSeconds``: default 30, at most 90). A timeout is
+        not an error: read ``isActive`` in the answer.
+        Request DTO: WaitForProjectActiveRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/wait-active",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def set_environment_rank(self, environment_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/environments/{environmentName}/rank
+
+        Moves an environment on the promotion ladder (``rank``). Out-of-range
+        values are clamped and the ranks re-normalised.
+        Request DTO: SetEnvironmentRankRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/{environmentName}/rank",
+            method="PATCH",
+            path_params={"environmentName": environment_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def promote_environment(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/environments/promote
+
+        Promotes ``sourceEnv`` into ``targetEnv``. ``dryRun=True`` gives back the
+        plan only; a real run that deletes a collection holding records needs
+        ``confirmRecordLoss=True``. The answer's ``fromVersion`` is the rollback
+        anchor.
+        Request DTO: PromoteEnvironmentRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/promote",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def rollback_promotion(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/environments/promote/rollback
+
+        Rolls a promotion back: ``targetEnv`` and the promotion's ``fromVersion``.
+        ``dryRun=True`` gives back the plan only.
+        Request DTO: RollbackPromotionRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/promote/rollback",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def repair_environment_built_ins(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/environments/built-ins/repair
+
+        Creates or realigns the built-in templates (e-mail, push, SMS, the Default
+        footer and signature) of an environment under PROD's ids
+        (``environmentName``; empty = every environment except PROD).
+        ``dryRun=True`` gives back what would be done.
+        Request DTO: RepairEnvironmentBuiltInsRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/built-ins/repair",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_environment_admin_url(self, environment_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/environments/{environmentName}/admin-url
+
+        Where an environment's e-mail links point: its own admin URL, the address
+        the links really use, and where that came from.
+        Request DTO: GetEnvironmentAdminUrl.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/{environmentName}/admin-url",
+            method="GET",
+            path_params={"environmentName": environment_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_environment_admin_url(self, environment_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PATCH /{version}/account/projects/environments/{environmentName}/admin-url
+
+        Sets the environment's own admin portal address (``url``); an empty url
+        clears it.
+        Request DTO: UpdateEnvironmentAdminUrl.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/environments/{environmentName}/admin-url",
+            method="PATCH",
+            path_params={"environmentName": environment_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_ai_knowledge(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/knowledge
+
+        Turns the project's AI knowledge from uploaded text files on or off
+        (``embedFiles``).
+        Request DTO: UpdateProjectAiKnowledge.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/knowledge",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_project_ai_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/plans
+
+        The project's end-user AI plans (quotas), the role → plan rows and the
+        default plan.
+        Request DTO: GetProjectAiPlans.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_ai_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/plans
+
+        Saves the end-user AI plans. ``plans`` is the complete list: a plan left
+        out is removed (full replace). Read ``get_project_ai_plans`` first.
+        Request DTO: UpdateProjectAiPlans.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def update_project_ai_plan_assignments(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """PUT /{version}/account/projects/{projectId}/ai/plans/assignments
+
+        Saves which plan a user gets: ``roles`` (role → plan rows, in order; the
+        first row whose role the user has wins) and ``defaultPlanId``. Both are
+        replaced as a whole.
+        Request DTO: UpdateProjectAiPlanAssignments.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans/assignments",
+            method="PUT",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_project_ai_user_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/projects/{projectId}/ai/plans/users
+
+        The users that have their own end-user AI plan, with the plan id.
+        Request DTO: GetProjectAiUserPlans.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/plans/users",
+            method="GET",
+            path_params={"projectId": project_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def create_ai_credit_pack_checkout(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/projects/{projectId}/ai/credits/checkout
+
+        Starts a Stripe checkout for an AI credit pack (``pack``: ``pack-10``,
+        ``pack-50`` or ``pack-200``) and gives back the checkout address. Nothing
+        is charged until the payer completes the checkout. Optional ``returnUrl``.
+        Request DTO: CreateAiCreditPackCheckoutRequest.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/projects/{projectId}/ai/credits/checkout",
+            method="POST",
+            path_params={"projectId": project_id},
             request=request,
             scope="project",
             timeout=timeout,

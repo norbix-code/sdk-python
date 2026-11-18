@@ -81,9 +81,52 @@ Sync and async clients behave the same. Tests:
 | `rotate_ai_service_user_key` | `POST` | `/{version}/account/ai/service-users/{Id}/keys` | `project` |
 | `revoke_ai_service_user_key` | `DELETE` | `/{version}/account/ai/service-users/{Id}/keys/{KeyId}` | `project` |
 | `delete_ai_service_user` | `DELETE` | `/{version}/account/ai/service-users/{Id}` | `project` |
+| `get_account_usage_billing` | `GET` | `/{version}/account/usage-billing` | `project` |
+| `set_extra_regions` | `POST` | `/{version}/account/stripe/extra-regions` | `project` |
+| `get_project_health` | `GET` | `/{version}/account/projects/{projectId}/health` | `project` |
+| `wait_for_project_active` | `GET` | `/{version}/account/projects/{projectId}/wait-active` | `project` |
+| `set_environment_rank` | `PATCH` | `/{version}/account/projects/environments/{environmentName}/rank` | `project` |
+| `promote_environment` | `POST` | `/{version}/account/projects/environments/promote` | `project` |
+| `rollback_promotion` | `POST` | `/{version}/account/projects/environments/promote/rollback` | `project` |
+| `repair_environment_built_ins` | `POST` | `/{version}/account/projects/environments/built-ins/repair` | `project` |
+| `get_environment_admin_url` | `GET` | `/{version}/account/projects/environments/{environmentName}/admin-url` | `project` |
+| `update_environment_admin_url` | `PATCH` | `/{version}/account/projects/environments/{environmentName}/admin-url` | `project` |
+| `update_project_ai_knowledge` | `PUT` | `/{version}/account/projects/{projectId}/ai/knowledge` | `project` |
+| `get_project_ai_plans` | `GET` | `/{version}/account/projects/{projectId}/ai/plans` | `project` |
+| `update_project_ai_plans` | `PUT` | `/{version}/account/projects/{projectId}/ai/plans` | `project` |
+| `update_project_ai_plan_assignments` | `PUT` | `/{version}/account/projects/{projectId}/ai/plans/assignments` | `project` |
+| `get_project_ai_user_plans` | `GET` | `/{version}/account/projects/{projectId}/ai/plans/users` | `project` |
+| `create_ai_credit_pack_checkout` | `POST` | `/{version}/account/projects/{projectId}/ai/credits/checkout` | `project` |
 | `mcp` | `POST` | `/{version}/account/mcp` | `project` |
 | `mcp_stream` | `GET` | `/{version}/account/mcp` | `project` |
 | `mcp_end_session` | `DELETE` | `/{version}/account/mcp` | `project` |
+
+## Project health, environments and AI plans
+
+The rows above added on 2026-11-18 (project settings coverage) are tested with
+host, verb, exact path, query and body in
+`tests/hub/test_project_settings_routes.py`, sync and async.
+
+- `wait_for_project_active(project_id, timeoutSeconds=60)` — call it once after
+  `create_project`: the new project provisions its database in the background.
+  A timeout is not an error; read `isActive` in the answer.
+- `get_project_health(project_id, refresh=True, periodDays=7)` — the problems,
+  each with a Cloud fix path, and the user / e-mail / API call numbers.
+- Environments: `norbix.hub.environments` lists, creates and deletes them;
+  the ladder (`set_environment_rank`), promotion (`promote_environment`,
+  `rollback_promotion`), the built-in repair and the per-environment admin
+  address are here. Preview a promotion with `dryRun=True` first; the answer's
+  `fromVersion` is the anchor `rollback_promotion` takes.
+- `update_project_ai_plans(project_id, plans=[...])` replaces the whole list
+  (a plan left out is removed), and `update_project_ai_plan_assignments`
+  replaces `roles` and `defaultPlanId` together: read `get_project_ai_plans`
+  first and send the list back with your change.
+- `create_ai_credit_pack_checkout(project_id, pack="pack-10")` gives back a
+  Stripe checkout address; nothing is charged until the payer completes it.
+- `set_extra_regions` changes the Managed Service subscription through Stripe
+  (pro rata); the account shows the change when Stripe's webhook arrives.
+  Discount codes (`check_bundle_discount`, `apply_bundle_discount`): see
+  below.
 
 ## Your account user and the team
 

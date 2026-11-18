@@ -51,8 +51,10 @@ def _capture(seen: list[httpx.Request]) -> Any:
 
 
 def _check(request: httpx.Request, verb: str, path: str, body: dict[str, Any] | None) -> None:
+    assert request.url.host == "hub.norbix.ai"
     assert request.method == verb
     assert request.url.path == "/v3" + path
+    assert request.url.query == b""
     assert request.headers["authorization"] == "Bearer test-token"
     assert request.headers["norbix-project-id"] == "test-project"
     if body is None:
