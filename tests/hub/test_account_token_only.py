@@ -39,6 +39,8 @@ CASES: list[tuple[str, str, str, str, dict[str, str]]] = [
     ("account", "change_managed_service_bundle", "POST", "/v3/account/stripe/change-bundle", {}),
     ("account", "get_flex_clusters", "GET", "/v3/account/flex-clusters", {}),
     ("account", "upgrade_flex_cluster", "POST", "/v3/account/flex-clusters/flex_cluster_id_1/upgrade", {'flex_cluster_id': "flex_cluster_id_1"}),
+    ("account", "check_bundle_discount", "POST", "/v3/account/stripe/discount/check", {}),
+    ("account", "apply_bundle_discount", "POST", "/v3/account/stripe/discount", {}),
     ("account", "delete_notifications_group", "DELETE", "/v3/account/projects/project_id_1/notifications/settings/group", {'project_id': "project_id_1"}),
     ("account", "delete_notifications_tag", "DELETE", "/v3/account/projects/project_id_1/notifications/settings/tag", {'project_id': "project_id_1"}),
     ("account", "remove_tag_from_notifications_group", "DELETE", "/v3/account/projects/project_id_1/notifications/settings/group/tag", {'project_id': "project_id_1"}),

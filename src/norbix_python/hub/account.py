@@ -218,6 +218,45 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def check_bundle_discount(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/discount/check
+
+        Checks a discount code for the Managed Service bundle without using
+        it. Send ``code`` and, optionally, ``bundle`` and ``billingPeriod``.
+        Answers ``{"discount": {code, percentOff, amountOff, currency, months,
+        endsAt}}``. A refused code is a 400 ``CM-ERRORS-ACCOUNT-027`` whose
+        context ``reason`` says why.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/discount/check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def apply_bundle_discount(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/discount
+
+        Puts a discount code on the account's Managed Service subscription,
+        which changes what the account pays. Send ``code``. A refused code is
+        a 400 ``CM-ERRORS-ACCOUNT-027`` whose context ``reason`` says why;
+        ``CM-ERRORS-PROJECTS-039`` when the account has no subscription.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/discount",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def create_team_member_from_invitation(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/team/member"""
         return self._transport.send(
@@ -1235,6 +1274,45 @@ class AsyncAccountModule:
             path="/{version}/account/flex-clusters/{flexClusterId}/upgrade",
             method="POST",
             path_params={"flexClusterId": flex_cluster_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def check_bundle_discount(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/discount/check
+
+        Checks a discount code for the Managed Service bundle without using
+        it. Send ``code`` and, optionally, ``bundle`` and ``billingPeriod``.
+        Answers ``{"discount": {code, percentOff, amountOff, currency, months,
+        endsAt}}``. A refused code is a 400 ``CM-ERRORS-ACCOUNT-027`` whose
+        context ``reason`` says why.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/discount/check",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def apply_bundle_discount(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/account/stripe/discount
+
+        Puts a discount code on the account's Managed Service subscription,
+        which changes what the account pays. Send ``code``. A refused code is
+        a 400 ``CM-ERRORS-ACCOUNT-027`` whose context ``reason`` says why;
+        ``CM-ERRORS-PROJECTS-039`` when the account has no subscription.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/stripe/discount",
+            method="POST",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,

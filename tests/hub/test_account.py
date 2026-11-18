@@ -17,6 +17,8 @@ def test_hub_account_module_surface() -> None:
     assert callable(module.change_managed_service_bundle)
     assert callable(module.get_flex_clusters)
     assert callable(module.upgrade_flex_cluster)
+    assert callable(module.check_bundle_discount)
+    assert callable(module.apply_bundle_discount)
     assert callable(module.create_team_member_from_invitation)
     assert callable(module.verify_account)
     assert callable(module.delete_notifications_group)
