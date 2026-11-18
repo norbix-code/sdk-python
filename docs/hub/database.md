@@ -61,6 +61,7 @@ Access with `norbix.hub.database`.
 | `get_database_schema_list_settings` | `GET` | `/{version}/database/schemas/{Id}/list-settings` | `project` |
 | `update_database_schema_list_settings` | `PUT` | `/{version}/database/schemas/{Id}/list-settings` | `project` |
 | `update_database_schema_embed` | `PUT` | `/{version}/database/schemas/{Id}/embed` | `project` |
+| `end_user_own_records_report` | `POST` | `/{version}/database/schemas/end-user-own-records` | `project` |
 | `aggregate_records` | `POST` | `/{version}/database/collections/{collectionName}/aggregate` | `project` |
 | `change_record_responsibility` | `PUT` | `/{version}/database/collections/{collectionName}/{id}/responsibility` | `project` |
 | `count_records` | `GET` | `/{version}/database/collections/{collectionName}/count` | `project` |
@@ -290,5 +291,9 @@ The request fields are listed under `RequestImportUploadUrlRequest`,
   `norbix-env` header) picks which one you read and write.
 - `update_database_schema_embed(id, ...)` — the schema's embed settings.
 - `apply_database_schema_bundle(...)` — apply a bundle of schemas in one call.
+- `end_user_own_records_report(dryRun=True)` — every schema of the environment with its
+  "Signed-in users can create their own records" switch and `hasRecordOwner`.
+  `dryRun` left out means a dry run; `dryRun=False, enable=["orders"]` turns the
+  switch on for exactly those schemas.
 
 The async client (`AsyncNorbix`) has the same methods; `await` them.

@@ -691,6 +691,25 @@ class DatabaseModule:
             bearer_token=bearer_token,
         )
 
+    def end_user_own_records_report(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/schemas/end-user-own-records
+
+        Lists every schema of the request environment with its "Signed-in users can
+        create their own records" switch (``endUserOwnRecords``) and ``hasRecordOwner``.
+        ``dryRun`` left out = True (only list); ``dryRun=False`` turns the switch on for
+        exactly the schema names in ``enable``.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/end-user-own-records",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def apply_database_schema_bundle(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/database/schemas/apply-bundle"""
         return self._transport.send(
@@ -1645,6 +1664,25 @@ class AsyncDatabaseModule:
             path="/{version}/database/taxonomies/{TaxonomyName}/terms/tree",
             method="GET",
             path_params={"TaxonomyName": taxonomy_name},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def end_user_own_records_report(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/database/schemas/end-user-own-records
+
+        Lists every schema of the request environment with its "Signed-in users can
+        create their own records" switch (``endUserOwnRecords``) and ``hasRecordOwner``.
+        ``dryRun`` left out = True (only list); ``dryRun=False`` turns the switch on for
+        exactly the schema names in ``enable``.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/database/schemas/end-user-own-records",
+            method="POST",
+            path_params={},
             request=request,
             scope="project",
             timeout=timeout,
