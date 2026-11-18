@@ -333,6 +333,13 @@ can be read again with `get_chat_session_entries`. A turn can take long: pass a
 larger `timeout=` than the client default. POST is never retried, so a turn
 never runs twice. Tests: `tests/hub/test_ai_cluster_routes.py`.
 
+`set_chat_session_sharing(doNotShare=True)` means the chat is never traced,
+whatever the account's sharing consent says. `delete_chat_session` is a soft
+delete. `stop_chat_run_step` ends the step failed, blocks its dependants and
+makes the assistant ask whether to retry, skip or fix. `invoke_ai_tool` runs the
+tool under the caller's identity; the env comes from an `env` argument, then the
+`norbix-env` header, and a PROD write needs `"env": "PROD"` in the arguments.
+
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
 | `chat_turn` | `POST` | `/{version}/account/chat/turn` | `project` |

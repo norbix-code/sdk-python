@@ -1436,7 +1436,8 @@ class AccountModule:
     def delete_chat_session(self, session_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """DELETE /{version}/account/chat/sessions/{SessionId}
 
-        Deletes one of the caller's chats.
+        Deletes one of the caller's chats (a soft delete: it leaves the list and
+        the history, the data is kept).
         TypeScript twin: ``deleteChatSession``.
         """
         return self._transport.send(
@@ -1487,8 +1488,9 @@ class AccountModule:
     def set_chat_session_sharing(self, session_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PATCH /{version}/account/chat/sessions/{SessionId}/sharing
 
-        Keeps one chat out of the shared improvement data (``doNotShare``: true) or
-        lets it in again.
+        Marks one chat do-not-share (``doNotShare``: true: it is never traced,
+        whatever the account's sharing consent says) or unmarks it (false: it
+        follows the consent).
         TypeScript twin: ``setChatSessionSharing``.
         """
         return self._transport.send(
@@ -1559,7 +1561,9 @@ class AccountModule:
     def stop_chat_run_step(self, session_id: str, entry_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/chat/sessions/{SessionId}/steps/{EntryId}/stop
 
-        Stops a running step of an approved plan.
+        Stops one queued, running or waiting step of a plan run: the step ends
+        failed (cancelled by the user), the steps that depend on it are blocked,
+        and the assistant asks whether to retry, skip or fix.
         TypeScript twin: ``stopChatRunStep``.
         """
         return self._transport.send(
@@ -1595,7 +1599,8 @@ class AccountModule:
     def get_chat_memory(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/chat/memory
 
-        Lists the assistant's memory notes. Optional query ``projectId``.
+        Lists the assistant's memory notes. Optional query ``projectId`` filters
+        them to one project.
         TypeScript twin: ``getChatMemory``.
         """
         return self._transport.send(
@@ -1648,8 +1653,11 @@ class AccountModule:
     def invoke_ai_tool(self, tool_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/ai/tools/{ToolName}
 
-        Calls one AI tool by name with ``argumentsJson`` (the arguments as a JSON
-        string) and returns its result text.
+        Calls one AI tool by name under the caller's identity with
+        ``argumentsJson`` (the arguments as a JSON object string) and returns the
+        tool envelope (``{ok, data}`` or ``{ok: false, errors}``). The env comes
+        from an ``env`` argument, then the norbix-env header; a PROD write needs
+        ``"env": "PROD"`` in the arguments.
         TypeScript twin: ``invokeAiTool``.
         """
         return self._transport.send(
@@ -3143,7 +3151,8 @@ class AsyncAccountModule:
     async def delete_chat_session(self, session_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """DELETE /{version}/account/chat/sessions/{SessionId}
 
-        Deletes one of the caller's chats.
+        Deletes one of the caller's chats (a soft delete: it leaves the list and
+        the history, the data is kept).
         TypeScript twin: ``deleteChatSession``.
         """
         return await self._transport.send(
@@ -3194,8 +3203,9 @@ class AsyncAccountModule:
     async def set_chat_session_sharing(self, session_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PATCH /{version}/account/chat/sessions/{SessionId}/sharing
 
-        Keeps one chat out of the shared improvement data (``doNotShare``: true) or
-        lets it in again.
+        Marks one chat do-not-share (``doNotShare``: true: it is never traced,
+        whatever the account's sharing consent says) or unmarks it (false: it
+        follows the consent).
         TypeScript twin: ``setChatSessionSharing``.
         """
         return await self._transport.send(
@@ -3266,7 +3276,9 @@ class AsyncAccountModule:
     async def stop_chat_run_step(self, session_id: str, entry_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/chat/sessions/{SessionId}/steps/{EntryId}/stop
 
-        Stops a running step of an approved plan.
+        Stops one queued, running or waiting step of a plan run: the step ends
+        failed (cancelled by the user), the steps that depend on it are blocked,
+        and the assistant asks whether to retry, skip or fix.
         TypeScript twin: ``stopChatRunStep``.
         """
         return await self._transport.send(
@@ -3302,7 +3314,8 @@ class AsyncAccountModule:
     async def get_chat_memory(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/chat/memory
 
-        Lists the assistant's memory notes. Optional query ``projectId``.
+        Lists the assistant's memory notes. Optional query ``projectId`` filters
+        them to one project.
         TypeScript twin: ``getChatMemory``.
         """
         return await self._transport.send(
@@ -3355,8 +3368,11 @@ class AsyncAccountModule:
     async def invoke_ai_tool(self, tool_name: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/ai/tools/{ToolName}
 
-        Calls one AI tool by name with ``argumentsJson`` (the arguments as a JSON
-        string) and returns its result text.
+        Calls one AI tool by name under the caller's identity with
+        ``argumentsJson`` (the arguments as a JSON object string) and returns the
+        tool envelope (``{ok, data}`` or ``{ok: false, errors}``). The env comes
+        from an ``env`` argument, then the norbix-env header; a PROD write needs
+        ``"env": "PROD"`` in the arguments.
         TypeScript twin: ``invokeAiTool``.
         """
         return await self._transport.send(
