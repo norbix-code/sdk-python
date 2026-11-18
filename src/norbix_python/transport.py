@@ -10,7 +10,7 @@ from urllib.parse import quote, urlencode
 import httpx
 
 from .errors import NorbixError, error_from_body, retry_after_seconds_of, says_it_failed
-from .project_host import compose_project_url
+from .project_host import project_api_base_url
 
 HttpVerb = Literal["GET", "POST", "PUT", "PATCH", "DELETE"]
 # "optional": auth is sent when the client has a token, never required — used
@@ -48,10 +48,6 @@ class TransportConfig:
     language: str | None = None
     base_url_api_is_default: bool = False
     base_url_hub_is_default: bool = False
-    # The SDK's built-in API address, when the caller gave none (no option, no
-    # NORBIX_API_URL). Only then do API calls go to the project's own host; an
-    # address the caller wrote is used as given, also when it is this one.
-    builtin_base_url_api: str | None = None
     default_headers: dict[str, str] = field(default_factory=dict)
 
 
@@ -420,19 +416,15 @@ class AsyncTransport:
 
 
 def _api_call_base_url(cfg: TransportConfig) -> str:
-    """Where an API call goes: the project's own host on the built-in address.
+    """Where an API call goes: the project's own host wherever the address serves one.
 
-    ``https://pr-<32 hex>.api.norbix.ai`` — with no region label, the project's
-    DNS record already points at its region. Worked out from the project id at
-    the time of the call, so the host and the ``norbix-project-id`` header
-    always name the same project. A project id that is not a Norbix id, or an
-    address the caller supplied, keeps ``cfg.base_url_api``.
+    ``project_api_base_url`` decides it from ``cfg.base_url_api`` — built in or
+    supplied by the caller — and the project id at the time of the call, so
+    the host and the ``norbix-project-id`` header always name the same project
+    (``https://pr-<32 hex>.api.norbix.ai`` on norbix.ai, with no region label:
+    the project's DNS record already points at its region).
     """
-    if cfg.builtin_base_url_api:
-        project_url = compose_project_url(cfg.project_id, cfg.builtin_base_url_api)
-        if project_url:
-            return project_url
-    return cfg.base_url_api
+    return project_api_base_url(cfg.base_url_api, cfg.project_id).project
 
 
 def _navigation_url(
@@ -450,9 +442,14 @@ def _navigation_url(
 
     The link stays on the shared API host, never the project's own one: the
     gateway's social sign-in callback comes back to the shared host, and its
-    nonce cookie is host-only.
+    nonce cookie is host-only. A template or a pasted project host loses its
+    label (``https://{projectHostLabel}.api.customer.com`` → ``https://api.customer.com``).
     """
-    base_url = cfg.base_url_api if target == "api" else cfg.base_url_hub
+    base_url = (
+        project_api_base_url(cfg.base_url_api, cfg.project_id).shared
+        if target == "api"
+        else cfg.base_url_hub
+    )
     version = cfg.api_version if target == "api" else cfg.hub_version
     url, _ = _build_url_and_body(
         base_url=base_url,

@@ -13,7 +13,12 @@ from .errors import (
 from .functions import FunctionEvent, NorbixFunctionEventError, parse_function_event
 from .models import AuthLoginResult, DatabaseFindResult, ReferenceDisplay
 from .pkce import PkcePair, create_pkce_pair, pkce_challenge
-from .project_host import project_host_label
+from .project_host import (
+    PROJECT_HOST_LABEL_PLACEHOLDER,
+    ProjectApiBaseUrl,
+    project_api_base_url,
+    project_host_label,
+)
 from .webhooks import (
     AsyncNorbixWebhookReceiver,
     NorbixWebhookReceiver,
@@ -38,13 +43,16 @@ __all__ = [
     "NorbixFunctionEventError",
     "NorbixWebhookReceiver",
     "NotFoundError",
+    "PROJECT_HOST_LABEL_PLACEHOLDER",
     "PkcePair",
+    "ProjectApiBaseUrl",
     "RateLimitError",
     "ReferenceDisplay",
     "ValidationError",
     "WorkflowRun",
     "WorkflowRunTimeoutError",
     "parse_function_event",
+    "project_api_base_url",
     "project_host_label",
     "step_output",
 ]
