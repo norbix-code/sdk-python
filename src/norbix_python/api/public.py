@@ -61,6 +61,32 @@ class PublicModule:
         )
 
 
+    def get_public_project_brand_asset(self, project_id: str, kind: str, *, timeout: float | None = None, **request: Any) -> Any:
+        """GET /{version}/public/projects/{ProjectId}/brand/{Kind}
+
+        The project's brand picture: ``kind`` is ``"logo"`` or ``"icon"``. Gives
+        back the raw image ``bytes`` — the address is the ``branding.logoUrl`` /
+        ``iconUrl`` that ``get_public_project_config`` hands out. It is there only
+        while the project exposes its brand
+        (``hub.account.update_project_expose_brand``); every miss is a plain 404
+        that does not say which case it was. A logo kept in a cloud bucket
+        answers 302 to a signed link, and this call follows it.
+
+        **No sign-in**, same as ``get_public_project_config``.
+        Request DTO: GetPublicProjectBrandAsset.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/public/projects/{ProjectId}/brand/{Kind}",
+            method="GET",
+            path_params={"ProjectId": project_id, "Kind": kind},
+            request=request,
+            scope="unauthenticated",
+            timeout=timeout,
+            response_type="binary",
+            follow_redirects=True,
+        )
+
 class AsyncPublicModule:
     def __init__(self, transport: AsyncTransport) -> None:
         self._transport = transport
@@ -110,4 +136,30 @@ class AsyncPublicModule:
             request=request,
             scope="unauthenticated",
             timeout=timeout,
+        )
+
+    async def get_public_project_brand_asset(self, project_id: str, kind: str, *, timeout: float | None = None, **request: Any) -> Any:
+        """GET /{version}/public/projects/{ProjectId}/brand/{Kind}
+
+        The project's brand picture: ``kind`` is ``"logo"`` or ``"icon"``. Gives
+        back the raw image ``bytes`` — the address is the ``branding.logoUrl`` /
+        ``iconUrl`` that ``get_public_project_config`` hands out. It is there only
+        while the project exposes its brand
+        (``hub.account.update_project_expose_brand``); every miss is a plain 404
+        that does not say which case it was. A logo kept in a cloud bucket
+        answers 302 to a signed link, and this call follows it.
+
+        **No sign-in**, same as ``get_public_project_config``.
+        Request DTO: GetPublicProjectBrandAsset.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/public/projects/{ProjectId}/brand/{Kind}",
+            method="GET",
+            path_params={"ProjectId": project_id, "Kind": kind},
+            request=request,
+            scope="unauthenticated",
+            timeout=timeout,
+            response_type="binary",
+            follow_redirects=True,
         )
