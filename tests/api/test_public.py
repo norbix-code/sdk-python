@@ -42,6 +42,7 @@ def test_public_project_config_goes_to_the_api_host_without_auth(bearer_token: s
     assert seen[0].method == "GET"
     assert seen[0].url.host == "api.norbix.ai"
     assert seen[0].url.path == "/v3/public/projects/pr_1/config"
+    assert seen[0].url.query == b""
     assert "authorization" not in seen[0].headers
 
 
@@ -57,6 +58,8 @@ def test_public_project_legal_puts_project_and_kind_in_the_path() -> None:
 
     assert result == LEGAL
     assert seen[0].method == "GET"
+    assert seen[0].url.host == "api.norbix.ai"
+    assert seen[0].url.query == b""
     assert seen[0].url.path == "/v3/public/projects/pr_1/legal/terms"
     assert "authorization" not in seen[0].headers
     assert client.Public is client.public
