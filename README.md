@@ -130,7 +130,17 @@ avail = norbix.api.ai.get_end_user_chat_availability()
 session = norbix.api.ai.create_end_user_chat_session(title="Help")
 turn = norbix.api.ai.start_end_user_chat_turn(sessionId=session["id"], message="What can you do?")
 entries = norbix.api.ai.get_end_user_chat_entries(session_id=session["id"])
+
+for event in norbix.api.ai.ai_chat(auth_id):   # the answer, as it streams
+    if event["eventName"] == "ai.chat.turn.completed":
+        break
 ```
+
+The developer AI chat of the Cloud dashboard is on the Hub:
+`norbix.hub.account.chat_turn` runs one turn and answers with the reply; the
+sessions, entries, plans, questions, attachments, memory and the AI tool
+inventory (`get_ai_tools`, `invoke_ai_tool`) are in
+[docs/hub/account.md](docs/hub/account.md#developer-ai-chat).
 
 Project owners configure the assistant on the Hub: `norbix.hub.account`
 (`get_project_ai_settings`, `update_project_ai_settings`,

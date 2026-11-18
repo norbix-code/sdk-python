@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 import time
+from collections.abc import AsyncIterator, Iterable, Iterator
 from dataclasses import dataclass, field
 from typing import Any, Literal
 from urllib.parse import quote, urlencode
@@ -232,6 +233,34 @@ class Transport:
         assert last_response is not None
         return last_response
 
+    def stream(
+        self,
+        *,
+        target: Target,
+        path: str,
+        query: dict[str, Any] | None = None,
+        bearer_token: str | None = None,
+    ) -> Iterator[SseFrame]:
+        """Open a server-sent events stream (GET) and yield its frames.
+
+        ``path`` is the stream path (the gateway's is ``/event-stream``, without
+        ``{version}``); ``query`` goes in the URL. Auth and the project / env /
+        region headers are those of :meth:`send`. The read never times out —
+        the stream ends when the server closes it or the caller stops
+        iterating. No retry, no reconnect: a refused subscription (401 / 403 /
+        404) raises the gateway's :class:`NorbixError` at once.
+        """
+        url, headers = _stream_request(self._cfg, target, path, query, bearer_token)
+        timeout = httpx.Timeout(self._cfg.timeout, read=None)
+        try:
+            with self._client.stream("GET", url, headers=headers, timeout=timeout) as response:
+                if response.status_code >= 400:
+                    response.read()
+                    raise _stream_refusal(response)
+                yield from iter_sse(response.iter_lines())
+        except httpx.HTTPError as exc:
+            raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
+
 
 class AsyncTransport:
     def __init__(self, cfg: TransportConfig, client: httpx.AsyncClient | None = None) -> None:
@@ -414,6 +443,30 @@ class AsyncTransport:
         assert last_response is not None
         return last_response
 
+    async def stream(
+        self,
+        *,
+        target: Target,
+        path: str,
+        query: dict[str, Any] | None = None,
+        bearer_token: str | None = None,
+    ) -> AsyncIterator[SseFrame]:
+        """Async twin of :meth:`Transport.stream`."""
+        url, headers = _stream_request(self._cfg, target, path, query, bearer_token)
+        timeout = httpx.Timeout(self._cfg.timeout, read=None)
+        try:
+            stream = self._client.stream("GET", url, headers=headers, timeout=timeout)
+            async with stream as response:
+                if response.status_code >= 400:
+                    await response.aread()
+                    raise _stream_refusal(response)
+                parser = _SseParser()
+                async for line in response.aiter_lines():
+                    frame = parser.feed(line)
+                    if frame is not None:
+                        yield frame
+        except httpx.HTTPError as exc:
+            raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
 
 def _api_call_base_url(cfg: TransportConfig) -> str:
     """Where an API call goes: the project's own host wherever the address serves one.
@@ -542,3 +595,96 @@ def _stringify(value: Any) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
     return str(value)
+
+
+@dataclass
+class SseFrame:
+    """One server-sent events frame: ``event`` ("message" when the frame has
+    none), the ``data`` lines joined with "\n", and the last ``id`` seen."""
+
+    event: str
+    data: str
+    id: str | None = None
+
+
+class _SseParser:
+    """SSE framing: ``event:``, ``data:`` (several are joined), ``id:``, ``:``
+    comments (heartbeats) and the blank line that ends a frame."""
+
+    def __init__(self) -> None:
+        self._event = "message"
+        self._data: list[str] = []
+        self._id: str | None = None
+
+    def feed(self, line: str) -> SseFrame | None:
+        line = line.rstrip("\r")
+        if line == "":
+            frame = None
+            if self._data or self._event != "message":
+                frame = SseFrame(event=self._event, data="\n".join(self._data), id=self._id)
+            self._event, self._data = "message", []
+            return frame
+        if line.startswith(":"):
+            return None
+        field_name, _, value = line.partition(":")
+        if value.startswith(" "):
+            value = value[1:]
+        if field_name == "event":
+            self._event = value
+        elif field_name == "data":
+            self._data.append(value)
+        elif field_name == "id":
+            self._id = value
+        return None
+
+
+def iter_sse(lines: Iterable[str]) -> Iterator[SseFrame]:
+    """Parse SSE lines into frames (see :class:`_SseParser`)."""
+    parser = _SseParser()
+    for line in lines:
+        frame = parser.feed(line)
+        if frame is not None:
+            yield frame
+
+
+def _stream_request(
+    cfg: TransportConfig,
+    target: Target,
+    path: str,
+    query: dict[str, Any] | None,
+    bearer_token: str | None,
+) -> tuple[str, dict[str, str]]:
+    base_url = _api_call_base_url(cfg) if target == "api" else cfg.base_url_hub
+    version = cfg.api_version if target == "api" else cfg.hub_version
+    url, _ = _build_url_and_body(
+        base_url=base_url,
+        path=path,
+        version=version,
+        method="GET",
+        path_params={},
+        request=query or {},
+    )
+    headers = {"Accept": "text/event-stream", "Cache-Control": "no-cache", **cfg.default_headers}
+    token = bearer_token or cfg.bearer_token or cfg.api_key
+    if not token:
+        raise NorbixError(
+            message="Not authenticated. Provide api_key / bearer_token or login first.",
+            code="NORBIX_NOT_AUTHENTICATED",
+        )
+    headers["Authorization"] = f"Bearer {token}"
+    headers["norbix-project-id"] = cfg.project_id
+    if cfg.account_id:
+        headers["norbix-account-id"] = cfg.account_id
+    if cfg.env and cfg.env != "PROD":
+        headers["norbix-env"] = cfg.env
+    if cfg.region:
+        headers["nb-region"] = cfg.region
+    return url, headers
+
+
+def _stream_refusal(response: httpx.Response) -> NorbixError:
+    try:
+        parsed: Any = response.json()
+    except ValueError:
+        parsed = None
+    return error_from_body(body=parsed, status=response.status_code, text=response.text)
