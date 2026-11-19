@@ -43,8 +43,7 @@ class PublicModule:
         The project's public legal document: ``kind`` is ``"terms"`` or
         ``"privacy"``. Gives back ``{kind, title, body, available}`` with the
         Markdown in ``body``. ``available`` is ``False`` when the project has
-        not turned the legal pages on (``hub.account.update_project_expose_legal``),
-        has not written that document, or does not exist — the answer does
+        not written that document, or does not exist — the answer does
         not say which.
 
         **No sign-in**, same as ``get_public_project_config``.
@@ -66,9 +65,8 @@ class PublicModule:
 
         The project's brand picture: ``kind`` is ``"logo"`` or ``"icon"``. Gives
         back the raw image ``bytes`` — the address is the ``branding.logoUrl`` /
-        ``iconUrl`` that ``get_public_project_config`` hands out. It is there only
-        while the project exposes its brand
-        (``hub.account.update_project_expose_brand``); every miss is a plain 404
+        ``iconUrl`` that ``get_public_project_config`` hands out. It is there once
+        the project has a logo / icon; every miss is a plain 404
         that does not say which case it was. A logo kept in a cloud bucket
         answers 302 to a signed link, and this call follows it.
 
@@ -121,8 +119,7 @@ class AsyncPublicModule:
         The project's public legal document: ``kind`` is ``"terms"`` or
         ``"privacy"``. Gives back ``{kind, title, body, available}`` with the
         Markdown in ``body``. ``available`` is ``False`` when the project has
-        not turned the legal pages on (``hub.account.update_project_expose_legal``),
-        has not written that document, or does not exist — the answer does
+        not written that document, or does not exist — the answer does
         not say which.
 
         **No sign-in**, same as ``get_public_project_config``.
@@ -143,9 +140,8 @@ class AsyncPublicModule:
 
         The project's brand picture: ``kind`` is ``"logo"`` or ``"icon"``. Gives
         back the raw image ``bytes`` — the address is the ``branding.logoUrl`` /
-        ``iconUrl`` that ``get_public_project_config`` hands out. It is there only
-        while the project exposes its brand
-        (``hub.account.update_project_expose_brand``); every miss is a plain 404
+        ``iconUrl`` that ``get_public_project_config`` hands out. It is there once
+        the project has a logo / icon; every miss is a plain 404
         that does not say which case it was. A logo kept in a cloud bucket
         answers 302 to a signed link, and this call follows it.
 

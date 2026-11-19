@@ -13,8 +13,8 @@ the SDK sends no `Authorization` header even when the client has a token.
 
 `get_public_project_legal` takes `kind` = `"terms"` or `"privacy"` and gives
 back `{kind, title, body, available}` (Markdown in `body`). `available` is
-`False` until the project turns the legal pages on with
-`norbix.hub.account.update_project_expose_legal(project_id, exposed=True)`.
+`False` until the project saves that document with
+`norbix.hub.account.update_project_legal_documents(project_id, ...)`.
 
 `get_public_project_brand_asset` takes `kind` = `"logo"` or `"icon"` and gives
 back the image `bytes` (the address `get_public_project_config` hands out as

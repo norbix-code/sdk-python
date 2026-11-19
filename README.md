@@ -154,17 +154,15 @@ and `norbix.hub.ai` (`get_embedding_integrations`, `save_embedding_integration`,
 
 Project owners manage the Admin Portal and legal pages on the Hub,
 `norbix.hub.account`: `update_project_admin_url`, `update_project_legal_documents`,
-`update_project_expose_legal`, `get_admin_portal_structure`,
-`assign_admin_portal_service_user`. Two switches choose what the public Admin
-Portal config shows: `update_project_expose_brand` (brand, on by default) and
-`update_project_expose_auth` (sign-in methods and password policy, off by default).
+`get_admin_portal_structure`, `assign_admin_portal_service_user`. The public
+Admin Portal config always shows the brand, the sign-in methods and the
+password policy.
 
-Once the legal pages are exposed, anyone can read them — and the project's
+Once a legal document is saved, anyone can read it — and the project's
 public config — from the API host with no sign-in, `norbix.api.public`:
 
 ```python
 norbix.hub.account.update_project_legal_documents("proj_123", termsMarkdown="# Terms", privacyMarkdown="# Privacy")
-norbix.hub.account.update_project_expose_legal("proj_123", exposed=True)
 norbix.api.public.get_public_project_legal("proj_123", "terms")  # {"kind", "title", "body", "available"}
 norbix.api.public.get_public_project_config("proj_123")
 ```

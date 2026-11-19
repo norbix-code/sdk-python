@@ -70,9 +70,6 @@ Sync and async clients behave the same. Tests:
 | `get_project_ai_usage` | `GET` | `/{version}/account/projects/{projectId}/ai/usage` | `project` |
 | `update_project_admin_url` | `PATCH` | `/{version}/account/projects/{projectId}/settings/admin-url` | `project` |
 | `update_project_legal_documents` | `PATCH` | `/{version}/account/projects/{projectId}/settings/legal` | `project` |
-| `update_project_expose_legal` | `PATCH` | `/{version}/account/projects/{projectId}/settings/legal/expose` | `project` |
-| `update_project_expose_brand` | `PATCH` | `/{version}/account/projects/{projectId}/settings/brand/expose` | `project` |
-| `update_project_expose_auth` | `PATCH` | `/{version}/account/projects/{projectId}/settings/auth/expose` | `project` |
 | `get_admin_portal_structure` | `GET` | `/{version}/account/projects/{projectId}/admin-portal/structure` | `project` |
 | `assign_admin_portal_service_user` | `PUT` | `/{version}/account/projects/{projectId}/settings/admin-portal/service-user` | `project` |
 | `create_ai_service_user` | `POST` | `/{version}/account/ai/service-users` | `project` |
