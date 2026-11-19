@@ -134,8 +134,6 @@ CASES: list[tuple[str, str, str, dict[str, list[str]] | None, dict[str, Any] | N
     ("update_environment_admin_url", "PATCH", f"{E}/TEST/admin-url", None, {"url": "https://test-admin.example.com"},
      lambda h: h.account.update_environment_admin_url("TEST", url="https://test-admin.example.com")),
     # Admin portal.
-    ("set_admin_portal_enabled", "PUT", f"{P}/admin-portal/enabled", None, {"enabled": True},
-     lambda h: h.account.set_admin_portal_enabled(PR, enabled=True)),
     ("get_admin_portal_structure", "GET", f"{P}/admin-portal/structure", None, None,
      lambda h: h.account.get_admin_portal_structure(PR)),
     ("assign_admin_portal_service_user", "PUT", f"{P}/settings/admin-portal/service-user", None, {"serviceUserId": "su_1"},
@@ -228,9 +226,9 @@ def _assert_request(
 
 
 def test_project_settings_route_count() -> None:
-    # General info 6 + brand 7 + access 1 + regions 1 + languages 3 + environments 9 + admin portal 4
+    # General info 6 + brand 7 + access 1 + regions 1 + languages 3 + environments 9 + admin portal 3
     # + legal / expose 4 + AI 12 + termination 3 + billing 8.
-    assert len(CASES) == 6 + 7 + 1 + 1 + 3 + 9 + 4 + 4 + 12 + 3 + 8
+    assert len(CASES) == 6 + 7 + 1 + 1 + 3 + 9 + 3 + 4 + 12 + 3 + 8
     assert len(set(IDS)) == len(IDS)
 
 

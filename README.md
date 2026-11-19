@@ -143,7 +143,7 @@ MCP. The AI tool inventory an external agent can call (`get_ai_tools`,
 Project owners configure the assistant on the Hub: `norbix.hub.account`
 (`get_project_ai_settings`, `update_project_ai_settings`,
 `create_project_ai_assistant`, `update_project_ai_assistant`,
-`delete_project_ai_assistant`, `get_project_ai_usage`, `set_admin_portal_enabled`)
+`delete_project_ai_assistant`, `get_project_ai_usage`)
 and `norbix.hub.ai` (`get_embedding_integrations`, `save_embedding_integration`,
 `get_embedding_integration`, `delete_embedding_integration`,
 `test_embedding_integration`, `set_llm_integration_as_default`). Full tables:
