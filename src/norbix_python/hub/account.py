@@ -829,19 +829,6 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
-    def set_admin_portal_enabled(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/account/projects/{projectId}/admin-portal/enabled"""
-        return self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/admin-portal/enabled",
-            method="PUT",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def update_project_admin_url(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PATCH /{version}/account/projects/{projectId}/settings/admin-url
 
@@ -938,8 +925,7 @@ class AccountModule:
     def get_admin_portal_structure(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/projects/{projectId}/admin-portal/structure
 
-        Reads what the project's Admin Portal shows: ``projectId``, ``adminPortalEnabled``,
-        ``displayName`` and the ``modules`` in its navigation.
+        Reads what the project's Admin Portal shows: ``projectId``, ``displayName`` and the ``modules`` in its navigation.
         Request DTO: GetAdminPortalStructure.
         """
         return self._transport.send(
@@ -2270,19 +2256,6 @@ class AsyncAccountModule:
             bearer_token=bearer_token,
         )
 
-    async def set_admin_portal_enabled(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/account/projects/{projectId}/admin-portal/enabled"""
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/admin-portal/enabled",
-            method="PUT",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     async def update_project_admin_url(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """PATCH /{version}/account/projects/{projectId}/settings/admin-url
 
@@ -2379,8 +2352,7 @@ class AsyncAccountModule:
     async def get_admin_portal_structure(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/projects/{projectId}/admin-portal/structure
 
-        Reads what the project's Admin Portal shows: ``projectId``, ``adminPortalEnabled``,
-        ``displayName`` and the ``modules`` in its navigation.
+        Reads what the project's Admin Portal shows: ``projectId``, ``displayName`` and the ``modules`` in its navigation.
         Request DTO: GetAdminPortalStructure.
         """
         return await self._transport.send(

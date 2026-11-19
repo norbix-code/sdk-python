@@ -68,7 +68,6 @@ Sync and async clients behave the same. Tests:
 | `update_project_ai_assistant` | `PUT` | `/{version}/account/projects/{projectId}/ai/assistants/{assistantId}` | `project` |
 | `delete_project_ai_assistant` | `DELETE` | `/{version}/account/projects/{projectId}/ai/assistants/{assistantId}` | `project` |
 | `get_project_ai_usage` | `GET` | `/{version}/account/projects/{projectId}/ai/usage` | `project` |
-| `set_admin_portal_enabled` | `PUT` | `/{version}/account/projects/{projectId}/admin-portal/enabled` | `project` |
 | `update_project_admin_url` | `PATCH` | `/{version}/account/projects/{projectId}/settings/admin-url` | `project` |
 | `update_project_legal_documents` | `PATCH` | `/{version}/account/projects/{projectId}/settings/legal` | `project` |
 | `update_project_expose_legal` | `PATCH` | `/{version}/account/projects/{projectId}/settings/legal/expose` | `project` |
