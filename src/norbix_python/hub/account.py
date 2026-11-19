@@ -866,62 +866,6 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
-    def update_project_expose_legal(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/account/projects/{projectId}/settings/legal/expose
-
-        Turns the public legal pages on or off. Body: ``exposed`` (bool).
-        When on, ``api.public.get_public_project_legal`` serves the documents.
-        Request DTO: UpdateProjectExposeLegal.
-        """
-        return self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/settings/legal/expose",
-            method="PATCH",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def update_project_expose_brand(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/account/projects/{projectId}/settings/brand/expose
-
-        Sets whether the brand (name, colors, logo, icon) is returned by the public
-        Admin Portal config, ``api.public.get_public_project_config``. On by default.
-        Body: ``exposed`` (bool).
-        Request DTO: UpdateProjectExposeBrand.
-        """
-        return self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/settings/brand/expose",
-            method="PATCH",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    def update_project_expose_auth(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/account/projects/{projectId}/settings/auth/expose
-
-        Sets whether the sign-in methods (email / phone / username) and the password
-        policy are returned by the public Admin Portal config,
-        ``api.public.get_public_project_config``. Off by default. Body: ``exposed`` (bool).
-        Request DTO: UpdateProjectExposeAuth.
-        """
-        return self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/settings/auth/expose",
-            method="PATCH",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
     def get_admin_portal_structure(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/projects/{projectId}/admin-portal/structure
 
@@ -2285,62 +2229,6 @@ class AsyncAccountModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/account/projects/{projectId}/settings/legal",
-            method="PATCH",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def update_project_expose_legal(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/account/projects/{projectId}/settings/legal/expose
-
-        Turns the public legal pages on or off. Body: ``exposed`` (bool).
-        When on, ``api.public.get_public_project_legal`` serves the documents.
-        Request DTO: UpdateProjectExposeLegal.
-        """
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/settings/legal/expose",
-            method="PATCH",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def update_project_expose_brand(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/account/projects/{projectId}/settings/brand/expose
-
-        Sets whether the brand (name, colors, logo, icon) is returned by the public
-        Admin Portal config, ``api.public.get_public_project_config``. On by default.
-        Body: ``exposed`` (bool).
-        Request DTO: UpdateProjectExposeBrand.
-        """
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/settings/brand/expose",
-            method="PATCH",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
-
-    async def update_project_expose_auth(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PATCH /{version}/account/projects/{projectId}/settings/auth/expose
-
-        Sets whether the sign-in methods (email / phone / username) and the password
-        policy are returned by the public Admin Portal config,
-        ``api.public.get_public_project_config``. Off by default. Body: ``exposed`` (bool).
-        Request DTO: UpdateProjectExposeAuth.
-        """
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/settings/auth/expose",
             method="PATCH",
             path_params={"projectId": project_id},
             request=request,

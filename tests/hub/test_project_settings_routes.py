@@ -143,12 +143,6 @@ CASES: list[tuple[str, str, str, dict[str, list[str]] | None, dict[str, Any] | N
     # Legal + expose switches.
     ("update_project_legal_documents", "PATCH", f"{P}/settings/legal", None, LEGAL,
      lambda h: h.account.update_project_legal_documents(PR, **LEGAL)),
-    ("update_project_expose_legal", "PATCH", f"{P}/settings/legal/expose", None, {"exposed": True},
-     lambda h: h.account.update_project_expose_legal(PR, exposed=True)),
-    ("update_project_expose_auth", "PATCH", f"{P}/settings/auth/expose", None, {"exposed": True},
-     lambda h: h.account.update_project_expose_auth(PR, exposed=True)),
-    ("update_project_expose_brand", "PATCH", f"{P}/settings/brand/expose", None, {"exposed": False},
-     lambda h: h.account.update_project_expose_brand(PR, exposed=False)),
     # AI settings tab.
     ("get_project_ai_settings", "GET", f"{P}/ai/settings", None, None, lambda h: h.account.get_project_ai_settings(PR)),
     ("update_project_ai_settings", "PUT", f"{P}/ai/settings", None,
@@ -227,8 +221,8 @@ def _assert_request(
 
 def test_project_settings_route_count() -> None:
     # General info 6 + brand 7 + access 1 + regions 1 + languages 3 + environments 9 + admin portal 3
-    # + legal / expose 4 + AI 12 + termination 3 + billing 8.
-    assert len(CASES) == 6 + 7 + 1 + 1 + 3 + 9 + 3 + 4 + 12 + 3 + 8
+    # + legal 1 + AI 12 + termination 3 + billing 8.
+    assert len(CASES) == 6 + 7 + 1 + 1 + 3 + 9 + 3 + 1 + 12 + 3 + 8
     assert len(set(IDS)) == len(IDS)
 
 
