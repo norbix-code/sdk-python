@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from .client import AsyncNorbix, LoginCredentials, Norbix, NorbixApi, NorbixHub
 from .errors import (
+    EMAIL_NOT_VERIFIED_ERROR_CODE,
     AuthenticationError,
     ErrorItem,
     NorbixError,
@@ -9,6 +10,7 @@ from .errors import (
     RateLimitError,
     ValidationError,
     WorkflowRunTimeoutError,
+    is_email_not_verified_error,
 )
 from .functions import FunctionEvent, NorbixFunctionEventError, parse_function_event
 from .models import AuthLoginResult, DatabaseFindResult, ReferenceDisplay
@@ -27,12 +29,14 @@ from .workflows import WorkflowRun, step_output
 
 __all__ = [
     "create_pkce_pair",
+    "is_email_not_verified_error",
     "pkce_challenge",
     "AsyncNorbix",
     "AsyncNorbixWebhookReceiver",
     "AuthLoginResult",
     "AuthenticationError",
     "DatabaseFindResult",
+    "EMAIL_NOT_VERIFIED_ERROR_CODE",
     "ErrorItem",
     "FunctionEvent",
     "LoginCredentials",

@@ -44,6 +44,8 @@ Access with `norbix.api.membership`.
 | `change_password` | `POST` | `/{version}/membership/userauth/password/change` | `project` |
 | `request_password_reset` | `POST` | `/{version}/membership/userauth/password/reset/request` | `project` |
 | `confirm_password_reset` | `POST` | `/{version}/membership/userauth/password/reset/confirm` | `project` |
+| `verify_email_address` | `POST` | `/{version}/membership/userauth/email-verification/confirm` | `optional` |
+| `resend_email_address_verification` | `POST` | `/{version}/membership/userauth/email-verification/resend` | `optional` |
 | `map_auth_to_user` | `POST` | `/{version}/membership/users/{userId}/map-auth` | `project` |
 | `set_contact_roles` | `PUT` | `/{version}/membership/users/{userId}/roles` | `project` |
 | `grant_contact_consent` | `POST` | `/{version}/membership/users/{contactId}/marketing-state/{channel}/consent` | `project` |
@@ -113,6 +115,34 @@ m.link_identity("usr_…", code=link_code, codeVerifier=link_pkce.code_verifier)
   again), `-059` (the challenge is not a 43-character S256). A refused
   `returnUrl` sends the browser to the mode's failure page with
   `error=return_url_not_allowed`.
+
+## E-mail address verification
+
+When the project requires it (Hub authorization setting
+`RequireEmailVerification`, with a `UserVerificationCallback` URL), a user who
+signs up with e-mail + password gets a link to the callback with
+`#token=…` added. Both calls are public — no token is demanded:
+
+```python
+from norbix_python import AuthenticationError, LoginCredentials, is_email_not_verified_error
+
+norbix.api.membership.verify_email_address(token)            # {"authId", "verifiedAtUtc"}
+norbix.api.membership.resend_email_address_verification("ana@example.com")  # always OK
+
+try:
+    norbix.login(LoginCredentials(user_name="ana@example.com", password="…"))
+except AuthenticationError as exc:
+    if is_email_not_verified_error(exc):  # HTTP 401, CM-ERRORS-MEMBERSHIP-USERS-052
+        ...  # show "check your inbox" and offer resend_email_address_verification
+    else:
+        raise
+```
+
+`verify_email_address` refuses a link that is invalid, expired, used or
+replaced with `CM-ERRORS-MEMBERSHIP-USERS-051`. Both take
+`databaseIntegrationId=` to pick a database integration. The constant
+`EMAIL_NOT_VERIFIED_ERROR_CODE` holds the 052 code. These are not the passkey
+sign-up code routes (`start_email_verification` / `confirm_email_verification`).
 
 ## Credential version
 
