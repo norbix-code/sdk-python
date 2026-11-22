@@ -328,6 +328,8 @@ API keys and JWTs are sent as `Authorization: Bearer ...` (document your backend
 
 Social sign-in (Google, Apple, Microsoft, GitHub, Facebook, X, Okta) and linking a provider to the signed-in user: `api.membership.social_sign_in_url`, `exchange_social_sign_in_code`, `start_link_identity` and `link_identity`. See [docs/api/membership.md](docs/api/membership.md#social-sign-in-and-link-identity).
 
+E-mail address verification for e-mail + password users: `api.membership.verify_email_address(token)` and `resend_email_address_verification(email)` (public, no token); a sign-in refused because the address is not verified is told apart with `is_email_not_verified_error(err)` (`EMAIL_NOT_VERIFIED_ERROR_CODE`). See [docs/api/membership.md](docs/api/membership.md#e-mail-address-verification).
+
 ## Configuration from environment
 
 ```bash

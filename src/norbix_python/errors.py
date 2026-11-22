@@ -204,6 +204,24 @@ class WorkflowRunTimeoutError(NorbixError):
         self.run = run
 
 
+#: Password sign-in refused because the user's e-mail address is not verified
+#: yet, while the project requires verification (HTTP 401). Show "check your
+#: inbox" and offer ``norbix.api.membership.resend_email_address_verification(email)``.
+EMAIL_NOT_VERIFIED_ERROR_CODE = "CM-ERRORS-MEMBERSHIP-USERS-052"
+
+
+def is_email_not_verified_error(err: object) -> bool:
+    """``True`` when ``err`` is the "e-mail not verified" sign-in refusal.
+
+    Matches :data:`EMAIL_NOT_VERIFIED_ERROR_CODE` on the error itself or on any
+    item of its ``errors`` list.
+    """
+    if not isinstance(err, NorbixError):
+        return False
+    codes = [err.code, *(item.error_code for item in err.errors)]
+    return EMAIL_NOT_VERIFIED_ERROR_CODE in codes
+
+
 def error_from_http(
     *,
     message: str,

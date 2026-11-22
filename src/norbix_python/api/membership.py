@@ -557,6 +557,45 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
+    def verify_email_address(self, token: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/email-verification/confirm
+
+        Confirm a password user's e-mail address with the token from the
+        verification link (Norbix adds ``#token=…`` to the project's callback
+        URL). Public: no token is demanded. Answers ``{"authId", "verifiedAtUtc"}``.
+        A link that is invalid, expired, used or replaced is refused with
+        ``CM-ERRORS-MEMBERSHIP-USERS-051``. Pass ``databaseIntegrationId=`` to
+        pick a database integration.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/email-verification/confirm",
+            method="POST",
+            path_params={},
+            request={"token": token, **request},
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def resend_email_address_verification(self, email: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/email-verification/resend
+
+        Send the e-mail verification link again. Public: no token is demanded.
+        Always answers OK, whether or not the address belongs to a user. Pass
+        ``databaseIntegrationId=`` to pick a database integration.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/email-verification/resend",
+            method="POST",
+            path_params={},
+            request={"email": email, **request},
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def map_auth_to_user(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/membership/users/{userId}/map-auth"""
         return self._transport.send(
@@ -1409,6 +1448,45 @@ class AsyncMembershipModule:
             method="POST",
             path_params={},
             request=request,
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def verify_email_address(self, token: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/email-verification/confirm
+
+        Confirm a password user's e-mail address with the token from the
+        verification link (Norbix adds ``#token=…`` to the project's callback
+        URL). Public: no token is demanded. Answers ``{"authId", "verifiedAtUtc"}``.
+        A link that is invalid, expired, used or replaced is refused with
+        ``CM-ERRORS-MEMBERSHIP-USERS-051``. Pass ``databaseIntegrationId=`` to
+        pick a database integration.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/email-verification/confirm",
+            method="POST",
+            path_params={},
+            request={"token": token, **request},
+            scope="optional",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def resend_email_address_verification(self, email: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/membership/userauth/email-verification/resend
+
+        Send the e-mail verification link again. Public: no token is demanded.
+        Always answers OK, whether or not the address belongs to a user. Pass
+        ``databaseIntegrationId=`` to pick a database integration.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/membership/userauth/email-verification/resend",
+            method="POST",
+            path_params={},
+            request={"email": email, **request},
             scope="optional",
             timeout=timeout,
             bearer_token=bearer_token,
