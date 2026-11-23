@@ -200,3 +200,17 @@ def test_async_hub_payments_get_payments_webhook_log_hits_the_route() -> None:
     assert asyncio.run(run()) == log
     assert [(r.method, urlparse(str(r.url)).path) for r in seen] == [('GET', '/v3/payments/webhooks/log')]
     assert parse_qs(urlparse(str(seen[0].url)).query).get('limit') == ['20']
+
+
+def test_hub_payments_start_payments_integration_test_payment_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.hub.payments.start_payments_integration_test_payment(
+        integrationId="int_neopay", returnUrl="https://app.example.test/back"
+    )
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'POST'
+    assert urlparse(transport.last_request['url']).path == '/v3/payments/integrations/test-payment'
+    assert json.loads(transport.last_request['body']) == {
+        'integrationId': 'int_neopay',
+        'returnUrl': 'https://app.example.test/back',
+    }

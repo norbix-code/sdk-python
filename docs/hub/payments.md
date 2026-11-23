@@ -21,9 +21,26 @@ Access with `norbix.hub.payments`.
 | `get_payments_webhook_log` | `GET` | `/{version}/payments/webhooks/log` | `project` |
 | `save_payments_integration` | `POST` | `/{version}/payments/integrations` | `project` |
 | `test_payments_integration` | `POST` | `/{version}/payments/integrations/test` | `project` |
+| `start_payments_integration_test_payment` | `POST` | `/{version}/payments/integrations/test-payment` | `project` |
 | `start_payments_integration_connect` | `POST` | `/{version}/payments/integrations/connect/start` | `project` |
 | `complete_payments_integration_connect` | `POST` | `/{version}/payments/integrations/connect/{ConnectId}/complete` | `project` |
 | `disconnect_payments_integration_connect` | `POST` | `/{version}/payments/integrations/{Id}/connect/disconnect` | `project` |
+
+## Test payment (Neopay, Montonio)
+
+`start_payments_integration_test_payment` opens a real 0.01 payment at the
+provider so you can check the integration end to end. Open `payUrl` and pay;
+the provider sends the payer back to `returnUrl`. Other providers answer
+`CM-ERRORS-PAYMENTS-014`.
+
+```python
+started = norbix.hub.payments.start_payments_integration_test_payment(
+    integrationId="int_…", returnUrl="https://app.example.com/payments/back"
+)
+print(started["payUrl"], started["reference"], started["amountMinor"], started["currency"])
+```
+
+Saving an integration again with an empty secret keeps the saved secret.
 
 ## Quick connect (one-click OAuth)
 
