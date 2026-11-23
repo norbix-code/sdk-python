@@ -1,13 +1,29 @@
 # HUB · Integrations
 
 Access with `norbix.hub.integrations`. Helpers shared by the integrations of
-every module: keyless cloud setup and quick connect.
+every module: keyless cloud setup, quick connect and saved secrets.
 
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
 | `get_keyless_integration_setup` | `GET` | `/{version}/integrations/keyless/setup` | `project` |
 | `get_quick_connect_providers` | `GET` | `/{version}/integrations/connect/providers` | `project` |
 | `get_integration_connect_targets` | `GET` | `/{version}/integrations/connect/{ConnectId}/targets` | `project` |
+| `get_integration_secrets` | `GET` | `/{version}/integrations/{IntegrationId}/secrets` | `project` |
+| `remove_integration_secrets` | `POST` | `/{version}/integrations/{IntegrationId}/secrets/remove` | `project` |
+
+## Saved secrets
+
+`get_integration_secrets` works for an integration of any module. It lists each
+secret as `{"key", "field", "isSet", "isOptional"}` — never the value, not even
+part of it. Only optional keys can be removed; a needed key is refused with
+`CM-ERRORS-SECRETS-012` and nothing changes. To keep a saved secret when you
+save an integration again, leave that secret empty.
+
+```python
+rows = norbix.hub.integrations.get_integration_secrets("int_…", env="TEST")["result"]
+optional_set = [r["key"] for r in rows if r["isSet"] and r["isOptional"]]
+norbix.hub.integrations.remove_integration_secrets("int_…", optional_set)
+```
 
 ## Keyless cloud connections
 
