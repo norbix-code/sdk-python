@@ -6,7 +6,7 @@ from ..transport import AsyncTransport, Transport
 
 
 class IntegrationsModule:
-    """Helpers shared by every module's integrations: keyless cloud setup, quick connect."""
+    """Helpers shared by every module's integrations: keyless cloud setup, quick connect, saved secrets."""
 
     def __init__(self, transport: Transport) -> None:
         self._transport = transport
@@ -73,8 +73,52 @@ class IntegrationsModule:
         )
 
 
+    def get_integration_secrets(
+        self, integration_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any
+    ) -> Any:
+        """GET /{version}/integrations/{IntegrationId}/secrets — which secrets of an integration are saved.
+
+        Works for an integration of any module. Answer: ``result``, a list of ``{"key", "field", "isSet",
+        "isOptional"}`` — never a value or any part of one. ``field`` is the save request property that fills
+        the key. Empty for keyless and Norbix-owned integrations and for MCP, Marketplace and Webhook
+        integrations. Request: optional ``env``."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/integrations/{IntegrationId}/secrets",
+            method="GET",
+            path_params={"IntegrationId": integration_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def remove_integration_secrets(
+        self,
+        integration_id: str,
+        keys: list[str],
+        *,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/integrations/{IntegrationId}/secrets/remove — remove optional secrets.
+
+        ``keys`` as ``get_integration_secrets`` lists them. A key the integration needs is refused with
+        ``CM-ERRORS-SECRETS-012`` (400) and nothing is written. Request: optional ``env``. Answer: ``id``."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/integrations/{IntegrationId}/secrets/remove",
+            method="POST",
+            path_params={"IntegrationId": integration_id},
+            request={**request, "keys": list(keys)},
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
 class AsyncIntegrationsModule:
-    """Helpers shared by every module's integrations: keyless cloud setup, quick connect."""
+    """Helpers shared by every module's integrations: keyless cloud setup, quick connect, saved secrets."""
 
     def __init__(self, transport: AsyncTransport) -> None:
         self._transport = transport
@@ -123,6 +167,42 @@ class AsyncIntegrationsModule:
             method="GET",
             path_params={"ConnectId": connect_id},
             request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def get_integration_secrets(
+        self, integration_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any
+    ) -> Any:
+        """GET /{version}/integrations/{IntegrationId}/secrets — see ``IntegrationsModule.get_integration_secrets``."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/integrations/{IntegrationId}/secrets",
+            method="GET",
+            path_params={"IntegrationId": integration_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def remove_integration_secrets(
+        self,
+        integration_id: str,
+        keys: list[str],
+        *,
+        timeout: float | None = None,
+        bearer_token: str | None = None,
+        **request: Any,
+    ) -> Any:
+        """POST /{version}/integrations/{IntegrationId}/secrets/remove — see ``IntegrationsModule.remove_integration_secrets``."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/integrations/{IntegrationId}/secrets/remove",
+            method="POST",
+            path_params={"IntegrationId": integration_id},
+            request={**request, "keys": list(keys)},
             scope="project",
             timeout=timeout,
             bearer_token=bearer_token,
