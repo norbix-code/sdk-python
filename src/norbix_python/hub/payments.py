@@ -230,6 +230,23 @@ class PaymentsModule:
             bearer_token=bearer_token,
         )
 
+    def start_payments_integration_test_payment(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/test-payment — open a real 0.01 test payment at the provider.
+
+        Request: ``integrationId`` and ``returnUrl`` (an absolute https URL; http only for localhost).
+        Answer: ``payUrl`` (open it to pay), ``reference``, ``amountMinor``, ``currency``.
+        Neopay and Montonio only; another provider answers ``CM-ERRORS-PAYMENTS-014``."""
+        return self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/test-payment",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def start_payments_integration_connect(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/payments/integrations/connect/start — start the quick connect (one-click OAuth) of a payments integration.
 
@@ -500,6 +517,23 @@ class AsyncPaymentsModule:
         return await self._transport.send(
             target="hub",
             path="/{version}/payments/integrations/test",
+            method="POST",
+            path_params={},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def start_payments_integration_test_payment(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/payments/integrations/test-payment — open a real 0.01 test payment at the provider.
+
+        Request: ``integrationId`` and ``returnUrl`` (an absolute https URL; http only for localhost).
+        Answer: ``payUrl`` (open it to pay), ``reference``, ``amountMinor``, ``currency``.
+        Neopay and Montonio only; another provider answers ``CM-ERRORS-PAYMENTS-014``."""
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/payments/integrations/test-payment",
             method="POST",
             path_params={},
             request=request,
