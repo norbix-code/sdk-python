@@ -669,6 +669,38 @@ class CodeModule:
             bearer_token=bearer_token,
         )
 
+    def set_code_workflow_start_event(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/start-event
+
+        Sets the event that starts the workflow (`start={"source", "event", "schema", "condition"}`) and saves a draft; publishing it writes the trigger. A different start answers CM-ERRORS-WORKFLOWS-054.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/start-event",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def save_code_workflow_canvas(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/canvas
+
+        Saves where the visual builder draws the steps (`canvas="<json text>"`); no draft, no version.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/canvas",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def publish_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: POST /{version}/code/workflows/{Id}/publish
 
@@ -774,6 +806,22 @@ class CodeModule:
             target="hub",
             path="/{version}/code/workflows/{Id}/disable",
             method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    def test_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/test
+
+        Starts a real run with a test event: a database record (`source="database"`, `collection`, `recordId`, `edits`), a Membership user (`source="membership"`, `userId`) or a manual `payload`.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/test",
+            method="POST",
             path_params={"Id": id},
             request=request,
             scope="project",
@@ -1704,6 +1752,38 @@ class AsyncCodeModule:
             bearer_token=bearer_token,
         )
 
+    async def set_code_workflow_start_event(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/start-event
+
+        Sets the event that starts the workflow (`start={"source", "event", "schema", "condition"}`) and saves a draft; publishing it writes the trigger. A different start answers CM-ERRORS-WORKFLOWS-054.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/start-event",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def save_code_workflow_canvas(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: PUT /{version}/code/workflows/{Id}/canvas
+
+        Saves where the visual builder draws the steps (`canvas="<json text>"`); no draft, no version.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/canvas",
+            method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def publish_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: POST /{version}/code/workflows/{Id}/publish
 
@@ -1809,6 +1889,22 @@ class AsyncCodeModule:
             target="hub",
             path="/{version}/code/workflows/{Id}/disable",
             method="PUT",
+            path_params={"Id": id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def test_code_workflow(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """Beta: POST /{version}/code/workflows/{Id}/test
+
+        Starts a real run with a test event: a database record (`source="database"`, `collection`, `recordId`, `edits`), a Membership user (`source="membership"`, `userId`) or a manual `payload`.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/code/workflows/{Id}/test",
+            method="POST",
             path_params={"Id": id},
             request=request,
             scope="project",

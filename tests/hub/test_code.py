@@ -442,11 +442,28 @@ WF_DEFINITION: dict[str, Any] = {
     "steps": [{"id": "approve", "kind": "wait.approval", "assignees": ["usr_1"]}],
 }
 
+START_EVENT = {
+    "source": "database",
+    "event": "database.record.inserted",
+    "schema": "moto_listings",
+    "condition": 'return New.status == "review";',
+}
+TEST_RUN = {
+    "source": "database",
+    "event": "database.record.updated",
+    "collection": "moto_listings",
+    "recordId": "rec_1",
+    "edits": {"status": "review"},
+}
+
 WORKFLOW_CASES: list[FunctionCase] = [
     ("get_code_workflows", "GET", "/v3/code/workflows", {"isEnabled": ["true"], "pageSize": ["20"]}, None, lambda m: m.get_code_workflows(isEnabled=True, pageSize=20)),
     ("save_code_workflow", "PUT", "/v3/code/workflows", None, {"definition": WF_DEFINITION}, lambda m: m.save_code_workflow(definition=WF_DEFINITION)),
     ("get_code_workflow", "GET", f"/v3/code/workflows/{WF}", {"pinnedVersion": ["2"]}, None, lambda m: m.get_code_workflow(WF, pinnedVersion=2)),
     ("delete_code_workflow", "DELETE", f"/v3/code/workflows/{WF}", None, None, lambda m: m.delete_code_workflow(WF)),
+    ("set_code_workflow_start_event", "PUT", f"/v3/code/workflows/{WF}/start-event", None, {"start": START_EVENT}, lambda m: m.set_code_workflow_start_event(WF, start=START_EVENT)),
+    ("save_code_workflow_canvas", "PUT", f"/v3/code/workflows/{WF}/canvas", None, {"canvas": '{"nodes":{}}'}, lambda m: m.save_code_workflow_canvas(WF, canvas='{"nodes":{}}')),
+    ("test_code_workflow", "POST", f"/v3/code/workflows/{WF}/test", None, TEST_RUN, lambda m: m.test_code_workflow(WF, **TEST_RUN)),
     ("publish_code_workflow", "POST", f"/v3/code/workflows/{WF}/publish", None, None, lambda m: m.publish_code_workflow(WF)),
     ("get_code_workflow_draft", "GET", f"/v3/code/workflows/{WF}/draft", None, None, lambda m: m.get_code_workflow_draft(WF)),
     ("discard_code_workflow_draft", "DELETE", f"/v3/code/workflows/{WF}/draft", None, None, lambda m: m.discard_code_workflow_draft(WF)),
@@ -524,10 +541,10 @@ def test_async_workflow_endpoints_hit_the_same_routes() -> None:
 
 
 def test_workflow_surface_size() -> None:
-    """26 Hub workflow routes in the gateway (Code.Workflows.md §7). A new one changes this count."""
-    assert len(WORKFLOW_CASES) == 26
-    assert len({case[0] for case in WORKFLOW_CASES}) == 26
-    assert len({(case[1], case[2]) for case in WORKFLOW_CASES}) == 26
+    """29 Hub workflow routes in the gateway (Code.Workflows.md §7). A new one changes this count."""
+    assert len(WORKFLOW_CASES) == 29
+    assert len({case[0] for case in WORKFLOW_CASES}) == 29
+    assert len({(case[1], case[2]) for case in WORKFLOW_CASES}) == 29
     client, _ = make_client()
     for name, *_ in WORKFLOW_CASES:
         assert callable(getattr(client.hub.code, name)), name

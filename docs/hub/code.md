@@ -115,6 +115,8 @@ sync and the async client. Paging fields are `pageSize`, `startingAfter`,
 | `save_code_workflow` | `PUT` | `/{version}/code/workflows` | `project` | JSON body: `definition` (saves the draft; creates when `definition.workflowId` is absent) |
 | `get_code_workflow` | `GET` | `/{version}/code/workflows/{Id}` | `project` | path: `id`; query: `pinnedVersion?` |
 | `delete_code_workflow` | `DELETE` | `/{version}/code/workflows/{Id}` | `project` | path: `id` (waiting runs are cancelled) |
+| `set_code_workflow_start_event` | `PUT` | `/{version}/code/workflows/{Id}/start-event` | `project` | path: `id`; JSON body: `start` (`source`, `event`, `schema?`, `condition?`) — saves a draft; publishing writes the trigger; a different start is `CM-ERRORS-WORKFLOWS-054` |
+| `save_code_workflow_canvas` | `PUT` | `/{version}/code/workflows/{Id}/canvas` | `project` | path: `id`; JSON body: `canvas` (the visual builder layout as JSON text; no draft, no version) |
 | `publish_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/publish` | `project` | path: `id` |
 | `get_code_workflow_draft` | `GET` | `/{version}/code/workflows/{Id}/draft` | `project` | path: `id` |
 | `discard_code_workflow_draft` | `DELETE` | `/{version}/code/workflows/{Id}/draft` | `project` | path: `id` |
@@ -123,6 +125,7 @@ sync and the async client. Paging fields are `pageSize`, `startingAfter`,
 | `enable_code_workflow` | `PUT` | `/{version}/code/workflows/{Id}/enable` | `project` | path: `id` |
 | `disable_code_workflow` | `PUT` | `/{version}/code/workflows/{Id}/disable` | `project` | path: `id` |
 | `invoke_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/invoke` | `project` | path: `id`; JSON body: `payload?`, `waitSeconds?` (0–30), `runVersion?` (`"draft"` or a version number as a string) |
+| `test_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/test` | `project` | path: `id`; JSON body: `source` (`database` / `membership` / `manual`), `event?`, `collection?`, `recordId?`, `userId?`, `edits?`, `payload?`, `runVersion?` — a real run |
 | `get_code_workflow_runs` | `GET` | `/{version}/code/workflows/{Id}/runs` | `project` | path: `id`; query: `status?`, `from?`, `to?`, paging; newest first |
 | `resume_code_workflow_run_by_key` | `POST` | `/{version}/code/workflows/{Id}/resume` | `project` | path: `id`; JSON body: `key`, `stepId?`, `decision?`, `payload?` |
 | `validate_code_workflow` | `POST` | `/{version}/code/workflows/validate` | `project` | JSON body: `definition`; answers `isValid`, `errors`, `warnings` |
@@ -144,7 +147,11 @@ the key. Auth is still sent when the client has a token.
 ```python
 saved = norbix.hub.code.save_code_workflow(definition=definition)
 workflow_id = saved["workflow"]["definition"]["workflowId"]
-norbix.hub.code.publish_code_workflow(workflow_id)
+norbix.hub.code.set_code_workflow_start_event(workflow_id, start={
+    "source": "database", "event": "database.record.inserted",
+    "schema": "moto_listings", "condition": 'return New.status == "review";',
+})  # the condition reads Old, New and Event, like a trigger's activation code
+norbix.hub.code.publish_code_workflow(workflow_id)  # writes the trigger, managed by the workflow
 started = norbix.hub.code.invoke_code_workflow(workflow_id, payload={"orderId": "ord_1"}, waitSeconds=0)
 inbox = norbix.hub.code.get_code_workflow_waiting_runs(assignee="me")
 ```
