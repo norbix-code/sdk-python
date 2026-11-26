@@ -712,15 +712,17 @@ class MembershipModule:
             bearer_token=bearer_token,
         )
 
-    def set_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users/{userId}/ai-plan
+    def get_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{userId}/ai-plan
 
-        Gives the user an AI plan (``planId``).
+        The AI plan the user has now and where it comes from: a role of the
+        user or the project's default plan. Plans are given by role in the
+        project's AI plans; there is no per-user plan to set.
         """
         return self._transport.send(
             target="hub",
             path="/{version}/membership/users/{userId}/ai-plan",
-            method="PUT",
+            method="GET",
             path_params={"userId": user_id},
             request=request,
             scope="project",
@@ -1436,15 +1438,17 @@ class AsyncMembershipModule:
             bearer_token=bearer_token,
         )
 
-    async def set_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """PUT /{version}/membership/users/{userId}/ai-plan
+    async def get_user_ai_plan(self, user_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/membership/users/{userId}/ai-plan
 
-        Gives the user an AI plan (``planId``).
+        The AI plan the user has now and where it comes from: a role of the
+        user or the project's default plan. Plans are given by role in the
+        project's AI plans; there is no per-user plan to set.
         """
         return await self._transport.send(
             target="hub",
             path="/{version}/membership/users/{userId}/ai-plan",
-            method="PUT",
+            method="GET",
             path_params={"userId": user_id},
             request=request,
             scope="project",

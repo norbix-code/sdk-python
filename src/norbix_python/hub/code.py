@@ -608,7 +608,8 @@ class CodeModule:
     def get_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: GET /{version}/code/workflows
 
-        List the workflows; query `isEnabled?`, `pageSize`, `startingAfter`, `endingBefore`.
+        List the workflows, newest first; query `isEnabled?`, `search?` (part of the name, any case),
+        `pageSize`, `startingAfter`, `endingBefore`.
         """
         return self._transport.send(
             target="hub",
@@ -848,7 +849,8 @@ class CodeModule:
     def get_code_workflow_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: GET /{version}/code/workflows/{Id}/runs
 
-        Runs of a workflow, newest first; query `status?`, `from?`, `to?` and paging.
+        Runs of a workflow, newest first; query `status?`, `from?`, `to?`, `workflowVersion?`
+        (only runs of that published version) and paging.
         """
         return self._transport.send(
             target="hub",
@@ -1691,7 +1693,8 @@ class AsyncCodeModule:
     async def get_code_workflows(self, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: GET /{version}/code/workflows
 
-        List the workflows; query `isEnabled?`, `pageSize`, `startingAfter`, `endingBefore`.
+        List the workflows, newest first; query `isEnabled?`, `search?` (part of the name, any case),
+        `pageSize`, `startingAfter`, `endingBefore`.
         """
         return await self._transport.send(
             target="hub",
@@ -1931,7 +1934,8 @@ class AsyncCodeModule:
     async def get_code_workflow_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: GET /{version}/code/workflows/{Id}/runs
 
-        Runs of a workflow, newest first; query `status?`, `from?`, `to?` and paging.
+        Runs of a workflow, newest first; query `status?`, `from?`, `to?`, `workflowVersion?`
+        (only runs of that published version) and paging.
         """
         return await self._transport.send(
             target="hub",

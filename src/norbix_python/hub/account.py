@@ -751,6 +751,26 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
+    def get_team_member(self, member_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/team/member/{MemberId}
+
+        One account team member (``usr_…``, from ``get_account_collaborators``):
+        display name, full name, e-mail, phone, account roles (with the
+        environments and projects each applies to) and the push devices
+        registered for them. The answer's ``item`` is a TeamMemberDetailsDto.
+        Request DTO: GetTeamMember.
+        """
+        return self._transport.send(
+            target="hub",
+            path="/{version}/account/team/member/{MemberId}",
+            method="GET",
+            path_params={"MemberId": member_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def get_project_ai_settings(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/projects/{projectId}/ai/settings"""
         return self._transport.send(
@@ -1033,7 +1053,11 @@ class AccountModule:
         The project's health for the request environment: the problems, each
         with a Cloud fix path, and the user / e-mail / API call numbers of the
         period. Computed every 6 hours and cached; ``refresh=True`` computes it
-        now, ``periodDays`` is 7, 30 (the default) or 90.
+        now, ``periodDays`` is 7, 30 (the default) or 90. Narrow the problems
+        with ``severity`` (``Warning`` or ``Error``) and ``module`` (``Email``,
+        ``Files``, …); page them with ``pageNumber`` (0-based) and ``pageSize``
+        (1 to 100, empty = all). Errors come first; ``warningsTotal`` counts
+        every match, ``pageNumber`` / ``pageSize`` echo the page.
         Request DTO: GetProjectHealth.
         """
         return self._transport.send(
@@ -1251,22 +1275,6 @@ class AccountModule:
             bearer_token=bearer_token,
         )
 
-    def get_project_ai_user_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/projects/{projectId}/ai/plans/users
-
-        The users that have their own end-user AI plan, with the plan id.
-        Request DTO: GetProjectAiUserPlans.
-        """
-        return self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/ai/plans/users",
-            method="GET",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
 
     def create_ai_credit_pack_checkout(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/projects/{projectId}/ai/credits/checkout
@@ -2122,6 +2130,26 @@ class AsyncAccountModule:
             bearer_token=bearer_token,
         )
 
+    async def get_team_member(self, member_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """GET /{version}/account/team/member/{MemberId}
+
+        One account team member (``usr_…``, from ``get_account_collaborators``):
+        display name, full name, e-mail, phone, account roles (with the
+        environments and projects each applies to) and the push devices
+        registered for them. The answer's ``item`` is a TeamMemberDetailsDto.
+        Request DTO: GetTeamMember.
+        """
+        return await self._transport.send(
+            target="hub",
+            path="/{version}/account/team/member/{MemberId}",
+            method="GET",
+            path_params={"MemberId": member_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     async def get_project_ai_settings(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/account/projects/{projectId}/ai/settings"""
         return await self._transport.send(
@@ -2404,7 +2432,11 @@ class AsyncAccountModule:
         The project's health for the request environment: the problems, each
         with a Cloud fix path, and the user / e-mail / API call numbers of the
         period. Computed every 6 hours and cached; ``refresh=True`` computes it
-        now, ``periodDays`` is 7, 30 (the default) or 90.
+        now, ``periodDays`` is 7, 30 (the default) or 90. Narrow the problems
+        with ``severity`` (``Warning`` or ``Error``) and ``module`` (``Email``,
+        ``Files``, …); page them with ``pageNumber`` (0-based) and ``pageSize``
+        (1 to 100, empty = all). Errors come first; ``warningsTotal`` counts
+        every match, ``pageNumber`` / ``pageSize`` echo the page.
         Request DTO: GetProjectHealth.
         """
         return await self._transport.send(
@@ -2622,22 +2654,6 @@ class AsyncAccountModule:
             bearer_token=bearer_token,
         )
 
-    async def get_project_ai_user_plans(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
-        """GET /{version}/account/projects/{projectId}/ai/plans/users
-
-        The users that have their own end-user AI plan, with the plan id.
-        Request DTO: GetProjectAiUserPlans.
-        """
-        return await self._transport.send(
-            target="hub",
-            path="/{version}/account/projects/{projectId}/ai/plans/users",
-            method="GET",
-            path_params={"projectId": project_id},
-            request=request,
-            scope="project",
-            timeout=timeout,
-            bearer_token=bearer_token,
-        )
 
     async def create_ai_credit_pack_checkout(self, project_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """POST /{version}/account/projects/{projectId}/ai/credits/checkout

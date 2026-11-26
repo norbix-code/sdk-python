@@ -62,7 +62,7 @@ Access with `norbix.api.membership`.
 | `remove_contact_identity` | `DELETE` | `/{version}/membership/users/{contactId}/identities/{authId}` | `project` |
 | `promote_contact_identity` | `POST` | `/{version}/membership/users/{contactId}/identities/{authId}/promote` | `project` |
 | `clear_contact_bounce` | `POST` | `/{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce` | `project` |
-| `set_user_ai_plan` | `PUT` | `/{version}/membership/users/{userId}/ai-plan` | `project` |
+| `get_user_ai_plan` | `GET` | `/{version}/membership/users/{userId}/ai-plan` | `project` |
 | `finish_invitation` | `POST` | `/{version}/membership/auth/invitation/finish` | `optional` |
 | `send_test_password_reset` | `POST` | `/{version}/membership/userauth/password/reset/test` | `project` |
 
@@ -167,4 +167,17 @@ except AuthenticationError as exc:
         norbix.login(LoginCredentials(user_name="alice@team.io", password="…"))  # a fresh token
     else:
         raise
+```
+
+## A user's AI plan
+
+`get_user_ai_plan(user_id)` reads the end-user AI plan one user gets now and
+why: `planId`, `planName`, `reason` (`role`, `default`, `no-plans`,
+`no-match` or `plans-off`) and, for `role`, the `roleId` that gave it. It is
+read-only. Plans are given by role in the project's AI plans
+(`hub.account.update_project_ai_plan_assignments`); there is no per-user plan
+to set any more (`set_user_ai_plan` was removed).
+
+```python
+plan = norbix.membership.get_user_ai_plan("ct_123")
 ```

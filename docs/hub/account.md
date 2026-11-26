@@ -62,6 +62,7 @@ Sync and async clients behave the same. Tests:
 | `get_my_account_user_profile` | `GET` | `/{version}/account/me` | `project` |
 | `update_my_account_user_phone` | `PUT` | `/{version}/account/me/phone` | `project` |
 | `send_invite_to_team_member` | `POST` | `/{version}/account/team/member/invite` | `project` |
+| `get_team_member` | `GET` | `/{version}/account/team/member/{MemberId}` | `project` |
 | `get_project_ai_settings` | `GET` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
 | `update_project_ai_settings` | `PUT` | `/{version}/account/projects/{projectId}/ai/settings` | `project` |
 | `create_project_ai_assistant` | `POST` | `/{version}/account/projects/{projectId}/ai/assistants` | `project` |
@@ -91,7 +92,6 @@ Sync and async clients behave the same. Tests:
 | `get_project_ai_plans` | `GET` | `/{version}/account/projects/{projectId}/ai/plans` | `project` |
 | `update_project_ai_plans` | `PUT` | `/{version}/account/projects/{projectId}/ai/plans` | `project` |
 | `update_project_ai_plan_assignments` | `PUT` | `/{version}/account/projects/{projectId}/ai/plans/assignments` | `project` |
-| `get_project_ai_user_plans` | `GET` | `/{version}/account/projects/{projectId}/ai/plans/users` | `project` |
 | `create_ai_credit_pack_checkout` | `POST` | `/{version}/account/projects/{projectId}/ai/credits/checkout` | `project` |
 | `mcp` | `POST` | `/{version}/account/mcp` | `project` |
 | `mcp_stream` | `GET` | `/{version}/account/mcp` | `project` |
@@ -109,6 +109,12 @@ routes) is tested with host, verb, exact path, query and body in
   A timeout is not an error; read `isActive` in the answer.
 - `get_project_health(project_id, refresh=True, periodDays=7)` — the problems,
   each with a Cloud fix path, and the user / e-mail / API call numbers.
+  Errors come first. Narrow the list with `severity` (`Warning` or `Error`)
+  and `module` (`Email`, `Files`, …), and page it with `pageNumber` (from 0)
+  and `pageSize` (1 to 100; leave it out for every problem). The answer's
+  `warningsTotal` counts every match; `pageNumber` and `pageSize` say which
+  page you got:
+  `get_project_health(project_id, severity="Error", pageNumber=0, pageSize=20)`.
 - Environments: `norbix.hub.environments` lists, creates and deletes them;
   the ladder (`set_environment_rank`), promotion (`promote_environment`,
   `rollback_promotion`), the built-in repair and the per-environment admin
@@ -117,7 +123,8 @@ routes) is tested with host, verb, exact path, query and body in
 - `update_project_ai_plans(project_id, plans=[...])` replaces the whole list
   (a plan left out is removed), and `update_project_ai_plan_assignments`
   replaces `roles` and `defaultPlanId` together: read `get_project_ai_plans`
-  first and send the list back with your change.
+  first and send the list back with your change. Plans are given by role
+  only; read the plan one user gets with `membership.get_user_ai_plan(user_id)`.
 - `create_ai_credit_pack_checkout(project_id, pack="pack-10")` gives back a
   Stripe checkout address; nothing is charged until the payer completes it.
 - `set_extra_regions` changes the Managed Service subscription through Stripe
@@ -149,6 +156,15 @@ The team list pages with flat fields — `pageSize` (default 20),
 
 ```python
 team = norbix.hub.account.get_account_collaborators(projectId="proj_123", pageSize=50)
+```
+
+`get_team_member(member_id)` reads one team member (`usr_…`, from the team
+list): display name, full name, e-mail, phone, account roles (with the
+environments and projects each applies to) and their push devices. The
+answer's `item` holds them:
+
+```python
+member = norbix.hub.account.get_team_member("usr_123")["item"]
 ```
 
 ## Subscription, bundles and Flex clusters

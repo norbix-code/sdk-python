@@ -52,6 +52,7 @@ def test_hub_account_module_surface() -> None:
     assert callable(module.get_my_account_user_profile)
     assert callable(module.update_my_account_user_phone)
     assert callable(module.send_invite_to_team_member)
+    assert callable(module.get_team_member)
 
 
 def test_hub_account_get_account_profile_request_shape() -> None:
@@ -307,6 +308,40 @@ def test_hub_account_send_invite_to_team_member_request_shape() -> None:
     assert transport.last_request['method'] == 'POST'
     assert transport.last_request is not None
     assert transport.last_request['url'].startswith('https://')
+
+def test_hub_account_get_team_member_request_shape() -> None:
+    client, transport = make_client()
+    client.hub.account.get_team_member("usr_1")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'GET'
+    assert transport.last_request['url'] == 'https://hub.norbix.ai/v3/account/team/member/usr_1'
+    assert transport.last_request['body'] == ''
+
+
+def test_hub_account_get_team_member_async_hits_the_same_route() -> None:
+    import asyncio
+
+    import httpx
+
+    from norbix_python import AsyncNorbix
+
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={})
+
+    async def run() -> None:
+        async with AsyncNorbix(
+            project_id="test-project",
+            bearer_token="test-token",
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        ) as client:
+            await client.hub.account.get_team_member("usr_1")
+
+    asyncio.run(run())
+    assert seen[0].method == 'GET'
+    assert str(seen[0].url) == 'https://hub.norbix.ai/v3/account/team/member/usr_1'
 
 def test_hub_account_wave3_module_surface() -> None:
     client, _ = make_client()

@@ -457,7 +457,7 @@ TEST_RUN = {
 }
 
 WORKFLOW_CASES: list[FunctionCase] = [
-    ("get_code_workflows", "GET", "/v3/code/workflows", {"isEnabled": ["true"], "pageSize": ["20"]}, None, lambda m: m.get_code_workflows(isEnabled=True, pageSize=20)),
+    ("get_code_workflows", "GET", "/v3/code/workflows", {"isEnabled": ["true"], "search": ["invoice"], "pageSize": ["20"]}, None, lambda m: m.get_code_workflows(isEnabled=True, search="invoice", pageSize=20)),
     ("save_code_workflow", "PUT", "/v3/code/workflows", None, {"definition": WF_DEFINITION}, lambda m: m.save_code_workflow(definition=WF_DEFINITION)),
     ("get_code_workflow", "GET", f"/v3/code/workflows/{WF}", {"pinnedVersion": ["2"]}, None, lambda m: m.get_code_workflow(WF, pinnedVersion=2)),
     ("delete_code_workflow", "DELETE", f"/v3/code/workflows/{WF}", None, None, lambda m: m.delete_code_workflow(WF)),
@@ -472,7 +472,7 @@ WORKFLOW_CASES: list[FunctionCase] = [
     ("enable_code_workflow", "PUT", f"/v3/code/workflows/{WF}/enable", None, None, lambda m: m.enable_code_workflow(WF)),
     ("disable_code_workflow", "PUT", f"/v3/code/workflows/{WF}/disable", None, None, lambda m: m.disable_code_workflow(WF)),
     ("invoke_code_workflow", "POST", f"/v3/code/workflows/{WF}/invoke", None, {"payload": {"orderId": "ord_1"}, "waitSeconds": 10, "runVersion": "draft"}, lambda m: m.invoke_code_workflow(WF, payload={"orderId": "ord_1"}, waitSeconds=10, runVersion="draft")),
-    ("get_code_workflow_runs", "GET", f"/v3/code/workflows/{WF}/runs", {"status": ["failed"], "from": ["2026-10-01T00:00:00Z"], "pageSize": ["50"]}, None, lambda m: m.get_code_workflow_runs(WF, status="failed", **{"from": "2026-10-01T00:00:00Z"}, pageSize=50)),
+    ("get_code_workflow_runs", "GET", f"/v3/code/workflows/{WF}/runs", {"status": ["failed"], "from": ["2026-10-01T00:00:00Z"], "workflowVersion": ["2"], "pageSize": ["50"]}, None, lambda m: m.get_code_workflow_runs(WF, status="failed", **{"from": "2026-10-01T00:00:00Z"}, workflowVersion=2, pageSize=50)),
     ("resume_code_workflow_run_by_key", "POST", f"/v3/code/workflows/{WF}/resume", None, {"key": "order-ord_1", "decision": "approved", "payload": {"note": "ok"}}, lambda m: m.resume_code_workflow_run_by_key(WF, key="order-ord_1", decision="approved", payload={"note": "ok"})),
     ("validate_code_workflow", "POST", "/v3/code/workflows/validate", None, {"definition": WF_DEFINITION}, lambda m: m.validate_code_workflow(definition=WF_DEFINITION)),
     ("get_code_workflow_schema", "GET", "/v3/code/workflows/schema", None, None, lambda m: m.get_code_workflow_schema()),

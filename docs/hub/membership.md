@@ -53,7 +53,7 @@ Access with `norbix.hub.membership`.
 | `repair_contact_roles` | `POST` | `/{version}/membership/users/repair-roles` | `project` |
 | `update_contact` | `PATCH` | `/{version}/membership/users/{contactId}` | `project` |
 | `clear_contact_bounce` | `POST` | `/{version}/membership/users/{contactId}/marketing-state/{channel}/clear-bounce` | `project` |
-| `set_user_ai_plan` | `PUT` | `/{version}/membership/users/{userId}/ai-plan` | `project` |
+| `get_user_ai_plan` | `GET` | `/{version}/membership/users/{userId}/ai-plan` | `project` |
 
 ## Service-user API keys
 
@@ -66,3 +66,16 @@ lists the keys (without their text) and `delete_service_user_api_key(user_id, ke
 The contact routes (`/membership/users…`) are served by the Hub and by the API host. The same methods
 live on `norbix.hub.membership` and `norbix.api.membership`; a project API key calls the API host.
 `import_users` and `repair_login_project_ids` are Hub only.
+
+## A user's AI plan
+
+`get_user_ai_plan(user_id)` reads the end-user AI plan one user gets now and
+why: `planId`, `planName`, `reason` (`role`, `default`, `no-plans`,
+`no-match` or `plans-off`) and, for `role`, the `roleId` that gave it. It is
+read-only. Plans are given by role in the project's AI plans
+(`hub.account.update_project_ai_plan_assignments`); there is no per-user plan
+to set any more (`set_user_ai_plan` was removed).
+
+```python
+plan = norbix.membership.get_user_ai_plan("ct_123")
+```

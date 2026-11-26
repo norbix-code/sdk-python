@@ -104,7 +104,7 @@ class CodeModule:
     def get_code_workflow_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: GET /{version}/code/workflows/{Id}/runs
 
-        A workflow's runs, newest first; query ``status?``, ``from?``, ``to?``, ``pageSize?``, ``startingAfter?``, ``endingBefore?``.
+        A workflow's runs, newest first; query ``status?``, ``from?``, ``to?``, ``workflowVersion?``, ``pageSize?``, ``startingAfter?``, ``endingBefore?``.
         """
         return self._transport.send(
             target="api",
@@ -287,7 +287,7 @@ class AsyncCodeModule:
     async def get_code_workflow_runs(self, id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """Beta: GET /{version}/code/workflows/{Id}/runs
 
-        A workflow's runs, newest first; query ``status?``, ``from?``, ``to?``, ``pageSize?``, ``startingAfter?``, ``endingBefore?``.
+        A workflow's runs, newest first; query ``status?``, ``from?``, ``to?``, ``workflowVersion?``, ``pageSize?``, ``startingAfter?``, ``endingBefore?``.
         """
         return await self._transport.send(
             target="api",
