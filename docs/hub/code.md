@@ -111,7 +111,7 @@ sync and the async client. Paging fields are `pageSize`, `startingAfter`,
 
 | Method | Verb | Path | Scope | Parameters go in |
 | --- | --- | --- | --- | --- |
-| `get_code_workflows` | `GET` | `/{version}/code/workflows` | `project` | query: `isEnabled?`, paging |
+| `get_code_workflows` | `GET` | `/{version}/code/workflows` | `project` | query: `isEnabled?`, `search?` (part of the name, any case), paging; newest first |
 | `save_code_workflow` | `PUT` | `/{version}/code/workflows` | `project` | JSON body: `definition` (saves the draft; creates when `definition.workflowId` is absent) |
 | `get_code_workflow` | `GET` | `/{version}/code/workflows/{Id}` | `project` | path: `id`; query: `pinnedVersion?` |
 | `delete_code_workflow` | `DELETE` | `/{version}/code/workflows/{Id}` | `project` | path: `id` (waiting runs are cancelled) |
@@ -126,7 +126,7 @@ sync and the async client. Paging fields are `pageSize`, `startingAfter`,
 | `disable_code_workflow` | `PUT` | `/{version}/code/workflows/{Id}/disable` | `project` | path: `id` |
 | `invoke_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/invoke` | `project` | path: `id`; JSON body: `payload?`, `waitSeconds?` (0–30), `runVersion?` (`"draft"` or a version number as a string) |
 | `test_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/test` | `project` | path: `id`; JSON body: `source` (`database` / `membership` / `manual`), `event?`, `collection?`, `recordId?`, `userId?`, `edits?`, `payload?`, `runVersion?` — a real run |
-| `get_code_workflow_runs` | `GET` | `/{version}/code/workflows/{Id}/runs` | `project` | path: `id`; query: `status?`, `from?`, `to?`, paging; newest first |
+| `get_code_workflow_runs` | `GET` | `/{version}/code/workflows/{Id}/runs` | `project` | path: `id`; query: `status?`, `from?`, `to?`, `workflowVersion?` (one published version), paging; newest first |
 | `resume_code_workflow_run_by_key` | `POST` | `/{version}/code/workflows/{Id}/resume` | `project` | path: `id`; JSON body: `key`, `stepId?`, `decision?`, `payload?` |
 | `validate_code_workflow` | `POST` | `/{version}/code/workflows/validate` | `project` | JSON body: `definition`; answers `isValid`, `errors`, `warnings` |
 | `get_code_workflow_schema` | `GET` | `/{version}/code/workflows/schema` | `project` | — |

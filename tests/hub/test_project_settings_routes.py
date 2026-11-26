@@ -85,6 +85,9 @@ CASES: list[tuple[str, str, str, dict[str, list[str]] | None, dict[str, Any] | N
      lambda h: h.account.get_project_tokens(PR, recipientId="usr_1")),
     ("get_project_health", "GET", f"{P}/health", {"refresh": ["true"], "periodDays": ["7"]}, None,
      lambda h: h.account.get_project_health(PR, refresh=True, periodDays=7)),
+    ("get_project_health_page", "GET", f"{P}/health",
+     {"severity": ["Error"], "module": ["Email"], "pageNumber": ["1"], "pageSize": ["20"]}, None,
+     lambda h: h.account.get_project_health(PR, severity="Error", module="Email", pageNumber=1, pageSize=20)),
     ("wait_for_project_active", "GET", f"{P}/wait-active", {"timeoutSeconds": ["60"]}, None,
      lambda h: h.account.wait_for_project_active(PR, timeoutSeconds=60)),
     # Brand.
@@ -162,8 +165,6 @@ CASES: list[tuple[str, str, str, dict[str, list[str]] | None, dict[str, Any] | N
      lambda h: h.account.update_project_ai_plans(PR, **PLANS)),
     ("update_project_ai_plan_assignments", "PUT", f"{P}/ai/plans/assignments", None, ASSIGNMENTS,
      lambda h: h.account.update_project_ai_plan_assignments(PR, **ASSIGNMENTS)),
-    ("get_project_ai_user_plans", "GET", f"{P}/ai/plans/users", None, None,
-     lambda h: h.account.get_project_ai_user_plans(PR)),
     ("create_ai_credit_pack_checkout", "POST", f"{P}/ai/credits/checkout", None,
      {"pack": "pack-10", "returnUrl": "/projects/shop/settings?tab=AI"},
      lambda h: h.account.create_ai_credit_pack_checkout(PR, pack="pack-10", returnUrl="/projects/shop/settings?tab=AI")),
@@ -220,9 +221,9 @@ def _assert_request(
 
 
 def test_project_settings_route_count() -> None:
-    # General info 6 + brand 7 + access 1 + regions 1 + languages 3 + environments 9 + admin portal 3
-    # + legal 1 + AI 12 + termination 3 + billing 8.
-    assert len(CASES) == 6 + 7 + 1 + 1 + 3 + 9 + 3 + 1 + 12 + 3 + 8
+    # General info 7 (health twice: period, filter + page) + brand 7 + access 1 + regions 1 + languages 3 + environments 9 + admin portal 3
+    # + legal 1 + AI 11 + termination 3 + billing 8.
+    assert len(CASES) == 7 + 7 + 1 + 1 + 3 + 9 + 3 + 1 + 11 + 3 + 8
     assert len(set(IDS)) == len(IDS)
 
 

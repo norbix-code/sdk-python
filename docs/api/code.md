@@ -15,7 +15,7 @@ workflow route, is on [HUB · Code](../hub/code.md#workflows-beta).
 | `open_code_workflow_resume_link` | `GET` | `/{version}/code/workflows/resume/{Token}` | `optional` | path: `token` (checks the link, changes nothing) |
 | `use_code_workflow_resume_link` | `POST` | `/{version}/code/workflows/resume/{Token}` | `optional` | path: `token` (answers the link) |
 | `invoke_code_workflow` | `POST` | `/{version}/code/workflows/{Id}/invoke` | `project` | path: `id`; JSON body: `payload?`, `waitSeconds?` (0–30), `runVersion?` |
-| `get_code_workflow_runs` | `GET` | `/{version}/code/workflows/{Id}/runs` | `project` | path: `id`; query: `status?`, `from?`, `to?`, `pageSize`, `startingAfter`, `endingBefore` |
+| `get_code_workflow_runs` | `GET` | `/{version}/code/workflows/{Id}/runs` | `project` | path: `id`; query: `status?`, `from?`, `to?`, `workflowVersion?`, `pageSize`, `startingAfter`, `endingBefore` |
 | `get_code_workflow_run` | `GET` | `/{version}/code/workflows/runs/{RunId}` | `project` | path: `run_id` |
 | `get_code_workflow_run_logs` | `GET` | `/{version}/code/workflows/runs/{RunId}/logs` | `project` | path: `run_id`; query: `stepId?`, `level?`, `pageSize`, `startingAfter`, `endingBefore` |
 | `resume_code_workflow_run_by_key` | `POST` | `/{version}/code/workflows/{Id}/resume` | `project` | path: `id`; JSON body: `key`, `stepId?`, `decision?`, `payload?` |

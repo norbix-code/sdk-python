@@ -46,7 +46,6 @@ MERGE = {"survivorId": CT, "mergedIds": ["ct_2"]}
 DRY_RUN = {"dryRun": True}
 UPDATE_CONTACT = {"displayName": "Ana B.", "language": "lt"}
 IDENTITY = {"authId": AUTH}
-AI_PLAN = {"planId": "plan_pro"}
 
 INVITE = {"email": "ana@example.test", "fullName": "Ana Berg", "roles": ["Editor"]}
 FINISH = {"token": "inv_tok", "password": "S3cret-pass!", "firstName": "Ana"}
@@ -129,7 +128,7 @@ CASES: list[Case] = [
      lambda m: m.promote_contact_identity(CT, AUTH)),
     ("clear_contact_bounce", "POST", f"{U}/{CT}/marketing-state/Sms/clear-bounce", None, None,
      lambda m: m.clear_contact_bounce(CT, "Sms")),
-    ("set_user_ai_plan", "PUT", f"{U}/{USR}/ai-plan", None, AI_PLAN, lambda m: m.set_user_ai_plan(USR, **AI_PLAN)),
+    ("get_user_ai_plan", "GET", f"{U}/{USR}/ai-plan", None, None, lambda m: m.get_user_ai_plan(USR)),
     # User edit / detail — /membership/auth user routes.
     ("update_user", "PUT", A, None, UPDATE_USER, lambda m: m.update_user(**UPDATE_USER)),
     ("assign_role_permissions", "PUT", f"{A}/assign-roles", None, ASSIGN_ROLES, lambda m: m.assign_role_permissions(**ASSIGN_ROLES)),

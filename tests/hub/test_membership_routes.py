@@ -44,7 +44,6 @@ DRY_RUN = {"dryRun": True}
 IMPORT_USERS = {"dryRun": False, "ignoreDefaultRoles": True, "users": [{"email": "ana@example.test"}]}
 UPDATE_CONTACT = {"displayName": "Ana B.", "company": "Norbix", "city": "Vilnius"}
 IDENTITY = {"authId": AUTH}
-AI_PLAN = {"planId": "plan_pro"}
 ROLE_NEW = {"roleName": "Editor", "description": "Edits records", "policies": ["pol_1"]}
 ROLE_UPDATE = {"id": ROLE, "roleName": "Editor", "policies": ["pol_1", "pol_2"]}
 POLICY_NEW = {"policyName": "Read orders", "description": "Orders only", "policyDocumentJson": '{"statements":[]}'}
@@ -82,8 +81,8 @@ CASES: list[Case] = [
      lambda m: m.promote_contact_identity(CT, AUTH)),
     ("clear_contact_bounce", "POST", f"/v2/membership/users/{CT}/marketing-state/Email/clear-bounce", None, None,
      lambda m: m.clear_contact_bounce(CT, "Email")),
-    ("set_user_ai_plan", "PUT", f"/v2/membership/users/{AUTH}/ai-plan", None, AI_PLAN,
-     lambda m: m.set_user_ai_plan(AUTH, **AI_PLAN)),
+    ("get_user_ai_plan", "GET", f"/v2/membership/users/{AUTH}/ai-plan", None, None,
+     lambda m: m.get_user_ai_plan(AUTH)),
     # Roles. The delete id goes on the query: the route has no {Id} (same as the .NET snapshot).
     ("get_roles", "GET", "/v2/membership/roles", None, None, lambda m: m.get_roles()),
     ("get_role", "GET", f"/v2/membership/roles/{ROLE}", None, None, lambda m: m.get_role(ROLE)),
