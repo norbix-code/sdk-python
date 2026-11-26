@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 import time
-from collections.abc import AsyncIterator, Iterable, Iterator
+from collections.abc import AsyncIterator, Callable, Iterable, Iterator
 from dataclasses import dataclass, field
 from typing import Any, Literal
 from urllib.parse import quote, urlencode
@@ -28,6 +28,10 @@ ResponseType = Literal["json", "binary", "envelope"]
 Target = Literal["api", "hub"]
 
 _IDEMPOTENT_VERBS: frozenset[str] = frozenset({"GET", "DELETE"})
+# A project sign-in's JWT slides (12 hours, 30 days with rememberMe, never past
+# 90 days from sign-in). Past half its window an answer carries a fresh one in
+# this header; the client swaps its stored bearer token for it.
+SESSION_TOKEN_HEADER = "norbix-session-token"
 _DEFAULT_MAX_RETRIES = 3
 
 
@@ -50,6 +54,9 @@ class TransportConfig:
     base_url_api_is_default: bool = False
     base_url_hub_is_default: bool = False
     default_headers: dict[str, str] = field(default_factory=dict)
+    # Called with the new token after the client swapped its stored bearer
+    # token for a ``norbix-session-token`` answer header, so the app can save it.
+    on_session_token: Callable[[str], None] | None = None
 
 
 class Transport:
@@ -112,6 +119,10 @@ class Transport:
         url = _with_query(url, query)
         headers = {"Accept": "application/json", **self._cfg.default_headers}
 
+        # The stored bearer token this request sends, if it sends one. Only
+        # that token is ever swapped for a fresher one (never an API key or a
+        # per-call token the client does not hold).
+        sent_stored_token: str | None = None
         if scope != "unauthenticated":
             token = bearer_token or self._cfg.bearer_token or self._cfg.api_key
             if not token and scope != "optional":
@@ -121,6 +132,8 @@ class Transport:
                 )
             if token:
                 headers["Authorization"] = f"Bearer {token}"
+                if token == self._cfg.bearer_token:
+                    sent_stored_token = token
 
         headers["norbix-project-id"] = self._cfg.project_id
         if self._cfg.account_id:
@@ -160,6 +173,8 @@ class Transport:
             )
         except httpx.HTTPError as exc:
             raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
+
+        _take_session_token(self._cfg, sent_stored_token, response)
 
         if response.status_code >= 400:
             try:
@@ -322,6 +337,10 @@ class AsyncTransport:
         url = _with_query(url, query)
         headers = {"Accept": "application/json", **self._cfg.default_headers}
 
+        # The stored bearer token this request sends, if it sends one. Only
+        # that token is ever swapped for a fresher one (never an API key or a
+        # per-call token the client does not hold).
+        sent_stored_token: str | None = None
         if scope != "unauthenticated":
             token = bearer_token or self._cfg.bearer_token or self._cfg.api_key
             if not token and scope != "optional":
@@ -331,6 +350,8 @@ class AsyncTransport:
                 )
             if token:
                 headers["Authorization"] = f"Bearer {token}"
+                if token == self._cfg.bearer_token:
+                    sent_stored_token = token
 
         headers["norbix-project-id"] = self._cfg.project_id
         if self._cfg.account_id:
@@ -370,6 +391,8 @@ class AsyncTransport:
             )
         except httpx.HTTPError as exc:
             raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
+
+        _take_session_token(self._cfg, sent_stored_token, response)
 
         if response.status_code >= 400:
             try:
@@ -467,6 +490,25 @@ class AsyncTransport:
                         yield frame
         except httpx.HTTPError as exc:
             raise NorbixError(message=str(exc), code="NORBIX_NETWORK_ERROR") from exc
+
+def _take_session_token(
+    cfg: TransportConfig, sent_stored_token: str | None, response: httpx.Response
+) -> None:
+    """Swap the stored bearer token for the answer's ``norbix-session-token``.
+
+    Only when the request sent the stored bearer token and that token is still
+    the stored one (a sign-out or another call may have changed it meanwhile).
+    An empty header value is ignored. API-key calls never swap.
+    """
+    if not sent_stored_token:
+        return
+    fresh = (response.headers.get(SESSION_TOKEN_HEADER) or "").strip()
+    if not fresh or fresh == sent_stored_token or cfg.bearer_token != sent_stored_token:
+        return
+    cfg.bearer_token = fresh
+    if cfg.on_session_token is not None:
+        cfg.on_session_token(fresh)
+
 
 def _api_call_base_url(cfg: TransportConfig) -> str:
     """Where an API call goes: the project's own host wherever the address serves one.

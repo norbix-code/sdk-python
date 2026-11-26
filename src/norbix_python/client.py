@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Callable
 from typing import Any
 
 import httpx
@@ -38,6 +39,9 @@ class LoginCredentials(BaseModel):
     user_name: str = Field(alias="userName")
     password: str
     provider: str = "credentials"
+    # False: the session slides 12 hours. True: it slides 30 days. Never past
+    # 90 days from sign-in. Always sent.
+    remember_me: bool = Field(default=False, alias="rememberMe")
 
 
 def _build_config(
@@ -56,6 +60,7 @@ def _build_config(
     default_headers: dict[str, str] | None,
     client_name: str,
     language: str | None = None,
+    on_session_token: Callable[[str], None] | None = None,
 ) -> TransportConfig:
     resolved_project_id = project_id or os.getenv("NORBIX_PROJECT_ID")
     if not resolved_project_id:
@@ -98,6 +103,7 @@ def _build_config(
         base_url_api_is_default=base_url_api_is_default,
         base_url_hub_is_default=base_url_hub_is_default,
         default_headers=default_headers or {},
+        on_session_token=on_session_token,
     )
 
 
@@ -196,6 +202,7 @@ class Norbix(_AuthMixin):
         hub_version: str | None = None,
         timeout: float | None = None,
         default_headers: dict[str, str] | None = None,
+        on_session_token: Callable[[str], None] | None = None,
         http_client: httpx.Client | None = None,
     ) -> None:
         cfg = _build_config(
@@ -212,6 +219,7 @@ class Norbix(_AuthMixin):
             hub_version=hub_version,
             timeout=timeout,
             default_headers=default_headers,
+            on_session_token=on_session_token,
             client_name="Norbix",
         )
 
@@ -245,6 +253,7 @@ class NorbixApi(_AuthMixin):
         api_version: str | None = None,
         timeout: float | None = None,
         default_headers: dict[str, str] | None = None,
+        on_session_token: Callable[[str], None] | None = None,
         http_client: httpx.Client | None = None,
     ) -> None:
         cfg = _build_config(
@@ -261,6 +270,7 @@ class NorbixApi(_AuthMixin):
             hub_version=None,
             timeout=timeout,
             default_headers=default_headers,
+            on_session_token=on_session_token,
             client_name="NorbixApi",
         )
         self._transport = Transport(cfg=cfg, client=http_client)
@@ -305,6 +315,7 @@ class NorbixHub(_AuthMixin):
         hub_version: str | None = None,
         timeout: float | None = None,
         default_headers: dict[str, str] | None = None,
+        on_session_token: Callable[[str], None] | None = None,
         http_client: httpx.Client | None = None,
     ) -> None:
         cfg = _build_config(
@@ -321,6 +332,7 @@ class NorbixHub(_AuthMixin):
             hub_version=hub_version,
             timeout=timeout,
             default_headers=default_headers,
+            on_session_token=on_session_token,
             client_name="NorbixHub",
         )
         self._transport = Transport(cfg=cfg, client=http_client)
@@ -381,6 +393,7 @@ class AsyncNorbix:
         hub_version: str | None = None,
         timeout: float | None = None,
         default_headers: dict[str, str] | None = None,
+        on_session_token: Callable[[str], None] | None = None,
         http_client: httpx.AsyncClient | None = None,
     ) -> None:
         cfg = _build_config(
@@ -397,6 +410,7 @@ class AsyncNorbix:
             hub_version=hub_version,
             timeout=timeout,
             default_headers=default_headers,
+            on_session_token=on_session_token,
             client_name="AsyncNorbix",
         )
 

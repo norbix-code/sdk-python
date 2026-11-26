@@ -326,6 +326,27 @@ Both the sync and the async client follow the same rule.
 
 API keys and JWTs are sent as `Authorization: Bearer ...` (document your backend expectations).
 
+### Sessions
+
+- A project user's sign-in lasts 12 hours and slides: each call keeps it
+  alive. With `remember_me=True` it slides 30 days. It never lasts past 90
+  days from the sign-in.
+- `LoginCredentials(user_name=..., password=..., remember_me=True)` asks for
+  the long session. The default is `False`; `login` always sends it.
+- When the session is past half its window, an answer carries a fresh JWT in
+  the `norbix-session-token` header. If the call sent the client's stored
+  bearer token, the client swaps it for the new one and calls
+  `on_session_token(token)` so your app can save it. Calls with an API key,
+  or with a per-call `bearer_token=`, never swap. An empty header is ignored.
+
+```python
+def save_token(token: str) -> None:
+    store["norbix_token"] = token  # your own storage
+
+norbix = NorbixApi(project_id="proj_123", on_session_token=save_token)
+norbix.login(LoginCredentials(user_name="alice@team.io", password="secret", remember_me=True))
+```
+
 Social sign-in (Google, Apple, Microsoft, GitHub, Facebook, X, Okta) and linking a provider to the signed-in user: `api.membership.social_sign_in_url`, `exchange_social_sign_in_code`, `start_link_identity` and `link_identity`. See [docs/api/membership.md](docs/api/membership.md#social-sign-in-and-link-identity).
 
 E-mail address verification for e-mail + password users: `api.membership.verify_email_address(token)` and `resend_email_address_verification(email)` (public, no token); a sign-in refused because the address is not verified is told apart with `is_email_not_verified_error(err)` (`EMAIL_NOT_VERIFIED_ERROR_CODE`). See [docs/api/membership.md](docs/api/membership.md#e-mail-address-verification).
