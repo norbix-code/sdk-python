@@ -14,6 +14,7 @@ def test_api_ai_wave3_module_surface() -> None:
     assert callable(module.archive_end_user_chat_session)
     assert callable(module.get_end_user_chat_entries)
     assert callable(module.set_end_user_chat_entry_feedback)
+    assert callable(module.decide_end_user_chat_action)
     assert callable(module.list_end_user_chat_attachments)
     assert callable(module.upload_end_user_chat_attachment)
     assert callable(module.delete_end_user_chat_attachment)
@@ -118,6 +119,16 @@ def test_api_ai_set_end_user_chat_entry_feedback_request_shape() -> None:
     assert transport.last_request is not None
     assert transport.last_request['method'] == 'PUT'
     assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/entries/stub-EntryId/feedback')
+    assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
+    assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
+
+
+def test_api_ai_decide_end_user_chat_action_request_shape() -> None:
+    client, transport = make_client(account_id=None)
+    client.api.ai.decide_end_user_chat_action(session_id="stub-SessionId", entry_id="stub-EntryId", decision="apply")
+    assert transport.last_request is not None
+    assert transport.last_request['method'] == 'POST'
+    assert transport.last_request['url'].endswith('/v3/ai/chat/sessions/stub-SessionId/actions/stub-EntryId')
     assert transport.last_request['headers']['authorization'] == 'Bearer test-token'
     assert transport.last_request['headers']['norbix-project-id'] == 'test-project'
 

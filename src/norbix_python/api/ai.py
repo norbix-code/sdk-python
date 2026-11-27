@@ -180,6 +180,27 @@ class AiModule:
             bearer_token=bearer_token,
         )
 
+    def decide_end_user_chat_action(self, session_id: str, entry_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/chat/sessions/{SessionId}/actions/{EntryId}
+
+        The signed-in user's own decision on an action the chat held: a tool that
+        changes something (sends, pays, creates, deletes) is not run by the
+        assistant but lands in the chat as an ``action.pending`` entry. Pass
+        ``decision="apply"`` to run it once, as the user, or ``"dismiss"`` to run
+        nothing. The answer's ``status`` is ``applied``, ``failed`` or ``skipped``;
+        a second decision is refused with HTTP 409.
+        """
+        return self._transport.send(
+            target="api",
+            path="/{version}/ai/chat/sessions/{SessionId}/actions/{EntryId}",
+            method="POST",
+            path_params={"SessionId": session_id, "EntryId": entry_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
     def list_end_user_chat_attachments(self, session_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
         """GET /{version}/ai/chat/sessions/{SessionId}/attachments"""
         return self._transport.send(
@@ -441,6 +462,27 @@ class AsyncAiModule:
             target="api",
             path="/{version}/ai/chat/sessions/{SessionId}/entries/{EntryId}/feedback",
             method="PUT",
+            path_params={"SessionId": session_id, "EntryId": entry_id},
+            request=request,
+            scope="project",
+            timeout=timeout,
+            bearer_token=bearer_token,
+        )
+
+    async def decide_end_user_chat_action(self, session_id: str, entry_id: str, *, timeout: float | None = None, bearer_token: str | None = None, **request: Any) -> Any:
+        """POST /{version}/ai/chat/sessions/{SessionId}/actions/{EntryId}
+
+        The signed-in user's own decision on an action the chat held: a tool that
+        changes something (sends, pays, creates, deletes) is not run by the
+        assistant but lands in the chat as an ``action.pending`` entry. Pass
+        ``decision="apply"`` to run it once, as the user, or ``"dismiss"`` to run
+        nothing. The answer's ``status`` is ``applied``, ``failed`` or ``skipped``;
+        a second decision is refused with HTTP 409.
+        """
+        return await self._transport.send(
+            target="api",
+            path="/{version}/ai/chat/sessions/{SessionId}/actions/{EntryId}",
+            method="POST",
             path_params={"SessionId": session_id, "EntryId": entry_id},
             request=request,
             scope="project",

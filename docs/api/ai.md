@@ -8,6 +8,8 @@ Access with `norbix.api.ai`. End-user AI chat for a signed-in project user (bear
 
 Tests: `tests/api/test_ai_chat_routes.py` — host, verb, exact path, query and body of every route below (sync and async), and the stream against a mock SSE answer.
 
+**Held actions.** A tool that changes something (sends, pays, creates, deletes) is not run by the assistant: it lands in the chat as an `action.pending` entry with the tool and its exact arguments. `decide_end_user_chat_action(session_id, entry_id, decision="apply")` runs it once, as the signed-in user; `decision="dismiss"` runs nothing. The answer's `status` is `applied`, `failed` or `skipped`; a second decision is refused with 409. The model never decides.
+
 | Method | Verb | Path | Scope |
 | --- | --- | --- | --- |
 | `get_end_user_chat_availability` | `GET` | `/{version}/ai/chat/availability` | `project` |
@@ -20,6 +22,7 @@ Tests: `tests/api/test_ai_chat_routes.py` — host, verb, exact path, query and 
 | `archive_end_user_chat_session` | `PUT` | `/{version}/ai/chat/sessions/{SessionId}/archive` | `project` |
 | `get_end_user_chat_entries` | `GET` | `/{version}/ai/chat/sessions/{SessionId}/entries` | `project` |
 | `set_end_user_chat_entry_feedback` | `PUT` | `/{version}/ai/chat/sessions/{SessionId}/entries/{EntryId}/feedback` | `project` |
+| `decide_end_user_chat_action` | `POST` | `/{version}/ai/chat/sessions/{SessionId}/actions/{EntryId}` | `project` |
 | `list_end_user_chat_attachments` | `GET` | `/{version}/ai/chat/sessions/{SessionId}/attachments` | `project` |
 | `upload_end_user_chat_attachment` | `POST` | `/{version}/ai/chat/sessions/{SessionId}/attachments` | `project` |
 | `delete_end_user_chat_attachment` | `DELETE` | `/{version}/ai/chat/attachments/{AttachmentId}` | `project` |

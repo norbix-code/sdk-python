@@ -59,6 +59,8 @@ CASES: list[tuple[str, str, str, dict[str, list[str]] | None, dict[str, Any] | N
      lambda c: c.ai.get_end_user_chat_entries("aics_1", afterSeq=3, take=50)),
     ("set_end_user_chat_entry_feedback", "PUT", "/v2/ai/chat/sessions/aics_1/entries/ent_1/feedback", None, {'feedback': 'down'},
      lambda c: c.ai.set_end_user_chat_entry_feedback("aics_1", "ent_1", feedback='down')),
+    ("decide_end_user_chat_action", "POST", "/v2/ai/chat/sessions/aics_1/actions/ent_7", None, {'decision': 'apply'},
+     lambda c: c.ai.decide_end_user_chat_action("aics_1", "ent_7", decision='apply')),
     ("list_end_user_chat_attachments", "GET", "/v2/ai/chat/sessions/aics_1/attachments", None, None,
      lambda c: c.ai.list_end_user_chat_attachments("aics_1")),
     ("upload_end_user_chat_attachment", "POST", "/v2/ai/chat/sessions/aics_1/attachments", None, {'fileName': 'receipt.pdf', 'contentType': 'application/pdf', 'base64Content': 'JVBERg=='},
@@ -103,7 +105,7 @@ def _assert_request(
 
 def test_ai_chat_api_route_count() -> None:
     # 16 end-user chat routes + 2 AI tool routes.
-    assert len(CASES) == 16 + 2
+    assert len(CASES) == 17 + 2
     assert len(set(IDS)) == len(IDS)
 
 
